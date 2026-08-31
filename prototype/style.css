@@ -6,7 +6,8 @@
   --btn-grad: linear-gradient(180deg,#1c2634,#141c28);
   --radius: 12px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 html, body { height: 100%; background: #06090e; color: var(--fg); overscroll-behavior: none;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 15px; line-height: 1.5; }
 #app { max-width: 520px; margin: 0 auto; height: 100%; display: flex; flex-direction: column; background: var(--bg); box-shadow: 0 0 40px rgba(0,0,0,.6); }

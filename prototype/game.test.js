@@ -40,6 +40,11 @@ const a=sandbox.api;
 function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.setState(s); return s; }
 
 {
+  const css=fs.readFileSync(__dirname+'/style.css','utf8');
+  assert.match(css,/\*\s*\{[^}]*user-select:\s*none/s,'整个游戏界面必须禁用文字选择，避免拖动时误选文本');
+}
+
+{
   const s=reset(); assert.equal(a.totalAtk(),12,'初始攻击应让前期敌人至少需要两次攻击');
   s.player.location='outer'; s.player.stamina=0; a.emergencyEvacuate();
   assert.equal(s.player.location,'camp'); assert.ok(s.player.stamina>0,'零体力仍可撤离');
