@@ -59,6 +59,8 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.match(js,/id=\"update-status\"/,'设置页必须显示更新过程和结果');
   const campHome=js.slice(js.indexOf('function renderCampHome'),js.indexOf('function renderConstruction'));
   assert.ok(campHome.indexOf('renderCampHero')<campHome.indexOf('camp-mapbar-top'),'营地地图入口必须紧跟在营地信息卡下面');
+  assert.ok(campHome.indexOf('if(!state.mapOpen)')<campHome.indexOf('camp-mapbar-top'),'地图展开后不得继续显示外层地图入口');
+  assert.doesNotMatch(campHome,/收起区域地图/,'展开后的收起操作只能保留在地图面板内部');
   assert.doesNotMatch(campHome,/renderObjectiveStrip/,'营地主页不应显示冗余的当前目标条');
   assert.ok(campHome.indexOf('camp-construction')<campHome.indexOf('camp-section-head'),'建筑管理必须和营地设施一起放在上半区');
   assert.ok(campHome.indexOf('camp-depart-dock')>campHome.indexOf('camp-layout'),'离开营地必须作为底部主操作');
