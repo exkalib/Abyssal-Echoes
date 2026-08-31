@@ -15,14 +15,18 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.JavascriptInterface;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import org.json.JSONObject;
 
 public final class MainActivity extends Activity {
     private WebView webView;
     private TextView updateStatus;
     private BundleUpdater updater;
     private boolean rollbackAttempted;
+    private boolean updateCheckRunning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,24 +77,37 @@ public final class MainActivity extends Activity {
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         settings.setUserAgentString(settings.getUserAgentString() + " AbyssalEchoesShell/" + BuildConfig.SHELL_VERSION);
+        webView.addJavascriptInterface(new AppBridge(), "AbyssApp");
         webView.setWebViewClient(new LocalContentWebViewClient(this, updater, this::handleMainPageError));
     }
 
     private void checkForUpdates() {
+        if (updateCheckRunning) {
+            showStatus("正在检查资源更新…", 0L);
+            return;
+        }
+        updateCheckRunning = true;
         updater.check(new BundleUpdater.Listener() {
             @Override public void onStatus(String text) { showStatus(text, 0L); }
-            @Override public void onNoUpdate() { showStatus("资源已是最新版本", 900L); }
+            @Override public void onNoUpdate() {
+                updateCheckRunning = false;
+                showStatus("资源已是最新版本", 900L);
+            }
             @Override public void onReady(long build, String version) {
+                updateCheckRunning = false;
                 rollbackAttempted = false;
                 showStatus("已更新至 " + version, 1300L);
                 webView.clearCache(true);
                 loadGame();
             }
             @Override public void onNativeUpdate(String apkUrl, String version) {
+                updateCheckRunning = false;
+                notifyWebUpdateStatus("发现安卓外壳更新 " + version, true);
                 hideStatus();
                 showNativeUpdateDialog(apkUrl, version);
             }
             @Override public void onError(String message) {
+                updateCheckRunning = false;
                 showStatus("离线运行 · " + message, 1600L);
             }
         });
@@ -125,6 +142,27 @@ public final class MainActivity extends Activity {
         updateStatus.setVisibility(View.VISIBLE);
         updateStatus.removeCallbacks(hideStatusAction);
         if (hideAfterMs > 0L) updateStatus.postDelayed(hideStatusAction, hideAfterMs);
+        notifyWebUpdateStatus(text, hideAfterMs > 0L);
+    }
+
+    private void notifyWebUpdateStatus(String text, boolean finished) {
+        if (webView == null) return;
+        String script = "window.onAbyssUpdateStatus&&window.onAbyssUpdateStatus("
+                + JSONObject.quote(text) + "," + finished + ");";
+        webView.evaluateJavascript(script, null);
+    }
+
+    private final class AppBridge {
+        @JavascriptInterface
+        public void checkForUpdates() {
+            runOnUiThread(MainActivity.this::checkForUpdates);
+        }
+
+        @JavascriptInterface
+        public String versionInfo() {
+            return "安卓 " + BuildConfig.VERSION_NAME + " · 外壳 " + BuildConfig.SHELL_VERSION
+                    + " · 资源 " + updater.currentBuild();
+        }
     }
 
     private final Runnable hideStatusAction = this::hideStatus;

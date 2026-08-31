@@ -40,6 +40,21 @@ html, body { height: 100%; background: #06090e; color: var(--fg); overscroll-beh
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 4px; }
 .grid.one { grid-template-columns: 1fr; }
 
+/* 设置 · 主动更新 */
+.settings-update { position:relative; display:grid; grid-template-columns:48px minmax(0,1fr) auto; align-items:center; gap:11px;
+  margin:0 0 12px; padding:12px; overflow:hidden; border:1px solid #2a536b; border-radius:14px;
+  background:radial-gradient(circle at 0 50%,rgba(56,189,248,.16),transparent 42%),linear-gradient(135deg,#111e2a,#0b121b 68%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 8px 22px rgba(0,0,0,.24); }
+.settings-update::after { content:''; position:absolute; right:-32px; top:-64px; width:120px; height:120px; border:1px solid rgba(56,189,248,.11); border-radius:50%; pointer-events:none; }
+.update-mark { width:46px; height:46px; display:grid; place-items:center; border:1px solid #2c7897; border-radius:13px; color:#78e4ff;
+  background:radial-gradient(circle,#163b4e,#09141e 70%); box-shadow:inset 0 0 14px rgba(56,189,248,.13),0 0 12px rgba(56,189,248,.08); font-size:27px; line-height:1; }
+.update-copy { min-width:0; position:relative; z-index:1; }.update-copy small,.update-copy b,.update-copy em,.update-copy span { display:block; }
+.update-copy small { color:#52ccec; font:7px ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing:1.3px; }
+.update-copy b { color:#e9f7ff; font-size:14px; margin-top:1px; }.update-copy em { color:#7890a3; font-size:9px; font-style:normal; margin-top:1px; }
+.update-copy #update-status { color:#9fb3c3; font-size:9px; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#panel .update-check { position:relative; z-index:1; width:auto; min-width:78px; padding:9px 11px; text-align:center; font-size:11px; }
+@media(max-width:420px){.settings-update{grid-template-columns:42px minmax(0,1fr);gap:9px}.update-mark{width:40px;height:40px;font-size:24px}#panel .update-check{grid-column:1/-1;width:100%;padding:9px}.update-copy #update-status{white-space:normal}}
+
 /* 通用按钮 */
 #panel button, .card { background: var(--btn-grad); border: 1px solid var(--border); color: var(--fg);
   padding: 13px 12px; border-radius: var(--radius); font-size: 15px; cursor: pointer; text-align: left; width: 100%;

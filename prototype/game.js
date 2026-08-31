@@ -1348,8 +1348,40 @@ function renderTaskPanel(box){
 }
 
 /* ---------- 设置 ---------- */
+const updateUi={text:'',busy:false};
+function appVersionInfo(){
+  try{
+    const bridge=globalThis.AbyssApp;
+    if(bridge&&typeof bridge.versionInfo==='function') return bridge.versionInfo();
+  }catch(_){ }
+  return '网页版 · 刷新页面即可加载服务器最新版';
+}
+function setUpdateUi(text,busy){
+  updateUi.text=text||''; updateUi.busy=!!busy;
+  const status=$('update-status'),button=$('check-update-btn');
+  if(status) status.textContent=updateUi.text||'启动时会自动检查，也可以现在手动检查。';
+  if(button){ button.disabled=updateUi.busy; button.textContent=updateUi.busy?'正在检查…':'检查更新'; }
+}
+function checkAppUpdate(){
+  if(updateUi.busy)return;
+  try{
+    const bridge=globalThis.AbyssApp;
+    if(bridge&&typeof bridge.checkForUpdates==='function'){
+      setUpdateUi('正在连接更新服务器…',true);
+      bridge.checkForUpdates();
+      return;
+    }
+  }catch(_){ }
+  setUpdateUi('网页版由服务器直接提供，刷新页面就是最新版本。',false);
+}
+globalThis.onAbyssUpdateStatus=(text,finished)=>setUpdateUi(String(text||''),!finished);
 function renderSetPanel(box){
   title(box,'<b>设置</b>');
+  const update=el('section','settings-update');
+  update.innerHTML='<span class="update-mark" aria-hidden="true">↻</span><span class="update-copy"><small>APPLICATION UPDATE</small><b>游戏更新</b><em id="update-version"></em><span id="update-status"></span></span>';
+  const check=el('button','primary update-check','检查更新'); check.id='check-update-btn'; check.onclick=checkAppUpdate;
+  update.appendChild(check); box.appendChild(update);
+  $('update-version').textContent=appVersionInfo(); setUpdateUi(updateUi.text,updateUi.busy);
   grid(box,[{label:'音效  '+(state.sound?'开':'关'),fn:()=>{state.sound=!state.sound;render();}},{label:'音乐  '+(state.music?'开':'关'),fn:()=>{state.music=!state.music;render();}}]);
   title(box,'存档'); grid(box,[{label:'重新开始(清空本档)',cost:'删除全部进度,包括回响',cls:'danger',full:true,fn:hardReset}]);
   title(box,'关于'); box.appendChild(el('div','panel-title','《深渊回响》· 深度流文字RPG原型'));

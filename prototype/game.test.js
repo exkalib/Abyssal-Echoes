@@ -51,6 +51,9 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.match(css,/animation:gear-idle\s+6s/,'完整齿轮的待机动画周期应为6秒');
   assert.match(css,/90%,100%\s*\{\s*transform:rotate\(1080deg\)/,'齿轮每次启动应连续旋转三圈');
   const js=fs.readFileSync(__dirname+'/game.js','utf8');
+  assert.match(js,/function checkAppUpdate\(\)/,'设置页必须提供主动检查更新入口');
+  assert.match(js,/bridge\.checkForUpdates\(\)/,'主动更新按钮必须调用安卓原生更新器');
+  assert.match(js,/id=\"update-status\"/,'设置页必须显示更新过程和结果');
   const campHome=js.slice(js.indexOf('function renderCampHome'),js.indexOf('function renderConstruction'));
   assert.ok(campHome.indexOf('renderCampHero')<campHome.indexOf('camp-mapbar-top'),'营地地图入口必须紧跟在营地信息卡下面');
   assert.doesNotMatch(campHome,/renderObjectiveStrip/,'营地主页不应显示冗余的当前目标条');

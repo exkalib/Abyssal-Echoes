@@ -1,6 +1,6 @@
 # 深渊回响 Android 外壳
 
-这是一个原生 WebView 外壳。APK 内置 `prototype/` 当前版本，离线也能启动；联网时自动检查服务器上的签名资源清单。
+这是一个原生 WebView 外壳。APK 内置 `prototype/` 当前版本，离线也能启动；联网时自动检查服务器上的签名资源清单，也可在游戏设置页主动点击“检查更新”。
 
 - 最低系统：Android 8.0（API 26）
 - 当前安装包：http://59.110.144.30:9091/app-update/Abyssal-Echoes.apk
