@@ -46,7 +46,10 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.doesNotMatch(html,/id="log-peek"/,'底部不得再显示统一的查看记录入口');
   assert.match(html,/class="gauge sp"[\s\S]*id="stamina"[\s\S]*class="g-ico">⚡/,'体力图标必须位于体力条最右侧');
   assert.match(html,/class="gear-svg"/,'设置按钮必须使用中心稳定的矢量齿轮，不能依赖字体字形');
+  assert.equal((html.match(/<rect x="10\.5" y="1" width="3" height="5"/g)||[]).length,8,'设置图标必须是完整八齿轮');
   assert.match(css,/@keyframes\s+gear-idle/,'移动端设置齿轮必须具有不依赖 hover 的待机动画');
+  assert.match(css,/animation:gear-idle\s+6s/,'完整齿轮的待机动画周期应为6秒');
+  assert.match(css,/90%,100%\s*\{\s*transform:rotate\(1080deg\)/,'齿轮每次启动应连续旋转三圈');
 }
 
 {
