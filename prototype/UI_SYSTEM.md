@@ -77,6 +77,7 @@
 - `.ui-button--danger`：红色，仅用于不可逆操作。
 - `.ui-button--ghost`：返回、关闭、地图缩放等工具操作。
 - `.ui-icon-button`：视觉尺寸 `32–36px`，通过伪元素扩展到最少 `44px` 触摸区。
+- 关闭控件统一为切角装甲小片：方块切角、钛灰边线、暗石墨面、`icon-close` 纯 X 图标；面板顶栏、底部弹层、科技与基因树共用同一外观，按下转青，禁止圆形或带边框装饰的变体。
 
 按钮必须具备 `default / pressed / selected / disabled / loading` 状态。按下反馈为亮度 `1.08` 和缩放 `.985`，不依赖 hover。
 

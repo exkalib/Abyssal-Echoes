@@ -1040,7 +1040,7 @@ function freshState(keepMeta){
       arkBand:returning?1:0,builderGun:returning?1:0,fieldMap:returning?1:0},
     defenses:[], rests:0, skills:{}, skillSlots:[null,null,null], skillSlotSel:0, charView:'overview', quests:{first_exit:'active'}, questStart:{}, flags:{}, areaSearch:{}, investigationMisses:{}, discovered:{camp:true,outer:true,joeCamp:true}, dailyGather:{}, dailyLocation:{}, dailyFacility:{}, foodBuff:null, truthClaimed:null,
     runStats:{kills:0,wKill:0,dmg:0,mat:0}, checkpoint:null, expeditionStartInv:null, time:0,
-    tab:'act', screen:'play', campBuilding:null, campView:'home', fieldView:'actions', bagSel:null, techSel:null, combat:null, visited:{camp:true}, mapLevel:'world', mapRegion:'surface', siteSheet:null, meta, kills:0,
+    tab:'act', screen:'play', campBuilding:null, campView:'home', bagSel:null, techSel:null, combat:null, visited:{camp:true}, mapLevel:'world', mapRegion:'surface', siteSheet:null, meta, kills:0,
     tutorial:returning?{version:1,step:'done',complete:true}:{version:1,step:'wake',complete:false},
   };
   Object.assign(next.quests,meta.spaceQuests||{});
@@ -1400,6 +1400,47 @@ function load(){ try{ const r=localStorage.getItem(SAVE_KEY); if(r){state=JSON.p
 
 /* ================= DOM ================= */
 const $=id=>document.getElementById(id);
+let interactionFeedbackInstalled=false,feedbackBatch=null,feedbackFlushTimer=null,feedbackGeneration=0;
+const pressedPointers=new Map();
+const FEEDBACK_PRIORITY={dim:0,story:1,sys:2,good:3,success:3,warn:4,warning:4,danger:5,error:5};
+function feedbackSpec(entries){
+  const compact=[];(entries||[]).forEach(entry=>{const text=String(entry&&entry.text||'').trim(),cls=entry&&entry.cls||'story';if(!text||compact.length&&compact[compact.length-1].text===text)return;compact.push({text,cls});});
+  const meaningful=compact.some(entry=>entry.cls!=='dim')?compact.filter(entry=>entry.cls!=='dim'):compact;
+  const lines=meaningful.slice(-3),strongest=lines.reduce((best,entry)=>(FEEDBACK_PRIORITY[entry.cls]||0)>(FEEDBACK_PRIORITY[best]||0)?entry.cls:best,'dim');
+  const map={danger:['is-error','DANGER // ACTION INTERRUPTED','alert'],error:['is-error','DANGER // ACTION INTERRUPTED','alert'],warn:['is-warning','WARNING // FIELD REPORT','alert'],warning:['is-warning','WARNING // FIELD REPORT','alert'],good:['is-success','RESULT // ACQUIRED','check'],success:['is-success','RESULT // ACQUIRED','check'],sys:['is-system','SYSTEM // OPERATION COMPLETE','scan'],story:['is-story','TRANSMISSION // FIELD REPORT','dialogue'],dim:['is-system','FIELD REPORT // NO CHANGE','document']},tone=map[strongest]||map.story;
+  return {tone:tone[0],label:tone[1],icon:tone[2],lines,duration:lines.some(entry=>entry.cls==='story')?4800:strongest==='danger'||strongest==='error'?3800:3100};
+}
+function showActionFeedback(entries){
+  const layer=$('action-feedback'),messages=$('feedback-messages'),label=$('feedback-label'),icon=$('feedback-icon-use'),spec=feedbackSpec(entries);if(!layer||!messages||!label||!icon||!spec.lines.length)return;
+  const generation=++feedbackGeneration;layer.hidden=false;layer.className='action-feedback ui-toast '+spec.tone;label.textContent=spec.label;icon.setAttribute('href','#icon-'+spec.icon);messages.textContent='';
+  spec.lines.forEach(entry=>{const p=document.createElement('p');p.className=entry.cls||'story';p.textContent=entry.text;messages.appendChild(p);});
+  layer.classList.remove('is-visible');void layer.offsetWidth;requestAnimationFrame(()=>{if(generation===feedbackGeneration)layer.classList.add('is-visible');});
+  setTimeout(()=>{if(generation!==feedbackGeneration)return;layer.classList.remove('is-visible');setTimeout(()=>{if(generation===feedbackGeneration)layer.hidden=true;},180);},spec.duration);
+}
+function dismissActionFeedback(immediate){
+  const layer=$('action-feedback'),messages=$('feedback-messages');feedbackGeneration++;
+  if(!layer)return;layer.classList.remove('is-visible');
+  if(immediate){layer.hidden=true;if(messages)messages.textContent='';return;}
+  setTimeout(()=>{layer.hidden=true;if(messages)messages.textContent='';},180);
+}
+function flushFeedbackBatch(batch){
+  if(!batch||!batch.entries.length)return;
+  /* 战斗过程已有专用 feed；进入战斗时清掉旧 toast，离开战斗的胜利/逃脱结算则正常显示。 */
+  if(state&&state.combat){dismissActionFeedback(true);return;}
+  showActionFeedback(batch.entries);
+}
+function queueStandaloneFeedback(entry){
+  if(feedbackBatch){feedbackBatch.entries.push(entry);return;}
+  const batch={entries:[entry]};feedbackBatch=batch;feedbackFlushTimer=setTimeout(()=>{if(feedbackBatch===batch)feedbackBatch=null;flushFeedbackBatch(batch);},0);
+}
+function installInteractionFeedback(){
+  if(interactionFeedbackInstalled)return;interactionFeedbackInstalled=true;
+  const buttonFrom=e=>e.target&&e.target.closest?e.target.closest('button'):null;
+  const release=e=>{const b=pressedPointers.get(e.pointerId)||buttonFrom(e);pressedPointers.delete(e.pointerId);if(b)setTimeout(()=>b.classList.remove('is-touching'),120);};
+  document.addEventListener('pointerdown',e=>{const b=buttonFrom(e);if(!b||b.disabled)return;const previous=pressedPointers.get(e.pointerId);if(previous&&previous!==b)previous.classList.remove('is-touching');pressedPointers.set(e.pointerId,b);b.classList.add('is-touching');if(e.pointerType==='touch'&&typeof navigator!=='undefined'&&navigator.vibrate)try{navigator.vibrate(8);}catch(_){}},{passive:true});
+  document.addEventListener('pointerup',release,{passive:true});document.addEventListener('pointercancel',release,{passive:true});document.addEventListener('lostpointercapture',release,{passive:true});
+  document.addEventListener('click',e=>{const b=buttonFrom(e);if(!b||b.disabled)return;if(feedbackBatch){clearTimeout(feedbackFlushTimer);feedbackBatch=null;}const batch={entries:[]};feedbackBatch=batch;feedbackFlushTimer=setTimeout(()=>{if(feedbackBatch===batch)feedbackBatch=null;flushFeedbackBatch(batch);},0);},true);
+}
 function setLogOpen(open){
   const tray=$('log'),peek=$('log-peek'); if(!tray||!peek)return;
   const yes=!!open&&tray.childElementCount>0;
@@ -1409,6 +1450,7 @@ function setLogOpen(open){
 }
 function log(msg,cls){ const out=$('log'),peek=$('log-peek'),latest=$('log-latest'); const d=document.createElement('div'); d.className='line '+(cls||'story'); d.textContent=msg; out.appendChild(d); out.scrollTop=out.scrollHeight;
   if(state&&state.combat){const history=state.combat.history||(state.combat.history=[]);history.push({text:msg,cls:cls||'story'});if(history.length>6)history.shift();}
+  if(interactionFeedbackInstalled)queueStandaloneFeedback({text:msg,cls:cls||'story'});
   if(peek){ peek.classList.remove('hidden'); peek.classList.add('unread'); } if(latest)latest.textContent=msg; }
 function divider(){ const el=$('log'); const d=document.createElement('div'); d.className='line divider'; el.appendChild(d); el.scrollTop=el.scrollHeight; }
 function el(tag,cls,html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
@@ -1583,10 +1625,20 @@ function renderSiteSheet(box){
   const close=el('button','site-sheet-close ui-icon-button',uiIcon('close'));close.setAttribute('aria-label','关闭');close.onclick=closeSiteSheet;
   if(ref.kind==='operation'){
     const op=FIELD_OPERATIONS[ref.id];if(!op){state.siteSheet=null;return;}
-    const status=operationStatus(ref.id),costs=Object.entries(op.cost||{}).map(([item,n])=>'<i class="'+((state.inv[item]||0)>=n?'ok':'')+'">'+ITEMS[item].icon+' '+ITEMS[item].name+' '+(state.inv[item]||0)+'/'+n+'</i>').join('');
-    sheet.innerHTML='<div class="site-sheet-grip"></div><div class="site-sheet-head"><span>'+op.icon+'</span><div><small>FIELD OPERATION</small><b>'+op.name+'</b></div></div><p>'+op.desc+'</p><div class="site-sheet-costs">'+costs+'</div><div class="site-sheet-status '+(status.ok?'ready':'')+'">'+status.text+'</div>';
+    const status=operationStatus(ref.id),searched=state.areaSearch[op.at]||0,need=op.minSearch||0;
+    const reqRows=[];
+    if(need>0)reqRows.push('<div class="site-sheet-req'+(searched>=need?' ok':'')+'"><i>'+uiIcon(searched>=need?'check':'scan')+'</i><span>现场调查</span><em>'+searched+'/'+need+'</em></div>');
+    if(op.requireFlag){const ok=!!state.flags[op.requireFlag];reqRows.push('<div class="site-sheet-req'+(ok?' ok':'')+'"><i>'+uiIcon(ok?'check':'lock')+'</i><span>关键调查</span><em>'+(ok?'已完成':'未完成')+'</em></div>');}
+    const costs=Object.entries(op.cost||{}).map(([item,n])=>'<i class="'+((state.inv[item]||0)>=n?'ok':'')+'">'+ITEMS[item].icon+' '+ITEMS[item].name+' '+(state.inv[item]||0)+'/'+n+'</i>').join('');
+    sheet.innerHTML='<div class="site-sheet-grip"></div><div class="site-sheet-head"><span>'+op.icon+'</span><div><small>FIELD OPERATION</small><b>'+op.name+'</b></div></div><p>'+op.desc+'</p>'+(reqRows.length?'<div class="site-sheet-reqs">'+reqRows.join('')+'</div>':'')+(costs?'<div class="site-sheet-costs">'+costs+'</div>':'')+'<div class="site-sheet-status '+(status.ok?'ready':'')+'">'+status.text+'</div>';
     sheet.appendChild(close);
-    const action=el('button','site-sheet-primary',status.done?'已完成':'执行现场操作');action.disabled=!status.ok;action.onclick=()=>performFieldOperation(ref.id);sheet.appendChild(action);
+    let primaryLabel='执行现场操作',primaryFn=()=>performFieldOperation(ref.id),primaryDisabled=!status.ok;
+    if(status.done){primaryLabel='已完成';primaryDisabled=true;}
+    else if(searched<need){primaryLabel='调查现场 · '+searched+'/'+need;primaryDisabled=false;primaryFn=()=>explore('investigate');}
+    else if(op.requireFlag&&!state.flags[op.requireFlag]){primaryLabel='先完成关键调查';primaryDisabled=true;}
+    else if(!status.ok){primaryLabel='材料不足 · 无法执行';primaryDisabled=true;}
+    const action=el('button','site-sheet-primary',primaryLabel);action.disabled=primaryDisabled;action.onclick=primaryFn;sheet.appendChild(action);
+    if(!status.ok&&!status.done){const back=el('button','site-sheet-secondary','返回，先补齐条件');back.onclick=closeSiteSheet;sheet.appendChild(back);}
   }else if(ref.kind==='exhaustion'){
     const losses=(ref.lost||[]).map(x=>'<i>'+ITEMS[x.id].icon+' '+ITEMS[x.id].name+' -'+x.n+'</i>').join('');
     sheet.classList.add('exhaustion-sheet');sheet.innerHTML='<div class="site-sheet-grip"></div><div class="site-sheet-head"><span>!</span><div><small>EXPEDITION FAILED</small><b>体力耗尽</b></div></div><p>你在荒野中失去意识，被搜救队送回方舟营地。只会遗失本次远征中新获得的部分材料，出发前的背包与关键道具不受影响。</p><div class="site-sheet-costs">'+(losses||'<i class="ok">本次没有可掉落的新增材料</i>')+'</div>';
@@ -1607,7 +1659,7 @@ function renderSiteSheet(box){
     sheet.innerHTML='<div class="site-sheet-grip"></div><div class="site-sheet-head"><span>'+loc.icon+'</span><div><small>ROUTE ACCESS</small><b>'+loc.name+'</b></div></div><p>'+(req?req.text:gate.text)+'</p>'+(req?'<div class="gate-tool '+(owned?'owned':'')+'"><i>'+ITEMS[req.item].icon+'</i><span><small>所需道具</small><b>'+ITEMS[req.item].name+'</b></span><em>'+(owned?'已持有':'未取得')+'</em></div><div class="gate-source"><small>获取线索</small><span>'+req.source+'</span></div>':'<div class="site-sheet-status">'+gate.text+'</div>');
     sheet.appendChild(close);
     const label=!gate.ok?'知道了':!reachable?'先抵达相邻地点':(req&&entryNeedsConfirm(ref.id)?req.action:'前往');
-    const action=el('button','site-sheet-primary',label);action.disabled=gate.ok&&!reachable;action.onclick=gate.ok?()=>confirmEntry(ref.id):closeSiteSheet;sheet.appendChild(action);
+    const action=el('button','site-sheet-primary',label);action.onclick=(gate.ok&&reachable)?()=>confirmEntry(ref.id):closeSiteSheet;sheet.appendChild(action);
   }else{state.siteSheet=null;return;}
   backdrop.onclick=e=>{if(e.target===backdrop)closeSiteSheet();};backdrop.appendChild(sheet);box.appendChild(backdrop);
 }
@@ -1880,12 +1932,23 @@ function renderActPanel(box){
   const mapbar=el('div','explore-tools explore-tools-top');
   const mapbtn=el('button','map-toggle camp-command-card','<span class="cc-icon">'+uiIcon('map')+'</span><span class="cc-copy"><small>LOCAL NAVIGATION</small><b>'+region.name+' · 局部地图</b><em>已发现 '+mapped.known+'/'+mapped.total+' 个地点 · 查看路线网络</em></span><span class="command-access"><small>OPEN</small><i>'+uiIcon('chevron-right')+'</i></span>');
   mapbtn.onclick=()=>{state.mapOpen=true;state.mapLevel='local';state.mapRegion=regionId;state.mapSelected=loc;renderPanelTop();}; mapbar.appendChild(mapbtn); box.appendChild(mapbar);
-  const fieldView=state.fieldView==='routes'?'routes':'actions',switcher=el('div','field-switch');
-  [{id:'actions',icon:'scan',label:'现场行动'},{id:'routes',icon:'map',label:'移动路线'}].forEach(v=>{const b=el('button',fieldView===v.id?'active':'',uiIcon(v.icon)+'<span><small>'+(v.id==='actions'?'OPERATIONS':'NAVIGATION')+'</small><b>'+v.label+'</b></span>');b.onclick=()=>{state.fieldView=v.id;renderPanelTop();};switcher.appendChild(b);});box.appendChild(switcher);
-  if(fieldView==='actions'){
-    box.appendChild(el('div','camp-section-head field-section-head','<span><small>FIELD OPERATIONS</small><b>现场行动</b></span><em>SELECT OPERATION</em>'));
-    const ag=el('div','region-actions');
-    renderLocationAction(ag,loc);
+  const nb=neighbors(loc);
+  if(nb.length){
+    const route=el('div','route-panel','<div class="camp-section-head route-title"><span><small>MOVEMENT</small><b>移动路线</b></span><em>点按目的地直接前往 · 移动后无需切换页签</em></div>');
+    const rg=el('div','route-list');
+    nb.forEach(id=>{ const g=locationGate(id),nl=LOCATIONS[id],cost=moveCost(loc,id),b=el('button','routebtn'+(g.ok?'':' locked'));
+      const entry=g.ok&&entryNeedsConfirm(id),tired=g.ok&&!entry&&P().stamina<cost,label=!g.ok?g.text:(entry?ENTRY_REQUIREMENTS[id].action:(tired?'体力不足 · 前往会力竭':'前往 · 体力 -'+cost));
+      b.innerHTML='<span>'+uiIcon(g.ok?'map':'lock')+'</span><span><small>DESTINATION</small><b>'+nl.name+'</b><em>'+label+'</em></span><i>'+uiIcon('chevron-right')+'</i>';
+      if(!g.ok){b.setAttribute('aria-label',nl.name+'，查看进入条件');b.onclick=()=>openSiteSheet('gate',id);}
+      else if(entry){b.onclick=()=>openSiteSheet('gate',id);}
+      else b.onclick=()=>move(id);rg.appendChild(b); });
+    route.appendChild(rg); box.appendChild(route);
+    const safe=P().stamina>=backNeed,risk=el('div','return-risk'+(safe?'':' danger'));
+    risk.innerHTML='<span class="return-mark">'+uiIcon('energy')+'</span><span><small>RETURN RISK</small><b>返程风险</b><em>最短路线需要 '+(Number.isFinite(backNeed)?backNeed:'未知')+' 体力 · 体力归零将力竭死亡，并遗失本次远征新增材料的一部分</em></span><i>'+(safe?'返程体力充足':'无法安全返程')+'</i>';box.appendChild(risk);
+  }
+  box.appendChild(el('div','camp-section-head field-section-head','<span><small>FIELD OPERATIONS</small><b>现场行动</b></span><em>SELECT OPERATION</em>'));
+  const ag=el('div','region-actions');
+  renderLocationAction(ag,loc);
   (profile.actions||[]).forEach(a=>{ const cost=areaActionCost(a.mode==='gather'?2:1),b=el('button','region-action '+(a.mode==='investigate'?'primary':'') );
     const remaining=a.mode==='gather'?gatherAvailable(loc):null;
     const hazard=here.contamination&&!armorImmune('contamination')?' · 生命 -3':'';
@@ -1900,19 +1963,6 @@ function renderActPanel(box){
     renderOutpostPanel(box);
     renderSpaceRoutes(box,false);
     if(P().infected) grid(box,[{label:'用血清清感染',cost:has('serum')?'清除':'无血清',disabled:!has('serum'),cls:'danger',fn:()=>useItem('serum')}],true);
-  }else{
-    const route=el('div','route-panel','<div class="camp-section-head route-title"><span><small>ROUTE NETWORK</small><b>可通行路线</b></span><em>相邻区域移动消耗体力</em></div>');
-    const rg=el('div','route-list');
-  neighbors(loc).forEach(id=>{ const g=locationGate(id),nl=LOCATIONS[id],cost=moveCost(loc,id),b=el('button','routebtn'+(g.ok?'':' locked'));
-    const entry=g.ok&&entryNeedsConfirm(id),tired=g.ok&&!entry&&P().stamina<cost,label=!g.ok?g.text:(entry?ENTRY_REQUIREMENTS[id].action:(tired?'体力不足 · 前往会力竭':'前往 · 体力 -'+cost));
-    b.innerHTML='<span>'+uiIcon(g.ok?'map':'lock')+'</span><span><small>DESTINATION</small><b>'+nl.name+'</b><em>'+label+'</em></span><i>'+uiIcon('chevron-right')+'</i>';
-    if(!g.ok){b.setAttribute('aria-label',nl.name+'，查看进入条件');b.onclick=()=>openSiteSheet('gate',id);}
-    else if(entry){b.onclick=()=>openSiteSheet('gate',id);}
-    else b.onclick=()=>move(id);rg.appendChild(b); });
-    route.appendChild(rg); box.appendChild(route);
-    const safe=P().stamina>=backNeed,risk=el('div','return-risk'+(safe?'':' danger'));
-    risk.innerHTML='<span class="return-mark">'+uiIcon('energy')+'</span><span><small>RETURN RISK</small><b>返程风险</b><em>最短路线需要 '+(Number.isFinite(backNeed)?backNeed:'未知')+' 体力 · 体力归零将力竭死亡，并遗失本次远征新增材料的一部分</em></span><i>'+(safe?'返程体力充足':'无法安全返程')+'</i>';box.appendChild(risk);
-  }
 }
 
 /* ---------- 角色 · 属性 / 技能栏 / 成长入口 ---------- */
@@ -3051,6 +3101,7 @@ function boot(){
     if(state.tab==='tech'){ state.techZoom=.22; state.techPanX=0; state.techPanY=0; } render(); }; };
   document.querySelectorAll('#tabbar .tab').forEach(b=>wire(b,b.dataset.tab));
   wire($('set-btn'),'set');
+  installInteractionFeedback();
   const peek=$('log-peek'); if(peek)peek.onclick=()=>setLogOpen($('log').classList.contains('collapsed'));
   const loaded=load(); if(!loaded) state=freshState();
   MATS.forEach(k=>{if(state.inv[k]==null)state.inv[k]=0;});

@@ -216,9 +216,18 @@ button > .ui-icon { display:inline-block; margin-right:6px; vertical-align:-4px;
 #tabbar button:active,
 #statusbar button:active,
 .ui-button:active {
-  transform:scale(.985);
-  filter:brightness(1.08);
+  transform:translateY(1px) scale(.97);
+  filter:brightness(1.18) saturate(1.08);
 }
+
+button.is-touching {
+  border-color:var(--ui-energy)!important;
+  filter:brightness(1.2) saturate(1.1)!important;
+  box-shadow:inset 0 0 0 1px rgba(167,244,255,.2),inset 0 0 18px rgba(57,211,235,.14),0 0 12px rgba(57,211,235,.16)!important;
+}
+button.is-touching:not(.slotchip):not(.tnode):not(.gnode):not(.mapnode) { transform:translateY(2px) scale(.97)!important; }
+#panel button.slotchip.is-touching { transform:translate(-50%,-50%); }
+#panel button.slotchip.is-touching .sc-box { transform:scale(.94);filter:brightness(1.2); }
 
 /* Equipment slots are positioned around the body with this translation.
    Press feedback belongs on .sc-box; replacing the anchor transform makes it jump. */
@@ -303,6 +312,40 @@ textarea:focus-visible,
 .ui-toast.is-warning { --toast:var(--ui-warning); }
 .ui-toast.is-error { --toast:var(--ui-danger); }
 
+.action-feedback {
+  position:fixed;
+  z-index:55;
+  left:50%;
+  bottom:calc(var(--hud-status-h) + var(--hud-tabs-h) + env(safe-area-inset-bottom,0px) + 8px);
+  width:min(496px,calc(100% - 20px));
+  grid-template-columns:30px minmax(0,1fr);
+  padding:9px 11px;
+  pointer-events:none;
+  opacity:0;
+  transform:translate(-50%,8px) scale(.985);
+  box-shadow:0 12px 30px rgba(0,0,0,.5),inset 0 1px var(--ui-specular);
+  transition:opacity 160ms ease,transform 180ms ease;
+}
+.action-feedback[hidden] { display:none!important; }
+.action-feedback.is-visible { opacity:1;transform:translate(-50%,0) scale(1); }
+.action-feedback.is-system { --toast:var(--ui-energy); }
+.action-feedback.is-story { --toast:var(--ui-anomaly); }
+#app.panel-open .action-feedback { bottom:calc(var(--hud-tabs-h) + env(safe-area-inset-bottom,0px) + 8px); }
+#panel[data-view="camp"] + .action-feedback { bottom:calc(var(--hud-status-h) + var(--hud-tabs-h) + env(safe-area-inset-bottom,0px) + 82px); }
+.af-mark { width:28px;height:28px;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--toast) 55%,var(--ui-line));color:var(--toast);background:#081119; }
+.af-mark .ui-icon { width:17px;height:17px; }
+.af-copy { min-width:0;display:block; }
+.af-copy>small { display:block;color:var(--toast);font:700 6.5px/1 var(--ui-font-tech);letter-spacing:1.1px; }
+#feedback-messages { display:grid;gap:2px;margin-top:4px; }
+#feedback-messages p { color:var(--ui-text-1);font-size:9.5px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+#feedback-messages p:not(:last-child) { color:var(--ui-text-2);font-size:8.5px; }
+#feedback-messages p:last-child { white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2; }
+#feedback-messages p.story:last-child { -webkit-line-clamp:3; }
+#feedback-messages p.good,#feedback-messages p.success { color:#9cebc9; }
+#feedback-messages p.warn,#feedback-messages p.warning { color:#f6d487; }
+#feedback-messages p.danger,#feedback-messages p.error { color:#ffafb6; }
+#app.combat-active .action-feedback { display:none; }
+
 .ui-dialog {
   position:fixed;
   z-index:80;
@@ -344,7 +387,8 @@ textarea:focus-visible,
 }
 #panel .closebar .closebtn,
 #panel .tx-x,
-#panel .tdet-x {
+#panel .tdet-x,
+#panel .site-sheet-close {
   width:34px;
   min-width:34px;
   height:34px;

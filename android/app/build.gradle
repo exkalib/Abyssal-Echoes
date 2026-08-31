@@ -19,11 +19,11 @@ android {
         applicationId "com.exkalib.abyssalecho"
         minSdk 26
         targetSdk 36
-        versionCode 3
-        versionName "0.3.0"
+        versionCode 4
+        versionName "0.3.1"
 
-        buildConfigField "int", "SHELL_VERSION", "2"
-        buildConfigField "long", "BUNDLED_BUILD", "7L"
+        buildConfigField "int", "SHELL_VERSION", "3"
+        buildConfigField "long", "BUNDLED_BUILD", "8L"
         buildConfigField "String", "UPDATE_BASE_URL", '"http://59.110.144.30:9091/app-update/"'
         buildConfigField "String", "UPDATE_PUBLIC_KEY", '"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEV38qnk5xngW+U/kAezd6ubgNUn+y1eMAwlAgHTtsFQO/ffqaXYdxwa7c2Af7sDoiXicjyPH5E7SJtB/E9R0usA=="'
     }

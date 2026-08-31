@@ -35,7 +35,7 @@ const sandbox = {
 };
 vm.createContext(sandbox);
 let source=fs.readFileSync(__dirname+'/game.js','utf8').replace(/\nboot\(\);\s*$/,'');
-source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,totalAtk,statPen,locExtraCost,areaActionCost,fieldMealActive,payAreaAction,materialSnapshot,beginExpedition,finishExpedition,exhaustionDeath,startCombat,winCombat,playerAttack,orbitalStrike,attackResource,attackResourceText,catchBreath,useSkill,equipSkill,unequipSkill,skillUnlocked,passiveBonus,updateCheckpoint,restoreCheckpoint,research,unlockGene,unlockGeneNode,geneTier,geneBonus,geneRule,chooseJob,jobBonus,gainCareerXp,doReincarnate,chooseEnding,gatherAvailable,gatherArea,gatherLimit,performLocationAction,locationActionRemaining,currentDay,rest,fmtTime,activateAvailableQuests,questSearchCount,startBeacon,flee,settleEcho,render,renderCharPanel,renderBuilding,renderSpaceRoutes,explore,staminaToCamp,travelRoute,buyEchoUpgrade,repairFacility,resolveRaid,hasBuildingTech,buildFacility,buildingLevel,upgradeFacility,eatMeal,eatFishMeal,harvestGarden,dispatchDrone,recycleMaterial,damageRandomFacility,mapEdgePath,tutorialActive,finishWakeAnimation,grantTutorialBracelet,grantTutorialBuilder,grantTutorialMap,completeTutorial,normalizeEquipment,normalizeMeta,mergePersistentSpaceMeta,metaFlag,setMetaFlag,grantTechRecord,syncQuestProgress,shipReady,assembleStarship,spaceFlightStatus,launchSpaceRoute,emergencySpaceReturn,outpostBuildStatus,buildOutpostPart,outpostReady,locationRevealed,locationGate,entryNeedsConfirm,operationStatus,performFieldOperation,regionForLocation,regionUnlocked,regionDiscovery,treeLayout,treePortOffset,treeEdgeRoute,techReady,techFacilitiesReady,discoverTechRecord,migrateTechTree,SLOTS,EQUIP_ICON,QUESTS,TECHS,TECH_RECORDS,BRANCHES,MATS,MATERIAL_SOURCES,LOCATIONS,MAP_LINKS,MAP_CANVAS,WORLD_POS,WORLD_REGIONS,WORLD_REGION_LINKS,LOCAL_MAPS,DISCOVERY_MILESTONES,ENTRY_REQUIREMENTS,FIELD_OPERATIONS,LOCATION_ACTIONS,npcLocation,npcsAt,ITEMS,RECIPES,CAMP_BUILDINGS,OUTPOST_BUILDINGS:(typeof OUTPOST_BUILDINGS==='undefined'?[]:OUTPOST_BUILDINGS),SPACE_ROUTES:(typeof SPACE_ROUTES==='undefined'?[]:SPACE_ROUTES),SMELT,RECYCLE,BEACON,SKILLS,GENE_NODES,GENE_TREE,JOBS};`;
+source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,totalAtk,statPen,locExtraCost,areaActionCost,fieldMealActive,payAreaAction,materialSnapshot,beginExpedition,finishExpedition,exhaustionDeath,startCombat,winCombat,playerAttack,orbitalStrike,attackResource,attackResourceText,catchBreath,useSkill,equipSkill,unequipSkill,skillUnlocked,passiveBonus,updateCheckpoint,restoreCheckpoint,research,unlockGene,unlockGeneNode,geneTier,geneBonus,geneRule,chooseJob,jobBonus,gainCareerXp,doReincarnate,chooseEnding,gatherAvailable,gatherArea,gatherLimit,performLocationAction,locationActionRemaining,currentDay,rest,fmtTime,activateAvailableQuests,questSearchCount,startBeacon,flee,settleEcho,feedbackSpec,render,renderCharPanel,renderBuilding,renderSpaceRoutes,explore,staminaToCamp,travelRoute,buyEchoUpgrade,repairFacility,resolveRaid,hasBuildingTech,buildFacility,buildingLevel,upgradeFacility,eatMeal,eatFishMeal,harvestGarden,dispatchDrone,recycleMaterial,damageRandomFacility,mapEdgePath,tutorialActive,finishWakeAnimation,grantTutorialBracelet,grantTutorialBuilder,grantTutorialMap,completeTutorial,normalizeEquipment,normalizeMeta,mergePersistentSpaceMeta,metaFlag,setMetaFlag,grantTechRecord,syncQuestProgress,shipReady,assembleStarship,spaceFlightStatus,launchSpaceRoute,emergencySpaceReturn,outpostBuildStatus,buildOutpostPart,outpostReady,locationRevealed,locationGate,entryNeedsConfirm,operationStatus,performFieldOperation,regionForLocation,regionUnlocked,regionDiscovery,treeLayout,treePortOffset,treeEdgeRoute,techReady,techFacilitiesReady,discoverTechRecord,migrateTechTree,SLOTS,EQUIP_ICON,QUESTS,TECHS,TECH_RECORDS,BRANCHES,MATS,MATERIAL_SOURCES,LOCATIONS,MAP_LINKS,MAP_CANVAS,WORLD_POS,WORLD_REGIONS,WORLD_REGION_LINKS,LOCAL_MAPS,DISCOVERY_MILESTONES,ENTRY_REQUIREMENTS,FIELD_OPERATIONS,LOCATION_ACTIONS,npcLocation,npcsAt,ITEMS,RECIPES,CAMP_BUILDINGS,OUTPOST_BUILDINGS:(typeof OUTPOST_BUILDINGS==='undefined'?[]:OUTPOST_BUILDINGS),SPACE_ROUTES:(typeof SPACE_ROUTES==='undefined'?[]:SPACE_ROUTES),SMELT,RECYCLE,BEACON,SKILLS,GENE_NODES,GENE_TREE,JOBS};`;
 vm.runInContext(source,sandbox);
 const a=sandbox.api;
 function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.setState(s); return s; }
@@ -45,6 +45,14 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.equal(s.player.stamina,100,'新档初始体力必须为100');
   s.player.stamina=0;a.rest();
   assert.equal(s.player.stamina,100,'休息必须恢复到新的100点基础体力上限');
+}
+
+{
+  const result=a.feedbackSpec([{text:'扫描到废弃容器。',cls:'story'},{text:'获得：废铁×2',cls:'good'},{text:'返程体力偏低。',cls:'warn'}]);
+  assert.equal(result.tone,'is-warning','一次操作含警告时反馈色必须升级为警告态');
+  assert.deepEqual(Array.from(result.lines,x=>x.text),['扫描到废弃容器。','获得：废铁×2','返程体力偏低。'],'一次点击产生的剧情、奖励与风险必须合并展示');
+  const compact=a.feedbackSpec([{text:'环境噪声。',cls:'dim'},{text:'没有取得新情报。',cls:'dim'},{text:'重复',cls:'dim'},{text:'重复',cls:'dim'}]);
+  assert.equal(compact.lines.length,3,'反馈层最多保留三条且必须去除连续重复信息');
 }
 
 {
@@ -65,6 +73,18 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.match(uiCss,/\.tedge-rail[\s\S]*\.tedge\.next\.hi/,'树连线必须有交叉隔离底轨和独立的焦点状态层级');
   assert.match(uiCss,/\.tport\.next\.hi\s*\{[^}]*stroke:var\(--ui-warning\)/,'待研究焦点线与目标接口必须保持同一琥珀色');
   assert.match(uiCss,/prefers-reduced-motion:reduce/,'设计系统必须支持减少动态效果');
+  assert.match(html,/id="action-feedback"[^>]*aria-live="polite"[^>]*aria-atomic="true"/,'操作反馈必须位于持久且可访问的实时提示层');
+  assert.match(source,/function installInteractionFeedback\(\)[\s\S]*navigator\.vibrate\(8\)/,'手机按钮必须统一提供轻触震动反馈');
+  assert.match(source,/pressedPointers=new Map\(\)[\s\S]*pressedPointers\.get\(e\.pointerId\)/,'滑出按钮后也必须按 pointerId 清理原始按压态');
+  assert.match(source,/function flushFeedbackBatch\(batch\)[\s\S]*state&&state\.combat[\s\S]*dismissActionFeedback\(true\)/,'战斗中必须使用战斗反馈区并彻底清除旧提示');
+  assert.match(uiCss,/button\.is-touching[\s\S]*scale\(\.97\)/,'按钮按下态必须比原有轻微缩放更明显');
+  assert.match(uiCss,/\.action-feedback\.is-visible\s*\{[^}]*opacity:1/,'文字反馈必须提供明确的出现状态');
+  assert.match(uiCss,/\.action-feedback\[hidden\]\s*\{[^}]*display:none!important/,'无内容时反馈容器不得露出空框');
+  assert.match(uiCss,/#feedback-messages p\.story:last-child\s*\{[^}]*-webkit-line-clamp:3/,'剧情反馈必须允许手机上显示多行文本');
+  const manifest=fs.readFileSync(path.join(__dirname,'..','android','app','src','main','AndroidManifest.xml'),'utf8');
+  assert.match(manifest,/android\.permission\.VIBRATE/,'安卓外壳必须声明震动权限才能提供真实触觉反馈');
+  const androidBuild=fs.readFileSync(path.join(__dirname,'..','android','app','build.gradle'),'utf8');
+  assert.match(androidBuild,/SHELL_VERSION", "3"/,'新增安卓震动权限后必须升级原生外壳协议版本');
   assert.match(source,/loadout-console/,'背包必须使用科幻装备终端容器');
   assert.match(source,/inventory-vault/,'背包物品必须使用独立物品仓容器');
   assert.match(source,/inventory-scroll/,'物品仓内容必须拥有独立滚动层，不能推动整页与底部菜单');
@@ -128,10 +148,10 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.match(css,/\.route-list\{display:flex;overflow-x:auto;scroll-snap-type:x proximity/,'手机端路线必须改为横向快捷条以缩短页面');
   assert.match(css,/\.field-console:not\(\.map-mode\) \.scene-card\{padding:7px 9px 0\}/,'区域信息摘要必须直接适配应用的手机容器，不能依赖外层视口宽度');
   assert.match(css,/\.scene-metrics>span\{padding:5px 8px\}/,'手机端区域读数必须使用紧凑间距');
-  assert.match(js,/const fieldView=state\.fieldView==='routes'\?'routes':'actions'/,'探索页必须提供行动与路线双模式');
-  assert.match(js,/if\(fieldView==='actions'\)[\s\S]*\}else\{[\s\S]*ROUTE NETWORK/,'行动与路线内容必须互斥渲染，避免手机长页面');
+  assert.match(js,/const nb=neighbors\(loc\)[\s\S]*FIELD OPERATIONS/,'探索页必须把移动路线与现场行动渲染在同一屏，移动后无需切换页签');
+  assert.doesNotMatch(js,/fieldView==='routes'/,'探索页不得保留行动/路线双模式，避免移动后还要手动切回行动页');
   assert.match(js,/if\(state\.mapOpen\)\{box\.classList\.add\('map-mode'\);renderWorldMap\(box\);return;\}/,'地图必须独占探索页面');
-  assert.match(css,/\.field-switch\{display:grid;grid-template-columns:1fr 1fr/,'手机探索页必须提供双模式切换器');
+  assert.doesNotMatch(css,/\.field-switch\{/,'双模式切换器已随合并视图移除，不得残留样式');
   assert.match(css,/#panel \.region-action\s*\{[^}]*grid-template-columns:40px minmax\(0,1fr\) 118px/s,'三个现场行动必须使用同宽的右侧状态列');
   assert.match(css,/\.ra-status\s*\{[^}]*grid-template-columns:minmax\(0,1fr\) 15px[^}]*grid-template-rows:auto auto/s,'行动消耗文字与箭头必须共享固定对齐网格');
   assert.match(js,/function investigationClueChance\(id\)[\s\S]*misses>=3\?1/,'随机勘察必须提供三次失败后的线索保底');
