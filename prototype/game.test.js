@@ -52,7 +52,8 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.match(css,/90%,100%\s*\{\s*transform:rotate\(1080deg\)/,'齿轮每次启动应连续旋转三圈');
   const js=fs.readFileSync(__dirname+'/game.js','utf8');
   const campHome=js.slice(js.indexOf('function renderCampHome'),js.indexOf('function renderConstruction'));
-  assert.ok(campHome.indexOf('camp-mapbar-top')<campHome.indexOf('renderCampHero'),'营地地图入口必须位于页面最上方');
+  assert.ok(campHome.indexOf('renderCampHero')<campHome.indexOf('camp-mapbar-top'),'营地地图入口必须紧跟在营地信息卡下面');
+  assert.doesNotMatch(campHome,/renderObjectiveStrip/,'营地主页不应显示冗余的当前目标条');
   assert.ok(campHome.indexOf('camp-construction')<campHome.indexOf('camp-section-head'),'建筑管理必须和营地设施一起放在上半区');
   assert.ok(campHome.indexOf('camp-depart-dock')>campHome.indexOf('camp-layout'),'离开营地必须作为底部主操作');
   assert.match(css,/\.camp-depart-dock\s*\{[^}]*position:fixed[^}]*bottom:97px/s,'离开营地按钮必须固定在手机拇指可触达的底部区域');
