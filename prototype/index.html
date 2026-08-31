@@ -4,9 +4,196 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>深渊回响</title>
-  <link rel="stylesheet" href="style.css?v=depart1">
+  <link rel="stylesheet" href="style.css?v=starbound1">
+  <link rel="stylesheet" href="ui-system.css?v=starbound1">
 </head>
-<body>
+<body data-ui="abyss-frame">
+  <svg class="ui-icon-sprite" aria-hidden="true">
+    <symbol id="icon-vital" viewBox="0 0 24 24">
+      <path d="M3 12h4l2-5 4 10 2-5h6"/>
+      <path d="M5 5.5A8.5 8.5 0 0 1 19 8" opacity=".45"/>
+      <path d="M19 18.5A8.5 8.5 0 0 1 5 16" opacity=".45"/>
+    </symbol>
+    <symbol id="icon-energy" viewBox="0 0 24 24">
+      <path d="M13.5 2 6 13h5l-.5 9L18 10h-5l.5-8Z"/>
+    </symbol>
+    <symbol id="icon-personnel" viewBox="0 0 24 24">
+      <circle cx="12" cy="8" r="3.2"/>
+      <path d="M5.5 20v-2.2c0-3.1 2.9-5.6 6.5-5.6s6.5 2.5 6.5 5.6V20"/>
+      <path d="M3 5V3h2M19 3h2v2M3 19v2h2M19 21h2v-2" opacity=".55"/>
+    </symbol>
+    <symbol id="icon-cargo" viewBox="0 0 24 24">
+      <path d="M7 8V6.5A4.5 4.5 0 0 1 11.5 2h1A4.5 4.5 0 0 1 17 6.5V8"/>
+      <path d="M6 7.5h12l1.5 4V21h-15v-9.5l1.5-4Z"/>
+      <path d="M8 12v5M16 12v5M9.5 11.5h5" opacity=".65"/>
+    </symbol>
+    <symbol id="icon-tech" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3"/>
+      <circle cx="5" cy="6" r="1.5"/>
+      <circle cx="19" cy="6" r="1.5"/>
+      <circle cx="5" cy="18" r="1.5"/>
+      <circle cx="19" cy="18" r="1.5"/>
+      <path d="m7 7.5 2.7 2.4m4.6 0L17 7.5M7 16.5l2.7-2.4m4.6 0 2.7 2.4"/>
+    </symbol>
+    <symbol id="icon-mission" viewBox="0 0 24 24">
+      <path d="M7 4h12v17H5V6l2-2Z"/>
+      <path d="M8.5 9H16M8.5 13H16M8.5 17H13"/>
+      <path d="M5 6h2V4" opacity=".65"/>
+    </symbol>
+    <symbol id="icon-expedition" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8.5"/>
+      <path d="m15.8 8.2-2.2 5.4-5.4 2.2 2.2-5.4 5.4-2.2Z"/>
+      <circle cx="12" cy="12" r="1.2"/>
+    </symbol>
+    <symbol id="icon-camp" viewBox="0 0 24 24">
+      <path d="m4 10 8-6 8 6v9H4v-9Z"/>
+      <path d="M9 19v-6h6v6M2.5 21h19"/>
+    </symbol>
+    <symbol id="icon-map" viewBox="0 0 24 24">
+      <circle cx="5" cy="17" r="2"/><circle cx="12" cy="7" r="2"/><circle cx="19" cy="14" r="2"/>
+      <path d="m6.2 15.4 4.6-6.8m2.6-.2 4.2 4.2M7 18h8.5"/>
+    </symbol>
+    <symbol id="icon-construct" viewBox="0 0 24 24">
+      <path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/>
+      <path d="m4.4 7.7 7.6 4.2 7.6-4.2M12 12v9M8.5 6.4l7.5 4.2"/>
+    </symbol>
+    <symbol id="icon-bracelet" viewBox="0 0 24 24">
+      <path d="M8 8V3h8v5M8 16v5h8v-5"/><rect x="5" y="7" width="14" height="10" rx="3"/><path d="M9 12h2l1-2 2 4 1-2h2"/>
+    </symbol>
+    <symbol id="icon-builder" viewBox="0 0 24 24">
+      <path d="m4 15 9-9 5 5-9 9H4v-5Z"/><path d="m12 7 5 5M15 16l4 4M17 14l4 4M7 16h2v2"/>
+    </symbol>
+    <symbol id="icon-close" viewBox="0 0 24 24">
+      <path d="m6 6 12 12M18 6 6 18"/><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4" opacity=".42"/>
+    </symbol>
+    <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+    <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="icon-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="icon-fit" viewBox="0 0 24 24">
+      <path d="M9 4H4v5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><circle cx="12" cy="12" r="2.5" opacity=".5"/>
+    </symbol>
+    <symbol id="icon-locate" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3" opacity=".55"/>
+    </symbol>
+    <symbol id="icon-lock" viewBox="0 0 24 24">
+      <rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/>
+    </symbol>
+    <symbol id="icon-document" viewBox="0 0 24 24">
+      <path d="M6 3h8l4 4v14H6V3Z"/><path d="M14 3v5h5M9 12h6M9 16h6"/>
+    </symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24">
+      <path d="m5 12 4.2 4.2L19 6.5"/><path d="M20 12a8 8 0 1 1-4-6.9" opacity=".42"/>
+    </symbol>
+    <symbol id="icon-alert" viewBox="0 0 24 24">
+      <path d="M12 3 22 20H2L12 3Z"/><path d="M12 9v5M12 17.5v.5"/>
+    </symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24">
+      <path d="M20 7v5h-5M4 17v-5h5"/><path d="M18.2 9A7 7 0 0 0 6.5 6.3L4 9M5.8 15A7 7 0 0 0 17.5 17.7L20 15"/>
+    </symbol>
+    <symbol id="icon-unknown" viewBox="0 0 24 24">
+      <path d="M9.4 9a3 3 0 1 1 4.2 2.75C12.5 12.3 12 13 12 14.5"/><path d="M12 18v.1"/><circle cx="12" cy="12" r="9" opacity=".42"/>
+    </symbol>
+    <symbol id="icon-slot-empty" viewBox="0 0 24 24">
+      <path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5"/><path d="M8 12h8" opacity=".42"/>
+    </symbol>
+    <symbol id="icon-dialogue" viewBox="0 0 24 24">
+      <path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/>
+    </symbol>
+    <symbol id="icon-scan" viewBox="0 0 24 24">
+      <path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5"/><circle cx="12" cy="12" r="3"/><path d="M5 12h14" opacity=".42"/>
+    </symbol>
+    <symbol id="icon-salvage" viewBox="0 0 24 24">
+      <path d="m14 4-2.5 2.5 6 6L20 10a5 5 0 0 1-6.5 7.5L8 23l-7-7 5.5-5.5A5 5 0 0 1 14 4Z"/>
+    </symbol>
+    <symbol id="icon-combat" viewBox="0 0 24 24">
+      <path d="m5 3 6 6-2 2-6-6V3h2ZM19 3l-6 6 2 2 6-6V3h-2Z"/><path d="m9 11 6 6M15 11l-6 6M7 19l-2 2M17 19l2 2"/>
+    </symbol>
+    <symbol id="icon-medical" viewBox="0 0 24 24">
+      <path d="M9 4h6v5h5v6h-5v5H9v-5H4V9h5V4Z"/>
+    </symbol>
+    <symbol id="icon-armor" viewBox="0 0 24 24">
+      <path d="M12 3 20 6v5c0 5-3.4 8.3-8 10-4.6-1.7-8-5-8-10V6l8-3Z"/><path d="M12 7v10M8 10h8" opacity=".45"/>
+    </symbol>
+    <symbol id="icon-sensor" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M4.5 4.5a10.6 10.6 0 0 0 0 15M19.5 4.5a10.6 10.6 0 0 1 0 15"/>
+    </symbol>
+    <symbol id="icon-pierce" viewBox="0 0 24 24">
+      <path d="m4 20 12-12M14 4l6-2-2 6M7 17l-3-3M11 13l-3-3"/>
+    </symbol>
+    <symbol id="icon-lifesteal" viewBox="0 0 24 24">
+      <path d="M12 3c3.5 4.2 6 7.2 6 11a6 6 0 0 1-12 0c0-3.8 2.5-6.8 6-11Z"/><path d="M9 14h6M12 11v6"/>
+    </symbol>
+    <symbol id="icon-helmet" viewBox="0 0 24 24">
+      <path d="M5 15v-4a7 7 0 0 1 14 0v4l-3 5H8l-3-5Z"/><path d="M7 13h10M9 13v3h6v-3"/>
+    </symbol>
+    <symbol id="icon-chest" viewBox="0 0 24 24">
+      <path d="m8 4-4 3 2 5 2-1v9h8v-9l2 1 2-5-4-3-2 3h-4L8 4Z"/><path d="M12 7v13" opacity=".45"/>
+    </symbol>
+    <symbol id="icon-gloves" viewBox="0 0 24 24">
+      <path d="M5 13V7.5a1.5 1.5 0 0 1 3 0V11 5.5a1.5 1.5 0 0 1 3 0V11 5a1.5 1.5 0 0 1 3 0v6-4.5a1.5 1.5 0 0 1 3 0v8c0 4-2.5 6.5-6 6.5H9c-3 0-5-2-6-5l-1-3a1.6 1.6 0 0 1 3-1Z"/>
+    </symbol>
+    <symbol id="icon-legs" viewBox="0 0 24 24">
+      <path d="M7 3h10l1 8-3 10h-4l1-8-2 8H6L7 11V3Z"/><path d="M12 3v10" opacity=".45"/>
+    </symbol>
+    <symbol id="icon-boots" viewBox="0 0 24 24">
+      <path d="M5 4h6v10l3 3v3H3v-4l2-2V4ZM15 4h4v11l2 2v3h-6"/>
+    </symbol>
+    <symbol id="icon-backpack" viewBox="0 0 24 24">
+      <path d="M7 8V6a5 5 0 0 1 10 0v2M5 8h14v13H5V8Z"/><path d="M8 13h8v5H8zM5 11H3v6h2M19 11h2v6h-2"/>
+    </symbol>
+    <symbol id="icon-implant" viewBox="0 0 24 24">
+      <path d="M8 4h8v4h4v8h-4v4H8v-4H4V8h4V4Z"/><circle cx="12" cy="12" r="3"/><path d="M12 4V1M12 23v-3M4 12H1M23 12h-3"/>
+    </symbol>
+    <symbol id="icon-module" viewBox="0 0 24 24">
+      <rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 9h6v6H9zM9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M19 9h3M2 15h3M19 15h3"/>
+    </symbol>
+    <symbol id="icon-offhand" viewBox="0 0 24 24">
+      <path d="M12 3 19 6v5c0 4.4-2.9 7.4-7 9-4.1-1.6-7-4.6-7-9V6l7-3Z"/><path d="M8 12h8" opacity=".45"/>
+    </symbol>
+    <symbol id="icon-weapon" viewBox="0 0 24 24">
+      <path d="m4 20 11-11M14 5l5-2-2 5M7 17l-3-3M12 12l4 4M14 18l4-4 3 3-4 4-3-3Z"/>
+    </symbol>
+    <symbol id="icon-knife" viewBox="0 0 24 24">
+      <path d="M4 20 15.5 8.5M13 6l5-3 3 3-3 5-5-5ZM7 15l3 3M3 21l2-4 2 2-4 2Z"/>
+    </symbol>
+    <symbol id="icon-blade" viewBox="0 0 24 24">
+      <path d="m4 20 12-12 4-5 1 1-3 6L6 22l-2-2ZM8 14l3 3M4 16l4 4"/>
+    </symbol>
+    <symbol id="icon-energy-blade" viewBox="0 0 24 24">
+      <path d="m5 19 3-3M9 15 19 3l2 1-7 14-5-3ZM4 16l4 4M3 21l3-1-2-2-1 3Z"/><path d="m12 13 6-8" opacity=".42"/>
+    </symbol>
+    <symbol id="icon-pistol" viewBox="0 0 24 24">
+      <path d="M3 8h13l4 3-3 3h-6l-1 7H6l1-7H3V8ZM15 8V5h4l2 3M7 11h4"/>
+    </symbol>
+    <symbol id="icon-rifle" viewBox="0 0 24 24">
+      <path d="M2 10h14l5 3-3 3h-6l-2 5H6l1-5H3l-1-6ZM7 10l2-4h4l2 4M15 16l2 4"/>
+    </symbol>
+    <symbol id="icon-lance" viewBox="0 0 24 24">
+      <path d="M3 21 17 7M15 4l6-2-2 6-4-4ZM6 15l3 3M11 11l3 3"/><path d="M2 16 8 22" opacity=".45"/>
+    </symbol>
+    <symbol id="icon-visor" viewBox="0 0 24 24">
+      <path d="M3 9c4-3 14-3 18 0l-2 7-5 1-2-3-2 3-5-1-2-7ZM5 10l5 1M19 10l-5 1"/><circle cx="12" cy="8" r="1"/>
+    </symbol>
+    <symbol id="icon-radiation" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="2"/><path d="M10 9 7 4a9 9 0 0 1 5-1v6M14 9l3-5a9 9 0 0 1 3 4l-6 3M14 14l6 2a9 9 0 0 1-3 4l-4-5M10 14l-3 6a9 9 0 0 1-3-4l6-3"/>
+    </symbol>
+    <symbol id="icon-biohazard" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="2"/><path d="M10 10C6 9 5 5 7 3c3 0 5 2 5 6M14 10c1-4 5-5 7-3 0 3-2 5-6 5M13 14c3 2 3 6 0 7-3-1-4-4-1-7M9 12H4M16 15l3 3M15 9l3-3"/>
+    </symbol>
+    <symbol id="icon-power-armor" viewBox="0 0 24 24">
+      <path d="m8 3-4 4 2 5 2-1v10h8V11l2 1 2-5-4-4-2 4h-4L8 3Z"/><path d="M9 12h6M12 8v13M5 17H2M22 17h-3" opacity=".5"/>
+    </symbol>
+    <symbol id="icon-core" viewBox="0 0 24 24">
+      <path d="m12 2 8 5v10l-8 5-8-5V7l8-5Z"/><circle cx="12" cy="12" r="4"/><path d="M12 8V4M16 12h4M12 16v4M8 12H4" opacity=".5"/>
+    </symbol>
+    <symbol id="icon-phase" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8"/><path d="M4 12h16M7 7c4 2 6 8 10 10M17 7c-4 2-6 8-10 10" opacity=".6"/>
+    </symbol>
+    <symbol id="icon-exorig" viewBox="0 0 24 24">
+      <path d="M8 3h8l2 6-2 4 3 7h-4l-3-5-3 5H5l3-7-2-4 2-6ZM9 7h6M12 3v12"/><circle cx="6" cy="9" r="2"/><circle cx="18" cy="9" r="2"/>
+    </symbol>
+  </svg>
   <div id="app">
     <header id="metabar">
       <span id="time">第1天 08:00</span>
@@ -18,8 +205,11 @@
 
     <footer id="statusbar">
       <div class="gauge hp">
-        <span class="g-ico">❤</span>
-        <div class="g-track"><div class="g-fill" id="hp-fill"></div><span class="g-val" id="hp">50/50</span></div>
+        <span class="g-ico" aria-hidden="true"><svg><use href="#icon-vital"/></svg></span>
+        <div class="g-readout">
+          <span class="g-label">VITAL</span><span class="g-val" id="hp">50/50</span>
+          <div class="g-track"><div class="g-fill" id="hp-fill"></div></div>
+        </div>
       </div>
       <button id="set-btn" class="emblem" aria-label="设置">
         <svg class="gear-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -38,21 +228,24 @@
         </svg>
       </button>
       <div class="gauge sp">
-        <div class="g-track"><div class="g-fill" id="st-fill"></div><span class="g-val" id="stamina">50/50</span></div>
-        <span class="g-ico">⚡</span>
+        <div class="g-readout">
+          <span class="g-label">ENERGY</span><span class="g-val" id="stamina">100/100</span>
+          <div class="g-track"><div class="g-fill" id="st-fill"></div></div>
+        </div>
+        <span class="g-ico" aria-hidden="true"><svg><use href="#icon-energy"/></svg></span>
       </div>
     </footer>
 
     <main id="log" hidden aria-hidden="true"></main>
 
     <nav id="tabbar">
-      <button data-tab="char" class="tab"><span class="ti">👤</span>角色</button>
-      <button data-tab="bag" class="tab"><span class="ti">🎒</span>背包</button>
-      <button data-tab="tech" class="tab"><span class="ti">🔬</span>科技</button>
-      <button data-tab="task" class="tab"><span class="ti">📋</span>任务</button>
+      <button data-tab="char" class="tab"><span class="ti" aria-hidden="true"><svg><use href="#icon-personnel"/></svg></span>角色</button>
+      <button data-tab="bag" class="tab"><span class="ti" aria-hidden="true"><svg><use href="#icon-cargo"/></svg></span>背包</button>
+      <button data-tab="tech" class="tab"><span class="ti" aria-hidden="true"><svg><use href="#icon-tech"/></svg></span>科技</button>
+      <button data-tab="task" class="tab"><span class="ti" aria-hidden="true"><svg><use href="#icon-mission"/></svg></span>任务</button>
     </nav>
   </div>
 
-  <script src="game.js?v=mapnodes1"></script>
+  <script src="game.js?v=starbound1"></script>
 </body>
 </html>

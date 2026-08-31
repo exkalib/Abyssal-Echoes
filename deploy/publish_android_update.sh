@@ -18,10 +18,11 @@ min_shell="${3:-1}"
 work_dir="$(mktemp -d)"
 payload_dir="$work_dir/payload"
 mkdir -p "$payload_dir"
-cp "$root_dir/prototype/index.html" "$root_dir/prototype/style.css" "$root_dir/prototype/game.js" "$payload_dir/"
+cp "$root_dir/prototype/index.html" "$root_dir/prototype/style.css" "$root_dir/prototype/ui-system.css" "$root_dir/prototype/game.js" "$payload_dir/"
+cp -R "$root_dir/prototype/assets" "$payload_dir/assets"
 
 bundle="bundle-$build.zip"
-(cd "$payload_dir" && zip -q -9 "$work_dir/$bundle" index.html style.css game.js)
+(cd "$payload_dir" && zip -q -9 -r "$work_dir/$bundle" index.html style.css ui-system.css game.js assets)
 sha256="$(shasum -a 256 "$work_dir/$bundle" | awk '{print $1}')"
 size="$(wc -c < "$work_dir/$bundle" | tr -d ' ')"
 apk_url="http://59.110.144.30:9091/app-update/Abyssal-Echoes.apk"
