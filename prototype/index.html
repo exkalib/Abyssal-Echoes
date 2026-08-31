@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>深渊回响</title>
-  <link rel="stylesheet" href="style.css?v=hud1">
+  <link rel="stylesheet" href="style.css?v=hud4">
 </head>
 <body>
   <div id="app">
@@ -23,7 +23,18 @@
         <span class="g-ico">❤</span>
         <div class="g-track"><div class="g-fill" id="hp-fill"></div><span class="g-val" id="hp">50/50</span></div>
       </div>
-      <button id="set-btn" class="emblem"><span>⚙</span></button>
+      <button id="set-btn" class="emblem" aria-label="设置">
+        <svg class="gear-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <g class="gear-shape">
+            <rect x="10.5" y="1" width="3" height="5" rx="1"/>
+            <rect x="10.5" y="1" width="3" height="5" rx="1" transform="rotate(45 12 12)"/>
+            <rect x="10.5" y="1" width="3" height="5" rx="1" transform="rotate(90 12 12)"/>
+            <rect x="10.5" y="1" width="3" height="5" rx="1" transform="rotate(135 12 12)"/>
+            <circle cx="12" cy="12" r="7"/>
+            <circle class="gear-hole" cx="12" cy="12" r="2.7"/>
+          </g>
+        </svg>
+      </button>
       <div class="gauge sp">
         <div class="g-track"><div class="g-fill" id="st-fill"></div><span class="g-val" id="stamina">50/50</span></div>
         <span class="g-ico">⚡</span>
@@ -40,6 +51,6 @@
     </nav>
   </div>
 
-  <script src="game.js?v=hud1"></script>
+  <script src="game.js?v=hud4"></script>
 </body>
 </html>

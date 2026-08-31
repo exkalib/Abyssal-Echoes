@@ -45,6 +45,8 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   const html=fs.readFileSync(__dirname+'/index.html','utf8');
   assert.doesNotMatch(html,/id="log-peek"/,'底部不得再显示统一的查看记录入口');
   assert.match(html,/class="gauge sp"[\s\S]*id="stamina"[\s\S]*class="g-ico">⚡/,'体力图标必须位于体力条最右侧');
+  assert.match(html,/class="gear-svg"/,'设置按钮必须使用中心稳定的矢量齿轮，不能依赖字体字形');
+  assert.match(css,/@keyframes\s+gear-idle/,'移动端设置齿轮必须具有不依赖 hover 的待机动画');
 }
 
 {
