@@ -42,6 +42,9 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
 {
   const css=fs.readFileSync(__dirname+'/style.css','utf8');
   assert.match(css,/\*\s*\{[^}]*user-select:\s*none/s,'整个游戏界面必须禁用文字选择，避免拖动时误选文本');
+  const html=fs.readFileSync(__dirname+'/index.html','utf8');
+  assert.doesNotMatch(html,/id="log-peek"/,'底部不得再显示统一的查看记录入口');
+  assert.match(html,/class="gauge sp"[\s\S]*id="stamina"[\s\S]*class="g-ico">⚡/,'体力图标必须位于体力条最右侧');
 }
 
 {

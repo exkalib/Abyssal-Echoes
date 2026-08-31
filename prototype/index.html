@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>深渊回响</title>
-  <link rel="stylesheet" href="style.css?v=map4">
+  <link rel="stylesheet" href="style.css?v=hud1">
 </head>
 <body>
   <div id="app">
@@ -25,15 +25,12 @@
       </div>
       <button id="set-btn" class="emblem"><span>⚙</span></button>
       <div class="gauge sp">
-        <span class="g-ico">⚡</span>
         <div class="g-track"><div class="g-fill" id="st-fill"></div><span class="g-val" id="stamina">50/50</span></div>
+        <span class="g-ico">⚡</span>
       </div>
     </footer>
 
-    <button id="log-peek" class="hidden" aria-expanded="false">
-      <span class="lp-dot"></span><span id="log-latest">最新消息</span><span class="lp-label">查看记录</span><span class="lp-arrow">⌤</span>
-    </button>
-    <main id="log" class="collapsed" aria-live="polite"></main>
+    <main id="log" hidden aria-hidden="true"></main>
 
     <nav id="tabbar">
       <button data-tab="char" class="tab"><span class="ti">👤</span>角色</button>
@@ -43,6 +40,6 @@
     </nav>
   </div>
 
-  <script src="game.js?v=map4"></script>
+  <script src="game.js?v=hud1"></script>
 </body>
 </html>

@@ -11,7 +11,7 @@
 html, body { height: 100%; background: #06090e; color: var(--fg); overscroll-behavior: none;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 15px; line-height: 1.5; }
 #app { max-width: 520px; margin: 0 auto; height: 100%; display: flex; flex-direction: column; background: var(--bg); box-shadow: 0 0 40px rgba(0,0,0,.6); }
-#app.panel-open #log, #app.panel-open #log-peek, #app.panel-open #statusbar { display: none; }
+#app.panel-open #statusbar { display: none; }
 #app.panel-open #panel { padding-top: 8px; }
 .closebar { position: sticky; top: 0; z-index: 9; height: 30px; margin: -4px -14px 8px; pointer-events: none;
   background: linear-gradient(180deg,var(--bg) 58%,rgba(10,14,20,0)); }
@@ -361,7 +361,7 @@ html, body { height: 100%; background: #06090e; color: var(--fg); overscroll-beh
 #statusbar { display: flex; align-items: center; gap: 4px; padding: 9px 12px;
   background: linear-gradient(180deg,#151d29,#0d131c); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); flex: none; }
 .gauge { flex: 1; display: flex; align-items: center; gap: 7px; min-width: 0; }
-.g-ico { font-size: 13px; width: 16px; text-align: center; flex: none; filter: drop-shadow(0 0 3px rgba(0,0,0,.6)); }
+.g-ico { font-size: 20px; width: 24px; line-height:1; text-align: center; flex: none; filter: drop-shadow(0 0 4px rgba(0,0,0,.7)); }
 .gauge.hp .g-ico { color: var(--hp); } .gauge.sp .g-ico { color: var(--st); }
 .g-track { position: relative; flex: 1; height: 20px; min-width: 30px; border-radius: 999px;
   background: #05080d; border: 1px solid #2a3646;
@@ -373,8 +373,8 @@ html, body { height: 100%; background: #06090e; color: var(--fg); overscroll-beh
 .g-val { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
   font-size: 12px; font-weight: 700; color: #fff; letter-spacing: .3px; z-index: 2; pointer-events: none;
   text-shadow: 0 1px 2px rgba(0,0,0,.95), 0 0 3px rgba(0,0,0,.6); }
-.emblem { flex: none; width: 42px; height: 42px; margin: -4px 4px; border-radius: 50%; cursor: pointer;
-  display: grid; place-items: center; font-size: 30px; line-height: 1; color: var(--fg);
+.emblem { flex: none; width: 34px; height: 34px; margin: 0 5px; border-radius: 50%; cursor: pointer;
+  display: grid; place-items: center; font-size: 20px; line-height: 1; color: var(--fg);
   background: radial-gradient(circle at 50% 38%, #223146, #0d1420); border: 2px solid #3a4a63;
   box-shadow: 0 0 0 2px #0b1119, 0 3px 8px rgba(0,0,0,.6), inset 0 1px 2px rgba(255,255,255,.12);
   transition: transform .1s, box-shadow .15s, color .15s; }
@@ -383,24 +383,8 @@ html, body { height: 100%; background: #06090e; color: var(--fg); overscroll-beh
 .emblem:active { transform: scale(.93); }
 .emblem.on { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 2px #0b1119, 0 0 14px rgba(56,189,248,.6), inset 0 1px 2px rgba(255,255,255,.15); }
 
-/* ---------- 文本输出(滚动字幕) ---------- */
-#log-peek { flex:none; height:34px; margin:0; padding:0 13px; border:0; border-top:1px solid #1e2b3b; border-bottom:1px solid #1b2736;
-  display:flex; align-items:center; gap:7px; color:#718398; background:linear-gradient(180deg,#0d141d,#0a1017); font:11px inherit; text-align:left; cursor:pointer; }
-#log-peek.hidden { display:none; }
-#log-peek .lp-dot { width:6px; height:6px; flex:none; border-radius:50%; background:#38bdf8; box-shadow:0 0 7px rgba(56,189,248,.7); }
-#log-peek #log-latest { min-width:0; flex:1; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; color:#9badbd; }
-#log-peek .lp-label { flex:none; color:#557086; font-size:9px; }.lp-arrow { flex:none; color:#5fc8eb; transition:transform .15s; }
-#log-peek[aria-expanded="true"] .lp-arrow { transform:rotate(180deg); }
-#log-peek.unread .lp-dot { background:#f5b94f; box-shadow:0 0 8px rgba(245,185,79,.75); }
-#log { flex: none; height: 22vh; min-height: 88px; overflow-y: auto; -webkit-overflow-scrolling: touch;
-  padding: 9px 14px; background: linear-gradient(180deg,#080c12,#0a0e14); box-shadow: inset 0 6px 10px -8px rgba(0,0,0,.8); font-size: 13.5px; line-height: 1.5;
-  transition:height .18s ease,min-height .18s ease,padding .18s ease; }
-#log.collapsed { height:0; min-height:0; padding-top:0; padding-bottom:0; overflow:hidden; box-shadow:none; }
-#log .line { margin-bottom: 6px; white-space: pre-wrap; }
-#log .sys { color: var(--accent); } #log .good { color: var(--good); }
-#log .warn { color: var(--warn); } #log .danger { color: var(--danger); }
-#log .dim { color: var(--dim); font-size: 12.5px; } #log .story { color: var(--fg); }
-#log .divider { border-top: 1px dashed var(--border); margin: 4px 0; }
+/* 剧情日志先保留为内部数据容器，后续拆分到各地点详情中。 */
+#log { display:none!important; }
 
 /* ---------- 底部菜单(图标+标签) ---------- */
 #tabbar { display: flex; background: linear-gradient(180deg,#0f1620,#0b111a); border-top: 1px solid var(--border); flex: none; padding-bottom: env(safe-area-inset-bottom,0px); }
