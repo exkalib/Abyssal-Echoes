@@ -43,6 +43,8 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
 {
   const s=reset();
   assert.equal(s.player.stamina,100,'新档初始体力必须为100');
+  assert.equal(s.sound,true,'新档必须启用真实音效');assert.equal(s.music,true,'新档必须启用背景音乐');assert.equal(s.vibration,true,'新档必须默认启用且允许关闭触觉反馈');
+  assert.equal(s.soundVolume,.65);assert.equal(s.musicVolume,.30);
   s.player.stamina=0;a.rest();
   assert.equal(s.player.stamina,100,'休息必须恢复到新的100点基础体力上限');
 }
@@ -75,16 +77,24 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.match(uiCss,/prefers-reduced-motion:reduce/,'设计系统必须支持减少动态效果');
   assert.match(html,/id="action-feedback"[^>]*aria-live="polite"[^>]*aria-atomic="true"/,'操作反馈必须位于持久且可访问的实时提示层');
   assert.match(source,/function installInteractionFeedback\(\)[\s\S]*navigator\.vibrate\(8\)/,'手机按钮必须统一提供轻触震动反馈');
+  assert.match(source,/state&&state\.vibration!==false[\s\S]*navigator\.vibrate\(8\)/,'轻触震动必须受独立设置开关控制');
+  assert.match(source,/globalThis\.AudioContext\|\|globalThis\.webkitAudioContext[\s\S]*function playSfx\(kind\)/,'音效开关必须连接真实 WebAudio 输出');
+  assert.match(source,/function scheduleAmbientBar\(\)[\s\S]*roots=\[73\.42,58\.27,65\.41,55\]/,'音乐开关必须连接程序化环境音乐而不是假状态');
+  assert.match(source,/function stopAudioVoices\(voices\)[\s\S]*voice\.osc\.stop\(\)[\s\S]*stopAudioVoices\(audioRuntime\.musicVoices\)/,'关闭音乐时必须停止已排程声部，不能重新漏出尾音');
+  assert.match(source,/document\.hidden\)[\s\S]*audioRuntime\.ctx\.suspend\(\)/,'应用进入后台时必须暂停音频上下文');
+  assert.match(source,/settingsVolume\('musicVolume'[\s\S]*settingsToggle\('vibration'/,'设置页必须提供震动开关和真实音量控制');
   assert.match(source,/pressedPointers=new Map\(\)[\s\S]*pressedPointers\.get\(e\.pointerId\)/,'滑出按钮后也必须按 pointerId 清理原始按压态');
   assert.match(source,/function flushFeedbackBatch\(batch\)[\s\S]*state&&state\.combat[\s\S]*dismissActionFeedback\(true\)/,'战斗中必须使用战斗反馈区并彻底清除旧提示');
   assert.match(uiCss,/button\.is-touching[\s\S]*scale\(\.97\)/,'按钮按下态必须比原有轻微缩放更明显');
   assert.match(uiCss,/\.action-feedback\.is-visible\s*\{[^}]*opacity:1/,'文字反馈必须提供明确的出现状态');
   assert.match(uiCss,/\.action-feedback\[hidden\]\s*\{[^}]*display:none!important/,'无内容时反馈容器不得露出空框');
   assert.match(uiCss,/#feedback-messages p\.story:last-child\s*\{[^}]*-webkit-line-clamp:3/,'剧情反馈必须允许手机上显示多行文本');
+  assert.match(uiCss,/\.settings-switch\.on[\s\S]*settings-volume input\[type="range"\]/,'声音设置必须使用统一开关与可触摸音量滑块组件');
   const manifest=fs.readFileSync(path.join(__dirname,'..','android','app','src','main','AndroidManifest.xml'),'utf8');
   assert.match(manifest,/android\.permission\.VIBRATE/,'安卓外壳必须声明震动权限才能提供真实触觉反馈');
   const androidBuild=fs.readFileSync(path.join(__dirname,'..','android','app','build.gradle'),'utf8');
   assert.match(androidBuild,/SHELL_VERSION", "3"/,'新增安卓震动权限后必须升级原生外壳协议版本');
+  assert.match(androidBuild,/BUNDLED_BUILD", "9L"/,'最新 APK 必须内置声音设置资源 build 9');
   assert.match(source,/loadout-console/,'背包必须使用科幻装备终端容器');
   assert.match(source,/inventory-vault/,'背包物品必须使用独立物品仓容器');
   assert.match(source,/inventory-scroll/,'物品仓内容必须拥有独立滚动层，不能推动整页与底部菜单');
@@ -202,7 +212,7 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
 {
   const s=reset(),box=new FakeElement();a.renderCharPanel(box);const classes=box.children.map(x=>x.className||'');
   const growth=classes.indexOf('growth-nav character-quick-nav'),stats=classes.indexOf('char-fold stat-fold');
-  assert.equal(classes[0],'camp-hero char-console char-profile-card','角色页首屏应复用统一营地控制台组件');assert.ok(growth>=0&&growth<stats,'基因锁和职业入口必须排在详细属性之前');assert.equal(classes.filter(x=>x.startsWith('char-fold')).length,3,'详细属性、技能和回响应收进三个按需展开区');
+  assert.equal(classes[0],'camp-hero char-console char-profile-card','角色页首屏应复用统一营地控制台组件');assert.ok(growth>=0&&growth<stats,'基因锁和职业入口必须排在详细属性之前');assert.equal(classes.filter(x=>x.startsWith('char-fold')).length,4,'详细属性、技能、精通和回响应收进四个按需展开区');
   assert.equal(s.charView,'overview');
 }
 {

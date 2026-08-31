@@ -129,6 +129,76 @@ const SKILLS = {
   adaptiveCulture:{name:'适应性培养',type:'passive',desc:'生物材料采集 +18%',career:'biologist',careerLevel:3,bonus:{bioGatherPct:18}},
 };
 
+/* ================= 精通(纯物资升级 · 无上限) ================= */
+const MASTERIES = {
+  gatherMastery:  {name:'采集精通', stat:'gatherPct',    perLv:10, route:'prod', npc:'老乔',  desc:'采集产量 +{v}%'},
+  mineMastery:    {name:'挖矿精通', stat:'minePct',      perLv:10, route:'prod', npc:'老周',  desc:'矿产获取 +{v}%'},
+  recycleMastery: {name:'拆解精通', stat:'recyclePct',   perLv:10, route:'prod', npc:'老周',  desc:'拆解产量 +{v}%'},
+  craftMastery:   {name:'制造精通', stat:'craftSavePct', perLv:10, route:'prod', npc:'阿珍',  desc:'材料返还 +{v}%'},
+  gardenMastery:  {name:'培育精通', stat:'gardenPct',    perLv:10, route:'prod', npc:'陈嫂',  desc:'菌圃收获 +{v}%'},
+  attackMastery:  {name:'攻击精通', stat:'atk',          perLv:1,  route:'combat',npc:'哈里斯',desc:'攻击力 +{v}'},
+  defenseMastery: {name:'防御精通', stat:'def',          perLv:1,  route:'combat',npc:'小唐',  desc:'防御力 +{v}'},
+  critMastery:    {name:'暴击精通', stat:'crit',         perLv:1,  route:'combat',npc:'哈里斯',desc:'暴击率 +{v}%'},
+  critDmgMastery: {name:'暴伤精通', stat:'critDmg',      perLv:10, route:'combat',npc:'哈里斯',desc:'暴击伤害 +{v}%'},
+  speedMastery:   {name:'速度精通', stat:'spd',          perLv:1,  route:'combat',npc:'阿勇',  desc:'速度 +{v}'},
+  staminaMastery: {name:'耐力精通', stat:'stMax',        perLv:1,  route:'surv',  npc:'阿勇',  desc:'体力上限 +{v}'},
+  shieldMastery:  {name:'护盾精通', stat:'shield',       perLv:1,  route:'surv',  npc:'小唐',  desc:'护盾上限 +{v}'},
+};
+const MASTERY_ROUTES = {
+  combat:[ // 战斗系
+    {lo:1,hi:10,mat:{scrap:1},     scale:(lv)=>2+Math.floor((lv-1)/2)},
+    {lo:11,hi:20,mat:{ingot:1},    scale:(lv)=>2+Math.floor((lv-11)/2)},
+    {lo:21,hi:30,mat:{steel:1},    scale:(lv)=>2+Math.floor((lv-21)/2)},
+    {lo:31,hi:40,mat:{ecomp:1},    scale:(lv)=>2+Math.floor((lv-31)/2)},
+    {lo:41,hi:50,mat:{core:1},     scale:(lv)=>1+Math.floor((lv-41)/3)},
+    {lo:51,hi:60,mat:{crystal:1},  scale:(lv)=>1+Math.floor((lv-51)/3)},
+    {lo:61,hi:80,mat:{crystal:2,core:1},scale:()=>1},
+    {lo:81,hi:90,mat:{crystal:3,core:2},scale:()=>1},
+    {lo:91,hi:99,mat:{crystal:4,core:3},scale:()=>1},
+    {lo:100,hi:9999,mat:{crystal:1},scale:(lv)=>5+Math.floor((lv-100)/10)},
+  ],
+  prod:[ // 生产系
+    {lo:1,hi:10,mat:{scrap:1},     scale:(lv)=>2+Math.floor((lv-1)/2)},
+    {lo:11,hi:20,mat:{cloth:1},    scale:(lv)=>2+Math.floor((lv-11)/2)},
+    {lo:21,hi:30,mat:{ration:1},   scale:(lv)=>2+Math.floor((lv-21)/2)},
+    {lo:31,hi:40,mat:{ingot:1},    scale:(lv)=>2+Math.floor((lv-31)/2)},
+    {lo:41,hi:50,mat:{biocore:1},  scale:(lv)=>2+Math.floor((lv-41)/2)},
+    {lo:51,hi:60,mat:{steel:1},    scale:(lv)=>1+Math.floor((lv-51)/3)},
+    {lo:61,hi:80,mat:{crystal:1,biocore:1},scale:()=>1},
+    {lo:81,hi:90,mat:{crystal:2,biocore:2},scale:()=>1},
+    {lo:91,hi:99,mat:{crystal:3,biocore:3},scale:()=>1},
+    {lo:100,hi:9999,mat:{crystal:1},scale:(lv)=>5+Math.floor((lv-100)/10)},
+  ],
+  surv:[ // 生存系
+    {lo:1,hi:10,mat:{cloth:1},     scale:(lv)=>2+Math.floor((lv-1)/2)},
+    {lo:11,hi:20,mat:{ration:1},   scale:(lv)=>2+Math.floor((lv-11)/2)},
+    {lo:21,hi:30,mat:{ingot:1},    scale:(lv)=>2+Math.floor((lv-21)/2)},
+    {lo:31,hi:40,mat:{steel:1},    scale:(lv)=>2+Math.floor((lv-31)/2)},
+    {lo:41,hi:50,mat:{ecomp:1},    scale:(lv)=>2+Math.floor((lv-41)/2)},
+    {lo:51,hi:60,mat:{core:1},     scale:(lv)=>1+Math.floor((lv-51)/3)},
+    {lo:61,hi:80,mat:{crystal:1,core:1},scale:()=>1},
+    {lo:81,hi:90,mat:{crystal:2,core:2},scale:()=>1},
+    {lo:91,hi:99,mat:{crystal:3,core:3},scale:()=>1},
+    {lo:100,hi:9999,mat:{crystal:1},scale:(lv)=>5+Math.floor((lv-100)/10)},
+  ],
+};
+function masteryLv(k){ return state.masteries&&state.masteries[k]||0; }
+function masteryBonus(stat){ let n=0; for(const k in MASTERIES){const m=MASTERIES[k]; if(m.stat===stat) n+=m.perLv*masteryLv(k);} return n; }
+function masteryCost(k){ const lv=masteryLv(k); const next=lv+1; const m=MASTERIES[k]; const route=MASTERY_ROUTES[m.route];
+  const tier=route.find(t=>next>=t.lo&&next<=t.hi); if(!tier)return {}; const mult=tier.scale(next); const cost={};
+  for(const mat in tier.mat) cost[mat]=tier.mat[mat]*mult; return cost; }
+const NPC_TEACH = {
+  '老乔': ['gatherMastery'],
+  '老周': ['mineMastery','recycleMastery'],
+  '阿珍': ['craftMastery'],
+  '陈嫂': ['gardenMastery'],
+  '哈里斯':['attackMastery','critMastery','critDmgMastery'],
+  '小唐': ['defenseMastery','shieldMastery'],
+  '阿勇': ['speedMastery','staminaMastery'],
+};
+function upgradeMastery(k){ const cost=masteryCost(k); for(const[mat,n] of Object.entries(cost)){if((state.inv[mat]||0)<n){log('材料不足,需要 '+Object.entries(cost).map(([m,v])=>ITEMS[m].name+'×'+v).join(' ')+'。','warn');return;}}
+  for(const[mat,n] of Object.entries(cost)) state.inv[mat]-=n; state.masteries[k]++; log('✦ '+MASTERIES[k].name+' 升至 Lv'+state.masteries[k]+'!','good'); divider(); render(); }
+
 /* ================= 配方(按工位) ================= */
 const RECIPES = {
   knife:{st:'work',cost:{ingot:2},out:'knife'}, blade:{st:'work',cost:{ingot:2,steel:1},out:'blade'},
@@ -959,17 +1029,44 @@ const JOBS = {
   fabricator:{kind:'life',name:'制造技师',npc:'林薇',desc:'强化制作、熔炼与材料利用率。',qualification:'job_fabricator_qualified',reqText:'完成故障审计并掌握模块化制造',bonus:{craftSavePct:4},growth:{craftSavePct:1.5,smeltPct:2},skills:['precisionFab','thermalControl']},
   biologist:{kind:'life',name:'生态培育师',npc:'陈博士',desc:'强化菌圃、生物样本与培养技术。',qualification:'job_biologist_qualified',reqText:'完成样本任务并发现隔离培养室',bonus:{gardenPct:6},growth:{gardenPct:3,bioGatherPct:2},skills:['bioCycle','adaptiveCulture']},
 };
+/* ================= 入门职业(正式职业的简化版 · 自带主动技能) ================= */
+const NOVICE_JOBS = {
+  noviceCollector: {kind:'life',name:'入门拾荒者',formal:'salvager',    npc:'老乔',  desc:'基础采集训练。',bonus:{gatherPct:3},skill:'quickScavenge'},
+  noviceScout:     {kind:'main',name:'入门斥候',  formal:'vanguard',    npc:'阿勇',  desc:'基础侦察与移动训练。',bonus:{spd:1},skill:'tacticalScan'},
+  noviceGuard:     {kind:'main',name:'入门守卫',  formal:'bulwark',     npc:'小唐',  desc:'基础防御与护盾操作。',bonus:{hp:5},skill:'shieldBash'},
+  noviceStriker:   {kind:'main',name:'入门打击手',formal:'infiltrator', npc:'哈里斯',desc:'基础攻击与暴击意识。',bonus:{crit:1},skill:'heavyBlow'},
+  noviceApprentice:{kind:'life',name:'入门学徒',  formal:'fabricator',  npc:'阿珍',  desc:'基础制造与材料管理。',bonus:{craftSavePct:2},skill:'fieldRepair'},
+  noviceGrower:    {kind:'life',name:'入门培育师',formal:'biologist',   npc:'陈嫂',  desc:'基础菌圃与生态维护。',bonus:{gardenPct:3},skill:'sporeBoost'},
+};
+// 入门职业技能(加入SKILLS体系)
+Object.assign(SKILLS, {
+  quickScavenge:{name:'快速搜刮',type:'active',cost:2,kind:'any',desc:'本次采集产量+50%,不触发遭遇',effect:'scavenge',career:'noviceCollector',careerLevel:1},
+  tacticalScan: {name:'战术侦察',type:'active',cost:2,kind:'any',desc:'揭示当前区域隐藏资源与敌人',effect:'scan',career:'noviceScout',careerLevel:1},
+  shieldBash:   {name:'盾击',    type:'active',cost:3,kind:'melee',desc:'1.2倍伤害,本回合防御+5',effect:'bash',career:'noviceGuard',careerLevel:1},
+  heavyBlow:    {name:'猛击',    type:'active',cost:3,kind:'melee',desc:'1.5倍伤害,无视20%防御',effect:'blow',career:'noviceStriker',careerLevel:1},
+  fieldRepair:  {name:'应急修理',type:'active',cost:3,kind:'any',desc:'恢复设施1级耐久或装备效果',effect:'repair',career:'noviceApprentice',careerLevel:1},
+  sporeBoost:   {name:'催生孢子',type:'active',cost:2,kind:'any',desc:'立即获得一次菌圃收获',effect:'spore',career:'noviceGrower',careerLevel:1},
+});
+function isNoviceJob(id){ return !!NOVICE_JOBS[id]; }
+function noviceFormalId(noviceId){ const nj=NOVICE_JOBS[noviceId]; return nj?nj.formal:null; }
 function careerGuideLabel(name){const at=npcLocation(name);return name+' · '+(at&&LOCATIONS[at]?LOCATIONS[at].name:'行踪未知');}
 function careerRecord(kind){ return state.meta.careers&&state.meta.careers[kind]; }
-function currentCareer(id){ return ['main','life'].some(k=>careerRecord(k)&&careerRecord(k).id===id); }
+function currentCareer(id){ return ['main','life'].some(k=>{const r=careerRecord(k); if(!r)return false; if(r.id===id)return true; const nj=NOVICE_JOBS[r.id]; return nj&&nj.formal===id;}); }
 function careerLevelFor(id){ const r=['main','life'].map(careerRecord).find(r=>r&&r.id===id); return r?r.level:0; }
 function checkJobReq(id){ const j=JOBS[id]; if(!j||!state.flags[j.qualification])return false; if(j.ritual){return P().location===j.ritual.location&&P().equip.implant===j.ritual.item&&canAfford(j.ritual.cost);} return true; }
-function jobBonus(stat){ let n=0; ['main','life'].forEach(kind=>{ const r=careerRecord(kind),j=r&&JOBS[r.id]; if(!j)return; n+=(j.bonus[stat]||0)+(j.growth[stat]||0)*Math.max(0,r.level-1); }); return n+passiveBonus(stat); }
+function jobBonus(stat){ let n=0; ['main','life'].forEach(kind=>{ const r=careerRecord(kind); if(!r)return; const j=JOBS[r.id]; if(j){n+=(j.bonus[stat]||0)+(j.growth[stat]||0)*Math.max(0,r.level-1);} else {const nj=NOVICE_JOBS[r.id]; if(nj)n+=(nj.bonus[stat]||0);} }); return n+passiveBonus(stat); }
 function careerXpNeed(level){ return 30+level*20; }
 function gainCareerXp(kind,n){ const r=careerRecord(kind); if(!r)return; r.xp+=n; while(r.level<10&&r.xp>=careerXpNeed(r.level)){r.xp-=careerXpNeed(r.level);r.level++;log('✦ '+JOBS[r.id].name+' 提升至 Lv'+r.level+'，职业属性成长生效。','good');} }
 function chooseJob(id){ const j=JOBS[id]; if(!j||!checkJobReq(id)){log('职业资格或转职条件尚未满足。','warn');return;} const old=careerRecord(j.kind);
   if(old){ if(j.kind!=='main'||!has('reclassCore')){log(j.kind==='main'?'主职业已锁定，需要职业重构核心才能再次转职。':'副职业已经选定。','warn');return;} state.inv.reclassCore--; }
   if(j.ritual)payCost(j.ritual.cost); state.meta.careers[j.kind]={id,level:1,xp:0}; state.meta.job=j.kind==='main'?id:state.meta.job; ensureCareerSkills(); log('✦ '+(j.kind==='main'?'主':'副')+'职业转职 → '+j.name+'！','good'); divider(); render(); }
+function chooseNoviceJob(noviceId){ const nj=NOVICE_JOBS[noviceId]; if(!nj)return; const old=careerRecord(nj.kind);
+  if(old){log(nj.kind==='main'?'主职业已有。':'副职业已有。','warn');return;}
+  state.meta.careers[nj.kind]={id:noviceId,level:1,xp:0}; ensureCareerSkills(); log('✦ 入门职业 → '+nj.name+'!'+nj.desc,'good'); divider(); render(); }
+function tryNoviceUpgrade(){ ['main','life'].forEach(kind=>{ const r=careerRecord(kind); if(!r)return; const nj=NOVICE_JOBS[r.id]; if(!nj)return;
+  const formalId=nj.formal; const fj=JOBS[formalId]; if(!fj||!state.flags[fj.qualification])return; if(r.level<3)return;
+  state.meta.careers[kind]={id:formalId,level:r.level,xp:r.xp}; state.meta.job=kind==='main'?formalId:state.meta.job; ensureCareerSkills();
+  log('✦ 入门职业升级 → '+fj.name+'!','good'); }); }
 function techLevel(tid){ const v=state.meta.techs[tid]; return v===true?1:(v||0); }
 function techKnown(tid){ return techLevel(tid)>=1; }
 function techMax(){ return 1; }
@@ -1029,6 +1126,14 @@ function normalizeMeta(meta){
   Object.entries(meta.outposts).forEach(([rid,op])=>{if(op&&op.status==='operational')meta.spaceFlags[rid==='ashMoon'?'ashOutpostOperational':'verdantOutpostOperational']=true;});
   return meta;
 }
+const AUDIO_PREF_DEFAULTS={sound:true,music:true,vibration:true,soundVolume:.65,musicVolume:.30};
+function normalizeAudioPrefs(target){
+  if(!target)return AUDIO_PREF_DEFAULTS;
+  ['sound','music','vibration'].forEach(key=>{if(typeof target[key]!=='boolean')target[key]=AUDIO_PREF_DEFAULTS[key];});
+  ['soundVolume','musicVolume'].forEach(key=>{const value=Number(target[key]),clamped=Number.isFinite(value)?Math.max(0,Math.min(1,value)):AUDIO_PREF_DEFAULTS[key];target[key]=Math.round(clamped*20)/20;});
+  return target;
+}
+function audioPrefs(target){target=normalizeAudioPrefs(target||{});return {sound:target.sound,music:target.music,vibration:target.vibration,soundVolume:target.soundVolume,musicVolume:target.musicVolume};}
 function freshState(keepMeta){
   const returning=!!keepMeta;
   const meta = normalizeMeta(keepMeta || { playthrough:1, echo:0, echoUp:{stamina:0,collect:0,attr:0}, mult:{stamina:1,collect:1,attr:1}, gene:0, geneNodes:{}, careers:{main:null,life:null}, endingItems:[], fragments:[], endingsDone:[], built:{}, damaged:{}, techs:{}, records:[], techVersion:5 });
@@ -1041,6 +1146,7 @@ function freshState(keepMeta){
     defenses:[], rests:0, skills:{}, skillSlots:[null,null,null], skillSlotSel:0, charView:'overview', quests:{first_exit:'active'}, questStart:{}, flags:{}, areaSearch:{}, investigationMisses:{}, discovered:{camp:true,outer:true,joeCamp:true}, dailyGather:{}, dailyLocation:{}, dailyFacility:{}, foodBuff:null, truthClaimed:null,
     runStats:{kills:0,wKill:0,dmg:0,mat:0}, checkpoint:null, expeditionStartInv:null, time:0,
     tab:'act', screen:'play', campBuilding:null, campView:'home', bagSel:null, techSel:null, combat:null, visited:{camp:true}, mapLevel:'world', mapRegion:'surface', siteSheet:null, meta, kills:0,
+    sound:AUDIO_PREF_DEFAULTS.sound,music:AUDIO_PREF_DEFAULTS.music,vibration:AUDIO_PREF_DEFAULTS.vibration,soundVolume:AUDIO_PREF_DEFAULTS.soundVolume,musicVolume:AUDIO_PREF_DEFAULTS.musicVolume,
     tutorial:returning?{version:1,step:'done',complete:true}:{version:1,step:'wake',complete:false},
   };
   Object.assign(next.quests,meta.spaceQuests||{});
@@ -1048,6 +1154,7 @@ function freshState(keepMeta){
   Object.assign(next.discovered,meta.spaceDiscovered||{});
   if(returning) Object.assign(next.flags,{braceletUnlocked:true,builderUnlocked:true,mapUnlocked:true,exploreUnlocked:true,guideDeparted:true});
   Object.keys(SKILLS).forEach(k=>next.skills[k]={prof:0});
+  if(!next.masteries) next.masteries={}; Object.keys(MASTERIES).forEach(k=>{if(next.masteries[k]==null)next.masteries[k]=0;});
   MATS.forEach(k=>{if(next.inv[k]==null)next.inv[k]=0;});
   (meta.endingItems||[]).forEach(id=>{ if(ITEMS[id]&&ITEMS[id].type==='equip') next.inv[id]=Math.max(1,next.inv[id]||0); });
   Object.entries(meta.spaceItems||{}).forEach(([id,n])=>{if(ITEMS[id])next.inv[id]=Math.max(next.inv[id]||0,Number(n)||0);});
@@ -1127,7 +1234,7 @@ function fragmentCount(){ return state.meta.fragments.length; }
 function gainMat(id,n){ if(n<=0)return; state.inv[id]=(state.inv[id]||0)+n; state.runStats.mat+=n; }
 function skillLv(k){ return Math.floor((state.skills[k]?state.skills[k].prof:0)/10); }
 function skillUnlocked(k){ const s=SKILLS[k]; if(!s)return false; if(s.career)return currentCareer(s.career)&&careerLevelFor(s.career)>=(s.careerLevel||1); return skillLv(k)>0; }
-function passiveBonus(stat){ let n=0; for(const k in SKILLS){const s=SKILLS[k];if(s.type==='passive'&&skillUnlocked(k))n+=(s.bonus&&s.bonus[stat]||0);} return n; }
+function passiveBonus(stat){ let n=0; for(const k in SKILLS){const s=SKILLS[k];if(s.type==='passive'&&skillUnlocked(k))n+=(s.bonus&&s.bonus[stat]||0);} return n+masteryBonus(stat); }
 function skillAtkBonus(){ return 0; }
 function ensureCareerSkills(){ for(const k in SKILLS){const s=SKILLS[k];if(s.career&&currentCareer(s.career)&&!state.skills[k])state.skills[k]={prof:10};} }
 function equippedSlot(k){ return (state.skillSlots||[]).indexOf(k); }
@@ -1400,6 +1507,60 @@ function load(){ try{ const r=localStorage.getItem(SAVE_KEY); if(r){state=JSON.p
 
 /* ================= DOM ================= */
 const $=id=>document.getElementById(id);
+const audioRuntime={ctx:null,sfxBus:null,musicBus:null,musicTimer:null,musicBar:0,musicActive:false,sfxVoices:new Set(),musicVoices:new Set()};
+function createAudioRuntime(){
+  if(audioRuntime.ctx)return audioRuntime.ctx;
+  const AudioCtor=globalThis.AudioContext||globalThis.webkitAudioContext;if(!AudioCtor)return null;
+  try{
+    const ctx=new AudioCtor(),sfx=ctx.createGain(),music=ctx.createGain();sfx.connect(ctx.destination);music.connect(ctx.destination);
+    audioRuntime.ctx=ctx;audioRuntime.sfxBus=sfx;audioRuntime.musicBus=music;sfx.gain.value=0;music.gain.value=0;return ctx;
+  }catch(_){return null;}
+}
+function setAudioBus(bus,value){const ctx=audioRuntime.ctx;if(!ctx||!bus)return;const now=ctx.currentTime;bus.gain.cancelScheduledValues(now);bus.gain.setTargetAtTime(Math.max(0,value),now,.035);}
+function spawnAudioTone(bus,freq,start,duration,level,type){
+  const ctx=audioRuntime.ctx;if(!ctx||!bus||ctx.state!=='running')return;
+  const osc=ctx.createOscillator(),gain=ctx.createGain(),end=start+duration,attack=Math.min(.08,duration*.24);
+  osc.type=type||'sine';osc.frequency.setValueAtTime(freq,start);gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(Math.max(.0002,level),start+attack);gain.gain.exponentialRampToValueAtTime(.0001,end);
+  const voice={osc,gain},voices=bus===audioRuntime.musicBus?audioRuntime.musicVoices:audioRuntime.sfxVoices;voices.add(voice);
+  osc.connect(gain);gain.connect(bus);osc.start(start);osc.stop(end+.03);osc.onended=()=>{voices.delete(voice);try{osc.disconnect();gain.disconnect();}catch(_){}};
+}
+function stopAudioVoices(voices){voices.forEach(voice=>{try{voice.osc.stop();voice.osc.disconnect();voice.gain.disconnect();}catch(_){}});voices.clear();}
+function stopAmbientMusic(){
+  if(audioRuntime.musicTimer){clearTimeout(audioRuntime.musicTimer);audioRuntime.musicTimer=null;}stopAudioVoices(audioRuntime.musicVoices);audioRuntime.musicActive=false;setAudioBus(audioRuntime.musicBus,0);
+}
+function scheduleAmbientBar(){
+  const ctx=audioRuntime.ctx;if(!ctx||ctx.state!=='running'||!state||!state.music||state.musicVolume<=0||document.hidden){stopAmbientMusic();return;}
+  const roots=[73.42,58.27,65.41,55],root=roots[audioRuntime.musicBar++%roots.length],start=ctx.currentTime+.04;
+  [[1,.055,'triangle'],[1.5,.036,'sine'],[2,.028,'sine']].forEach(([ratio,level,type],i)=>spawnAudioTone(audioRuntime.musicBus,root*ratio,start+i*.06,4.45,level,type));
+  [2,2.25,1.5].forEach((ratio,i)=>spawnAudioTone(audioRuntime.musicBus,root*ratio,start+.55+i*1.18,.72,.022,'sine'));
+  audioRuntime.musicTimer=setTimeout(scheduleAmbientBar,4100);
+}
+function startAmbientMusic(){
+  if(audioRuntime.musicActive||!audioRuntime.ctx||audioRuntime.ctx.state!=='running'||!state.music||state.musicVolume<=0)return;
+  audioRuntime.musicActive=true;scheduleAmbientBar();
+}
+function syncAudioState(){
+  if(!audioRuntime.ctx)return;normalizeAudioPrefs(state);setAudioBus(audioRuntime.sfxBus,state.sound?state.soundVolume:0);
+  if(state.music&&state.musicVolume>0){setAudioBus(audioRuntime.musicBus,state.musicVolume);startAmbientMusic();}else stopAmbientMusic();
+}
+function unlockAudio(){
+  const ctx=createAudioRuntime();if(!ctx)return Promise.resolve(false);
+  const ready=ctx.state==='suspended'?ctx.resume():Promise.resolve();
+  return Promise.resolve(ready).then(()=>{if(document.hidden)return false;syncAudioState();return ctx.state==='running';}).catch(()=>false);
+}
+function playSfx(kind){
+  if(!state||!state.sound||state.soundVolume<=0||document.hidden||!audioRuntime.ctx||audioRuntime.ctx.state!=='running')return;
+  const patterns={
+    tap:[[0,620,.045,.036,'square'],[.035,920,.04,.018,'sine']],
+    success:[[0,440,.12,.055,'sine'],[.10,660,.13,.052,'sine'],[.20,880,.18,.045,'sine']],
+    warning:[[0,280,.14,.06,'sawtooth'],[.17,235,.18,.052,'triangle']],
+    error:[[0,180,.20,.07,'sawtooth'],[.11,115,.28,.06,'square']],
+    story:[[0,392,.20,.04,'sine'],[.15,523.25,.30,.035,'sine']],
+    travel:[[0,246.94,.18,.045,'triangle'],[.12,369.99,.24,.04,'sine']],
+    combat:[[0,130,.12,.075,'square'],[.08,92,.22,.065,'sawtooth']]
+  },pattern=patterns[kind]||patterns.tap,start=audioRuntime.ctx.currentTime+.008;
+  pattern.forEach(([offset,freq,duration,level,type])=>spawnAudioTone(audioRuntime.sfxBus,freq,start+offset,duration,level,type));
+}
 let interactionFeedbackInstalled=false,feedbackBatch=null,feedbackFlushTimer=null,feedbackGeneration=0;
 const pressedPointers=new Map();
 const FEEDBACK_PRIORITY={dim:0,story:1,sys:2,good:3,success:3,warn:4,warning:4,danger:5,error:5};
@@ -1410,10 +1571,16 @@ function feedbackSpec(entries){
   const map={danger:['is-error','DANGER // ACTION INTERRUPTED','alert'],error:['is-error','DANGER // ACTION INTERRUPTED','alert'],warn:['is-warning','WARNING // FIELD REPORT','alert'],warning:['is-warning','WARNING // FIELD REPORT','alert'],good:['is-success','RESULT // ACQUIRED','check'],success:['is-success','RESULT // ACQUIRED','check'],sys:['is-system','SYSTEM // OPERATION COMPLETE','scan'],story:['is-story','TRANSMISSION // FIELD REPORT','dialogue'],dim:['is-system','FIELD REPORT // NO CHANGE','document']},tone=map[strongest]||map.story;
   return {tone:tone[0],label:tone[1],icon:tone[2],lines,duration:lines.some(entry=>entry.cls==='story')?4800:strongest==='danger'||strongest==='error'?3800:3100};
 }
+function feedbackSound(spec){
+  if(!spec)return 'tap';const text=spec.lines.map(x=>x.text).join(' ');
+  if(spec.tone==='is-error')return 'error';if(spec.tone==='is-warning')return 'warning';if(spec.tone==='is-success')return 'success';
+  if(/来到|移动至|航行|返航|离开营地/.test(text))return 'travel';if(spec.tone==='is-story')return 'story';return 'success';
+}
 function showActionFeedback(entries){
   const layer=$('action-feedback'),messages=$('feedback-messages'),label=$('feedback-label'),icon=$('feedback-icon-use'),spec=feedbackSpec(entries);if(!layer||!messages||!label||!icon||!spec.lines.length)return;
   const generation=++feedbackGeneration;layer.hidden=false;layer.className='action-feedback ui-toast '+spec.tone;label.textContent=spec.label;icon.setAttribute('href','#icon-'+spec.icon);messages.textContent='';
   spec.lines.forEach(entry=>{const p=document.createElement('p');p.className=entry.cls||'story';p.textContent=entry.text;messages.appendChild(p);});
+  playSfx(feedbackSound(spec));
   layer.classList.remove('is-visible');void layer.offsetWidth;requestAnimationFrame(()=>{if(generation===feedbackGeneration)layer.classList.add('is-visible');});
   setTimeout(()=>{if(generation!==feedbackGeneration)return;layer.classList.remove('is-visible');setTimeout(()=>{if(generation===feedbackGeneration)layer.hidden=true;},180);},spec.duration);
 }
@@ -1426,7 +1593,7 @@ function dismissActionFeedback(immediate){
 function flushFeedbackBatch(batch){
   if(!batch||!batch.entries.length)return;
   /* 战斗过程已有专用 feed；进入战斗时清掉旧 toast，离开战斗的胜利/逃脱结算则正常显示。 */
-  if(state&&state.combat){dismissActionFeedback(true);return;}
+  if(state&&state.combat){const spec=feedbackSpec(batch.entries);playSfx(spec.tone==='is-error'||spec.tone==='is-warning'?'warning':'combat');dismissActionFeedback(true);return;}
   showActionFeedback(batch.entries);
 }
 function queueStandaloneFeedback(entry){
@@ -1437,9 +1604,10 @@ function installInteractionFeedback(){
   if(interactionFeedbackInstalled)return;interactionFeedbackInstalled=true;
   const buttonFrom=e=>e.target&&e.target.closest?e.target.closest('button'):null;
   const release=e=>{const b=pressedPointers.get(e.pointerId)||buttonFrom(e);pressedPointers.delete(e.pointerId);if(b)setTimeout(()=>b.classList.remove('is-touching'),120);};
-  document.addEventListener('pointerdown',e=>{const b=buttonFrom(e);if(!b||b.disabled)return;const previous=pressedPointers.get(e.pointerId);if(previous&&previous!==b)previous.classList.remove('is-touching');pressedPointers.set(e.pointerId,b);b.classList.add('is-touching');if(e.pointerType==='touch'&&typeof navigator!=='undefined'&&navigator.vibrate)try{navigator.vibrate(8);}catch(_){}},{passive:true});
+  document.addEventListener('pointerdown',e=>{const b=buttonFrom(e);if(!b||b.disabled)return;const previous=pressedPointers.get(e.pointerId);if(previous&&previous!==b)previous.classList.remove('is-touching');pressedPointers.set(e.pointerId,b);b.classList.add('is-touching');unlockAudio().then(ok=>{if(ok)playSfx('tap');});if(state&&state.vibration!==false&&e.pointerType==='touch'&&typeof navigator!=='undefined'&&navigator.vibrate)try{navigator.vibrate(8);}catch(_){}},{passive:true});
   document.addEventListener('pointerup',release,{passive:true});document.addEventListener('pointercancel',release,{passive:true});document.addEventListener('lostpointercapture',release,{passive:true});
   document.addEventListener('click',e=>{const b=buttonFrom(e);if(!b||b.disabled)return;if(feedbackBatch){clearTimeout(feedbackFlushTimer);feedbackBatch=null;}const batch={entries:[]};feedbackBatch=batch;feedbackFlushTimer=setTimeout(()=>{if(feedbackBatch===batch)feedbackBatch=null;flushFeedbackBatch(batch);},0);},true);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){stopAmbientMusic();stopAudioVoices(audioRuntime.sfxVoices);if(audioRuntime.ctx&&audioRuntime.ctx.state==='running')audioRuntime.ctx.suspend().catch(()=>{});}else if(audioRuntime.ctx)unlockAudio();});
 }
 function setLogOpen(open){
   const tray=$('log'),peek=$('log-peek'); if(!tray||!peek)return;
@@ -1559,7 +1727,16 @@ function renderTutorialPanel(box){
   }
   if(step==='shelter'){
     scene.appendChild(el('section','tutorial-built','<span class="built-check">✓</span><span><small>FACILITY // ONLINE</small><b>休眠仓建造完成</b><p>现在你可以恢复状态，并在这里记录存档点。</p></span>'));
-    return tutorialDialog(scene,'很好。至少今晚你不用睡在冷却管上了。最后一样东西——拿着，别在外面迷路。','收下小地图',grantTutorialMap);
+    return tutorialDialog(scene,'很好。至少今晚你不用睡在冷却管上了。不过材料不会自己跑来——走,教你怎么从废墟里回收有用的东西。','学习采集',()=>setTutorialStep('gather_intro'));
+  }
+  if(step==='gather_intro'){
+    return tutorialDialog(scene,'看好了——废铁找拖痕,木材看裂缝。动手试试,我给你看着。','开始采集',()=>{
+      state.masteries.gatherMastery=1; gainMat('scrap',2); gainMat('wood',2);
+      log('老乔教会了你【采集精通】(Lv1)!','good'); log('获得 废铁×2、木材×2。','good');
+      setTutorialStep('gather_action'); });
+  }
+  if(step==='gather_action'){
+    return tutorialDialog(scene,'不错。以后每次采集都会让你更熟练,精通等级会自己涨。营地里其他人也有本事,找他们花材料学就是了。最后一样——拿着地图,别在外面迷路。','收下小地图',grantTutorialMap);
   }
   if(step==='farewell'){
     scene.appendChild(el('section','tutorial-minimap','<header><small>WORLD / LOCAL MAP // 01</small><b>初始测绘</b><em>ONLINE</em></header><div class="mini-route"><span class="mini-node current"><i></i><b>方舟营地</b></span><span class="mini-line"></span><span class="mini-node"><i></i><b>地表坠毁带</b></span></div><div class="mini-known-points"><small>地表坠毁带 · 已知坐标</small><span>◈ 坠毁带入口</span><span>⌂ 老乔营地</span></div><p>世界地图、局部地图与“开始探索”已解锁</p>'));
@@ -1586,6 +1763,7 @@ function panelView(){
   if(P().location==='camp'){
     if(state.campBuilding&&state.meta.built[state.campBuilding])return 'facility';
     if(state.campView==='construct')return 'construction';
+    if(state.campView==='teach')return 'camp';
     return state.mapOpen?'camp-map':'camp';
   }
   return state.mapOpen?'explore-map':'explore';
@@ -1620,8 +1798,9 @@ function renderPanel(box){
 
 /* 手机端统一现场底部弹层：锁定入口和工具操作不再挤进常驻按钮区。 */
 function renderSiteSheet(box){
+  document.querySelectorAll('.site-sheet-backdrop').forEach(x=>x.remove());
   const ref=state.siteSheet;if(!ref||tutorialActive()||state.combat||state.screen!=='play')return;
-  const backdrop=el('div','site-sheet-backdrop'),sheet=el('section','site-sheet');sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');
+  const backdrop=el('div','site-sheet-backdrop'+(state.tab==='act'?' hud-status':'')),sheet=el('section','site-sheet');sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');
   const close=el('button','site-sheet-close ui-icon-button',uiIcon('close'));close.setAttribute('aria-label','关闭');close.onclick=closeSiteSheet;
   if(ref.kind==='operation'){
     const op=FIELD_OPERATIONS[ref.id];if(!op){state.siteSheet=null;return;}
@@ -1661,7 +1840,7 @@ function renderSiteSheet(box){
     const label=!gate.ok?'知道了':!reachable?'先抵达相邻地点':(req&&entryNeedsConfirm(ref.id)?req.action:'前往');
     const action=el('button','site-sheet-primary',label);action.onclick=(gate.ok&&reachable)?()=>confirmEntry(ref.id):closeSiteSheet;sheet.appendChild(action);
   }else{state.siteSheet=null;return;}
-  backdrop.onclick=e=>{if(e.target===backdrop)closeSiteSheet();};backdrop.appendChild(sheet);box.appendChild(backdrop);
+  backdrop.onclick=e=>{if(e.target===backdrop)closeSiteSheet();};backdrop.appendChild(sheet);document.body.appendChild(backdrop);
 }
 
 /* ---------- 行动 ---------- */
@@ -1861,7 +2040,41 @@ function renderCampHero(box){ const built=CAMP_BUILDINGS.filter(b=>state.meta.bu
 function renderCampContacts(box){
   const names=npcsAt('camp');if(!names.length)return;
   const sec=el('section','camp-contacts'),head=el('div','camp-section-head','<span><small>ACTIVE CONTACTS</small><b>营地联系人</b></span><em>剧情推进后位置会改变</em>'),list=el('div','camp-contact-list');sec.appendChild(head);
-  names.forEach(name=>{const b=el('button','camp-contact','<span>'+uiIcon('dialogue')+'</span><b>'+name+'</b><small>交谈</small>');b.onclick=()=>talkAreaNpc(name);list.appendChild(b);});sec.appendChild(list);box.appendChild(sec);
+  names.forEach(name=>{
+    const teachList=NPC_TEACH[name]||[];
+    const label=teachList.length?'教学 · '+teachList.length+'项精通':'交谈';
+    const b=el('button','camp-contact','<span>'+uiIcon('dialogue')+'</span><b>'+name+'</b><small>'+label+'</small>');
+    b.onclick=()=>{ if(teachList.length){openNpcTeachPanel(name);} else {talkAreaNpc(name);} };
+    list.appendChild(b);
+  });sec.appendChild(list);box.appendChild(sec);
+}
+function openNpcTeachPanel(npcName){
+  state.campView='teach'; state.teachNpc=npcName; setLogOpen(false); renderPanelTop();
+}
+function renderTeachPanel(box){
+  const npcName=state.teachNpc; const teachList=NPC_TEACH[npcName]||[];
+  title(box,'<b>'+npcName+' · 精通教学</b>');
+  const back=el('button','','← 返回营地'); back.onclick=()=>{state.campView='home';renderPanelTop();}; box.appendChild(back);
+  teachList.forEach(k=>{
+    const m=MASTERIES[k]; const lv=masteryLv(k); const cost=masteryCost(k);
+    const desc=m.desc.replace('{v}',m.perLv*(lv+1));
+    const costStr=Object.entries(cost).map(([mat,n])=>ITEMS[mat].name+'×'+n).join(' ');
+    const can=Object.entries(cost).every(([mat,n])=>(state.inv[mat]||0)>=n);
+    const card=el('div','mastery-card');
+    card.innerHTML='<div class="mc-head"><b>'+m.name+'</b><span class="mc-lv">Lv'+lv+'</span></div><div class="mc-desc">'+desc+'</div><div class="mc-cost">'+costStr+'</div>';
+    const btn=el('button',can?'primary':'',lv===0?'学习':'升级'); btn.disabled=!can; btn.onclick=(()=>{const _k=k;return ()=>upgradeMastery(_k);})(); card.appendChild(btn);
+    box.appendChild(card);
+  });
+  // 入门职业任务入口
+  const noviceForNpc=Object.entries(NOVICE_JOBS).find(([,nj])=>nj.npc===npcName);
+  if(noviceForNpc){
+    const [nid,nj]=noviceForNpc; const hasJob=currentCareer(nid)||currentCareer(nj.formal);
+    if(!hasJob){
+      title(box,'<b>入门职业</b>');
+      const qb=el('button','primary','接受训练 → '+nj.name); qb.onclick=(()=>{const _nid=nid;return ()=>chooseNoviceJob(_nid);})(); box.appendChild(qb);
+      box.appendChild(el('div','mc-desc',nj.desc));
+    }
+  }
 }
 function renderCampHome(box){ state.campBuilding=null; state.campView='home'; box.classList.add('camp-home');
   renderCampHero(box);
@@ -1916,6 +2129,7 @@ function renderActPanel(box){
   if(loc==='camp'){
     if(state.campBuilding&&state.meta.built[state.campBuilding])return renderBuilding(box,state.campBuilding);
     if(state.campView==='construct')return renderConstruction(box);
+    if(state.campView==='teach')return renderTeachPanel(box);
     return renderCampHome(box);
   }
   const here=LOCATIONS[loc],profile=REGION_PROFILES[here.profile],localNpcs=npcsAt(loc);
@@ -1994,7 +2208,19 @@ function renderCharPanel(box){
   const g=el('div','statlist char-stats');cells.forEach(c=>g.appendChild(el('div','srow','<span class="k">'+c[0]+'</span><span class="v">'+c[1]+'</span>')));stats.appendChild(g);box.appendChild(stats);
   const skills=el('details','char-fold skill-fold');skills.innerHTML='<summary class="camp-command-card char-fold-trigger"><span class="cc-icon char-module-code">02</span><span class="cc-copy"><small>SKILL LOADOUT</small><b>技能配置</b><em>主动槽 '+(state.skillSlots||[]).filter(Boolean).length+'/3 · 被动 '+Object.keys(SKILLS).filter(k=>SKILLS[k].type==='passive'&&skillUnlocked(k)).length+'</em></span><span class="command-access"><small>MODULE</small><i>'+uiIcon('chevron-right')+'</i></span></summary>';
   const skillBody=el('div','char-fold-body');renderSkillLoadout(skillBody);skills.appendChild(skillBody);box.appendChild(skills);
-  const echo=el('details','char-fold echo-fold');echo.innerHTML='<summary class="camp-command-card char-fold-trigger"><span class="cc-icon char-module-code">03</span><span class="cc-copy"><small>ECHO UPGRADES</small><b>回响强化</b><em>可用回响 '+state.meta.echo+'</em></span><span class="command-access"><small>MODULE</small><i>'+uiIcon('chevron-right')+'</i></span></summary>';
+  const learnedM=Object.entries(MASTERIES).filter(([k])=>masteryLv(k)>0);
+  const masterySec=el('details','char-fold mastery-fold');masterySec.innerHTML='<summary class="camp-command-card char-fold-trigger"><span class="cc-icon char-module-code">03</span><span class="cc-copy"><small>MASTERY GRID</small><b>精通面板</b><em>已学 '+learnedM.length+' / '+Object.keys(MASTERIES).length+'</em></span><span class="command-access"><small>MODULE</small><i>'+uiIcon('chevron-right')+'</i></span></summary>';
+  const mBody=el('div','char-fold-body mastery-grid');
+  if(!learnedM.length){mBody.appendChild(el('div','mc-empty','尚未学习任何精通，前往营地找NPC学习'));}
+  learnedM.forEach(([k,m])=>{const lv=masteryLv(k),bonus=m.perLv*lv,cost=masteryCost(k);
+    const costStr=Object.entries(cost).map(([mat,n])=>ITEMS[mat].name+'×'+n).join(' ');
+    const can=Object.entries(cost).every(([mat,n])=>(state.inv[mat]||0)>=n);
+    const card=el('div','mastery-card');
+    card.innerHTML='<div class="mc-head"><b>'+m.name+'</b><span class="mc-lv">Lv'+lv+'</span></div><div class="mc-desc">'+m.desc.replace('{v}',bonus)+'</div><div class="mc-cost"><small>NEXT</small> '+costStr+'</div>';
+    if(P().location==='camp'){const btn=el('button',can?'primary':'',can?'升级':'材料不足');btn.disabled=!can;btn.onclick=(()=>{const _k=k;return ()=>upgradeMastery(_k);})();card.appendChild(btn);}
+    mBody.appendChild(card);});
+  masterySec.appendChild(mBody);box.appendChild(masterySec);
+  const echo=el('details','char-fold echo-fold');echo.innerHTML='<summary class="camp-command-card char-fold-trigger"><span class="cc-icon char-module-code">04</span><span class="cc-copy"><small>ECHO UPGRADES</small><b>回响强化</b><em>可用回响 '+state.meta.echo+'</em></span><span class="command-access"><small>MODULE</small><i>'+uiIcon('chevron-right')+'</i></span></summary>';
   const echoBody=el('div','char-fold-body');grid(echoBody,Object.entries(ECHO_UPGRADES).map(([id,e])=>{const lv=state.meta.echoUp[id]||0,cost=echoUpgradeCost(id);return {label:e.name+' Lv'+lv,cost:e.desc+' · 回响×'+cost,disabled:state.meta.echo<cost,cls:state.meta.echo>=cost?'primary':'',fn:()=>buyEchoUpgrade(id)};}));echo.appendChild(echoBody);box.appendChild(echo);
 }
 const TREE_SVG_NS='http://www.w3.org/2000/svg';
@@ -2523,6 +2749,22 @@ function checkAppUpdate(){
   setUpdateUi('网页版由服务器直接提供，刷新页面就是最新版本。',false);
 }
 globalThis.onAbyssUpdateStatus=(text,finished)=>setUpdateUi(String(text||''),!finished);
+function toggleAudioPref(key){
+  normalizeAudioPrefs(state);state[key]=!state[key];save();
+  if(key==='vibration'&&state.vibration&&typeof navigator!=='undefined'&&navigator.vibrate)try{navigator.vibrate(16);}catch(_){}
+  if(key==='music'){if(state.music)unlockAudio();else stopAmbientMusic();}
+  else {syncAudioState();if(key==='sound'&&state.sound)unlockAudio().then(ok=>{if(ok)playSfx('success');});}
+  render();
+}
+function setAudioVolume(key,value){normalizeAudioPrefs(state);state[key]=Math.max(0,Math.min(1,Number(value)||0));save();syncAudioState();}
+function settingsToggle(key,icon,titleText,desc){
+  const on=!!state[key],row=el('div','settings-control'),copy=el('span','settings-control-copy','<small>'+titleText.toUpperCase()+'</small><b>'+titleText+'</b><em>'+desc+'</em>'),mark=el('span','settings-control-mark',uiIcon(icon)),toggle=el('button','settings-switch'+(on?' on':''),'<span><i></i></span><b>'+(on?'开启':'关闭')+'</b>');
+  toggle.setAttribute('aria-label',titleText+'：'+(on?'开启':'关闭'));toggle.setAttribute('aria-pressed',on?'true':'false');toggle.onclick=()=>toggleAudioPref(key);row.append(mark,copy,toggle);return row;
+}
+function settingsVolume(key,labelText,enabled){
+  const value=Math.round(state[key]*100),row=el('label','settings-volume','<span><b>'+labelText+'</b><em id="'+key+'-value">'+value+'%</em></span>'),input=document.createElement('input');input.type='range';input.min='0';input.max='100';input.step='5';input.value=String(value);input.disabled=!enabled;input.setAttribute('aria-label',labelText);
+  input.oninput=()=>{setAudioVolume(key,Number(input.value)/100);const out=$(key+'-value');if(out)out.textContent=input.value+'%';};input.onchange=()=>{if(key==='soundVolume'&&state.sound)unlockAudio().then(ok=>{if(ok)playSfx('success');});};row.appendChild(input);return row;
+}
 function renderSetPanel(box){
   title(box,'<b>设置</b>');
   const update=el('section','settings-update');
@@ -2530,7 +2772,11 @@ function renderSetPanel(box){
   const check=el('button','primary update-check','检查更新'); check.id='check-update-btn'; check.onclick=checkAppUpdate;
   update.appendChild(check); box.appendChild(update);
   $('update-version').textContent=appVersionInfo(); setUpdateUi(updateUi.text,updateUi.busy);
-  grid(box,[{label:'音效  '+(state.sound?'开':'关'),fn:()=>{state.sound=!state.sound;render();}},{label:'音乐  '+(state.music?'开':'关'),fn:()=>{state.music=!state.music;render();}}]);
+  normalizeAudioPrefs(state);title(box,'<b>声音与触觉</b> · 所有开关立即生效');
+  const media=el('section','settings-media ui-panel');media.appendChild(settingsToggle('sound','sensor','音效','触摸、采集、警告与战斗均使用独立反馈音'));
+  media.appendChild(settingsVolume('soundVolume','音效音量',state.sound));media.appendChild(settingsToggle('music','energy','背景音乐','程序化深空环境乐，首次触摸后开始播放'));
+  media.appendChild(settingsVolume('musicVolume','音乐音量',state.music));media.appendChild(settingsToggle('vibration','bracelet','触觉反馈','安卓按钮轻触震动，可独立关闭'));
+  media.appendChild(el('p','settings-media-note','声音会遵循手机系统媒体音量；静音后不会在后台偷偷播放。'));box.appendChild(media);
   title(box,'存档');
   if(resetConfirming) grid(box,[
     {label:'确认清空并重看序章',cost:'此操作无法撤销',cls:'danger',fn:hardReset},
@@ -2539,7 +2785,7 @@ function renderSetPanel(box){
   else grid(box,[{label:'重新开始(清空本档)',cost:'点击后在页面内再次确认',cls:'danger',full:true,fn:()=>{resetConfirming=true;render();}}]);
   title(box,'关于'); box.appendChild(el('div','panel-title','《深渊回响》· 深度流文字RPG原型'));
 }
-function hardReset(){ resetConfirming=false; localStorage.removeItem(SAVE_KEY); state=freshState(); updateCheckpoint(); $('log').innerHTML=''; intro(); render(); }
+function hardReset(){ const prefs=audioPrefs(state);resetConfirming=false; localStorage.removeItem(SAVE_KEY); state=freshState();Object.assign(state,prefs);syncAudioState();updateCheckpoint(); $('log').innerHTML=''; intro(); render(); }
 
 /* ---------- 战斗面板 ---------- */
 function combatActionButton(action){
@@ -3054,8 +3300,8 @@ function flee(){ if(P().stamina<2){if(P().stamina<=0&&P().location!=='camp')exha
 /* ================= 死亡/轮回 ================= */
 function die(){ state.combat=null; state.screen='death'; state.tab='act'; divider(); log('你倒下了。','danger'); setLogOpen(true); render(); }
 function continueFromCheckpoint(){ if(!state.checkpoint){ doReincarnate(); return; } restoreCheckpoint(); divider(); log('你在行军床上醒来——进度回到上个存档点。','story'); divider(); render(); }
-function doReincarnate(){ const s=settleEcho(); const meta=state.meta; meta.playthrough++; meta.wardenDone=false; meta.guardianDown=false; meta.echo+=s.total;
-  state=freshState(meta); state.endingChosen=null; updateCheckpoint(); divider();
+function doReincarnate(){ const s=settleEcho(); const meta=state.meta,prefs=audioPrefs(state); meta.playthrough++; meta.wardenDone=false; meta.guardianDown=false; meta.echo+=s.total;
+  state=freshState(meta);Object.assign(state,prefs); state.endingChosen=null; updateCheckpoint(); divider();
   log('=== 轮回 · 第 '+meta.playthrough+' 周目 ===','sys');
   log('本次结算回响 +'+s.total+'(击杀'+s.fromKills+'+伤害'+s.fromDmg+'+物资'+s.fromMat+')。','warn');
   log('你再次在应急灯下醒来。归零了,但回响、倍率、建成设施与结局道具都还在。','story'); divider(); render(); }
@@ -3103,7 +3349,7 @@ function boot(){
   wire($('set-btn'),'set');
   installInteractionFeedback();
   const peek=$('log-peek'); if(peek)peek.onclick=()=>setLogOpen($('log').classList.contains('collapsed'));
-  const loaded=load(); if(!loaded) state=freshState();
+  const loaded=load(); if(!loaded) state=freshState();normalizeAudioPrefs(state);
   MATS.forEach(k=>{if(state.inv[k]==null)state.inv[k]=0;});
   const legacyDiscovery=!state.discovered;
   if(!state.quests)state.quests={}; if(!state.questStart)state.questStart={}; if(!state.flags)state.flags={}; if(!state.areaSearch)state.areaSearch={}; if(!state.investigationMisses)state.investigationMisses={}; if(!state.discovered)state.discovered={camp:true,outer:true,joeCamp:true}; if(!state.dailyGather)state.dailyGather={}; if(!state.dailyLocation)state.dailyLocation={}; if(!state.dailyFacility)state.dailyFacility={}; if(state.foodBuff===undefined)state.foodBuff=null; if(state.truthClaimed===undefined)state.truthClaimed=null; if(!state.visited)state.visited={}; state.visited.camp=true;
@@ -3136,7 +3382,8 @@ function boot(){
   if(!state.meta.echoUp)state.meta.echoUp={stamina:0,collect:0,attr:0}; ['stamina','collect','attr'].forEach(k=>{if(state.meta.echoUp[k]==null)state.meta.echoUp[k]=0;}); refreshEchoMultipliers();
   if(!state.meta.careers){state.meta.careers={main:null,life:null};const old={striker:'vanguard',tank:'bulwark',shadow:'infiltrator',engineer:'fabricator'}[state.meta.job];if(old){const kind=JOBS[old].kind;state.meta.careers[kind]={id:old,level:1,xp:0};}}
   state.meta.careers.main=state.meta.careers.main||null;state.meta.careers.life=state.meta.careers.life||null;state.meta.job=state.meta.careers.main?state.meta.careers.main.id:null;
-  if(!state.player.equip)state=freshState(state.meta); normalizeEquipment(state.player,state.inv); if(state.checkpoint&&state.checkpoint.player)normalizeEquipment(state.checkpoint.player,state.checkpoint.inv||{}); if(state.bagSel&&!SLOTS.some(([slot])=>slot===state.bagSel))state.bagSel=null; if(state.player.shield==null)state.player.shield=0; if(!Array.isArray(state.defenses))state.defenses=[]; if(!state.skills)state.skills={}; Object.keys(SKILLS).forEach(k=>{if(!state.skills[k])state.skills[k]={prof:0};});ensureCareerSkills();
+  if(!state.masteries)state.masteries={};Object.keys(MASTERIES).forEach(k=>{if(state.masteries[k]==null)state.masteries[k]=0;});
+  if(!state.player.equip){const prefs=audioPrefs(state);state=freshState(state.meta);Object.assign(state,prefs);} normalizeEquipment(state.player,state.inv); if(state.checkpoint&&state.checkpoint.player)normalizeEquipment(state.checkpoint.player,state.checkpoint.inv||{}); if(state.bagSel&&!SLOTS.some(([slot])=>slot===state.bagSel))state.bagSel=null; if(state.player.shield==null)state.player.shield=0; if(!Array.isArray(state.defenses))state.defenses=[]; if(!state.skills)state.skills={}; Object.keys(SKILLS).forEach(k=>{if(!state.skills[k])state.skills[k]={prof:0};});ensureCareerSkills();
   migrateStaminaBase();
   if(!Array.isArray(state.skillSlots))state.skillSlots=[null,null,null];state.skillSlots=state.skillSlots.slice(0,3);while(state.skillSlots.length<3)state.skillSlots.push(null);state.skillSlots=state.skillSlots.map(k=>SKILLS[k]&&SKILLS[k].type==='active'&&skillUnlocked(k)?k:null);if(state.skillSlotSel==null)state.skillSlotSel=0;if(!state.charView)state.charView='overview';
   if(state.quests.fuel===true&&!state.quests.patrol){ state.quests.patrol='done'; state.inv.accessCard=Math.max(1,state.inv.accessCard||0); }
