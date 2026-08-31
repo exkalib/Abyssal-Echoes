@@ -124,12 +124,22 @@ const MAP_LINKS = [
   ['layer4','layer5'],['layer5','layer6'],['layer6','layer7'],
   ['coalRift','fungal'],['layer4','fungal'],['layer4','nursery'],['nursery','fungal'],['fungal','abyss'],['abyss','signal']
 ];
-const MAP_CANVAS={width:847,height:390,nodeWidth:92,nodeHeight:48};
+const MAP_CANVAS={width:1080,height:390,nodeWidth:120,nodeHeight:48,layoutVersion:2};
 const WORLD_POS = {
-  camp:[10,150],outer:[115,150],blackwood:[220,35],ridge:[220,105],coalRift:[325,70],
-  layer2:[220,190],layer3:[325,190],layer4:[430,190],layer5:[535,190],layer6:[640,190],layer7:[745,190],
-  oldMine:[325,20],sealedCabin:[325,255],nursery:[325,325],fungal:[430,325],abyss:[535,325],signal:[640,325]
+  camp:[16,150],outer:[148,150],blackwood:[280,35],ridge:[280,105],coalRift:[412,70],
+  layer2:[280,190],layer3:[412,190],layer4:[544,190],layer5:[676,190],layer6:[808,190],layer7:[940,190],
+  oldMine:[412,20],sealedCabin:[412,255],nursery:[412,325],fungal:[544,325],abyss:[676,325],signal:[808,325]
 };
+
+function mapEdgePath(pa,pb){
+  const w=MAP_CANVAS.nodeWidth,h=MAP_CANVAS.nodeHeight,acx=pa[0]+w/2,acy=pa[1]+h/2,bcx=pb[0]+w/2,bcy=pb[1]+h/2;
+  if(Math.abs(bcx-acx)>=Math.abs(bcy-acy)){
+    const ax=acx+(bcx>=acx?w/2:-w/2),ay=acy,bx=bcx+(acx>=bcx?w/2:-w/2),by=bcy,mx=(ax+bx)/2;
+    return 'M'+ax+','+ay+' L'+mx+','+ay+' L'+mx+','+by+' L'+bx+','+by;
+  }
+  const ax=acx,ay=acy+(bcy>=acy?h/2:-h/2),bx=bcx,by=bcy+(acy>=bcy?h/2:-h/2),my=(ay+by)/2;
+  return 'M'+ax+','+ay+' L'+ax+','+my+' L'+bx+','+my+' L'+bx+','+by;
+}
 
 const ENTRY_STORY = {
   outer:['外气闸在身后闭合。第一次真正的风刮过面罩，带来煤尘和陌生植物的味道。','老乔在无线电里说：“现在你明白了。怪物能进来，是因为这艘船到处都是洞；我们能出去，是因为还控制着这道门。”'],
@@ -711,15 +721,15 @@ function renderWorldMap(box){
   const close=el('button','map-close','收起'); close.onclick=()=>{state.mapOpen=false;render();};
   tools.append(zoomOut,zoomText,zoomIn,locate,close);head.appendChild(tools);wrap.appendChild(head);
   const sc=el('div','worldmap-scroll'),stage=el('div','worldmap-stage'),cv=el('div','worldmap');
+  cv.style.width=MAP_CANVAS.width+'px';cv.style.height=MAP_CANVAS.height+'px';cv.style.setProperty('--map-node-width',MAP_CANVAS.nodeWidth+'px');cv.style.setProperty('--map-node-height',MAP_CANVAS.nodeHeight+'px');
   const NS='http://www.w3.org/2000/svg', svg=document.createElementNS(NS,'svg'); svg.setAttribute('class','maplines'); svg.setAttribute('viewBox','0 0 '+MAP_CANVAS.width+' '+MAP_CANVAS.height);
   MAP_LINKS.forEach(([a,b])=>{ if(!locationRevealed(a)||!locationRevealed(b))return; const pa=WORLD_POS[a],pb=WORLD_POS[b], line=document.createElementNS(NS,'path');
-    const ax=pa[0]+MAP_CANVAS.nodeWidth/2,ay=pa[1]+MAP_CANVAS.nodeHeight/2,bx=pb[0]+MAP_CANVAS.nodeWidth/2,by=pb[1]+MAP_CANVAS.nodeHeight/2,mx=(ax+bx)/2;
-    line.setAttribute('d','M'+ax+','+ay+' L'+mx+','+ay+' L'+mx+','+by+' L'+bx+','+by);
+    line.setAttribute('d',mapEdgePath(pa,pb));
     const on=(state.visited[a]||a===P().location||a==='camp')&&(state.visited[b]||b===P().location||b==='camp');
     line.setAttribute('class','mapedge'+(on?' on':'')); svg.appendChild(line);
   });
   cv.appendChild(svg);
-  [['地表资源线',205,4,'surface'],['船内主线',205,164,'ship'],['地下信号线',410,300,'depth']].forEach(([t,x,y,c])=>{ const l=el('div','maplane '+c,t);l.style.left=x+'px';l.style.top=y+'px';cv.appendChild(l); });
+  [['地表资源线',260,4,'surface'],['船内主线',260,164,'ship'],['地下信号线',520,300,'depth']].forEach(([t,x,y,c])=>{ const l=el('div','maplane '+c,t);l.style.left=x+'px';l.style.top=y+'px';cv.appendChild(l); });
   const nodes=[];
   Object.entries(WORLD_POS).forEach(([id,p])=>{ if(!locationRevealed(id))return; const loc=LOCATIONS[id],st=mapNodeState(id),gate=locationGate(id),n=el('button','mapnode '+st);
     n.style.left=p[0]+'px'; n.style.top=p[1]+'px'; n.dataset.loc=id;
@@ -751,6 +761,7 @@ function renderWorldMap(box){
   renderDetails();
 
   const view=state.mapView||(state.mapView={scale:.82,x:null,y:null});
+  if(view.layoutVersion!==MAP_CANVAS.layoutVersion){view.layoutVersion=MAP_CANVAS.layoutVersion;view.x=null;view.y=null;}
   function clampView(){
     const sw=stage.clientWidth,sh=stage.clientHeight,w=MAP_CANVAS.width*view.scale,h=MAP_CANVAS.height*view.scale;
     view.x=w<=sw?(sw-w)/2:Math.min(12,Math.max(sw-w-12,view.x));

@@ -179,20 +179,20 @@ html, body { height: 100%; background: #06090e; color: var(--fg); overscroll-beh
   background-image:linear-gradient(rgba(45,83,108,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(45,83,108,.08) 1px,transparent 1px);
   background-size:28px 28px; box-shadow:inset 0 -12px 26px rgba(0,0,0,.26); }
 .worldmap-stage.dragging { cursor:grabbing; }
-.worldmap { position:relative; width:847px; height:390px; transform-origin:0 0; }
-.maplines { position:absolute; inset:0; width:847px; height:390px; z-index:0; overflow:hidden; }
+.worldmap { position:relative; transform-origin:0 0; }
+.maplines { position:absolute; inset:0; width:100%; height:100%; z-index:0; overflow:hidden; }
 .mapedge { fill:none; stroke:#26384b; stroke-width:1.5; stroke-dasharray:5 4; stroke-linecap:round; stroke-linejoin:round; }
 .mapedge.on { stroke:#39bde8; stroke-dasharray:none; filter:drop-shadow(0 0 3px rgba(56,189,248,.5)); }
 .maplane { position:absolute; z-index:1; font-size:9px; font-weight:700; letter-spacing:1.2px; color:#45647b;
   padding:2px 8px; border-left:2px solid currentColor; text-transform:uppercase; }
 .maplane.surface { color:#b38b42; }.maplane.ship { color:#4a95bf; }.maplane.depth { color:#8f66ca; }
-#panel .mapnode { position:absolute; z-index:2; width:92px; height:48px; padding:5px 6px; display:flex; align-items:center; gap:6px;
+#panel .mapnode { position:absolute; z-index:2; width:var(--map-node-width,120px); height:var(--map-node-height,48px); padding:5px 8px; display:flex; align-items:center; gap:7px;
   border-radius:7px; background:linear-gradient(145deg,#101b27,#0a111a); border:1px solid #31475e; box-shadow:0 4px 10px rgba(0,0,0,.45); }
 #panel .mapnode:hover { border-color:#61c9ed; transform:translateY(-1px); filter:none; opacity:1; }
 #panel .mapnode.selected { border-color:#d7a7ff; box-shadow:0 0 0 2px rgba(168,85,247,.2),0 0 18px rgba(139,92,246,.42); }
 .mn-icon { flex:none; width:29px; height:29px; display:grid; place-items:center; border-radius:50%; color:#81dcfb;
   background:radial-gradient(circle,#153e53,#0b1722 70%); border:1px solid #2a6a87; font-size:16px; }
-.mn-copy { min-width:0; }.mn-zone,.mn-name { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mn-copy { min-width:0; flex:1; }.mn-zone,.mn-name { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .mn-zone { color:#658096; font-size:8px; letter-spacing:.7px; }.mn-name { color:#d9e8f3; font-size:11px; font-weight:700; }
 .mapnode.current { border-color:#8ee9ff; box-shadow:0 0 0 2px rgba(56,189,248,.2),0 0 18px rgba(56,189,248,.45); }
 .mapnode.current .mn-icon { color:#fff; border-color:#b7f2ff; }.mapnode.reachable { border-color:#2f8fb5; cursor:pointer; }

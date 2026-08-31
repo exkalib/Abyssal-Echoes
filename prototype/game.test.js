@@ -34,7 +34,7 @@ const sandbox = {
 };
 vm.createContext(sandbox);
 let source=fs.readFileSync(__dirname+'/game.js','utf8').replace(/\nboot\(\);\s*$/,'');
-source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,totalAtk,statPen,locExtraCost,payAreaAction,emergencyEvacuate,startCombat,catchBreath,useSkill,updateCheckpoint,restoreCheckpoint,research,unlockGene,doReincarnate,geneTier,chooseEnding,gatherAvailable,gatherArea,currentDay,rest,fmtTime,activateAvailableQuests,questSearchCount,startBeacon,flee,settleEcho,render,renderBuilding,explore,staminaToCamp,travelRoute,buyEchoUpgrade,repairFacility,resolveRaid,hasBuildingTech,buildFacility,buildingLevel,upgradeFacility,eatMeal,harvestGarden,recycleMaterial,damageRandomFacility,QUESTS,TECHS,LOCATIONS,MAP_LINKS,MAP_CANVAS,WORLD_POS,ITEMS,RECIPES,CAMP_BUILDINGS,SMELT,RECYCLE,BEACON};`;
+source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,totalAtk,statPen,locExtraCost,payAreaAction,emergencyEvacuate,startCombat,catchBreath,useSkill,updateCheckpoint,restoreCheckpoint,research,unlockGene,doReincarnate,geneTier,chooseEnding,gatherAvailable,gatherArea,currentDay,rest,fmtTime,activateAvailableQuests,questSearchCount,startBeacon,flee,settleEcho,render,renderBuilding,explore,staminaToCamp,travelRoute,buyEchoUpgrade,repairFacility,resolveRaid,hasBuildingTech,buildFacility,buildingLevel,upgradeFacility,eatMeal,harvestGarden,recycleMaterial,damageRandomFacility,mapEdgePath,QUESTS,TECHS,LOCATIONS,MAP_LINKS,MAP_CANVAS,WORLD_POS,ITEMS,RECIPES,CAMP_BUILDINGS,SMELT,RECYCLE,BEACON};`;
 vm.runInContext(source,sandbox);
 const a=sandbox.api;
 function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.setState(s); return s; }
@@ -161,6 +161,11 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
 }
 {
   Object.entries(a.WORLD_POS).forEach(([id,[x,y]])=>{assert.ok(x>=0&&y>=0,`地图节点 ${id} 不得越出左上边界`);assert.ok(x+a.MAP_CANVAS.nodeWidth<=a.MAP_CANVAS.width,`地图节点 ${id} 越出右边界`);assert.ok(y+a.MAP_CANVAS.nodeHeight<=a.MAP_CANVAS.height,`地图节点 ${id} 越出下边界`);});
+  assert.ok(a.MAP_CANVAS.nodeWidth>=120,'地图节点必须足够显示完整地点名');
+  a.MAP_LINKS.forEach(([from,to])=>{const p=a.mapEdgePath(a.WORLD_POS[from],a.WORLD_POS[to]);assert.match(p,/^M[\d.]+,[\d.]+ L[\d.]+,[\d.]+ L[\d.]+,[\d.]+ L[\d.]+,[\d.]+$/,`${from} → ${to} 的连接线路径无效`);
+    const n=p.match(/[\d.]+/g).map(Number),start=n.slice(0,2),end=n.slice(-2),onEdge=(point,pos)=>{const [x,y]=point,[left,top]=pos,right=left+a.MAP_CANVAS.nodeWidth,bottom=top+a.MAP_CANVAS.nodeHeight;return ((x===left||x===right)&&y>=top&&y<=bottom)||((y===top||y===bottom)&&x>=left&&x<=right);};
+    assert.ok(onEdge(start,a.WORLD_POS[from]),`${from} → ${to} 起点没有贴住节点边缘`);assert.ok(onEdge(end,a.WORLD_POS[to]),`${from} → ${to} 终点没有贴住节点边缘`);
+  });
 }
 {
   const s=reset(); let route=a.travelRoute('camp','outer');
