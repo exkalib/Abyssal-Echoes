@@ -64,7 +64,8 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.doesNotMatch(campHome,/renderObjectiveStrip/,'营地主页不应显示冗余的当前目标条');
   assert.ok(campHome.indexOf('camp-construction')<campHome.indexOf('camp-section-head'),'建筑管理必须和营地设施一起放在上半区');
   assert.ok(campHome.indexOf('camp-depart-dock')>campHome.indexOf('camp-layout'),'离开营地必须作为底部主操作');
-  assert.match(css,/\.camp-depart-dock\s*\{[^}]*position:fixed[^}]*bottom:97px/s,'离开营地按钮必须固定在手机拇指可触达的底部区域');
+  assert.match(css,/\.camp-depart-dock\s*\{[^}]*position:fixed[^}]*bottom:calc\(102px \+ env\(safe-area-inset-bottom,0px\)\)[^}]*padding:0[^}]*background:none/s,'离开营地固定操作不得用黑色外层遮住状态栏');
+  assert.match(css,/#statusbar\s*\{[^}]*z-index:30/s,'状态栏必须显示在固定操作层上方');
 }
 
 {
