@@ -667,10 +667,7 @@ function renderTop(){
   $('hp').textContent=Math.max(0,P().hp)+'/'+maxh; $('hp-fill').style.width=Math.max(0,P().hp/maxh*100)+'%';
   $('stamina').textContent=P().stamina+'/'+maxs; $('st-fill').style.width=Math.max(0,P().stamina/maxs*100)+'%';
   $('time').textContent=fmtTime();
-  $('loc-label').textContent=LOCATIONS[P().location].name;
   $('pt-label').textContent='第'+state.meta.playthrough+'周目';
-  $('echo-label').textContent='回响 '+state.meta.echo;
-  $('frag-label').textContent='碎片 '+fragmentCount()+'/3';
 }
 function renderTabbar(){ document.querySelectorAll('#tabbar .tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===state.tab)); const sb=$('set-btn'); if(sb) sb.classList.toggle('on', state.tab==='set'); }
 function render(){ renderTop(); const box=$('panel'); box.innerHTML=''; box.classList.remove('camp-home');

@@ -43,6 +43,9 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   const css=fs.readFileSync(__dirname+'/style.css','utf8');
   assert.match(css,/\*\s*\{[^}]*user-select:\s*none/s,'整个游戏界面必须禁用文字选择，避免拖动时误选文本');
   const html=fs.readFileSync(__dirname+'/index.html','utf8');
+  assert.match(html,/viewport-fit=cover/,'顶栏必须启用手机安全区');
+  assert.match(html,/id="time"[\s\S]*class="camera-safe"[\s\S]*id="pt-label"/,'顶栏必须左右显示时间和周目，并为中置摄像头留空');
+  assert.doesNotMatch(html,/id="(?:loc-label|echo-label|frag-label)"/,'顶栏不得继续堆放地点、回响和碎片');
   assert.doesNotMatch(html,/id="log-peek"/,'底部不得再显示统一的查看记录入口');
   assert.match(html,/class="gauge sp"[\s\S]*id="stamina"[\s\S]*class="g-ico">⚡/,'体力图标必须位于体力条最右侧');
   assert.match(html,/class="gear-svg"/,'设置按钮必须使用中心稳定的矢量齿轮，不能依赖字体字形');

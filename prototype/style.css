@@ -23,13 +23,14 @@ html, body { height: 100%; background: #06090e; color: var(--fg); overscroll-beh
 #panel .closebar .closebtn:active { transform: scale(.9); color: var(--accent); border-color: var(--accent-dim); }
 .closebar .ctitle { position: absolute; left: 0; right: 0; top: 8px; text-align: center; font-size: 12px; font-weight: 600; color: var(--dim); letter-spacing: 3px; }
 
-/* ---------- 顶部信息条(分段徽章) ---------- */
-#metabar { display: flex; gap: 7px; align-items: center; padding: 8px 12px; font-size: 12px;
-  background: linear-gradient(180deg,#0f1620,#0b111a); border-bottom: 1px solid var(--border); flex: none; overflow-x: auto; white-space: nowrap; }
-#metabar span { padding: 3px 9px; border-radius: 999px; background: #0a121c; border: 1px solid var(--border); color: var(--dim); }
-#metabar #loc-label { color: var(--accent); border-color: var(--accent-dim); background: #0d1b26; font-weight: 700; }
-#metabar #echo-label { color: var(--warn); border-color: #4d3a17; }
-#metabar #frag-label { color: var(--accent); border-color: var(--accent-dim); }
+/* ---------- 顶部信息条：避让圆角、刘海与居中挖孔 ---------- */
+#metabar { display:grid; grid-template-columns:minmax(0,1fr) clamp(76px,22vw,108px) minmax(0,1fr); align-items:end;
+  min-height:42px; padding:max(8px,env(safe-area-inset-top,0px)) max(22px,env(safe-area-inset-right,0px)) 8px max(22px,env(safe-area-inset-left,0px));
+  font-size:12px; background:linear-gradient(180deg,#0f1620,#0b111a); border-bottom:1px solid var(--border); flex:none; white-space:nowrap; }
+#metabar span { min-width:0; color:#8292a5; font-size:11px; line-height:22px; font-variant-numeric:tabular-nums; }
+#metabar #time { justify-self:start; }
+#metabar #pt-label { justify-self:end; text-align:right; }
+#metabar .camera-safe { display:block; align-self:stretch; min-width:76px; pointer-events:none; }
 
 /* ---------- 主面板 ---------- */
 #panel { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--bg); padding: 12px 14px; }
