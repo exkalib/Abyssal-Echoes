@@ -673,7 +673,7 @@ function renderTop(){
   $('frag-label').textContent='碎片 '+fragmentCount()+'/3';
 }
 function renderTabbar(){ document.querySelectorAll('#tabbar .tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===state.tab)); const sb=$('set-btn'); if(sb) sb.classList.toggle('on', state.tab==='set'); }
-function render(){ renderTop(); const box=$('panel'); box.innerHTML='';
+function render(){ renderTop(); const box=$('panel'); box.innerHTML=''; box.classList.remove('camp-home');
   const panelOpen = !state.combat && state.screen==='play' && state.tab!=='act';
   $('app').classList.toggle('panel-open', panelOpen);
   if (panelOpen && state.tab!=='tech'){ const cb=el('div','closebar');
@@ -857,17 +857,17 @@ function renderPanelTop(){ render(); requestAnimationFrame(()=>{const panel=$('p
 function openCampBuilding(id){ state.campBuilding=id; state.campView='home'; setLogOpen(false); renderPanelTop(); }
 function renderCampHero(box){ const built=CAMP_BUILDINGS.filter(b=>state.meta.built[b.id]).length,nextRaid=state.flags.firstRaidSurvived?Math.max(0,3-(state.rests-(state.flags.lastRaidRest||0))):null;
   const hero=el('section','camp-hero'); hero.innerHTML='<div class="camp-orbit"><i></i><i></i><span>⌂</span></div><div class="camp-hero-copy"><small>ARK // SURVIVOR HUB</small><h1>方舟营地</h1><p>炉火、床铺与工坊一点点占据废弃舱段。这里的样子由你建成。</p><div class="camp-metrics"><b>'+built+'<em>设施</em></b><b>'+defensePower()+'<em>防御</em></b><b>'+(nextRaid==null?'未触发':nextRaid)+'<em>'+(nextRaid==null?'夜袭':'次休息')+'</em></b></div></div>'; box.appendChild(hero); }
-function renderCampHome(box){ state.campBuilding=null; state.campView='home'; renderCampHero(box); renderObjectiveStrip(box);
-  const commands=el('div','camp-command');
-  const expedition=el('button','camp-command-card expedition','<span class="cc-icon">◈</span><span><small>EXPEDITION</small><b>离开营地</b><em>前往地表坠毁带 · 体力 -2</em></span><i>→</i>');expedition.onclick=()=>move('outer');commands.appendChild(expedition);
+function renderCampHome(box){ state.campBuilding=null; state.campView='home'; box.classList.add('camp-home');
+  const mapbar=el('div','camp-mapbar camp-mapbar-top');const mapbtn=el('button','camp-map-toggle','<span>⌘</span><b>'+(state.mapOpen?'收起区域地图':'查看区域地图')+'</b><em>路线与已发现区域</em>');mapbtn.onclick=()=>{state.mapOpen=!state.mapOpen;render();};mapbar.appendChild(mapbtn);box.appendChild(mapbar);if(state.mapOpen)renderWorldMap(box);
+  renderCampHero(box); renderObjectiveStrip(box);
   const unlocked=CAMP_BUILDINGS.filter(b=>!state.meta.built[b.id]&&hasBuildingTech(b.id)).length;
-  const construction=el('button','camp-command-card construction','<span class="cc-icon">⌁</span><span><small>CONSTRUCTION</small><b>建筑管理</b><em>'+(unlocked?'有 '+unlocked+' 项设施可以建造':'研究科技解锁新设施')+'</em></span><i>→</i>');construction.onclick=()=>{state.campView='construct';setLogOpen(false);renderPanelTop();};commands.appendChild(construction);box.appendChild(commands);
+  const construction=el('button','camp-command-card construction camp-construction','<span class="cc-icon">⌁</span><span><small>CONSTRUCTION</small><b>建筑管理</b><em>'+(unlocked?'有 '+unlocked+' 项设施可以建造':'研究科技解锁新设施')+'</em></span><i>→</i>');construction.onclick=()=>{state.campView='construct';setLogOpen(false);renderPanelTop();};box.appendChild(construction);
   const head=el('div','camp-section-head','<span><small>BUILT FACILITIES</small><b>已建营地</b></span><em>点击建筑进入</em>');box.appendChild(head);
   const layout=el('div','camp-layout');
   CAMP_BUILDINGS.filter(b=>state.meta.built[b.id]).forEach(b=>{ const damaged=!!state.meta.damaged[b.id],lv=buildingLevel(b.id),card=el('button','camp-facility '+b.tone+(damaged?' damaged':''));
     card.innerHTML='<span class="cf-glow"></span><span class="cf-icon">'+(damaged?'⚠️':b.icon)+'</span><span class="cf-copy"><small>'+(damaged?'OFFLINE':'LEVEL 0'+lv)+'</small><b>'+b.name+'</b><em>'+(damaged?'受损停用 · 废铁×3修复':b.desc)+'</em></span><i>›</i>';
     card.onclick=damaged?()=>repairFacility(b.id):()=>openCampBuilding(b.id); layout.appendChild(card); }); box.appendChild(layout);
-  const mapbar=el('div','camp-mapbar');const mapbtn=el('button','camp-map-toggle','<span>⌘</span><b>'+(state.mapOpen?'收起区域地图':'查看区域地图')+'</b><em>路线与已发现区域</em>');mapbtn.onclick=()=>{state.mapOpen=!state.mapOpen;render();};mapbar.appendChild(mapbtn);box.appendChild(mapbar);if(state.mapOpen)renderWorldMap(box);
+  const depart=el('div','camp-depart-dock');const expedition=el('button','camp-command-card expedition camp-depart','<span class="cc-icon">◈</span><span><small>EXPEDITION</small><b>离开营地</b><em>前往地表坠毁带 · 体力 -2</em></span><i>→</i>');expedition.onclick=()=>move('outer');depart.appendChild(expedition);box.appendChild(depart);
 }
 function renderConstruction(box){ state.campBuilding=null; state.campView='construct'; const top=el('div','facility-nav'); const back=el('button','facility-back','‹');back.setAttribute('aria-label','返回营地');back.onclick=()=>{state.campView='home';renderPanelTop();};top.appendChild(back);top.appendChild(el('div','facility-nav-title','<small>CONSTRUCTION</small><b>建筑管理</b><em>只显示科技已解锁的设施</em>'));box.appendChild(top);
   const available=CAMP_BUILDINGS.filter(b=>!state.meta.built[b.id]&&hasBuildingTech(b.id));
@@ -885,15 +885,15 @@ function renderActPanel(box){
   const here=LOCATIONS[loc],profile=REGION_PROFILES[here.profile];
   const threats=(here.enemies||[]).map(id=>ENEMIES[id].name).join('、')||'无主动威胁';
   const resources=Object.keys(here.loot||{}).slice(0,4).map(id=>ITEMS[id].name).join(' · ');
+  const mapped=Object.keys(LOCATIONS).filter(id=>locationRevealed(id)&&(id==='camp'||state.visited[id]||id===loc)).length;
+  const mapbar=el('div','explore-tools explore-tools-top');
+  const mapbtn=el('button','map-toggle','<span>⌘</span><b>'+(state.mapOpen?'收起区域地图':'打开区域地图')+'</b><small>已测绘 '+mapped+' 个区域</small>');
+  mapbtn.onclick=()=>{state.mapOpen=!state.mapOpen;render();}; mapbar.appendChild(mapbtn); box.appendChild(mapbar);
+  if(state.mapOpen) renderWorldMap(box);
   const info=el('div','scene-card '+(profile?profile.tone:'camp'));
   info.innerHTML='<div class="scene-mark">'+here.icon+'</div><div class="scene-copy"><span class="lc-zone">'+here.zone+' / '+(profile?profile.label:'安全区')+'</span><b>'+here.name+'</b><span>'+here.desc+'</span><div class="scene-tags"><i>资源 '+(resources||'营地设施')+'</i><i>威胁 '+threats+'</i>'+(here.npc?'<i class="npc">NPC '+here.npc+'</i>':'')+'</div></div>';
   box.appendChild(info);
   renderObjectiveStrip(box);
-  const mapped=Object.keys(LOCATIONS).filter(id=>locationRevealed(id)&&(id==='camp'||state.visited[id]||id===loc)).length;
-  const mapbar=el('div','explore-tools');
-  const mapbtn=el('button','map-toggle','<span>⌘</span><b>'+(state.mapOpen?'收起区域地图':'打开区域地图')+'</b><small>已测绘 '+mapped+' 个区域</small>');
-  mapbtn.onclick=()=>{state.mapOpen=!state.mapOpen;render();}; mapbar.appendChild(mapbtn); box.appendChild(mapbar);
-  if(state.mapOpen) renderWorldMap(box);
   const extra=locExtraCost();
   const ag=el('div','region-actions');
   (profile.actions||[]).forEach(a=>{ const cost=(a.mode==='gather'?2:1)+extra,b=el('button','region-action '+(a.mode==='investigate'?'primary':'') );
