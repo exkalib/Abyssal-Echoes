@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>深渊回响</title>
+  <link rel="stylesheet" href="style.css?v=map3">
+</head>
+<body>
+  <div id="app">
+    <header id="metabar">
+      <span id="loc-label">营地</span>
+      <span id="time">第1天 08:00</span>
+      <span id="echo-label">回响 0</span>
+      <span id="frag-label">碎片 0/3</span>
+      <span id="pt-label">第1周目</span>
+    </header>
+
+    <section id="panel"></section>
+
+    <footer id="statusbar">
+      <div class="gauge hp">
+        <span class="g-ico">❤</span>
+        <div class="g-track"><div class="g-fill" id="hp-fill"></div><span class="g-val" id="hp">50/50</span></div>
+      </div>
+      <button id="set-btn" class="emblem"><span>⚙</span></button>
+      <div class="gauge sp">
+        <span class="g-ico">⚡</span>
+        <div class="g-track"><div class="g-fill" id="st-fill"></div><span class="g-val" id="stamina">50/50</span></div>
+      </div>
+    </footer>
+
+    <button id="log-peek" class="hidden" aria-expanded="false">
+      <span class="lp-dot"></span><span id="log-latest">最新消息</span><span class="lp-label">查看记录</span><span class="lp-arrow">⌤</span>
+    </button>
+    <main id="log" class="collapsed" aria-live="polite"></main>
+
+    <nav id="tabbar">
+      <button data-tab="char" class="tab"><span class="ti">👤</span>角色</button>
+      <button data-tab="bag" class="tab"><span class="ti">🎒</span>背包</button>
+      <button data-tab="tech" class="tab"><span class="ti">🔬</span>科技</button>
+      <button data-tab="task" class="tab"><span class="ti">📋</span>任务</button>
+    </nav>
+  </div>
+
+  <script src="game.js?v=map3"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+[Unit]
+Description=Abyss Echo static web prototype
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/srv/www/abyss-echo
+ExecStart=/usr/bin/python3 -m http.server 9091 --bind 0.0.0.0
+Restart=always
+RestartSec=3
+User=nobody
+Group=nobody
+
+[Install]
+WantedBy=multi-user.target
