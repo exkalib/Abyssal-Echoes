@@ -1,0 +1,69 @@
+plugins {
+    id "com.android.application"
+}
+
+def generatedWebAssets = layout.buildDirectory.dir("generated/webAssets")
+
+tasks.register("syncBundledWeb", Sync) {
+    from("../../prototype") {
+        include "index.html", "style.css", "game.js"
+    }
+    into(generatedWebAssets.map { it.dir("web") })
+}
+
+android {
+    namespace "com.exkalib.abyssalecho"
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "com.exkalib.abyssalecho"
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName "0.1.0"
+
+        buildConfigField "int", "SHELL_VERSION", "1"
+        buildConfigField "long", "BUNDLED_BUILD", "1L"
+        buildConfigField "String", "UPDATE_BASE_URL", '"http://59.110.144.30:9091/app-update/"'
+        buildConfigField "String", "UPDATE_PUBLIC_KEY", '"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEV38qnk5xngW+U/kAezd6ubgNUn+y1eMAwlAgHTtsFQO/ffqaXYdxwa7c2Af7sDoiXicjyPH5E7SJtB/E9R0usA=="'
+    }
+
+    sourceSets.main.assets.srcDir("$buildDir/generated/webAssets")
+
+    signingConfigs {
+        release {
+            def keyFile = System.getenv("ABYSS_KEYSTORE_FILE")
+            if (keyFile) {
+                storeFile file(keyFile)
+                storePassword System.getenv("ABYSS_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("ABYSS_KEY_ALIAS") ?: "abyss-release"
+                keyPassword System.getenv("ABYSS_KEY_PASSWORD") ?: System.getenv("ABYSS_KEYSTORE_PASSWORD")
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+        }
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+tasks.named("preBuild").configure {
+    dependsOn(tasks.named("syncBundledWeb"))
+}

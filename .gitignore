@@ -7,3 +7,11 @@ dist/
 coverage/
 __pycache__/
 *.pyc
+android/.gradle/
+android/local.properties
+android/app/build/
+android/build/
+android/.idea/
+android/*.iml
+android/app/*.iml
+android-release/
