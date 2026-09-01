@@ -35,7 +35,7 @@ const sandbox = {
 };
 vm.createContext(sandbox);
 let source=fs.readFileSync(__dirname+'/game.js','utf8').replace(/\nboot\(\);\s*$/,'');
-source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,totalAtk,statPen,locExtraCost,areaActionCost,fieldMealActive,payAreaAction,materialSnapshot,beginExpedition,finishExpedition,exhaustionDeath,startCombat,winCombat,playerAttack,orbitalStrike,attackResource,attackResourceText,catchBreath,useSkill,equipSkill,unequipSkill,skillUnlocked,passiveBonus,updateCheckpoint,restoreCheckpoint,research,unlockGene,unlockGeneNode,geneTier,geneBonus,geneRule,chooseJob,jobBonus,gainCareerXp,doReincarnate,chooseEnding,gatherAvailable,gatherArea,gatherLimit,performLocationAction,locationActionRemaining,currentDay,rest,fmtTime,activateAvailableQuests,questSearchCount,startBeacon,flee,settleEcho,feedbackSpec,render,renderCharPanel,renderBuilding,renderSpaceRoutes,explore,staminaToCamp,travelRoute,buyEchoUpgrade,repairFacility,resolveRaid,hasBuildingTech,buildFacility,buildingLevel,upgradeFacility,eatMeal,eatFishMeal,harvestGarden,dispatchDrone,recycleMaterial,damageRandomFacility,mapEdgePath,tutorialActive,finishWakeAnimation,grantTutorialBracelet,grantTutorialBuilder,grantTutorialMap,completeTutorial,normalizeEquipment,normalizeMeta,mergePersistentSpaceMeta,metaFlag,setMetaFlag,grantTechRecord,syncQuestProgress,shipReady,assembleStarship,spaceFlightStatus,launchSpaceRoute,emergencySpaceReturn,outpostBuildStatus,buildOutpostPart,outpostReady,locationRevealed,locationGate,entryNeedsConfirm,operationStatus,performFieldOperation,regionForLocation,regionUnlocked,regionDiscovery,treeLayout,treePortOffset,treeEdgeRoute,techReady,techFacilitiesReady,discoverTechRecord,migrateTechTree,SLOTS,EQUIP_ICON,QUESTS,TECHS,TECH_RECORDS,BRANCHES,MATS,MATERIAL_SOURCES,LOCATIONS,MAP_LINKS,MAP_CANVAS,WORLD_POS,WORLD_REGIONS,WORLD_REGION_LINKS,LOCAL_MAPS,DISCOVERY_MILESTONES,ENTRY_REQUIREMENTS,FIELD_OPERATIONS,LOCATION_ACTIONS,npcLocation,npcsAt,ITEMS,RECIPES,CAMP_BUILDINGS,OUTPOST_BUILDINGS:(typeof OUTPOST_BUILDINGS==='undefined'?[]:OUTPOST_BUILDINGS),SPACE_ROUTES:(typeof SPACE_ROUTES==='undefined'?[]:SPACE_ROUTES),SMELT,RECYCLE,BEACON,SKILLS,GENE_NODES,GENE_TREE,JOBS};`;
+source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,totalAtk,statPen,locExtraCost,areaActionCost,fieldMealActive,payAreaAction,materialSnapshot,beginExpedition,finishExpedition,exhaustionDeath,startCombat,winCombat,playerAttack,orbitalStrike,attackResource,attackResourceText,catchBreath,useSkill,equipSkill,unequipSkill,skillUnlocked,passiveBonus,updateCheckpoint,restoreCheckpoint,research,unlockGene,unlockGeneNode,geneTier,geneBonus,geneRule,chooseJob,jobBonus,gainCareerXp,doReincarnate,chooseEnding,gatherAvailable,gatherArea,gatherLimit,resourceSiteOf,resourceSiteDiscovered,resourceRecoveryRemaining,exploreAttempts,performLocationAction,locationActionRemaining,currentDay,rest,fmtTime,activateAvailableQuests,questSearchCount,startBeacon,flee,settleEcho,feedbackSpec,render,renderCharPanel,renderBuilding,renderSpaceRoutes,explore,move,staminaToCamp,travelRoute,buyEchoUpgrade,repairFacility,resolveRaid,hasBuildingTech,buildFacility,buildingLevel,upgradeFacility,eatMeal,eatFishMeal,harvestGarden,dispatchDrone,recycleMaterial,damageRandomFacility,mapEdgePath,tutorialActive,finishWakeAnimation,grantTutorialBracelet,grantTutorialBuilder,grantTutorialMap,completeTutorial,normalizeEquipment,normalizeMeta,mergePersistentSpaceMeta,metaFlag,setMetaFlag,grantTechRecord,syncQuestProgress,shipReady,assembleStarship,spaceFlightStatus,launchSpaceRoute,emergencySpaceReturn,outpostBuildStatus,buildOutpostPart,outpostReady,locationRevealed,locationGate,entryNeedsConfirm,routeObstacle,routeNeedsConfirm,crossRouteObstacle,operationStatus,performFieldOperation,regionForLocation,regionUnlocked,regionDiscovery,treeLayout,treePortOffset,treeEdgeRoute,techReady,techFacilitiesReady,discoverTechRecord,migrateTechTree,SLOTS,EQUIP_ICON,QUESTS,TECHS,TECH_RECORDS,BRANCHES,MATS,MATERIAL_SOURCES,LOCATIONS,MAP_LINKS,MAP_CANVAS,WORLD_POS,WORLD_REGIONS,WORLD_REGION_LINKS,LOCAL_MAPS,DISCOVERY_MILESTONES,ENTRY_REQUIREMENTS,ROUTE_OBSTACLES,FIELD_OPERATIONS,LOCATION_ACTIONS,npcLocation,npcsAt,ITEMS,RECIPES,CAMP_BUILDINGS,OUTPOST_BUILDINGS:(typeof OUTPOST_BUILDINGS==='undefined'?[]:OUTPOST_BUILDINGS),SPACE_ROUTES:(typeof SPACE_ROUTES==='undefined'?[]:SPACE_ROUTES),SMELT,RECYCLE,BEACON,SKILLS,GENE_NODES,GENE_TREE,JOBS};`;
 vm.runInContext(source,sandbox);
 const a=sandbox.api;
 function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.setState(s); return s; }
@@ -94,7 +94,7 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.match(manifest,/android\.permission\.VIBRATE/,'安卓外壳必须声明震动权限才能提供真实触觉反馈');
   const androidBuild=fs.readFileSync(path.join(__dirname,'..','android','app','build.gradle'),'utf8');
   assert.match(androidBuild,/SHELL_VERSION", "3"/,'新增安卓震动权限后必须升级原生外壳协议版本');
-  assert.match(androidBuild,/BUNDLED_BUILD", "9L"/,'最新 APK 必须内置声音设置资源 build 9');
+  assert.match(androidBuild,/BUNDLED_BUILD", "10L"/,'最新 APK 必须内置探索循环与声音设置资源 build 10');
   assert.match(source,/loadout-console/,'背包必须使用科幻装备终端容器');
   assert.match(source,/inventory-vault/,'背包物品必须使用独立物品仓容器');
   assert.match(source,/inventory-scroll/,'物品仓内容必须拥有独立滚动层，不能推动整页与底部菜单');
@@ -275,8 +275,11 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
 }
 {
   const s=reset(); s.player.location='outer'; sandbox.Math.random=()=>0;
-  a.gatherArea('outer'); a.gatherArea('outer'); assert.equal(a.gatherAvailable('outer'),0);
-  s.time=24; assert.equal(a.gatherAvailable('outer'),2,'常规资源应在次日刷新');
+  assert.equal(a.gatherAvailable('outer'),0,'未探索出资源点前不得直接显示采集');
+  a.explore('investigate');assert.equal(a.resourceSiteDiscovered('outer'),true);assert.equal(a.LOCATIONS.outer.resourceSite.label,'垃圾堆');
+  const before=s.inv.scrap;a.gatherArea('outer');assert.ok(s.inv.scrap-before>=2,'资源点产量必须高于普通探索的单份散落物资');
+  a.gatherArea('outer');a.gatherArea('outer');assert.equal(a.gatherAvailable('outer'),0);
+  s.time+=8;assert.equal(a.gatherAvailable('outer'),1,'资源点必须按游戏时间逐次恢复，而不是等到次日整批刷新');
 }
 {
   const s=reset(); a.rest(); assert.equal(a.fmtTime(),'第2天 08:00','休息应前往次日早晨');
@@ -480,14 +483,20 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   ['outer','joeCamp','cargoYard','blackwood','ridge','floodChannel','relayTower','coalRift','oldMine','silicaField','titaniumMine'].forEach(id=>assert.ok(a.WORLD_REGIONS.surface.locations.includes(id),id+' 必须留在坠毁带局部地图'));
   assert.ok(!Object.keys(a.WORLD_REGIONS).includes('blackwood'),'世界地图不得把黑木林当作大区域节点');
   const s=reset();assert.deepEqual(Object.keys(s.discovered).sort(),['camp','joeCamp','outer'],'引导地图开局只能登记营地、坠毁带入口与老乔营地');
-  s.player.location='outer';s.player.stamina=50;sandbox.Math.random=()=>0;
-  a.explore('investigate');assert.equal(s.discovered.cargoYard,true);assert.equal(s.discovered.blackwood,undefined,'入口调查只应发现货柜坟场');
-  a.explore('investigate');a.explore('investigate');assert.equal(s.discovered.blackwood,undefined);assert.equal(s.discovered.layer2,undefined,'重复调查入口不得继续连锁解锁地点');
+  s.player.location='outer';s.player.stamina=80;sandbox.Math.random=()=>0;
+  a.explore('investigate');assert.equal(s.resourceSites.outer,true);assert.equal(s.discovered.cargoYard,undefined,'第一次探索应先发现资源点，不得立刻吐出下一场景');
+  a.explore('investigate');assert.equal(s.discovered.cargoYard,true);
+  a.explore('investigate');assert.equal(s.discovered.blackwood,true);
+  a.explore('investigate');assert.equal(s.discovered.ridge,true);assert.equal(s.discovered.layer2,undefined,'入口的多个出口只能通向同一区域的相邻场景');
+  assert.equal(a.locationGate('blackwood').ok,true,'荆棘不是硬锁，没有刀也能冒险穿过');
+  assert.equal(a.routeNeedsConfirm('outer','blackwood'),true,'黑木林入口必须显示可重复路障');
+  const hp=s.player.hp;a.crossRouteObstacle('outer','blackwood',false);assert.equal(s.player.location,'blackwood');assert.equal(s.player.hp,hp-8,'没有刀强行穿越必须扣血');
+  a.crossRouteObstacle('blackwood','outer',false);assert.equal(s.player.hp,hp-16,'未清障时每次经过都必须再次扣血');
+  s.inv.knife=1;a.crossRouteObstacle('outer','blackwood',true);assert.equal(s.flags.blackwoodThornsCleared,true,'持有刀具后应永久清除荆棘');
+  const safeHp=s.player.hp;a.move('outer');assert.equal(s.player.hp,safeHp,'永久清障后再次经过不得扣血');
   s.player.location='cargoYard';s.visited.cargoYard=true;a.explore('investigate');
-  assert.equal(s.discovered.blackwood,true);assert.equal(a.locationGate('blackwood').ok,false,'发现黑木林后仍需工业切割器');
   assert.equal(a.operationStatus('repairCutter').ok,true,'入口事件与货柜事件应提供修复切割器所需材料');
-  a.performFieldOperation('repairCutter');assert.equal(s.inv.plasmaCutter,1);assert.equal(a.locationGate('blackwood').ok,true,'修复切割器后才可处理黑木林入口');
-  a.explore('investigate');assert.equal(s.discovered.ridge,true);assert.equal(s.discovered.layer2,undefined,'货柜坟场只能继续发现岩脊，不能直达方舟残骸');
+  a.performFieldOperation('repairCutter');assert.equal(s.inv.plasmaCutter,1,'工业切割器仍用于矿井和其他重型清障');
 }
 {
   const s=reset();
@@ -495,10 +504,10 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   Object.entries(a.FIELD_OPERATIONS).forEach(([id,op])=>{assert.ok(a.LOCATIONS[op.at],`现场操作 ${id} 地点不存在`);assert.ok(a.ITEMS[op.grant],`现场操作 ${id} 产出未知道具`);Object.keys(op.cost||{}).forEach(item=>assert.ok(a.ITEMS[item],`现场操作 ${id} 使用未知材料 ${item}`));});
   const resourceSites=Object.entries(a.LOCATIONS).filter(([,loc])=>loc.resourceSite);
   assert.ok(resourceSites.length>=5,'三层地图都应包含可供后续自动建筑接管的资源据点候选');
-  resourceSites.forEach(([id,loc])=>{assert.equal(a.gatherLimit(id),3,`${loc.name} 每日应有更高的定向采集次数`);loc.resourceSite.yield.forEach(item=>assert.ok(loc.loot[item]>0,`${loc.name} 必须实际产出标注资源 ${item}`));});
+  resourceSites.forEach(([id,loc])=>{assert.equal(a.gatherLimit(id),['mine','lunar'].includes(loc.profile)?4:3,`${loc.name} 必须具有可恢复的资源容量`);loc.resourceSite.yield.forEach(item=>assert.ok(loc.loot[item]>0,`${loc.name} 必须实际产出标注资源 ${item}`));});
   const css=fs.readFileSync(__dirname+'/style.css','utf8'),js=fs.readFileSync(__dirname+'/game.js','utf8');
   assert.match(css,/\.site-sheet-backdrop\s*\{[^}]*position:fixed[^}]*max-width:520px/s,'入口与现场操作必须使用手机宽度内的底部弹层');
-  assert.match(js,/box\.appendChild\(ag\);\s*renderFieldPrompt/s,'现场操作提示必须放在常驻探索按钮网格之外');
+  assert.match(js,/box\.appendChild\(ag\);\s*if\(surveyed\)\{renderFieldPrompt/s,'现场操作提示必须在首次探索后显示，并放在常驻探索按钮网格之外');
 }
 {
   let s=reset();s.player.location='relayTower';s.areaSearch.relayTower=1;s.inv.ecomp=2;
@@ -530,7 +539,7 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.deepEqual(Array.from(route.path),['camp','outer']); assert.equal(route.cost,2,'相邻区域应显示准确体力消耗');
   assert.equal(a.travelRoute('camp','blackwood'),null,'不得快速移动跳过尚未探索的中间区域');
   Object.assign(s.discovered,{cargoYard:true,blackwood:true});s.inv.plasmaCutter=1;s.visited.outer=true;s.visited.cargoYard=true;s.visited.blackwood=true;route=a.travelRoute('camp','blackwood');
-  assert.deepEqual(Array.from(route.path),['camp','outer','cargoYard','blackwood']); assert.equal(route.cost,6,'已探索区域应按分层后的最短路线累计体力');
+  assert.deepEqual(Array.from(route.path),['camp','outer','blackwood']); assert.equal(route.cost,4,'发现多个出口后应采用更短路线，但未清路障仍需现场处理');
 }
 {
   const s=reset(); s.player.location='outer'; s.player.stamina=50; sandbox.Math.random=()=>1;
