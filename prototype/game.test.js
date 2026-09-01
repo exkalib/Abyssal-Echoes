@@ -94,7 +94,7 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.match(manifest,/android\.permission\.VIBRATE/,'安卓外壳必须声明震动权限才能提供真实触觉反馈');
   const androidBuild=fs.readFileSync(path.join(__dirname,'..','android','app','build.gradle'),'utf8');
   assert.match(androidBuild,/SHELL_VERSION", "3"/,'新增安卓震动权限后必须升级原生外壳协议版本');
-  assert.match(androidBuild,/BUNDLED_BUILD", "10L"/,'最新 APK 必须内置探索循环与声音设置资源 build 10');
+  assert.match(androidBuild,/BUNDLED_BUILD", "11L"/,'最新 APK 必须内置分岔探索与机关路线资源 build 11');
   assert.match(source,/loadout-console/,'背包必须使用科幻装备终端容器');
   assert.match(source,/inventory-vault/,'背包物品必须使用独立物品仓容器');
   assert.match(source,/inventory-scroll/,'物品仓内容必须拥有独立滚动层，不能推动整页与底部菜单');
@@ -165,7 +165,7 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.match(css,/#panel \.region-action\s*\{[^}]*grid-template-columns:40px minmax\(0,1fr\) 118px/s,'三个现场行动必须使用同宽的右侧状态列');
   assert.match(css,/\.ra-status\s*\{[^}]*grid-template-columns:minmax\(0,1fr\) 15px[^}]*grid-template-rows:auto auto/s,'行动消耗文字与箭头必须共享固定对齐网格');
   assert.match(js,/function investigationClueChance\(id\)[\s\S]*misses>=3\?1/,'随机勘察必须提供三次失败后的线索保底');
-  assert.match(js,/随机结果：路线线索、物资痕迹、敌对遭遇或无发现/,'勘察入口必须说明随机结果类别');
+  assert.match(js,/随机结果：路线线索、机关、隐藏地点、物资或敌对遭遇/,'勘察入口必须说明随机结果与特殊发现类别');
   assert.doesNotMatch(js,/actionMeta=[^\n]*新线索 \+\(eventIndex\+1\)/,'勘察入口不得提前承诺下一次必出线索');
   assert.match(js,/const SLOT_ICON=\{head:'helmet'[\s\S]*weapon:'weapon'\}/,'十个装备接口必须各自使用语义化 SVG 图标');
   assert.doesNotMatch(js,/training-target[^\n]*◎/,'训练设施不得退回字体符号图标');
@@ -212,7 +212,7 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
 {
   const s=reset(),box=new FakeElement();a.renderCharPanel(box);const classes=box.children.map(x=>x.className||'');
   const growth=classes.indexOf('growth-nav character-quick-nav'),stats=classes.indexOf('char-fold stat-fold');
-  assert.equal(classes[0],'camp-hero char-console char-profile-card','角色页首屏应复用统一营地控制台组件');assert.ok(growth>=0&&growth<stats,'基因锁和职业入口必须排在详细属性之前');assert.equal(classes.filter(x=>x.startsWith('char-fold')).length,4,'详细属性、技能、精通和回响应收进四个按需展开区');
+  assert.equal(classes[0],'camp-hero char-console char-profile-card','角色页首屏应复用统一营地控制台组件');assert.ok(growth>=0&&growth<stats,'基因锁和职业入口必须排在详细属性之前');assert.equal(classes.filter(x=>x.startsWith('char-fold')).length,3,'详细属性、技能/精通和回响应收进三个按需展开区');
   assert.equal(s.charView,'overview');
 }
 {
@@ -499,9 +499,21 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   a.performFieldOperation('repairCutter');assert.equal(s.inv.plasmaCutter,1,'工业切割器仍用于矿井和其他重型清障');
 }
 {
+  let s=reset();s.player.location='floodChannel';s.player.stamina=50;s.discovered.floodChannel=true;sandbox.Math.random=()=>0;
+  a.explore('investigate');a.explore('investigate');a.explore('investigate');
+  assert.equal(s.flags.mineEntrance,true,'排水渠机关必须能开启旧矿井的第二入口');
+  assert.equal(a.locationRevealed('oldMine'),true,'特殊机关触发后隐藏地点必须真正显示在地图上');
+  assert.ok(a.MAP_LINKS.some(([x,y])=>new Set([x,y]).has('floodChannel')&&new Set([x,y]).has('oldMine')),'旧矿井必须具有不止一条发现路线');
+  s=reset();s.player.location='layer4';s.player.stamina=50;s.discovered.layer4=true;sandbox.Math.random=()=>0;
+  a.explore('investigate');a.explore('investigate');
+  assert.equal(s.flags.nurseryFound,true);assert.equal(a.locationRevealed('nursery'),true,'实验室机关必须开启隐藏培养室');
+}
+{
   const s=reset();
   Object.entries(a.ENTRY_REQUIREMENTS).forEach(([loc,req])=>{assert.ok(a.LOCATIONS[loc],`入口条件地点 ${loc} 不存在`);assert.ok(a.ITEMS[req.item],`入口条件 ${loc} 使用未知道具 ${req.item}`);});
   Object.entries(a.FIELD_OPERATIONS).forEach(([id,op])=>{assert.ok(a.LOCATIONS[op.at],`现场操作 ${id} 地点不存在`);assert.ok(a.ITEMS[op.grant],`现场操作 ${id} 产出未知道具`);Object.keys(op.cost||{}).forEach(item=>assert.ok(a.ITEMS[item],`现场操作 ${id} 使用未知材料 ${item}`));});
+  ['oldMine','relayTower','layer2','freightHub','coolingGallery','titaniumMine','cryoVault','sealedCabin','underworks','sporeTunnel','ruinVestibule','livingCanopy'].forEach(id=>assert.ok(a.ENTRY_REQUIREMENTS[id],`${a.LOCATIONS[id].name} 必须通过统一入口弹层说明所需道具及来源`));
+  ['floodChannel','relayTower','layer3','layer4','nursery','abyss','phaseGrove'].forEach(id=>assert.ok((a.DISCOVERY_MILESTONES[id]||[]).length,`${a.LOCATIONS[id].name} 必须能继续探索出新路线或特殊地点`));
   const resourceSites=Object.entries(a.LOCATIONS).filter(([,loc])=>loc.resourceSite);
   assert.ok(resourceSites.length>=5,'三层地图都应包含可供后续自动建筑接管的资源据点候选');
   resourceSites.forEach(([id,loc])=>{assert.equal(a.gatherLimit(id),['mine','lunar'].includes(loc.profile)?4:3,`${loc.name} 必须具有可恢复的资源容量`);loc.resourceSite.yield.forEach(item=>assert.ok(loc.loot[item]>0,`${loc.name} 必须实际产出标注资源 ${item}`));});

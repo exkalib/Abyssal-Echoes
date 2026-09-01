@@ -668,3 +668,16 @@ html, body { height: 100%; background: #06090e; color: var(--fg); overscroll-beh
 .mastery-card button { margin-top:4px;padding:5px 0;font-size:11px;border-radius:4px;border:1px solid #1d3346;background:#0a121b;color:#7a9ab5;cursor:pointer; }
 .mastery-card button.primary { background:linear-gradient(135deg,#0e3a5c,#0a2844);color:#65dbff;border-color:#1a5276; }
 .mastery-card button:disabled { opacity:.4;cursor:not-allowed; }
+
+/* ---------- NPC交互面板 ---------- */
+.npc-tabs { display:flex;gap:0;margin:8px 0;border-bottom:1px solid #1d3346; }
+.npc-tab { flex:1;padding:8px 0;background:none;border:none;border-bottom:2px solid transparent;color:#53677a;font-size:12px;font-family:inherit;letter-spacing:.5px;cursor:pointer;transition:color .15s,border-color .15s; }
+.npc-tab.active { color:#65dbff;border-bottom-color:#65dbff; }
+.npc-dialog { padding:8px 0;display:flex;flex-direction:column;gap:6px; }
+.npc-line { background:#0d1a26;border-left:2px solid #1d3346;padding:8px 12px;color:#b8d4e8;font-size:13px;line-height:1.5;border-radius:0 4px 4px 0; }
+.npc-line.story { border-left-color:#d4a843;color:#e8d5a8; }
+.npc-line.good { border-left-color:#43d480;color:#a8e8c5; }
+.npc-line.warn { border-left-color:#d47843;color:#e8c5a8; }
+.npc-line.dim { color:#53677a;font-style:italic; }
+.npc-novice { margin-top:12px; }
+.mastery-passive span { color:#65dbff!important;font-size:10px!important;font-weight:700; }

@@ -334,10 +334,10 @@ const LOCATIONS = {
 };
 const MAP_LINKS = [
   ['camp','outer'],['outer','joeCamp'],['outer','cargoYard'],['outer','blackwood'],['outer','ridge'],['cargoYard','blackwood'],['cargoYard','ridge'],
-  ['blackwood','floodChannel'],['floodChannel','coalRift'],['ridge','coalRift'],['ridge','relayTower'],['ridge','oldMine'],['ridge','silicaField'],['oldMine','coalRift'],['oldMine','titaniumMine'],['titaniumMine','underworks'],['relayTower','layer2'],
-  ['layer2','freightHub'],['freightHub','layer3'],['layer2','sealedCabin'],['layer3','coolingGallery'],['coolingGallery','layer4'],['coolingGallery','cryoVault'],
+  ['blackwood','floodChannel'],['floodChannel','coalRift'],['floodChannel','oldMine'],['ridge','coalRift'],['ridge','relayTower'],['ridge','oldMine'],['ridge','silicaField'],['oldMine','coalRift'],['oldMine','titaniumMine'],['titaniumMine','underworks'],['relayTower','layer2'],['relayTower','freightHub'],
+  ['layer2','freightHub'],['freightHub','layer3'],['layer2','sealedCabin'],['layer3','coolingGallery'],['layer3','underworks'],['coolingGallery','layer4'],['coolingGallery','cryoVault'],
   ['layer4','layer5'],['layer5','droneHangar'],['layer5','layer6'],['layer6','layer7'],
-  ['coalRift','underworks'],['layer4','underworks'],['layer4','nursery'],['nursery','underworks'],['underworks','fungal'],['fungal','sporeTunnel'],['sporeTunnel','abyss'],['abyss','phaseGrove'],['abyss','ruinVestibule'],['ruinVestibule','signal']
+  ['coalRift','underworks'],['layer4','underworks'],['layer4','nursery'],['nursery','underworks'],['nursery','fungal'],['underworks','fungal'],['fungal','sporeTunnel'],['sporeTunnel','abyss'],['abyss','phaseGrove'],['abyss','ruinVestibule'],['phaseGrove','ruinVestibule'],['ruinVestibule','signal']
   ,['orbitalGraveyard','brokenRing'],['brokenRing','wardenRelay'],
   ['regolithSea','iridiumCrater'],['iridiumCrater','massDriver'],
   ['xenoShore','livingCanopy'],['livingCanopy','seedCitadel'],
@@ -384,25 +384,34 @@ const DISCOVERY_MILESTONES = {
   ],
   cargoYard:[{count:1,reveal:'blackwood',hint:'钢索后的黑木林入口'},{count:2,reveal:'ridge',hint:'货柜顶端可见的断舰岩脊'}],
   blackwood:[{count:2,reveal:'floodChannel',hint:'通往冲刷排水渠的兽迹'}],
-  floodChannel:[{count:1,reveal:'coalRift',hint:'排水渠尽头的碳脉裂谷'}],
+  floodChannel:[
+    {range:[1,2],reveal:'coalRift',hint:'排水渠尽头的碳脉裂谷'},
+    {range:[3,5],reveal:'oldMine',flag:'mineEntrance',hint:'排水闸后的旧矿井泄水道',special:'你转动锈死的排水闸，泥水退去后露出一条通往旧矿井的泄水道。矿井现在有两处入口。'},
+  ],
   ridge:[{count:1,reveal:'relayTower',hint:'岩脊背后的旧中继塔'},{count:2,reveal:'oldMine',hint:'被断舰压住的矿井支路'},{count:3,reveal:'silicaField',hint:'只在扫描镜中反光的熔玻地层'}],
   oldMine:[{count:2,reveal:'titaniumMine',hint:'采掘机记录中的白色深脉'}],
   coalRift:[{count:1,reveal:'underworks',hint:'通往地下深层的船底维修井'}],
-  layer2:[{count:1,reveal:'freightHub',hint:'生活区外侧的货运中转轨'}],
+  relayTower:[{range:[2,4],reveal:'freightHub',hint:'中继塔下方的维护运输轨',special:'塔底终端还控制着一条旧维护轨。它绕过生活区，直接接入货运中转舱。'}],
+  layer2:[{range:[1,2],reveal:'freightHub',hint:'生活区外侧的货运中转轨'}],
   freightHub:[{count:1,reveal:'layer3',hint:'货运轨尽头的工程区'}],
-  layer3:[{count:1,reveal:'coolingGallery',hint:'热变形的冷却管廊舱门'}],
+  layer3:[
+    {range:[1,2],reveal:'coolingGallery',hint:'热变形的冷却管廊舱门'},
+    {range:[3,5],reveal:'underworks',hint:'反应堆检修井内的应急升降索',special:'你恢复了一台应急升降机。它能直达船底维修井，但井下粉尘仍需要深层探照灯。'},
+  ],
   coolingGallery:[{count:1,reveal:'layer4',hint:'管廊尽头的实验室升降机'},{count:2,reveal:'cryoVault',hint:'真空隔板后的零度储备舱'}],
   layer4:[
     {count:1,reveal:'layer5',hint:'军事区封锁通道'},
-    {count:2,reveal:'nursery',hint:'平面图外的气密管线'},
+    {range:[2,4],reveal:'nursery',flag:'nurseryFound',hint:'平面图外的气密管线',special:'培养台后的气密管线并不存在于公开平面图。沿管线反向扫描后，一间隐藏培养室出现在地图上。'},
     {count:3,reveal:'underworks',hint:'船底通往维修井的裂口'},
   ],
+  nursery:[{range:[2,4],reveal:'fungal',hint:'培养室排污管后的菌光通道',special:'原型终端打开了废弃生物排污管，管道另一端竟与地下菌光谷相连。'}],
   layer5:[{count:2,reveal:'droneHangar',hint:'被军事权限隐藏的自律机库'},{count:3,reveal:'layer6',hint:'巡逻队留下的舰桥通道'}],
   layer6:[{count:2,reveal:'layer7',hint:'核心舱升降井'}],
   underworks:[{count:1,reveal:'fungal',hint:'维修井底部的菌光洞口'}],
   fungal:[{count:1,reveal:'sporeTunnel',hint:'菌幕后方的孢子洞廊'}],
   sporeTunnel:[{count:1,reveal:'abyss',hint:'洞廊尽头的回声深井'}],
-  abyss:[{count:2,reveal:'phaseGrove',hint:'随回响频率显现的晶体侧路'}],
+  abyss:[{range:[2,4],reveal:'phaseGrove',hint:'随回响频率显现的晶体侧路',special:'深井脉冲短暂改变了岩壁折射率，一条只在特定频率出现的相位晶林侧路被记录下来。'}],
+  phaseGrove:[{range:[2,4],reveal:'ruinVestibule',hint:'晶林背后的折叠门厅',special:'相位晶簇同时共振，折叠出一条抵达遗迹门厅的第二通路；门锁仍需要遗迹解码楔。'}],
   ruinVestibule:[{count:1,reveal:'signal',hint:'遗迹门厅后的信号核心'}],
   orbitalGraveyard:[{count:1,reveal:'brokenRing',hint:'断环残骸的稳定接近窗口'}],
   brokenRing:[{count:1,reveal:'wardenRelay',hint:'封锁月面坐标的失控中继'}],
@@ -421,9 +430,13 @@ const ENTRY_REQUIREMENTS = {
   layer2:{item:'civilPass',text:'生活区外门拒绝未知身份',action:'刷生活区门禁卡',source:'携维护钥匙进入断波塔并恢复终端'},
   freightHub:{item:'maintenanceKey',text:'货运中转舱维护锁闭合',action:'打开维护锁',source:'调查黑木林，寻找三棱维护钥匙'},
   coolingGallery:{item:'plasmaCutter',text:'冷却管廊舱门热变形',action:'切开变形舱门',source:'在货柜坟场修复工业切割器'},
+  titaniumMine:{item:'miningHarness',text:'白钛深脉岩层持续滑移，普通装备无法稳定立足',action:'固定采掘外骨骼进入矿脉',source:'在旧世界矿井救出阿拓取得蓝图，再于工作台制作'},
+  cryoVault:{item:'radSuit',text:'零度储备舱同时存在辐射与低温泄漏',action:'密封防辐射服进入储备舱',source:'研究【环境防护】后在装甲台制作'},
+  sealedCabin:{item:'accessCard',text:'封存导航舱需要巡逻队长级权限',action:'刷指挥权限卡解除封存',source:'完成军事区任务【失联巡逻队】'},
   underworks:{item:'depthLamp',text:'维修井粉尘使普通照明失效',action:'启动深层探照灯下井',source:'救出矿工阿拓后，在旧世界矿井组装'},
   sporeTunnel:{item:'sporeSeal',text:'活体菌幕会侵入防护层',action:'校准菌幕通行胶囊',source:'在菌光谷完成任务【穿过菌幕】'},
   ruinVestibule:{item:'signalCipher',text:'遗迹门锁无法识别方舟权限',action:'插入遗迹解码楔',source:'修复回声深井中继器后完成解码'},
+  livingCanopy:{item:'xenoFilter',text:'活体天幕正在模仿并侵入探索者神经信号',action:'启动异星生态滤膜进入',source:'研究【异星生态隔离】后制造生态滤膜'},
 };
 
 /* 路障属于具体路线而不是整个地点。黑木林有多个入口，但共享同一片荆棘清理状态。 */
@@ -1374,9 +1387,17 @@ function thresholdFor(key,range){
   if(state.discoveryThresholds[key]==null){const min=Math.max(1,range[0]),max=Math.max(min,range[1]);state.discoveryThresholds[key]=min+Math.floor(Math.random()*(max-min+1));}
   return state.discoveryThresholds[key];
 }
-function milestoneNeed(id,index,rule){return thresholdFor('route:'+id+':'+index,rule.range||[Math.max(1,rule.count),Math.max(2,rule.count+2)]);}
+function routeSurveyBonus(){return (skillUnlocked('tacticalScan')?1:0)+(currentCareer('infiltrator')?1:0)+(techKnown('auto_2')?1:0);}
+function milestoneNeed(id,index,rule){return Math.max(1,thresholdFor('route:'+id+':'+index,rule.range||[Math.max(1,rule.count),Math.max(2,rule.count+2)])-routeSurveyBonus());}
 function applyDiscoveryMilestones(id,count){
-  (DISCOVERY_MILESTONES[id]||[]).forEach((rule,index)=>{if(count>=milestoneNeed(id,index,rule))discoverLocation(rule.reveal,true);});
+  (DISCOVERY_MILESTONES[id]||[]).forEach((rule,index)=>{
+    if(count<milestoneNeed(id,index,rule)||locationRevealed(rule.reveal))return;
+    if(rule.flag)setProgressFlag(rule.flag,true);
+    if(rule.special){divider();log('⌘ 发现特殊通路','sys');log(rule.special,'story');divider();setLogOpen(true);}
+    const announced=discoverLocation(rule.reveal,true);
+    /* 旧存档可能已经记住坐标但尚未触发机关；机关完成后仍要明确告诉玩家路线已经开放。 */
+    if(!announced&&locationRevealed(rule.reveal))log('◈ 路线开放：【'+LOCATIONS[rule.reveal].name+'】','good');
+  });
 }
 function nextDiscoveryMilestone(id){
   const count=exploreAttempts(id);
@@ -1388,7 +1409,7 @@ function resourceSiteOf(id){
   const yieldItems=Object.entries(loc.loot).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);return yieldItems.length?{label:labels[loc.profile]||'资源点',yield:yieldItems}:null;
 }
 function resourceSiteDiscovered(id){return !!(state.resourceSites&&state.resourceSites[id]);}
-function resourceDiscoveryNeed(id){return thresholdFor('resource:'+id,id==='outer'?[1,2]:[1,3]);}
+function resourceDiscoveryNeed(id){const surveyBonus=skillUnlocked('salvageSense')||currentCareer('salvager')?1:0;return Math.max(1,thresholdFor('resource:'+id,id==='outer'?[1,2]:[1,3])-surveyBonus);}
 function discoverResourceSite(id){
   const site=resourceSiteOf(id);if(!site||resourceSiteDiscovered(id))return false;
   state.resourceSites[id]=true;state.resourcePools[id]={charges:resourceCapacity(id),updatedAt:state.time};
@@ -1814,12 +1835,12 @@ function panelView(){
   if(P().location==='camp'){
     if(state.campBuilding&&state.meta.built[state.campBuilding])return 'facility';
     if(state.campView==='construct')return 'construction';
-    if(state.campView==='teach')return 'camp';
+    if(state.campView==='npc')return 'camp';
     return state.mapOpen?'camp-map':'camp';
   }
   return state.mapOpen?'explore-map':'explore';
 }
-function render(){ renderTop(); const box=$('panel'); box.innerHTML=''; box.classList.remove('camp-home','tutorial-panel');
+function render(){ if(_npcCapturing)return; renderTop(); const box=$('panel'); box.innerHTML=''; box.classList.remove('camp-home','tutorial-panel');
   box.dataset.view=panelView();
   const onboarding=tutorialActive(),hud=tutorialHudUnlocked();
   $('app').classList.toggle('tutorial-active',onboarding); $('app').classList.toggle('tutorial-nohud',onboarding&&!hud); $('app').classList.toggle('tutorial-hud',onboarding&&hud);
@@ -1892,8 +1913,10 @@ function renderSiteSheet(box){
     const force=el('button','site-sheet-secondary',canForce?'强行挤过 · 生命 -'+obstacle.damage:'生命不足，无法强行通过');force.disabled=!canForce;force.onclick=()=>crossRouteObstacle(ref.from,ref.to,false);sheet.appendChild(force);
   }else if(ref.kind==='gate'){
     const loc=LOCATIONS[ref.id];if(!loc){state.siteSheet=null;return;}
-    const gate=locationGate(ref.id),req=ENTRY_REQUIREMENTS[ref.id],owned=req&&has(req.item),reachable=isAdjacent(P().location,ref.id)||!!travelRoute(P().location,ref.id);
-    sheet.innerHTML='<div class="site-sheet-grip"></div><div class="site-sheet-head"><span>'+loc.icon+'</span><div><small>ROUTE ACCESS</small><b>'+loc.name+'</b></div></div><p>'+(req?req.text:gate.text)+'</p>'+(req?'<div class="gate-tool '+(owned?'owned':'')+'"><i>'+ITEMS[req.item].icon+'</i><span><small>所需道具</small><b>'+ITEMS[req.item].name+'</b></span><em>'+(owned?'已持有':'未取得')+'</em></div><div class="gate-source"><small>获取线索</small><span>'+req.source+'</span></div>':'<div class="site-sheet-status">'+gate.text+'</div>');
+    const gate=locationGate(ref.id),req=ENTRY_REQUIREMENTS[ref.id],owned=req&&ownsItem(req.item),tech=loc.needTech&&TECHS[loc.needTech],techReady=!tech||techKnown(loc.needTech),reachable=isAdjacent(P().location,ref.id)||!!travelRoute(P().location,ref.id),checks=[];
+    if(req)checks.push('<div class="gate-tool '+(owned?'owned':'')+'"><i>'+ITEMS[req.item].icon+'</i><span><small>所需道具</small><b>'+ITEMS[req.item].name+'</b></span><em>'+(owned?'已持有':'未取得')+'</em></div><div class="gate-source"><small>获取线索</small><span>'+req.source+'</span></div>');
+    if(tech)checks.push('<div class="gate-tool '+(techReady?'owned':'')+'"><i>'+uiIcon('tech')+'</i><span><small>所需科技</small><b>'+tech.n+'</b></span><em>'+(techReady?'已研究':'未研究')+'</em></div><div class="gate-source"><small>研究路径</small><span>前往科技树查看前置材料、技术资料与研究设施</span></div>');
+    sheet.innerHTML='<div class="site-sheet-grip"></div><div class="site-sheet-head"><span>'+loc.icon+'</span><div><small>ROUTE ACCESS</small><b>'+loc.name+'</b></div></div><p>'+(!gate.ok?gate.text:(req?req.text:'路线条件已经满足'))+'</p>'+(checks.join('')||'<div class="site-sheet-status">'+gate.text+'</div>');
     sheet.appendChild(close);
     const label=!gate.ok?'知道了':!reachable?'先抵达相邻地点':(req&&entryNeedsConfirm(ref.id)?req.action:'前往');
     const action=el('button','site-sheet-primary',label);action.onclick=(gate.ok&&reachable)?()=>confirmEntry(ref.id):closeSiteSheet;sheet.appendChild(action);
@@ -2101,38 +2124,58 @@ function renderCampContacts(box){
   const sec=el('section','camp-contacts'),head=el('div','camp-section-head','<span><small>ACTIVE CONTACTS</small><b>营地联系人</b></span><em>剧情推进后位置会改变</em>'),list=el('div','camp-contact-list');sec.appendChild(head);
   names.forEach(name=>{
     const teachList=NPC_TEACH[name]||[];
-    const label=teachList.length?'教学 · '+teachList.length+'项精通':'交谈';
-    const b=el('button','camp-contact','<span>'+uiIcon('dialogue')+'</span><b>'+name+'</b><small>'+label+'</small>');
-    b.onclick=()=>{ if(teachList.length){openNpcTeachPanel(name);} else {talkAreaNpc(name);} };
+    const sub=teachList.length?'可教学 · '+teachList.length+'项精通':'交谈';
+    const b=el('button','camp-contact','<span>'+uiIcon('dialogue')+'</span><b>'+name+'</b><small>'+sub+'</small>');
+    b.onclick=()=>openNpcPanel(name);
     list.appendChild(b);
   });sec.appendChild(list);box.appendChild(sec);
 }
-function openNpcTeachPanel(npcName){
-  state.campView='teach'; state.teachNpc=npcName; setLogOpen(false); renderPanelTop();
+function openNpcPanel(npcName){
+  state.campView='npc'; state.npcTarget=npcName; state.npcTab='talk'; setLogOpen(false); renderPanelTop();
 }
-function renderTeachPanel(box){
-  const npcName=state.teachNpc; const teachList=NPC_TEACH[npcName]||[];
-  title(box,'<b>'+npcName+' · 精通教学</b>');
-  const back=el('button','','← 返回营地'); back.onclick=()=>{state.campView='home';renderPanelTop();}; box.appendChild(back);
-  teachList.forEach(k=>{
-    const m=MASTERIES[k]; const lv=masteryLv(k); const cost=masteryCost(k);
-    const desc=m.desc.replace('{v}',m.perLv*(lv+1));
-    const costStr=Object.entries(cost).map(([mat,n])=>ITEMS[mat].name+'×'+n).join(' ');
-    const can=Object.entries(cost).every(([mat,n])=>(state.inv[mat]||0)>=n);
-    const card=el('div','mastery-card');
-    card.innerHTML='<div class="mc-head"><b>'+m.name+'</b><span class="mc-lv">Lv'+lv+'</span></div><div class="mc-desc">'+desc+'</div><div class="mc-cost">'+costStr+'</div>';
-    const btn=el('button',can?'primary':'',lv===0?'学习':'升级'); btn.disabled=!can; btn.onclick=(()=>{const _k=k;return ()=>upgradeMastery(_k);})(); card.appendChild(btn);
-    box.appendChild(card);
-  });
-  // 入门职业任务入口
-  const noviceForNpc=Object.entries(NOVICE_JOBS).find(([,nj])=>nj.npc===npcName);
-  if(noviceForNpc){
-    const [nid,nj]=noviceForNpc; const hasJob=currentCareer(nid)||currentCareer(nj.formal);
-    if(!hasJob){
-      title(box,'<b>入门职业</b>');
-      const qb=el('button','primary','接受训练 → '+nj.name); qb.onclick=(()=>{const _nid=nid;return ()=>chooseNoviceJob(_nid);})(); box.appendChild(qb);
-      box.appendChild(el('div','mc-desc',nj.desc));
+function logCaptureStart(){ return $('log').innerHTML; }
+function logCaptureEnd(prev){ const cur=$('log'),nodes=Array.from(cur.children),prevNodes=document.createElement('div');prevNodes.innerHTML=prev;const prevCount=prevNodes.children.length;const lines=[];for(let i=prevCount;i<nodes.length;i++){const n=nodes[i];if(n.classList.contains('divider'))continue;lines.push({text:n.textContent,cls:n.className});}return lines; }
+let _npcCapturing=false;
+function renderNpcPanel(box){
+  const npcName=state.npcTarget; if(!state.npcTab)state.npcTab='talk';
+  const teachList=NPC_TEACH[npcName]||[];
+  const top=el('div','facility-nav npc-nav');
+  const back=el('button','facility-back ui-icon-button',uiIcon('chevron-left'));back.setAttribute('aria-label','返回营地');back.onclick=()=>{state.campView='home';renderPanelTop();};top.appendChild(back);
+  top.appendChild(el('div','facility-nav-title','<small>CONTACT</small><b>'+npcName+'</b><em>'+(teachList.length?'教学 · 交谈':'营地成员')+'</em>'));
+  box.appendChild(top);
+  if(teachList.length){
+    const tabs=el('div','npc-tabs');
+    const tTalk=el('button','npc-tab'+(state.npcTab==='talk'?' active':''),'交谈');tTalk.onclick=()=>{state.npcTab='talk';renderPanelTop();};tabs.appendChild(tTalk);
+    const tTeach=el('button','npc-tab'+(state.npcTab==='teach'?' active':''),'精通教学');tTeach.onclick=()=>{state.npcTab='teach';renderPanelTop();};tabs.appendChild(tTeach);
+    box.appendChild(tabs);
+  }
+  if(state.npcTab==='teach'&&teachList.length){
+    const grid=el('div','mastery-grid');
+    teachList.forEach(k=>{
+      const m=MASTERIES[k]; const lv=masteryLv(k); const cost=masteryCost(k);
+      const desc=m.desc.replace('{v}',m.perLv*(lv+1));
+      const costStr=Object.entries(cost).map(([mat,n])=>ITEMS[mat].name+'×'+n).join(' ');
+      const can=Object.entries(cost).every(([mat,n])=>(state.inv[mat]||0)>=n);
+      const card=el('div','mastery-card');
+      card.innerHTML='<div class="mc-head"><b>'+m.name+'</b><span class="mc-lv">Lv'+lv+'</span></div><div class="mc-desc">'+desc+'</div><div class="mc-cost">'+costStr+'</div>';
+      const btn=el('button',can?'primary':'',lv===0?'学习':'升级'); btn.disabled=!can; btn.onclick=(()=>{const _k=k;return ()=>upgradeMastery(_k);})(); card.appendChild(btn);
+      grid.appendChild(card);
+    });
+    box.appendChild(grid);
+    const noviceForNpc=Object.entries(NOVICE_JOBS).find(([,nj])=>nj.npc===npcName);
+    if(noviceForNpc){
+      const [nid,nj]=noviceForNpc; const hasJob=currentCareer(nid)||currentCareer(nj.formal);
+      if(!hasJob){
+        const njSec=el('div','npc-novice');njSec.innerHTML='<div class="camp-section-head"><span><small>NOVICE CAREER</small><b>入门职业</b></span></div>';
+        const qb=el('button','camp-command-card primary','<span class="cc-copy"><small>TRAINING</small><b>'+nj.name+'</b><em>'+nj.desc+'</em></span>');qb.onclick=(()=>{const _nid=nid;return ()=>chooseNoviceJob(_nid);})();njSec.appendChild(qb);box.appendChild(njSec);
+      }
     }
+  } else {
+    const dialogBox=el('div','npc-dialog');
+    const prevLog=logCaptureStart(); _npcCapturing=true; talkAreaNpc(npcName); _npcCapturing=false; const lines=logCaptureEnd(prevLog);
+    if(lines.length){lines.forEach(l=>{const p=el('div','npc-line'+(l.cls?' '+l.cls:''));p.textContent=l.text;dialogBox.appendChild(p);});}
+    else dialogBox.appendChild(el('div','npc-line dim','……'));
+    box.appendChild(dialogBox);
   }
 }
 function renderCampHome(box){ state.campBuilding=null; state.campView='home'; box.classList.add('camp-home');
@@ -2188,7 +2231,7 @@ function renderActPanel(box){
   if(loc==='camp'){
     if(state.campBuilding&&state.meta.built[state.campBuilding])return renderBuilding(box,state.campBuilding);
     if(state.campView==='construct')return renderConstruction(box);
-    if(state.campView==='teach')return renderTeachPanel(box);
+    if(state.campView==='npc')return renderNpcPanel(box);
     return renderCampHome(box);
   }
   const here=LOCATIONS[loc],profile=REGION_PROFILES[here.profile],localNpcs=npcsAt(loc);
@@ -2227,7 +2270,7 @@ function renderActPanel(box){
     const remaining=a.mode==='gather'?gatherAvailable(loc):null;
     const hazard=here.contamination&&!armorImmune('contamination')?' · 生命 -3':'';
     const actionMeta=(a.mode==='gather'?(remaining?'储量 '+remaining+'/'+gatherLimit(loc)+' · 体力 -'+cost:'储量耗尽 · '+resourceRecoveryRemaining(loc)+'小时后恢复1次'):(a.mode==='investigate'?'结果未知 · 体力 -'+cost:'体力 -'+cost))+hazard;
-    const actionDesc=a.mode==='investigate'?'随机结果：路线线索、物资痕迹、敌对遭遇或无发现；少量物资随机获得，累计探索可发现资源点与多个出口':a.mode==='gather'?a.desc+' · 产量高于普通探索，储量随时间恢复':a.desc;
+    const actionDesc=a.mode==='investigate'?'随机结果：路线线索、机关、隐藏地点、物资或敌对遭遇；斥候技能与扫描科技会更快确认出口':a.mode==='gather'?a.desc+' · 产量高于普通探索，储量随时间恢复':a.desc;
     b.innerHTML='<span class="ra-icon">'+uiIcon(ACTION_ICON[a.mode]||'unknown')+'</span><span class="ra-copy"><small>OPERATION // '+a.mode.toUpperCase()+'</small><b>'+a.name+'</b><em>'+actionDesc+'</em></span><span class="ra-status"><small>COST</small><b>'+actionMeta+'</b><i>'+uiIcon('chevron-right')+'</i></span>';
     if(a.mode==='gather'&&!remaining)b.disabled=true; else b.onclick=()=>explore(a.mode); ag.appendChild(b); });
     if(surveyed)localNpcs.forEach(name=>{ const b=el('button','region-action npc-action'); b.innerHTML='<span class="ra-icon">'+uiIcon('dialogue')+'</span><span class="ra-copy"><small>CONTACT // LOCAL</small><b>与'+name+'交谈</b><em>询问任务、线索与当前区域情报</em></span><span class="ra-status"><small>COST</small><b>无消耗</b><i>'+uiIcon('chevron-right')+'</i></span>'; b.onclick=()=>talkAreaNpc(name); ag.appendChild(b); });
@@ -2248,8 +2291,11 @@ function renderSkillLoadout(box){
   active.forEach(k=>{const s=SKILLS[k],at=equippedSlot(k),b=el('button','skill-card'+(at>=0?' equipped':''));b.innerHTML='<span class="skill-type">ACTIVE</span><b>'+s.name+'</b><small>'+s.desc+' · 体力 '+s.cost+'</small><em>'+(at>=0?('已装配 0'+(at+1)):'装配到选中槽')+'</em>';b.onclick=()=>equipSkill(k,state.skillSlotSel);lib.appendChild(b);}); box.appendChild(lib);
   title(box,'<span class="section-code">PASSIVE MATRIX</span><b>被动技能</b><small>自动生效，不占技能槽</small>');
   const passives=Object.keys(SKILLS).filter(k=>SKILLS[k].type==='passive'&&skillUnlocked(k)),pg=el('div','passive-grid');
-  if(!passives.length)pg.appendChild(el('div','empty-note','职业达到对应等级后，被动模块会在这里自动接入。'));
-  passives.forEach(k=>{const s=SKILLS[k];pg.appendChild(el('div','passive-card','<span>AUTO</span><b>'+s.name+'</b><small>'+s.desc+'</small>'));}); box.appendChild(pg);
+  const learnedM=Object.entries(MASTERIES).filter(([k])=>masteryLv(k)>0);
+  if(!passives.length&&!learnedM.length)pg.appendChild(el('div','empty-note','职业达到对应等级后，被动模块会在这里自动接入。'));
+  passives.forEach(k=>{const s=SKILLS[k];pg.appendChild(el('div','passive-card','<span>AUTO</span><b>'+s.name+'</b><small>'+s.desc+'</small>'));});
+  learnedM.forEach(([k,m])=>{const lv=masteryLv(k),bonus=m.perLv*lv;pg.appendChild(el('div','passive-card mastery-passive','<span>LV'+lv+'</span><b>'+m.name+'</b><small>'+m.desc.replace('{v}',bonus)+'</small>'));});
+  box.appendChild(pg);
 }
 function careerSummary(kind){const r=careerRecord(kind);if(!r)return '未转职';return JOBS[r.id].name+' · Lv'+r.level;}
 function renderCharPanel(box){
@@ -2266,19 +2312,7 @@ function renderCharPanel(box){
   const g=el('div','statlist char-stats');cells.forEach(c=>g.appendChild(el('div','srow','<span class="k">'+c[0]+'</span><span class="v">'+c[1]+'</span>')));stats.appendChild(g);box.appendChild(stats);
   const skills=el('details','char-fold skill-fold');skills.innerHTML='<summary class="camp-command-card char-fold-trigger"><span class="cc-icon char-module-code">02</span><span class="cc-copy"><small>SKILL LOADOUT</small><b>技能配置</b><em>主动槽 '+(state.skillSlots||[]).filter(Boolean).length+'/3 · 被动 '+Object.keys(SKILLS).filter(k=>SKILLS[k].type==='passive'&&skillUnlocked(k)).length+'</em></span><span class="command-access"><small>MODULE</small><i>'+uiIcon('chevron-right')+'</i></span></summary>';
   const skillBody=el('div','char-fold-body');renderSkillLoadout(skillBody);skills.appendChild(skillBody);box.appendChild(skills);
-  const learnedM=Object.entries(MASTERIES).filter(([k])=>masteryLv(k)>0);
-  const masterySec=el('details','char-fold mastery-fold');masterySec.innerHTML='<summary class="camp-command-card char-fold-trigger"><span class="cc-icon char-module-code">03</span><span class="cc-copy"><small>MASTERY GRID</small><b>精通面板</b><em>已学 '+learnedM.length+' / '+Object.keys(MASTERIES).length+'</em></span><span class="command-access"><small>MODULE</small><i>'+uiIcon('chevron-right')+'</i></span></summary>';
-  const mBody=el('div','char-fold-body mastery-grid');
-  if(!learnedM.length){mBody.appendChild(el('div','mc-empty','尚未学习任何精通，前往营地找NPC学习'));}
-  learnedM.forEach(([k,m])=>{const lv=masteryLv(k),bonus=m.perLv*lv,cost=masteryCost(k);
-    const costStr=Object.entries(cost).map(([mat,n])=>ITEMS[mat].name+'×'+n).join(' ');
-    const can=Object.entries(cost).every(([mat,n])=>(state.inv[mat]||0)>=n);
-    const card=el('div','mastery-card');
-    card.innerHTML='<div class="mc-head"><b>'+m.name+'</b><span class="mc-lv">Lv'+lv+'</span></div><div class="mc-desc">'+m.desc.replace('{v}',bonus)+'</div><div class="mc-cost"><small>NEXT</small> '+costStr+'</div>';
-    if(P().location==='camp'){const btn=el('button',can?'primary':'',can?'升级':'材料不足');btn.disabled=!can;btn.onclick=(()=>{const _k=k;return ()=>upgradeMastery(_k);})();card.appendChild(btn);}
-    mBody.appendChild(card);});
-  masterySec.appendChild(mBody);box.appendChild(masterySec);
-  const echo=el('details','char-fold echo-fold');echo.innerHTML='<summary class="camp-command-card char-fold-trigger"><span class="cc-icon char-module-code">04</span><span class="cc-copy"><small>ECHO UPGRADES</small><b>回响强化</b><em>可用回响 '+state.meta.echo+'</em></span><span class="command-access"><small>MODULE</small><i>'+uiIcon('chevron-right')+'</i></span></summary>';
+  const echo=el('details','char-fold echo-fold');echo.innerHTML='<summary class="camp-command-card char-fold-trigger"><span class="cc-icon char-module-code">03</span><span class="cc-copy"><small>ECHO UPGRADES</small><b>回响强化</b><em>可用回响 '+state.meta.echo+'</em></span><span class="command-access"><small>MODULE</small><i>'+uiIcon('chevron-right')+'</i></span></summary>';
   const echoBody=el('div','char-fold-body');grid(echoBody,Object.entries(ECHO_UPGRADES).map(([id,e])=>{const lv=state.meta.echoUp[id]||0,cost=echoUpgradeCost(id);return {label:e.name+' Lv'+lv,cost:e.desc+' · 回响×'+cost,disabled:state.meta.echo<cost,cls:state.meta.echo>=cost?'primary':'',fn:()=>buyEchoUpgrade(id)};}));echo.appendChild(echoBody);box.appendChild(echo);
 }
 const TREE_SVG_NS='http://www.w3.org/2000/svg';
@@ -3107,7 +3141,7 @@ function flavor(id){ const zone=LOCATIONS[id].zone, pool={
   }; const a=pool[zone]||['这里暂时没有新的发现。']; return a[Math.floor(Math.random()*a.length)]; }
 function move(dest,routeHandled){
   if(!LOCATIONS[dest]||!isAdjacent(P().location,dest)){ log('这里没有可直接通行的路线。','warn'); return; }
-  const gate=locationGate(dest); if(!gate.ok){ log(gate.text+'。','warn'); return; }
+  const gate=locationGate(dest); if(!gate.ok){ openSiteSheet('gate',dest); return; }
   if(!routeHandled&&routeNeedsConfirm(P().location,dest)){openRouteObstacle(P().location,dest);return;}
   if(entryNeedsConfirm(dest)){openSiteSheet('gate',dest);return;}
   const from=P().location,nl=LOCATIONS[dest],cost=moveCost(from,dest);
