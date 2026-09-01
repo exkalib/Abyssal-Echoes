@@ -35,7 +35,7 @@ const sandbox = {
 };
 vm.createContext(sandbox);
 let source=fs.readFileSync(__dirname+'/game.js','utf8').replace(/\nboot\(\);\s*$/,'');
-source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,totalAtk,statPen,locExtraCost,areaActionCost,fieldMealActive,payAreaAction,materialSnapshot,beginExpedition,finishExpedition,exhaustionDeath,startCombat,winCombat,playerAttack,orbitalStrike,attackResource,attackResourceText,catchBreath,useSkill,equipSkill,unequipSkill,skillUnlocked,passiveBonus,updateCheckpoint,restoreCheckpoint,research,unlockGene,unlockGeneNode,geneTier,geneBonus,geneRule,chooseJob,jobBonus,gainCareerXp,doReincarnate,chooseEnding,gatherAvailable,gatherArea,gatherLimit,resourceSiteOf,resourceSiteDiscovered,resourceRecoveryRemaining,exploreAttempts,performLocationAction,locationActionRemaining,currentDay,rest,fmtTime,activateAvailableQuests,questSearchCount,startBeacon,flee,settleEcho,feedbackSpec,render,renderCharPanel,renderBuilding,renderSpaceRoutes,explore,move,staminaToCamp,travelRoute,buyEchoUpgrade,repairFacility,resolveRaid,hasBuildingTech,buildFacility,buildingLevel,upgradeFacility,eatMeal,eatFishMeal,harvestGarden,dispatchDrone,recycleMaterial,damageRandomFacility,mapEdgePath,tutorialActive,finishWakeAnimation,grantTutorialBracelet,grantTutorialBuilder,grantTutorialMap,completeTutorial,normalizeEquipment,normalizeMeta,mergePersistentSpaceMeta,metaFlag,setMetaFlag,grantTechRecord,syncQuestProgress,shipReady,assembleStarship,spaceFlightStatus,launchSpaceRoute,emergencySpaceReturn,outpostBuildStatus,buildOutpostPart,outpostReady,locationRevealed,locationGate,entryNeedsConfirm,routeObstacle,routeNeedsConfirm,crossRouteObstacle,operationStatus,performFieldOperation,regionForLocation,regionUnlocked,regionDiscovery,treeLayout,treePortOffset,treeEdgeRoute,techReady,techFacilitiesReady,discoverTechRecord,migrateTechTree,SLOTS,EQUIP_ICON,QUESTS,TECHS,TECH_RECORDS,BRANCHES,MATS,MATERIAL_SOURCES,LOCATIONS,MAP_LINKS,MAP_CANVAS,WORLD_POS,WORLD_REGIONS,WORLD_REGION_LINKS,LOCAL_MAPS,DISCOVERY_MILESTONES,ENTRY_REQUIREMENTS,ROUTE_OBSTACLES,FIELD_OPERATIONS,LOCATION_ACTIONS,npcLocation,npcsAt,ITEMS,RECIPES,CAMP_BUILDINGS,OUTPOST_BUILDINGS:(typeof OUTPOST_BUILDINGS==='undefined'?[]:OUTPOST_BUILDINGS),SPACE_ROUTES:(typeof SPACE_ROUTES==='undefined'?[]:SPACE_ROUTES),SMELT,RECYCLE,BEACON,SKILLS,GENE_NODES,GENE_TREE,JOBS};`;
+source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,totalAtk,statPen,locExtraCost,areaActionCost,fieldMealActive,payAreaAction,materialSnapshot,beginExpedition,finishExpedition,exhaustionDeath,startCombat,winCombat,playerAttack,orbitalStrike,attackResource,attackResourceText,catchBreath,useSkill,equipSkill,unequipSkill,skillUnlocked,passiveBonus,updateCheckpoint,restoreCheckpoint,research,unlockGene,unlockGeneNode,geneTier,geneBonus,geneRule,chooseJob,jobBonus,gainCareerXp,doReincarnate,chooseEnding,gatherAvailable,gatherArea,gatherLimit,resourceSiteOf,resourceSiteDiscovered,resourceRecoveryRemaining,exploreAttempts,performLocationAction,locationActionRemaining,currentDay,rest,fmtTime,activateAvailableQuests,questSearchCount,startBeacon,flee,settleEcho,feedbackSpec,render,renderCharPanel,renderBuilding,renderSpaceRoutes,explore,move,staminaToCamp,travelRoute,buyEchoUpgrade,repairFacility,resolveRaid,hasBuildingTech,buildFacility,buildingLevel,upgradeFacility,eatMeal,eatFishMeal,harvestGarden,dispatchDrone,recycleMaterial,damageRandomFacility,mapEdgePath,tutorialActive,finishWakeAnimation,grantTutorialBracelet,grantTutorialBuilder,grantTutorialMap,completeTutorial,normalizeEquipment,normalizeMeta,mergePersistentSpaceMeta,metaFlag,setMetaFlag,grantTechRecord,syncQuestProgress,shipReady,assembleStarship,spaceFlightStatus,launchSpaceRoute,emergencySpaceReturn,outpostBuildStatus,buildOutpostPart,outpostReady,locationRevealed,locationGate,entryNeedsConfirm,routeObstacle,routeNeedsConfirm,crossRouteObstacle,operationStatus,performFieldOperation,regionForLocation,regionUnlocked,regionDiscovery,treeLayout,treePortOffset,treeEdgeRoute,techReady,techFacilitiesReady,discoverTechRecord,migrateTechTree,setCampName,settlementTrade,settlementRecover,acceptCommission,turnInCommission,settlementDiscount,SLOTS,EQUIP_ICON,QUESTS,TECHS,TECH_RECORDS,BRANCHES,MATS,MATERIAL_SOURCES,LOCATIONS,MAP_LINKS,MAP_CANVAS,WORLD_POS,WORLD_REGIONS,WORLD_REGION_LINKS,LOCAL_MAPS,DISCOVERY_MILESTONES,ENTRY_REQUIREMENTS,ROUTE_OBSTACLES,FIELD_OPERATIONS,LOCATION_ACTIONS,SETTLEMENT_SHOP,SETTLEMENT_COMMISSIONS,npcLocation,npcsAt,ITEMS,RECIPES,CAMP_BUILDINGS,OUTPOST_BUILDINGS:(typeof OUTPOST_BUILDINGS==='undefined'?[]:OUTPOST_BUILDINGS),SPACE_ROUTES:(typeof SPACE_ROUTES==='undefined'?[]:SPACE_ROUTES),SMELT,RECYCLE,BEACON,SKILLS,GENE_NODES,GENE_TREE,JOBS};`;
 vm.runInContext(source,sandbox);
 const a=sandbox.api;
 function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.setState(s); return s; }
@@ -420,8 +420,8 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
     verdant:['xenoShore','livingCanopy','seedCitadel'],
     silent:['blackGlassPlain','precursorVault','zeroGate'],
   };
-  assert.equal(Object.keys(a.WORLD_REGIONS).length,8,'原有四区域加远航篇四区域后应为八个大区域');
-  assert.equal(Object.keys(a.LOCATIONS).length,43,'原有31地点加远航篇12地点后应为43个地点');
+  assert.equal(Object.keys(a.WORLD_REGIONS).length,9,'加入独立幸存者聚居地后应为九个大区域');
+  assert.equal(Object.keys(a.LOCATIONS).length,49,'原有地点加聚居地六地点后应为49个地点');
   Object.entries(regionLocations).forEach(([rid,locations])=>{const region=a.WORLD_REGIONS[rid];assert.ok(region,`远航区域 ${rid} 必须存在`);assert.deepEqual(Array.from(region.locations).sort(),locations.slice().sort(),`${rid} 必须恰好包含三个设计地点`);assert.ok(a.LOCAL_MAPS[rid],`远航区域 ${rid} 必须有可缩放的局部地图`);});
 
   const campBuildings=new Map(a.CAMP_BUILDINGS.map(b=>[b.id,b]));
@@ -625,11 +625,21 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   s.time+=24;assert.equal(a.fieldMealActive(),false);assert.equal(a.areaActionCost(2),2,'鱼汤增益必须在次日失效');
 }
 {
-  const s=reset();assert.equal(a.npcLocation('老乔'),'joeCamp');assert.ok(a.npcsAt('joeCamp').includes('老乔'));
-  s.flags.firstRaidSurvived=true;assert.equal(a.npcLocation('老乔'),'camp');assert.ok(!a.npcsAt('joeCamp').includes('老乔'),'剧情推进后旧地点不得继续显示 NPC');
+  const s=reset();assert.equal(a.npcLocation('老乔'),'camp');assert.ok(a.npcsAt('camp').includes('老乔'));
+  s.tutorial.complete=true;s.tutorial.step='done';assert.equal(a.npcLocation('老乔'),'setHub');assert.ok(!a.npcsAt('camp').includes('老乔'),'教程完成后老乔必须回到聚居地中枢');
   assert.equal(a.npcLocation('阿拓'),'oldMine');s.flags.depthLampBuilt=true;assert.equal(a.npcLocation('阿拓'),'underworks','组装深层探照灯后阿拓应转移到维修井');
-  assert.equal(a.npcLocation('纪遥'),'nursery');s.flags.prototypeOnline=true;assert.equal(a.npcLocation('纪遥'),'layer4','恢复原型终端后纪遥应转移到实验室');
+  assert.equal(a.npcLocation('纪遥'),'nursery');s.flags.prototypeOnline=true;assert.equal(a.npcLocation('纪遥'),'setArchive','恢复原型终端后纪遥应转移到聚居地档案区');
   s.flags.tangLost=true;assert.equal(a.npcLocation('小唐'),null,'不可逆剧情结果必须能让 NPC 从世界中移除');
+}
+{
+  const s=reset();assert.equal(s.campName,'幸存者营地');assert.equal(s.settlementRep,0);assert.deepEqual(Object.keys(a.LOCAL_MAPS.settlement.pos).sort(),['setArchive','setBio','setGarrison','setGate','setHub','setWorkshop'].sort());
+  assert.ok(a.MAP_LINKS.some(([x,y])=>x==='outer'&&y==='setGate'),'坠毁带必须能进入聚居地大门');assert.ok(a.WORLD_REGION_LINKS.some(([x,y])=>x==='surface'&&y==='settlement'),'世界地图必须连接地表与聚居地');
+  assert.equal(a.setCampName('  星火之家  '),'星火之家');assert.equal(s.campName,'星火之家');assert.equal(a.LOCATIONS.camp.name,'星火之家');
+  s.player.location='setHub';s.inv.crystal=2;assert.equal(a.settlementTrade('cloth','buy'),true);assert.equal(s.inv.cloth,3);assert.equal(s.inv.crystal,1);
+  s.settlementRep=20;s.inv.crystal=2;assert.equal(a.settlementDiscount(),.9);assert.equal(a.settlementTrade('ecomp','buy'),true);assert.equal(s.inv.ecomp,1);
+  s.player.location='setBio';s.player.hp=10;s.player.stamina=10;assert.equal(a.settlementRecover('basic'),true);assert.ok(s.player.hp>10&&s.player.stamina>10);assert.equal(a.settlementRecover('basic'),false,'每日基础医疗不得重复领取');
+  s.player.location='setHub';s.inv.scrap=12;assert.equal(a.acceptCommission('joe_scrap'),true);assert.equal(a.turnInCommission('joe_scrap'),true);assert.equal(s.settlementRep,26);assert.equal(s.settlementCommissions.joe_scrap.status,'done');assert.equal(a.acceptCommission('joe_scrap'),false,'一次性委托不得重复接取');
+  s.masteries.gatherMastery=3;a.updateCheckpoint();s.masteries.gatherMastery=9;a.restoreCheckpoint();assert.equal(a.getState().masteries.gatherMastery,3,'聚居地教学取得的精通等级必须进入检查点');
 }
 {
   const s=reset(); s.meta.built.garden=true; s.meta.buildLevels.garden=2; a.harvestGarden();
