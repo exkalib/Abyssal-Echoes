@@ -1,0 +1,25 @@
+[build]
+  publish = "prototype"
+  command = "node prototype/game.test.js"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Netlify 承载 HTTPS 前端；云存档暂时继续使用现有服务器，保持网页与 APK 存档互通。
+[[redirects]]
+  from = "/api/cloud-save"
+  to = "http://59.110.144.30:9091/api/cloud-save"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/cloud-save/*"
+  to = "http://59.110.144.30:9091/api/cloud-save/:splat"
+  status = 200
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

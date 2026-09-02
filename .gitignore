@@ -15,3 +15,8 @@ android/.idea/
 android/*.iml
 android/app/*.iml
 android-release/
+
+# 视觉校对拼图不属于游戏运行资源。
+prototype/assets/*-contact.png
+prototype/assets/*-contact-final.png
+prototype/assets/*-contact.jpg

@@ -319,31 +319,31 @@ textarea:focus-visible,
   position:fixed;
   z-index:55;
   left:50%;
-  bottom:calc(var(--hud-status-h) + var(--hud-tabs-h) + env(safe-area-inset-bottom,0px) + 8px);
-  width:min(496px,calc(100% - 20px));
-  grid-template-columns:30px minmax(0,1fr);
-  padding:9px 11px;
+  top:calc(var(--hud-status-h) + env(safe-area-inset-top,0px) + 7px);
+  bottom:auto;
+  width:min(390px,calc(100% - 24px));
+  grid-template-columns:24px minmax(0,1fr);
+  padding:7px 9px;
   pointer-events:none;
   opacity:0;
-  transform:translate(-50%,8px) scale(.985);
-  box-shadow:0 12px 30px rgba(0,0,0,.5),inset 0 1px var(--ui-specular);
+  transform:translate(-50%,-7px) scale(.985);
+  box-shadow:0 8px 22px rgba(0,0,0,.46),inset 0 1px var(--ui-specular);
   transition:opacity 160ms ease,transform 180ms ease;
 }
 .action-feedback[hidden] { display:none!important; }
 .action-feedback.is-visible { opacity:1;transform:translate(-50%,0) scale(1); }
 .action-feedback.is-system { --toast:var(--ui-energy); }
 .action-feedback.is-story { --toast:var(--ui-anomaly); }
-#app.panel-open .action-feedback { bottom:calc(var(--hud-tabs-h) + env(safe-area-inset-bottom,0px) + 8px); }
-#panel[data-view="camp"] + .action-feedback { bottom:calc(var(--hud-status-h) + var(--hud-tabs-h) + env(safe-area-inset-bottom,0px) + 82px); }
-.af-mark { width:28px;height:28px;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--toast) 55%,var(--ui-line));color:var(--toast);background:#081119; }
-.af-mark .ui-icon { width:17px;height:17px; }
+#app.panel-open .action-feedback,#panel[data-view="camp"] + .action-feedback { bottom:auto; }
+.af-mark { width:22px;height:22px;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--toast) 55%,var(--ui-line));color:var(--toast);background:#081119; }
+.af-mark .ui-icon { width:14px;height:14px; }
 .af-copy { min-width:0;display:block; }
 .af-copy>small { display:block;color:var(--toast);font:700 6.5px/1 var(--ui-font-tech);letter-spacing:1.1px; }
-#feedback-messages { display:grid;gap:2px;margin-top:4px; }
-#feedback-messages p { color:var(--ui-text-1);font-size:9.5px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-#feedback-messages p:not(:last-child) { color:var(--ui-text-2);font-size:8.5px; }
-#feedback-messages p:last-child { white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2; }
-#feedback-messages p.story:last-child { -webkit-line-clamp:3; }
+#feedback-messages { display:grid;margin-top:3px; }
+#feedback-messages p { color:var(--ui-text-1);font-size:9px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+#feedback-messages p:not(:last-child) { display:none; }
+#feedback-messages p:last-child { white-space:nowrap;display:block; }
+#feedback-messages p.story:last-child { white-space:nowrap; }
 #feedback-messages p.good,#feedback-messages p.success { color:#9cebc9; }
 #feedback-messages p.warn,#feedback-messages p.warning { color:#f6d487; }
 #feedback-messages p.danger,#feedback-messages p.error { color:#ffafb6; }
@@ -441,7 +441,6 @@ textarea:focus-visible,
 .inventory-vault,
 .scene-card,
 .route-panel,
-.return-risk,
 .camp-hero,
 .facility-section,
 .facility-hero,
@@ -535,7 +534,6 @@ textarea:focus-visible,
 .operation-row,
 .camp-command-card,
 .camp-facility,
-.facility-upgrade,
 .qcard,
 .item {
   border-color:var(--ui-line);
@@ -626,8 +624,6 @@ textarea:focus-visible,
 #panel .region-action { min-height:76px; border-color:var(--ui-line); }
 #panel .region-action.primary { border-color:var(--ui-energy-deep); background:linear-gradient(145deg,#12333f,#0a1d26); }
 .route-panel { background:#071019; }
-.return-risk { border-left:2px solid var(--ui-success); }
-.return-risk.danger { border-left-color:var(--ui-danger); }
 
 /* Camp, facilities and tasks. */
 .camp-hero::before { background:var(--ui-energy); }
@@ -732,6 +728,29 @@ textarea:focus-visible,
 .gauge.sp .g-fill { background:linear-gradient(90deg,#a26911,var(--ui-stamina)); box-shadow:0 0 7px rgba(244,173,36,.34); }
 .emblem { border-color:var(--ui-line-hi); border-radius:var(--ui-radius-sm); background:linear-gradient(145deg,var(--ui-surface-3),#07121a); }
 .emblem.on { color:var(--ui-energy); border-color:var(--ui-energy); }
+
+/* Compact top HUD: the native safe area places this row below the camera cutout. */
+#metabar{display:block;min-height:52px;padding:0;background:linear-gradient(180deg,#0d1720,#071019)}
+#metabar #statusbar{width:100%;min-height:52px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:10px;padding:env(safe-area-inset-top,0px) max(16px,env(safe-area-inset-right,0px)) 6px max(16px,env(safe-area-inset-left,0px));border:0;border-bottom:1px solid var(--ui-line);background:transparent;box-shadow:inset 0 -1px rgba(0,0,0,.62)}
+#metabar #statusbar::before{top:auto;bottom:0}
+#metabar .hud-wing{position:relative;min-width:0;display:flex;align-items:center;gap:7px}
+#metabar .hud-left{grid-column:1;justify-content:flex-end}
+#metabar .hud-right{grid-column:2;justify-content:flex-start}
+#metabar .hud-meta{position:absolute;left:0;top:50%;transform:translateY(-50%);display:grid;gap:2px;line-height:1;text-align:left}
+#metabar #time,#metabar #pt-label{color:var(--ui-text-3);font:600 8px/1 var(--ui-font-tech);letter-spacing:.2px}
+#metabar #pt-label{color:#526d80;font-size:6.5px;letter-spacing:.45px}
+#metabar .gauge{flex:none;width:96px;gap:4px}
+#metabar .g-ico{width:20px;height:20px;clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px)}
+#metabar .g-ico svg{width:13px;height:13px}
+#metabar .g-readout{column-gap:3px}
+#metabar .g-label{font:6px/1 var(--ui-font-tech);letter-spacing:.8px}
+#metabar .g-val{font:700 7.5px/1 var(--ui-font-tech);letter-spacing:0}
+#metabar .g-track{height:5px;margin-top:3px}
+#metabar .emblem{position:absolute;right:0;top:50%;transform:translateY(-50%);width:24px;height:24px;margin:0}
+#metabar .emblem::after{content:"";position:absolute;inset:-4px}
+#metabar .emblem.is-touching{transform:translateY(-50%) scale(.97)!important}
+#metabar .gear-svg{width:16px;height:16px}
+@media(max-width:410px){#metabar #statusbar{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px;padding-inline:10px}#metabar .gauge{width:88px}#metabar #time{font-size:7px}#metabar #pt-label{font-size:6px}#metabar .hud-wing{gap:4px}}
 
 #tabbar {
   min-height:var(--hud-tabs-h);
