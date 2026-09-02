@@ -220,10 +220,10 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.match(manifest,/android\.permission\.VIBRATE/,'安卓外壳必须声明震动权限才能提供真实触觉反馈');
   assert.match(manifest,/android\.permission\.ACCESS_NETWORK_STATE/,'安卓外壳必须读取当前网络类型才能保护移动流量');
   const androidBuild=fs.readFileSync(path.join(__dirname,'..','android','app','build.gradle'),'utf8');
-  assert.match(androidBuild,/versionCode 8/,'切换更新服务器后 APK 必须提升安装版本');
-  assert.match(androidBuild,/versionName "0\.5\.1"/,'切换更新服务器后 APK 必须展示新的应用版本');
+  assert.match(androidBuild,/versionCode 9/,'无框开屏版 APK 必须提升安装版本');
+  assert.match(androidBuild,/versionName "0\.5\.2"/,'无框开屏版 APK 必须展示新的应用版本');
   assert.match(androidBuild,/SHELL_VERSION", "7"/,'59 更新源必须升级原生外壳协议版本');
-  assert.match(androidBuild,/BUNDLED_BUILD", "1788329406L"/,'最新 APK 必须沿用 59 服务器的递增时间戳资源版本');
+  assert.match(androidBuild,/BUNDLED_BUILD", "1788330358L"/,'最新 APK 必须使用 59 服务器的递增时间戳资源版本');
   assert.match(androidBuild,/UPDATE_BASE_URL[^\n]*http:\/\/59\.110\.144\.30:9091\/app-update\//,'APK 更新资源必须固定走 59 测试服务器');
   assert.match(androidBuild,/CLOUD_SAVE_URL[^\n]*https:\/\/abyssal-echoes-survival\.netlify\.app\/api\/cloud-save/,'APK 云存档必须继续固定走 Netlify');
   assert.match(androidBuild,/CLOUD_SAVE_URL/,'安卓外壳必须提供独立云存档接口地址');
@@ -282,10 +282,12 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.match(html,/viewport-fit=cover/,'顶栏必须启用手机安全区');
   assert.match(html,/id="launch-screen"[\s\S]*id="launch-title">深渊回响[\s\S]*id="launch-status"[\s\S]*id="launch-enter"/,'启动页必须提供品牌、更新状态与进入游戏按钮');
   assert.match(html,/id="app" inert aria-hidden="true"/,'完成版本检查并点击进入前，游戏主体必须保持锁定');
-  assert.match(html,/style\.css\?v=[^"']*launch1[\s\S]*game\.js\?v=[^"']*launch1/,'开屏脚本与样式必须同时刷新缓存版本');
+  assert.match(html,/style\.css\?v=[^"']*launch2[\s\S]*game\.js\?v=[^"']*launch2/,'开屏脚本与样式必须同时刷新缓存版本');
   const launchArt=path.join(__dirname,'assets','launch-crash-ark.jpg');assert.ok(fs.existsSync(launchArt)&&fs.statSync(launchArt).size>100000,'坠舰开屏必须使用项目内的高清独立背景图');
   assert.match(css,/\.launch-art\{[^}]*launch-crash-ark\.jpg/,'开屏必须加载坠舰背景图');
-  assert.match(css,/@keyframes launch-art-breathe[\s\S]*@keyframes launch-haze-a[\s\S]*@keyframes launch-radar-spin/,'开屏必须具有镜头、雾层与雷达动效');
+  assert.match(css,/\.launch-console\{[^}]*border:0[^}]*background:none[^}]*box-shadow:none[^}]*backdrop-filter:none/,'启动入口必须融入背景，不能保留独立 HUD 面板');
+  assert.match(css,/\.launch-enter\{[^}]*width:min\(82%,292px\)[^}]*min-height:44px[^}]*border:0!important[^}]*clip-path:none[^}]*box-shadow:none!important/,'进入游戏必须使用无框窄入口，同时保留手机点击面积');
+  assert.match(css,/@keyframes launch-art-breathe[\s\S]*@keyframes launch-haze-a[\s\S]*@keyframes launch-signal-pulse/,'开屏必须具有镜头、雾层与轻量信号动效');
   assert.match(css,/@media\(prefers-reduced-motion:reduce\)[^}]*\.launch-art/,'开屏动效必须遵循系统减少动态效果设置');
   assert.match(html,/<header id="metabar">[\s\S]*id="statusbar"[\s\S]*class="hud-wing hud-left"[\s\S]*id="time"[\s\S]*class="hud-wing hud-right"[\s\S]*id="set-btn"/,'顶部 HUD 必须使用完整双栏状态翼，并以设置按钮替换轮回位置');
   assert.match(html,/class="hud-meta"[\s\S]{0,100}id="time"[\s\S]{0,100}id="pt-label">轮回1/,'日期与轮回信息必须合并在左上角元信息块内');
