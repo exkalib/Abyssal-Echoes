@@ -2246,6 +2246,14 @@ function renderTop(){
   $('pt-label').textContent='轮回'+state.meta.playthrough;
 }
 function renderTabbar(){ document.querySelectorAll('#tabbar .tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===state.tab)); const sb=$('set-btn'); if(sb) sb.classList.toggle('on', state.tab==='set'); }
+function normalizePanelNavigationState(){
+  if(P().location!=='camp')return;
+  /* 营地地图只以 campView 为准。修复旧存档中 mapOpen 残留为 true 时，
+     首页实际已返回营地、外层却仍按全屏地图隐藏底部菜单的问题。 */
+  const campMapOpen=state.campView==='map'&&!state.campBuilding;
+  state.mapOpen=campMapOpen;
+  if(!campMapOpen)state.mapReturn=null;
+}
 function panelView(){
   if(tutorialActive())return 'tutorial';
   if(state.combat)return 'combat';
@@ -2257,11 +2265,11 @@ function panelView(){
     if(state.campView==='map')return 'camp-map';
     if(state.campView==='construct')return 'construction';
     if(state.campView==='npc')return 'camp';
-    return state.mapOpen?'camp-map':'camp';
+    return 'camp';
   }
   return state.mapOpen?'explore-map':'explore';
 }
-function render(){ if(_npcCapturing)return; renderTop(); const box=$('panel'); box.innerHTML=''; box.classList.remove('camp-home','tutorial-panel','recipe-station-page','skill-console-page','npc-screen');
+function render(){ if(_npcCapturing)return; normalizePanelNavigationState();renderTop(); const box=$('panel'); box.innerHTML=''; box.classList.remove('camp-home','tutorial-panel','recipe-station-page','skill-console-page','npc-screen');
   const activeView=panelView();box.dataset.view=activeView;
   const onboarding=tutorialActive(),hud=tutorialHudUnlocked();
   $('app').classList.toggle('tutorial-active',onboarding); $('app').classList.toggle('tutorial-nohud',onboarding&&!hud); $('app').classList.toggle('tutorial-hud',onboarding&&hud);
