@@ -1255,4 +1255,16 @@ function hasClass(node,name){return String(node&&node.className||'').split(/\s+/
   const mapCss=fs.readFileSync(path.join(__dirname,'story-scenes.css'),'utf8');assert.match(mapCss,/#panel\.field-console\.expedition-board[\s\S]*grid-template-rows:auto minmax\(0,1fr\) auto/,'现场页必须锁定一屏而不是让整页滚动');assert.match(mapCss,/\.field-fog-layer svg\{[\s\S]*width:100%[\s\S]*height:100%/,'连续迷雾必须使用覆盖整张背景的遮罩');assert.match(mapCss,/@keyframes field-fog-radial-reveal[\s\S]*scale\(7\.4,6\.4\)/,'发现地点时必须播放从地点中心向外扩散的驱散动画');assert.match(mapCss,/\.field-fog-layer\.is-complete\.is-fresh[\s\S]*field-fog-final-clear/,'全部地点发现后必须播放整图清雾动画');assert.match(mapCss,/\.field-map-drawer-body\{[\s\S]*overflow-y:auto/,'地点详情必须在地图弹层内部滚动');
 }
 
+{
+  const s=reset();s.tutorial={version:1,step:'done',complete:true};s.player.location='cargoYard';Object.assign(s.discovered,{outer:true,cargoYard:true});Object.assign(s.visited,{camp:true,outer:true,cargoYard:true});sandbox.Math.random=()=>0;
+  let markers=a.fieldMapMarkers('cargoYard'),fog=a.fieldFogState('cargoYard',markers);assert.ok(markers.some(marker=>marker.kind==='route'&&marker.target==='outer'),'首次进入相邻场景时，来路必须立刻显示，不能再探索一次才驱散迷雾');assert.ok(fog.holes.some(hole=>hole.id==='route:outer'),'来路标记必须同时从对应坐标驱散一片迷雾');assert.equal(markers.some(marker=>marker.kind==='operation'),false,'新场景尚未探索时不得提前发现现场操作点');
+  s.discoveryThresholds['explore-v2:map-operation:cargoYard:0']=1;s.exploreCount.cargoYard=1;markers=a.fieldMapMarkers('cargoYard');assert.equal(markers.some(marker=>marker.kind==='operation'),false,'旧存档即使保存过首步阈值，第一次探索也不得必出新操作点');
+  assert.match(source,/retainedFieldViewport[\s\S]{0,900}dataset\.visualKey===visualKey/,'地图结构没有变化时必须复用原视口，避免整张背景和迷雾重新闪烁');assert.match(source,/fieldMarkerSelection=\{location:id,markerId:marker\.id\}[\s\S]{0,1200}restoreFieldMarkerSelection/,'地图地点详情必须记住当前选择，采集刷新后继续停留在同一操作点');
+}
+{
+  const s=reset();s.tutorial={version:1,step:'done',complete:true};s.player.location='nursery';s.exploreCount.nursery=7;sandbox.Math.random=()=>0;a.resetStoryScenes();a.queueNpcFirstContact('纪遥','nursery');a.resetStoryScenes();
+  a.applyNpcDiscoveries('nursery',7);assert.equal(s.flags['fieldNpcFound_纪遥'],true);assert.equal(s.flags['storyScene_field-npc-纪遥'],true,'NPC 即使在其他任务中露过面，现场发现时也必须触发对应场景剧情');s.flags.prototypeOnline=true;
+  const npcMarker=a.fieldMapMarkers('nursery').find(marker=>marker.id==='npc:纪遥');assert.ok(npcMarker&&npcMarker.kind==='npc','NPC 发现后即使剧情状态令其迁移，也必须在初遇地图保留可辨认头像记录');a.resetStoryScenes();
+}
+
 console.log('game.test.js: all assertions passed');
