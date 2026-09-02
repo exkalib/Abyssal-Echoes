@@ -221,8 +221,8 @@ body.story-scene-active{overflow:hidden;overscroll-behavior:none}
 .field-fog-layer.is-complete.is-fresh{visibility:visible;animation:field-fog-final-clear 1.55s cubic-bezier(.2,.72,.16,1) both}
 .field-fog-reveals{position:absolute;z-index:7;inset:0;overflow:hidden;pointer-events:none}
 .field-fog-reveal{
-  position:absolute;width:34px;height:28px;margin:-14px 0 0 -17px;border:1px solid rgba(var(--map-tone-rgb),.78);border-radius:50%;
-  background:radial-gradient(ellipse,rgba(var(--map-tone-rgb),.14),transparent 64%);box-shadow:0 0 12px rgba(var(--map-tone-rgb),.26);
+  position:absolute;width:32px;height:32px;margin:-16px 0 0 -16px;border:1px solid rgba(var(--map-tone-rgb),.78);border-radius:50%;
+  background:radial-gradient(circle,rgba(var(--map-tone-rgb),.14),transparent 64%);box-shadow:0 0 12px rgba(var(--map-tone-rgb),.26);
   animation:field-fog-radial-reveal 1.05s cubic-bezier(.16,.72,.22,1) both;
 }
 .field-fog-reveal::after{content:'';position:absolute;inset:18%;border:1px solid rgba(222,248,255,.55);border-radius:50%;animation:field-fog-radial-core 1.05s ease-out both}
@@ -323,7 +323,7 @@ body.story-scene-active{overflow:hidden;overscroll-behavior:none}
 
 @keyframes field-map-sweep{from{transform:translateY(-35%)}to{transform:translateY(250%)}}
 @keyframes field-fog-drift{from{transform:translate(-1.4%,-.7%) scale(1.035)}to{transform:translate(1.2%,.9%) scale(1.055)}}
-@keyframes field-fog-radial-reveal{0%{opacity:0;transform:scale(.3)}24%{opacity:.9}70%{opacity:.48}100%{opacity:0;transform:scale(4.8,4.2)}}
+@keyframes field-fog-radial-reveal{0%{opacity:0;transform:scale(.3)}24%{opacity:.9}70%{opacity:.48}100%{opacity:0;transform:scale(5)}}
 @keyframes field-fog-radial-core{0%{opacity:0;transform:scale(.1)}38%{opacity:1}100%{opacity:0;transform:scale(3.4)}}
 @keyframes field-fog-final-clear{0%{opacity:1}42%{opacity:.68}100%{opacity:0}}
 @keyframes field-fog-final-sweep{0%{opacity:0;transform:translateY(-160px)}24%{opacity:1}100%{opacity:0;transform:translateY(160px)}}
