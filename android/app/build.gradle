@@ -19,11 +19,11 @@ android {
         applicationId "com.exkalib.abyssalecho"
         minSdk 26
         targetSdk 36
-        versionCode 6
-        versionName "0.4.1"
+        versionCode 7
+        versionName "0.5.0"
 
-        buildConfigField "int", "SHELL_VERSION", "5"
-        buildConfigField "long", "BUNDLED_BUILD", "14L"
+        buildConfigField "int", "SHELL_VERSION", "6"
+        buildConfigField "long", "BUNDLED_BUILD", "15L"
         buildConfigField "String", "UPDATE_BASE_URL", '"https://abyssal-echoes-survival.netlify.app/app-update/"'
         buildConfigField "String", "CLOUD_SAVE_URL", '"https://abyssal-echoes-survival.netlify.app/api/cloud-save"'
         buildConfigField "String", "UPDATE_PUBLIC_KEY", '"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEV38qnk5xngW+U/kAezd6ubgNUn+y1eMAwlAgHTtsFQO/ffqaXYdxwa7c2Af7sDoiXicjyPH5E7SJtB/E9R0usA=="'

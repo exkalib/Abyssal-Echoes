@@ -22,17 +22,24 @@ final class LocalContentWebViewClient extends WebViewClient {
         void onMainPageError();
     }
 
+    interface PageReadyListener {
+        void onMainPageReady();
+    }
+
     static final String ORIGIN = "https://appassets.androidplatform.net";
     static final String HOME = ORIGIN + "/index.html";
 
     private final Context context;
     private final BundleUpdater updater;
     private final FatalErrorListener fatalErrorListener;
+    private final PageReadyListener pageReadyListener;
 
-    LocalContentWebViewClient(Context context, BundleUpdater updater, FatalErrorListener listener) {
+    LocalContentWebViewClient(Context context, BundleUpdater updater, FatalErrorListener errorListener,
+                              PageReadyListener readyListener) {
         this.context = context.getApplicationContext();
         this.updater = updater;
-        this.fatalErrorListener = listener;
+        this.fatalErrorListener = errorListener;
+        this.pageReadyListener = readyListener;
     }
 
     @Override
@@ -98,5 +105,11 @@ final class LocalContentWebViewClient extends WebViewClient {
     public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
         super.onReceivedError(view, request, error);
         if (request.isForMainFrame()) fatalErrorListener.onMainPageError();
+    }
+
+    @Override
+    public void onPageFinished(WebView view, String url) {
+        super.onPageFinished(view, url);
+        if (HOME.equals(url)) pageReadyListener.onMainPageReady();
     }
 }

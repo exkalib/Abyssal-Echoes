@@ -3528,7 +3528,7 @@ function appVersionInfo(){
 function setUpdateUi(text,busy){
   updateUi.text=text||''; updateUi.busy=!!busy;
   const status=$('update-status'),button=$('check-update-btn');
-  if(status) status.textContent=updateUi.text||'只在点击按钮时联网检查；启动游戏不会访问更新服务器。';
+  if(status) status.textContent=updateUi.text||'启动时已自动检查；也可以在这里再次手动检查。';
   if(button){ button.disabled=updateUi.busy; button.textContent=updateUi.busy?'正在检查…':'检查更新'; }
 }
 function checkAppUpdate(){
@@ -4330,4 +4330,33 @@ function boot(){
   addEventListener('resize',()=>{ if(state.mapOpen)render(); else if(state.tab==='tech')requestAnimationFrame(drawTechLines); else if(state.tab==='char'&&state.charView==='genes')requestAnimationFrame(()=>{drawGeneTreeLines();geneTreeApply();}); });
   if(!loaded) intro();setupTabLease();render();
 }
-boot();
+
+/* ================= 启动舱门 ================= */
+let gameBooted=false,launchCanEnter=false;
+function launchElements(){return {screen:$('launch-screen'),status:$('launch-status'),detail:$('launch-detail'),percent:$('launch-percent'),button:$('launch-enter')};}
+function prepareLocalGame(){if(gameBooted)return;gameBooted=true;boot();}
+function updateLaunchScreen(kind,text,detail,progress){
+  const ui=launchElements();if(!ui.screen)return;
+  const ready=kind==='ready'||kind==='offline',value=Number(progress);
+  ui.screen.classList.toggle('is-checking',!ready&&kind!=='downloading'&&kind!=='installing');
+  ui.screen.classList.toggle('has-progress',kind==='downloading'||kind==='installing');
+  ui.screen.classList.toggle('is-ready',ready);
+  if(Number.isFinite(value)){const pct=Math.max(0,Math.min(100,Math.round(value)));ui.screen.style.setProperty('--launch-progress',pct+'%');ui.percent.textContent=pct+'%';}
+  else ui.percent.textContent=ready?(kind==='offline'?'OFFLINE':'READY'):(kind==='installing'?'INSTALL':'LINK');
+  if(text)ui.status.textContent=String(text);if(detail)ui.detail.textContent=String(detail);
+  if(ready){prepareLocalGame();launchCanEnter=true;ui.button.hidden=false;ui.button.disabled=false;ui.button.querySelector('span').textContent=kind==='offline'?'离线进入游戏':'进入游戏';}
+  else{launchCanEnter=false;ui.button.hidden=true;ui.button.disabled=true;}
+}
+globalThis.onAbyssLaunchState=(kind,text,detail,progress)=>updateLaunchScreen(String(kind||'checking'),text,detail,progress);
+function enterGameFromLaunch(){
+  if(!launchCanEnter)return;const ui=launchElements(),app=$('app');launchCanEnter=false;
+  document.body.classList.remove('launch-pending');if(app){app.inert=false;app.removeAttribute('inert');app.removeAttribute('aria-hidden');}
+  if(ui.screen){ui.screen.classList.add('is-exiting');ui.screen.setAttribute('aria-hidden','true');setTimeout(()=>{ui.screen.hidden=true;},520);}
+}
+function initLaunchGate(){
+  const ui=launchElements();if(!ui.screen){prepareLocalGame();return;}ui.button.onclick=enterGameFromLaunch;
+  let nativeShell=false;try{const bridge=globalThis.AbyssApp;nativeShell=!!(bridge&&typeof bridge.versionInfo==='function');}catch(_){}
+  if(nativeShell)updateLaunchScreen('checking','正在接入方舟更新节点','正在校验版本与本地资源，请稍候。');
+  else queueMicrotask(()=>updateLaunchScreen('ready','网页版资源已就绪','本地存档已经载入，可以进入游戏。',100));
+}
+initLaunchGate();

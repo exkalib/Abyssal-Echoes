@@ -29,11 +29,33 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 final class BundleUpdater {
+    static final class UpdateInfo {
+        final long build;
+        final String version;
+        final boolean nativeShell;
+        final String apkUrl;
+        final String bundleName;
+        final String expectedHash;
+        final long expectedSize;
+
+        private UpdateInfo(long build, String version, boolean nativeShell, String apkUrl,
+                           String bundleName, String expectedHash, long expectedSize) {
+            this.build = build;
+            this.version = version;
+            this.nativeShell = nativeShell;
+            this.apkUrl = apkUrl;
+            this.bundleName = bundleName;
+            this.expectedHash = expectedHash;
+            this.expectedSize = expectedSize;
+        }
+    }
+
     interface Listener {
         void onStatus(String text);
         void onNoUpdate();
+        void onUpdateAvailable(UpdateInfo update);
+        void onProgress(int percent);
         void onReady(long build, String version);
-        void onNativeUpdate(String apkUrl, String version);
         void onError(String message);
     }
 
@@ -80,7 +102,10 @@ final class BundleUpdater {
 
                 if (minShell > BuildConfig.SHELL_VERSION) {
                     String apkUrl = manifest.optString("apkUrl", BuildConfig.UPDATE_BASE_URL + "Abyssal-Echoes.apk");
-                    post(() -> listener.onNativeUpdate(apkUrl, version));
+                    if (!apkUrl.startsWith("https://")) throw new IOException("安装包地址无效");
+                    UpdateInfo update = new UpdateInfo(build, version, true, apkUrl,
+                            null, null, 0L);
+                    post(() -> listener.onUpdateAvailable(update));
                     return;
                 }
                 if (build <= currentBuild()) {
@@ -91,19 +116,38 @@ final class BundleUpdater {
                 String bundleName = manifest.getString("bundle");
                 if (!bundleName.matches("[A-Za-z0-9._-]+\\.zip")) throw new IOException("更新包名称无效");
                 String expectedHash = manifest.getString("sha256").toLowerCase(Locale.ROOT);
+                if (!expectedHash.matches("[0-9a-f]{64}")) throw new IOException("更新包校验值无效");
                 long expectedSize = manifest.getLong("size");
                 if (expectedSize <= 0 || expectedSize > MAX_BUNDLE_BYTES) throw new IOException("更新包大小异常");
-
-                post(() -> listener.onStatus("发现 " + version + "，正在下载…"));
-                File zip = new File(context.getCacheDir(), "web-update-" + build + ".zip");
-                String actualHash = download(BuildConfig.UPDATE_BASE_URL + bundleName, zip, expectedSize);
-                if (!actualHash.equals(expectedHash)) throw new IOException("更新包校验失败");
-
-                post(() -> listener.onStatus("正在安装资源更新…"));
-                install(zip, build);
-                post(() -> listener.onReady(build, version));
+                UpdateInfo update = new UpdateInfo(build, version, false, null,
+                        bundleName, expectedHash, expectedSize);
+                post(() -> listener.onUpdateAvailable(update));
             } catch (Exception error) {
                 post(() -> listener.onError(error.getMessage() == null ? "更新检查失败" : error.getMessage()));
+            }
+        });
+    }
+
+    void downloadAndInstall(UpdateInfo update, Listener listener) {
+        if (update == null || update.nativeShell || update.bundleName == null) {
+            post(() -> listener.onError("更新信息无效"));
+            return;
+        }
+        executor.execute(() -> {
+            File zip = new File(context.getCacheDir(), "web-update-" + update.build + ".zip");
+            try {
+                post(() -> listener.onStatus("正在下载 " + update.version + "…"));
+                String actualHash = download(BuildConfig.UPDATE_BASE_URL + update.bundleName,
+                        zip, update.expectedSize, listener);
+                if (!actualHash.equals(update.expectedHash)) throw new IOException("更新包校验失败");
+                post(() -> listener.onStatus("正在安装资源更新…"));
+                install(zip, update.build);
+                post(() -> listener.onReady(update.build, update.version));
+            } catch (Exception error) {
+                post(() -> listener.onError(error.getMessage() == null ? "更新下载失败" : error.getMessage()));
+            } finally {
+                //noinspection ResultOfMethodCallIgnored
+                zip.delete();
             }
         });
     }
@@ -232,13 +276,14 @@ final class BundleUpdater {
         }
     }
 
-    private static String download(String address, File destination, long expectedSize) throws Exception {
+    private String download(String address, File destination, long expectedSize, Listener listener) throws Exception {
         HttpURLConnection connection = open(address);
         try {
             int status = connection.getResponseCode();
             if (status != HttpURLConnection.HTTP_OK) throw new IOException("更新包下载失败：" + status);
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             long total = 0L;
+            int reported = -1;
             try (InputStream input = connection.getInputStream(); FileOutputStream output = new FileOutputStream(destination)) {
                 byte[] buffer = new byte[16 * 1024];
                 int count;
@@ -247,6 +292,12 @@ final class BundleUpdater {
                     if (total > MAX_BUNDLE_BYTES) throw new IOException("更新包超过大小限制");
                     digest.update(buffer, 0, count);
                     output.write(buffer, 0, count);
+                    int percent = (int) Math.min(100L, total * 100L / expectedSize);
+                    if (percent >= reported + 2 || percent == 100) {
+                        reported = percent;
+                        int progress = percent;
+                        post(() -> listener.onProgress(progress));
+                    }
                 }
             }
             if (total != expectedSize) throw new IOException("更新包下载不完整");

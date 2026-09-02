@@ -5,6 +5,9 @@ import android.app.AlertDialog;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Build;
@@ -28,6 +31,8 @@ public final class MainActivity extends Activity {
     private CloudSaveClient cloudSaves;
     private boolean rollbackAttempted;
     private boolean updateCheckRunning;
+    private boolean launchCheckStarted;
+    private boolean launchResolved;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,39 +85,106 @@ public final class MainActivity extends Activity {
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         settings.setUserAgentString(settings.getUserAgentString() + " AbyssalEchoesShell/" + BuildConfig.SHELL_VERSION);
         webView.addJavascriptInterface(new AppBridge(), "AbyssApp");
-        webView.setWebViewClient(new LocalContentWebViewClient(this, updater, this::handleMainPageError));
+        webView.setWebViewClient(new LocalContentWebViewClient(this, updater,
+                this::handleMainPageError, this::handleMainPageReady));
     }
 
     private void checkForUpdates() {
+        checkForUpdates(false);
+    }
+
+    private void checkForUpdates(boolean startup) {
         if (updateCheckRunning) {
-            showStatus("正在检查资源更新…", 0L);
+            if (startup) notifyLaunchState("checking", "正在检查资源更新", "正在等待更新节点响应。", null);
+            else showStatus("正在检查资源更新…", 0L);
             return;
         }
         updateCheckRunning = true;
         updater.check(new BundleUpdater.Listener() {
-            @Override public void onStatus(String text) { showStatus(text, 0L); }
+            @Override public void onStatus(String text) {
+                if (startup) {
+                    String phase = text.contains("安装") ? "installing" : text.contains("下载") ? "downloading" : "checking";
+                    notifyLaunchState(phase, text, phase.equals("installing") ? "资源校验完成，正在切换版本。" : "请保持应用在前台。", null);
+                } else showStatus(text, 0L);
+            }
             @Override public void onNoUpdate() {
                 updateCheckRunning = false;
-                showStatus("资源已是最新版本", 900L);
+                if (startup) releaseLaunchGate("ready", "版本校验完成", "本地存档已经载入，可以进入游戏。");
+                else showStatus("资源已是最新版本", 900L);
+            }
+            @Override public void onUpdateAvailable(BundleUpdater.UpdateInfo update) {
+                handleUpdateAvailable(update, startup, this);
+            }
+            @Override public void onProgress(int percent) {
+                if (startup) notifyLaunchState("downloading", "正在下载资源更新", "更新完成后将自动校验并安装。", percent);
+                else showStatus("正在下载资源更新 " + percent + "%", 0L);
             }
             @Override public void onReady(long build, String version) {
                 updateCheckRunning = false;
                 rollbackAttempted = false;
-                showStatus("已更新至 " + version, 1300L);
+                launchResolved = true;
+                if (startup) notifyLaunchState("installing", "更新安装完成", "正在重新载入方舟系统。", 100);
+                else showStatus("已更新至 " + version, 1300L);
                 webView.clearCache(true);
                 loadGame();
             }
-            @Override public void onNativeUpdate(String apkUrl, String version) {
-                updateCheckRunning = false;
-                notifyWebUpdateStatus("发现安卓外壳更新 " + version, true);
-                hideStatus();
-                showNativeUpdateDialog(apkUrl, version);
-            }
             @Override public void onError(String message) {
                 updateCheckRunning = false;
-                showStatus("离线运行 · " + message, 1600L);
+                if (startup) releaseLaunchGate("offline", "更新节点不可用", "已切换离线模式，本地存档仍可正常游玩。");
+                else showStatus("离线运行 · " + message, 1600L);
             }
         });
+    }
+
+    private void handleUpdateAvailable(BundleUpdater.UpdateInfo update, boolean startup,
+                                       BundleUpdater.Listener listener) {
+        String description = update.nativeShell
+                ? "检测到安卓外壳更新 " + update.version
+                : "检测到资源更新 " + update.version + " · " + readableSize(update.expectedSize);
+        if (startup) notifyLaunchState("checking", "发现可用更新", description, null);
+        else showStatus(description, 0L);
+        if (isWifiOrUnmetered()) {
+            startUpdate(update, startup, listener);
+            return;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("当前不是 Wi-Fi 网络")
+                .setMessage(description + "。继续更新可能消耗移动数据；如果不更新，本次将退出游戏。")
+                .setCancelable(false)
+                .setNegativeButton("退出游戏", (dialog, which) -> {
+                    updateCheckRunning = false;
+                    finishAndRemoveTask();
+                })
+                .setPositiveButton("继续更新", (dialog, which) -> startUpdate(update, startup, listener))
+                .show();
+    }
+
+    private void startUpdate(BundleUpdater.UpdateInfo update, boolean startup,
+                             BundleUpdater.Listener listener) {
+        if (update.nativeShell) {
+            updateCheckRunning = false;
+            if (startup) notifyLaunchState("downloading", "正在打开安装包下载", "安装新版本后重新启动游戏。", null);
+            else notifyWebUpdateStatus("正在打开安卓外壳更新 " + update.version, true);
+            openNativeUpdate(update.apkUrl);
+            return;
+        }
+        if (startup) notifyLaunchState("downloading", "正在下载资源更新", "更新完成后将自动校验并安装。", 0);
+        updater.downloadAndInstall(update, listener);
+    }
+
+    private boolean isWifiOrUnmetered() {
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        if (manager == null) return false;
+        Network network = manager.getActiveNetwork();
+        NetworkCapabilities capabilities = network == null ? null : manager.getNetworkCapabilities(network);
+        return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                || capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED));
+    }
+
+    private static String readableSize(long bytes) {
+        if (bytes <= 0L) return "安装包";
+        return String.format(java.util.Locale.CHINA, "%.1f MB", bytes / 1024d / 1024d);
     }
 
     private void handleMainPageError() {
@@ -123,20 +195,31 @@ public final class MainActivity extends Activity {
         }
     }
 
+    private void handleMainPageReady() {
+        if (launchResolved) {
+            notifyLaunchState("ready", "方舟系统已就绪", "本地存档已经载入，可以进入游戏。", 100);
+        } else if (!launchCheckStarted) {
+            launchCheckStarted = true;
+            checkForUpdates(true);
+        }
+    }
+
     private void loadGame() {
         webView.loadUrl(LocalContentWebViewClient.HOME);
     }
 
-    private void showNativeUpdateDialog(String apkUrl, String version) {
-        new AlertDialog.Builder(this)
-                .setTitle("需要更新应用外壳")
-                .setMessage("版本 " + version + " 包含安卓底层变更，需要下载一次新的安装包。游戏存档会保留。")
-                .setNegativeButton("稍后", null)
-                .setPositiveButton("下载更新", (dialog, which) -> {
-                    try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl))); }
-                    catch (Exception ignored) { showStatus("无法打开下载地址", 1800L); }
-                })
-                .show();
+    private void openNativeUpdate(String apkUrl) {
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl)));
+            finishAndRemoveTask();
+        } catch (Exception ignored) {
+            new AlertDialog.Builder(this)
+                    .setTitle("无法打开更新地址")
+                    .setMessage("请检查系统下载工具后重新启动游戏。")
+                    .setCancelable(false)
+                    .setPositiveButton("退出游戏", (dialog, which) -> finishAndRemoveTask())
+                    .show();
+        }
     }
 
     private void showStatus(String text, long hideAfterMs) {
@@ -152,6 +235,20 @@ public final class MainActivity extends Activity {
         String script = "window.onAbyssUpdateStatus&&window.onAbyssUpdateStatus("
                 + JSONObject.quote(text) + "," + finished + ");";
         webView.evaluateJavascript(script, null);
+    }
+
+    private void notifyLaunchState(String state, String text, String detail, Integer progress) {
+        if (webView == null) return;
+        String value = progress == null ? "null" : String.valueOf(progress);
+        String script = "window.onAbyssLaunchState&&window.onAbyssLaunchState("
+                + JSONObject.quote(state) + "," + JSONObject.quote(text) + ","
+                + JSONObject.quote(detail) + "," + value + ");";
+        webView.evaluateJavascript(script, null);
+    }
+
+    private void releaseLaunchGate(String state, String text, String detail) {
+        launchResolved = true;
+        notifyLaunchState(state, text, detail, 100);
     }
 
     private final class AppBridge {

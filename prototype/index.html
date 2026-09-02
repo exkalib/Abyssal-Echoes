@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>深渊回响</title>
-  <link rel="stylesheet" href="style.css?v=explore3build2campnav1mapfull1terrain1closebottom10mapfab4buildvertical1tutorialhud1quickreturn1fieldscene2mapnotice1fieldtools1fieldlayout1combatturn1masterycompare1kitchen2stationsplit1lifeskill1facilityupgrade1npcportrait1charstats1profilematrix1careerui1careervisibility1bagcategories2equipslotart1combatcareer1mapmarkers1cloudsave2combatlayout1fieldbrief1cloudmanual1">
+  <link rel="stylesheet" href="style.css?v=explore3build2campnav1mapfull1terrain1closebottom10mapfab4buildvertical1tutorialhud1quickreturn1fieldscene2mapnotice1fieldtools1fieldlayout1combatturn1masterycompare1kitchen2stationsplit1lifeskill1facilityupgrade1npcportrait1charstats1profilematrix1careerui1careervisibility1bagcategories2equipslotart1combatcareer1mapmarkers1cloudsave2combatlayout1fieldbrief1cloudmanual1launch1">
   <link rel="stylesheet" href="ui-system.css?v=explore3tophud8toastcompact1">
 </head>
-<body data-ui="abyss-frame">
+<body data-ui="abyss-frame" class="launch-pending">
   <svg class="ui-icon-sprite" aria-hidden="true">
     <symbol id="icon-vital" viewBox="0 0 24 24">
       <path d="M3 12h4l2-5 4 10 2-5h6"/>
@@ -200,7 +200,23 @@
       <path d="M8 3h8l2 6-2 4 3 7h-4l-3-5-3 5H5l3-7-2-4 2-6ZM9 7h6M12 3v12"/><circle cx="6" cy="9" r="2"/><circle cx="18" cy="9" r="2"/>
     </symbol>
   </svg>
-  <div id="app">
+  <section id="launch-screen" class="launch-screen is-checking" role="dialog" aria-modal="true" aria-labelledby="launch-title" aria-describedby="launch-detail">
+    <div class="launch-art" aria-hidden="true"><i class="launch-haze haze-a"></i><i class="launch-haze haze-b"></i><i class="launch-scan"></i></div>
+    <header class="launch-brand">
+      <small>ARK RECOVERY PROTOCOL // 07</small>
+      <h1 id="launch-title">深渊回响</h1>
+      <p>ABYSSAL ECHOES</p>
+    </header>
+    <aside class="launch-telemetry" aria-hidden="true"><span>CRASH SITE</span><i></i><span>SIGNAL 07</span></aside>
+    <footer class="launch-console">
+      <div class="launch-state-line"><span class="launch-radar" aria-hidden="true"><i></i></span><span><small>STARTUP SEQUENCE</small><b id="launch-status">正在接入方舟更新节点</b></span><em id="launch-percent">LINK</em></div>
+      <div class="launch-progress" aria-hidden="true"><i id="launch-progress-fill"></i></div>
+      <p id="launch-detail">正在校验版本与本地资源，请稍候。</p>
+      <button id="launch-enter" class="launch-enter" type="button" hidden disabled><span>进入游戏</span><small>ENTER THE WRECKAGE</small></button>
+    </footer>
+  </section>
+
+  <div id="app" inert aria-hidden="true">
     <header id="metabar">
       <div id="statusbar">
         <div class="hud-wing hud-left">
@@ -239,6 +255,6 @@
     </nav>
   </div>
 
-<script src="game.js?v=explore3cycle1build1campnav1mapfull4terrain1zoomedge1closebottom2mapfab1buildvertical1settingsclose1fieldscene2mapnotice1fieldtools1combatturn1settlementopen1fogrepair1bgm1settlementroute1charfix1masterycompare1kitchen2stationsplit1lifeskill2careerpath1worlddirect1facilityupgrade1npcportrait1careergate1charstats1profilematrix1marketconsole1careerui1skillpage2returnhome1careervisibility1mapknown1collision1bagcategories2uniqueguard1protection3balance1equipslotart1careerprogress1combatcareer1careerskills1bioisolation1multilife1minerroute1mapmarkers1cloudsave3combatlayout1fieldbrief1toastcompact1pacing2encounter1cloudmanual1"></script>
+<script src="game.js?v=explore3cycle1build1campnav1mapfull4terrain1zoomedge1closebottom2mapfab1buildvertical1settingsclose1fieldscene2mapnotice1fieldtools1combatturn1settlementopen1fogrepair1bgm1settlementroute1charfix1masterycompare1kitchen2stationsplit1lifeskill2careerpath1worlddirect1facilityupgrade1npcportrait1careergate1charstats1profilematrix1marketconsole1careerui1skillpage2returnhome1careervisibility1mapknown1collision1bagcategories2uniqueguard1protection3balance1equipslotart1careerprogress1combatcareer1careerskills1bioisolation1multilife1minerroute1mapmarkers1cloudsave3combatlayout1fieldbrief1toastcompact1pacing2encounter1cloudmanual1launch1"></script>
 </body>
 </html>
