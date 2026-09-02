@@ -188,6 +188,11 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.match(uiCss,/\.tport\.next\.hi\s*\{[^}]*stroke:var\(--ui-warning\)/,'待研究焦点线与目标接口必须保持同一琥珀色');
   assert.match(uiCss,/prefers-reduced-motion:reduce/,'设计系统必须支持减少动态效果');
   assert.match(css,/\.recipe-station-screen\{[^}]*grid-template-rows:minmax\(0,56fr\) minmax\(0,44fr\)/,'压低控件后生产页下方操作区必须收紧到44%');
+  assert.match(css,/#app\.npc-fullpage #metabar,#app\.npc-fullpage #tabbar\{display:none\}/,'NPC 交互必须独占整屏并收起常驻 HUD');
+  assert.match(css,/\.npc-terminal\{[^}]*height:100%[^}]*grid-template-rows:[^}]*minmax\(0,1fr\)[^}]*overflow:hidden/s,'NPC 终端必须锁定为一屏并预留固定底部操作区');
+  assert.match(css,/\.npc-content-scroll\{[^}]*min-height:0[^}]*overflow-y:auto/,'NPC 页只能让中间内容区内部滚动');
+  assert.match(css,/\.npc-portrait\{[^}]*object-fit:contain/,'NPC 全身立绘必须完整显示，不能再裁成半身');
+  assert.match(source,/classList\.toggle\('npc-fullpage',activeView==='npc'\)/,'NPC 视图必须启用独立全屏模式');
   assert.match(css,/\.recipe-station-top\{[^}]*overflow-y:auto/,'上半屏必须可以独立滚动选择配方');
   assert.match(css,/\.recipe-station-bottom\{[^}]*overflow:hidden/,'下半屏必须固定，不能跟随配方列表滚走');
   assert.match(css,/\.station-detail-workbench \.station-detail-body\{[^}]*overflow-y:auto/,'材料较多时只能滚动下半屏内容，确认按钮仍固定');
@@ -514,8 +519,14 @@ function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.set
   assert.equal(a.careerRecord('life','salvager').level,2,'残骸勘探员获得足够职业经验后必须升级');assert.equal(a.jobBonus('stMax'),stamina+2,'残骸勘探员每级必须增加体力上限');assert.equal(a.jobBonus('gatherPct'),gather+2,'残骸勘探员每级必须增加采集属性');assert.equal(a.jobBonus('recyclePct'),recycle+2,'残骸勘探员每级必须增加拆解属性');
 }
 {
-  const s=reset();s.masteries.craftMastery=2;s.npcTarget='阿珍';s.npcTab='teach';const box=new FakeElement();a.renderNpcPanel(box);const masteryGrid=box.children.find(x=>x.className==='mastery-grid'),card=masteryGrid.children[0];
+  const s=reset();s.masteries.craftMastery=2;s.npcTarget='阿珍';s.npcTab='teach';const box=new FakeElement(),nodes=[];a.renderNpcPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);const masteryGrid=nodes.find(x=>x.className==='mastery-grid'),card=masteryGrid.children[0];
   assert.match(card.innerHTML,/当前[\s\S]*材料返还 \+20%[\s\S]*升级后[\s\S]*材料返还 \+30%/,'精通卡必须同时显示当前效果与升级后效果');assert.equal(card.children[0].innerHTML,'升级至 Lv3');
+}
+{
+  const s=reset();s.tutorial.complete=true;s.player.location='camp';s.campView='npc';s.npcTarget='老乔';s.npcTab='talk';const box=new FakeElement(),nodes=[];a.renderNpcPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);
+  const terminal=nodes.find(n=>String(n.className).startsWith('npc-terminal')),content=nodes.find(n=>n.className==='npc-content-scroll'),exitbar=nodes.find(n=>n.className==='npc-exitbar'),exit=nodes.find(n=>n.className==='npc-exit');
+  assert.ok(terminal&&content&&exitbar&&exit,'NPC 页面必须由全屏终端、内部滚动区与固定告别区组成');assert.equal(terminal.children.at(-1),exitbar,'告别按钮必须始终处于整页最底部');assert.ok(content.children.some(n=>n.className==='npc-dialog'),'对话内容必须装入中间滚动区');assert.equal(nodes.some(n=>n.className==='npc-stage-back ui-icon-button'),false,'NPC 页顶部不得再保留重复关闭按钮');assert.match(exit.innerHTML,/我走了[\s\S]*再见，老乔/,'底部按钮必须使用符合对话语境的告别文案');
+  assert.equal(a.panelView(),'npc','NPC 交互必须拥有独立全屏视图状态');
 }
 {
   const s=reset();s.inv.scrap=10;a.beginExpedition();s.player.location='outer';s.inv.scrap=20;s.player.stamina=1;

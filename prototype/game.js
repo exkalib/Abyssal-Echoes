@@ -2099,7 +2099,7 @@ function markInlineChange(kind,id){inlineChange={kind,id,until:Date.now()+1800};
 function inlineChangeClass(kind,id){return inlineChange&&inlineChange.kind===kind&&inlineChange.id===id&&Date.now()<inlineChange.until?' just-updated':'';}
 function log(msg,cls,options){ const out=$('log'),peek=$('log-peek'),latest=$('log-latest'); const d=document.createElement('div'); d.className='line '+(cls||'story'); d.textContent=msg; out.appendChild(d); out.scrollTop=out.scrollHeight;
   if(state&&state.combat){const history=state.combat.history||(state.combat.history=[]);history.push({text:msg,cls:cls||'story'});if(history.length>6)history.shift();}
-  if(interactionFeedbackInstalled&&!(options&&options.toast===false))queueStandaloneFeedback({text:msg,cls:cls||'story'});
+  if(interactionFeedbackInstalled&&!_npcCapturing&&!(options&&options.toast===false))queueStandaloneFeedback({text:msg,cls:cls||'story'});
   if(peek){ peek.classList.remove('hidden'); peek.classList.add('unread'); } if(latest)latest.textContent=msg; }
 function divider(){ const el=$('log'); const d=document.createElement('div'); d.className='line divider'; el.appendChild(d); el.scrollTop=el.scrollHeight; }
 function el(tag,cls,html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
@@ -2260,6 +2260,7 @@ function panelView(){
   if(state.screen==='death'||state.screen==='ending')return state.screen;
   if(state.tab==='char')return state.charView==='genes'?'genes':state.charView==='careers'?'careers':state.charView==='skills'?'skills':'character';
   if(state.tab==='bag'||state.tab==='tech'||state.tab==='task'||state.tab==='set')return ({bag:'bag',tech:'tech',task:'tasks',set:'settings'})[state.tab];
+  if(state.npcTarget&&NPC_NAMES.includes(state.npcTarget)&&((P().location==='camp'&&state.campView==='npc')||npcLocation(state.npcTarget)===P().location))return 'npc';
   if(P().location==='camp'){
     if(state.campBuilding&&state.meta.built[state.campBuilding])return 'facility';
     if(state.campView==='map')return 'camp-map';
@@ -2275,6 +2276,7 @@ function render(){ if(_npcCapturing)return; normalizePanelNavigationState();rend
   $('app').classList.toggle('tutorial-active',onboarding); $('app').classList.toggle('tutorial-nohud',onboarding&&!hud); $('app').classList.toggle('tutorial-hud',onboarding&&hud);
   $('app').classList.toggle('combat-active',!!state.combat);
   $('app').classList.toggle('map-fullpage',activeView==='camp-map'||activeView==='explore-map');
+  $('app').classList.toggle('npc-fullpage',activeView==='npc');
   const panelOpen = !onboarding && !state.combat && state.screen==='play' && state.tab!=='act';
   $('app').classList.toggle('panel-open', panelOpen);
   const geneFull=state.tab==='char'&&state.charView==='genes';
@@ -2301,7 +2303,7 @@ function renderPanel(box){
 /* 手机端统一现场底部弹层：锁定入口和工具操作不再挤进常驻按钮区。 */
 function renderSiteSheet(box){
   document.querySelectorAll('.site-sheet-backdrop').forEach(x=>x.remove());
-  const ref=state.siteSheet;if(!ref||tutorialActive()||state.combat||state.screen!=='play')return;
+  const ref=state.siteSheet;if(!ref||state.npcTarget||tutorialActive()||state.combat||state.screen!=='play')return;
   const backdrop=el('div','site-sheet-backdrop'+(state.tab==='act'?' hud-status':'')),sheet=el('section','site-sheet');sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');
   const close=el('button','site-sheet-close ui-icon-button',uiIcon('close'));close.setAttribute('aria-label','关闭');close.onclick=closeSiteSheet;
   if(ref.kind==='operation'){
@@ -2405,7 +2407,7 @@ function closeContextMap(){
 }
 function renderMapFab(){
   const old=$('map-fab');if(old&&old.parentNode)old.parentNode.removeChild(old);
-  if(!state.flags.mapUnlocked||state.tab!=='act'||state.mapOpen||state.screen!=='play'||tutorialActive()||state.combat||state.campBuilding||state.settlementShopOpen)return;
+  if(!state.flags.mapUnlocked||state.tab!=='act'||state.mapOpen||state.screen!=='play'||tutorialActive()||state.combat||state.campBuilding||state.npcTarget||state.settlementShopOpen)return;
   const world=P().location==='camp',unread=!!state.mapUnread,b=el('button','map-fab ui-icon-button'+(unread?' has-unread':''),uiIcon('map')+(unread?'<span class="map-fab-dot" aria-hidden="true"></span>':''));b.id='map-fab';b.setAttribute('aria-label',(world?'打开世界地图':'打开局部地图')+(unread?'，有新发现':''));b.title=(world?'世界地图':'局部地图')+(unread?' · 有新发现':'');b.onclick=openContextMap;$('app').appendChild(b);
 }
 function verticalMapLayout(canvas,positions,extra){
@@ -2595,7 +2597,7 @@ function renderCampContacts(box){
   });sec.appendChild(list);box.appendChild(sec);
 }
 function openNpcPanel(npcName){
-  state.npcTarget=npcName; state.npcTab='talk'; if(P().location==='camp')state.campView='npc';setLogOpen(false); renderPanelTop();
+  dismissActionFeedback(true);state.siteSheet=null;state.npcTarget=npcName; state.npcTab='talk'; if(P().location==='camp')state.campView='npc';setLogOpen(false); renderPanelTop();
 }
 function settlementDiscount(){return state.settlementRep>=50?.8:state.settlementRep>=20?.9:1;}
 function settlementTrade(itemId,mode,quantity){
@@ -2729,15 +2731,19 @@ function renderNpcPanel(box){
   const profile=npcProfile(npcName),modes=npcInteractionModes(npcName);
   if(!modes.some(mode=>mode.id===state.npcTab))state.npcTab='talk';
   box.classList.add('npc-screen');
-  const stage=el('section','npc-stage '+profile.tone),at=npcLocation(npcName),locationName=at&&LOCATIONS[at]?LOCATIONS[at].name:'行踪未知';
-  stage.innerHTML='<img class="npc-portrait" src="'+npcPortraitSrc(npcName)+'" alt="'+npcName+'立绘" draggable="false"><div class="npc-stage-grid" aria-hidden="true"></div><div class="npc-stage-status"><i></i>CONTACT ONLINE</div><div class="npc-stage-copy"><small>'+profile.unit+'</small><h1>'+npcName+'</h1><b>'+profile.role+'</b><p>'+profile.bio+'</p><em>'+locationName+'</em></div>';
-  const back=el('button','npc-stage-back ui-icon-button',uiIcon('chevron-left'));back.setAttribute('aria-label','返回');back.onclick=()=>{state.npcTarget=null;if(P().location==='camp')state.campView='home';renderPanelTop();};stage.appendChild(back);box.appendChild(stage);
+  const terminal=el('section','npc-terminal '+profile.tone),stage=el('div','npc-stage'),at=npcLocation(npcName),locationName=at&&LOCATIONS[at]?LOCATIONS[at].name:'行踪未知';
+  stage.innerHTML='<img class="npc-portrait" src="'+npcPortraitSrc(npcName)+'" alt="'+npcName+'立绘" draggable="false"><div class="npc-stage-grid" aria-hidden="true"></div><div class="npc-stage-scan" aria-hidden="true"></div><div class="npc-stage-status"><i></i>CONTACT ONLINE</div><div class="npc-stage-copy"><small>'+profile.unit+'</small><h1>'+npcName+'</h1><b>'+profile.role+'</b><p>'+profile.bio+'</p><em>'+locationName+'</em></div>';
+  terminal.appendChild(stage);terminal.appendChild(el('div','npc-visual-space'));
+  const console=el('section','npc-console');
   const actions=el('nav','npc-actions count-'+modes.length);actions.setAttribute('aria-label','与'+npcName+'互动');
-  modes.forEach(mode=>{const button=el('button','npc-action-button'+(state.npcTab===mode.id?' active':''),uiIcon(mode.icon)+'<span>'+mode.label+'</span>');button.setAttribute('aria-pressed',state.npcTab===mode.id?'true':'false');button.onclick=()=>{state.npcTab=mode.id;renderPanelTop();};actions.appendChild(button);});box.appendChild(actions);
-  if(state.npcTab==='teach')renderNpcMasteries(box,npcName);
-  else if(state.npcTab==='career')renderCareerMentorAction(box,npcName);
-  else if(state.npcTab==='commission')renderNpcCommissions(box,npcName);
-  else renderNpcDialogue(box,npcName);
+  modes.forEach(mode=>{const button=el('button','npc-action-button'+(state.npcTab===mode.id?' active':''),uiIcon(mode.icon)+'<span>'+mode.label+'</span>');button.setAttribute('aria-pressed',state.npcTab===mode.id?'true':'false');button.onclick=()=>{state.npcTab=mode.id;renderPanelTop();};actions.appendChild(button);});console.appendChild(actions);
+  const content=el('div','npc-content-scroll');
+  if(state.npcTab==='teach')renderNpcMasteries(content,npcName);
+  else if(state.npcTab==='career')renderCareerMentorAction(content,npcName);
+  else if(state.npcTab==='commission')renderNpcCommissions(content,npcName);
+  else renderNpcDialogue(content,npcName);
+  console.appendChild(content);terminal.appendChild(console);
+  const exitbar=el('footer','npc-exitbar'),exit=el('button','npc-exit',uiIcon('close')+'<span><b>我走了</b><small>再见，'+npcName+'</small></span>');exit.setAttribute('aria-label','结束与'+npcName+'交谈并返回');exit.onclick=()=>{state.npcTarget=null;if(P().location==='camp')state.campView='home';dismissActionFeedback(true);renderPanelTop();};exitbar.appendChild(exit);terminal.appendChild(exitbar);box.appendChild(terminal);
 }
 function renderCampHome(box){ state.campBuilding=null; state.campView='home'; box.classList.add('camp-home');
   renderCampHero(box);
