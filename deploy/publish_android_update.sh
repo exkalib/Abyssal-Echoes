@@ -22,11 +22,11 @@ work_dir="$(mktemp -d)"
 trap 'rm -rf "$work_dir"' EXIT
 payload_dir="$work_dir/payload"
 mkdir -p "$payload_dir"
-cp "$root_dir/prototype/index.html" "$root_dir/prototype/style.css" "$root_dir/prototype/ui-system.css" "$root_dir/prototype/game.js" "$payload_dir/"
+cp "$root_dir/prototype/index.html" "$root_dir/prototype/style.css" "$root_dir/prototype/ui-system.css" "$root_dir/prototype/story-scenes.css" "$root_dir/prototype/game.js" "$payload_dir/"
 cp -R "$root_dir/prototype/assets" "$payload_dir/assets"
 
 bundle="bundle-$build.zip"
-(cd "$payload_dir" && zip -q -9 -r "$work_dir/$bundle" index.html style.css ui-system.css game.js assets)
+(cd "$payload_dir" && zip -q -9 -r "$work_dir/$bundle" index.html style.css ui-system.css story-scenes.css game.js assets)
 sha256="$(shasum -a 256 "$work_dir/$bundle" | awk '{print $1}')"
 size="$(wc -c < "$work_dir/$bundle" | tr -d ' ')"
 apk_url="http://59.110.144.30:9091/app-update/Abyssal-Echoes.apk"
@@ -51,10 +51,10 @@ ssh "$remote_host" "chmod 644 '$remote_dir/$bundle' '$remote_dir/Abyssal-Echoes.
 # Safari/浏览器直接读取站点根目录；资源先同步，入口文件最后切换，避免页面引用到尚未上传的文件。
 ssh "$remote_host" "mkdir -p '$web_dir/assets'"
 scp -r "$root_dir/prototype/assets" "$remote_host:$web_dir/"
-for file in style.css ui-system.css game.js index.html; do
+for file in style.css ui-system.css story-scenes.css game.js index.html; do
   scp "$root_dir/prototype/$file" "$remote_host:$web_dir/$file.new"
 done
-ssh "$remote_host" "chmod 644 '$web_dir/style.css.new' '$web_dir/ui-system.css.new' '$web_dir/game.js.new' '$web_dir/index.html.new' && mv '$web_dir/style.css.new' '$web_dir/style.css' && mv '$web_dir/ui-system.css.new' '$web_dir/ui-system.css' && mv '$web_dir/game.js.new' '$web_dir/game.js' && mv '$web_dir/index.html.new' '$web_dir/index.html'"
+ssh "$remote_host" "chmod 644 '$web_dir/style.css.new' '$web_dir/ui-system.css.new' '$web_dir/story-scenes.css.new' '$web_dir/game.js.new' '$web_dir/index.html.new' && mv '$web_dir/style.css.new' '$web_dir/style.css' && mv '$web_dir/ui-system.css.new' '$web_dir/ui-system.css' && mv '$web_dir/story-scenes.css.new' '$web_dir/story-scenes.css' && mv '$web_dir/game.js.new' '$web_dir/game.js' && mv '$web_dir/index.html.new' '$web_dir/index.html'"
 
 echo "已发布资源版本 ${version}（build ${build}）"
 echo "清单：http://59.110.144.30:9091/app-update/manifest.json"

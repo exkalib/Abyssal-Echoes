@@ -1,0 +1,144 @@
+/* One-time narrative scenes. Kept separate from the persistent NPC operation page. */
+
+/* Opening: generated camp environment + the same Old Joe portrait used everywhere else. */
+.wake-camp{
+  width:100%;height:100%;object-fit:cover;object-position:center 48%;
+  background:#020305;filter:blur(12px) brightness(.22);animation:wake-focus-long 5.8s ease-out forwards;
+}
+.wake-guide-figure{
+  position:absolute;z-index:2;right:-7%;bottom:7%;width:72%;height:76%;object-fit:contain;object-position:right bottom;
+  opacity:0;filter:brightness(.45) saturate(.78) drop-shadow(0 18px 35px #000);transform-origin:70% 100%;
+  animation:wake-guide-focus 5.8s ease-out forwards;pointer-events:none;
+}
+@keyframes wake-guide-focus{
+  0%,24%{opacity:0;filter:blur(12px) brightness(.15);transform:scale(1.05)}
+  40%{opacity:.18;filter:blur(9px) brightness(.22)}
+  58%{opacity:.4;filter:blur(5px) brightness(.36)}
+  78%{opacity:.72;filter:blur(2px) brightness(.55)}
+  92%,100%{opacity:.9;filter:blur(0) brightness(.68) saturate(.86);transform:scale(1)}
+}
+.wake-top{animation:wake-lid-top-long 5.8s cubic-bezier(.55,.02,.22,1) forwards}
+.wake-bottom{animation:wake-lid-bottom-long 5.8s cubic-bezier(.55,.02,.22,1) forwards}
+.wake-caption{animation:wake-caption-long 5.8s ease forwards}
+@keyframes wake-lid-top-long{
+  0%,9%{transform:translateY(0)}16%{transform:translateY(-19%)}23%{transform:translateY(-2%)}
+  31%{transform:translateY(-38%)}39%{transform:translateY(-7%)}48%{transform:translateY(-64%)}
+  57%{transform:translateY(-34%)}69%{transform:translateY(-88%)}78%{transform:translateY(-72%)}
+  90%,100%{transform:translateY(-108%)}
+}
+@keyframes wake-lid-bottom-long{
+  0%,9%{transform:translateY(0)}16%{transform:translateY(19%)}23%{transform:translateY(2%)}
+  31%{transform:translateY(38%)}39%{transform:translateY(7%)}48%{transform:translateY(64%)}
+  57%{transform:translateY(34%)}69%{transform:translateY(88%)}78%{transform:translateY(72%)}
+  90%,100%{transform:translateY(108%)}
+}
+@keyframes wake-focus-long{
+  0%,23%{filter:blur(15px) brightness(.13)}39%{filter:blur(11px) brightness(.24)}
+  57%{filter:blur(7px) brightness(.38)}78%{filter:blur(3px) brightness(.62)}92%,100%{filter:blur(0) brightness(1)}
+}
+@keyframes wake-caption-long{0%,58%{opacity:0;transform:translateY(6px)}70%,94%{opacity:1;transform:none}100%{opacity:0}}
+
+.intro-camp-stage{
+  background:#02070b;
+}
+.intro-camp-stage::before{
+  z-index:3;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.015) 3px 4px);
+}
+.intro-camp-stage::after{
+  content:'';position:absolute;z-index:1;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(1,5,8,.22) 0,rgba(1,5,8,.04) 42%,rgba(1,5,8,.76) 76%,#02070b 100%),linear-gradient(90deg,rgba(2,7,11,.5),transparent 70%);
+}
+.intro-scene-bg{
+  position:absolute;z-index:0;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 48%;
+  filter:saturate(.82) contrast(1.04) brightness(.72);pointer-events:none;
+}
+.intro-guide-figure{
+  position:absolute;z-index:2;right:-7%;bottom:15%;width:72%;height:76%;object-fit:contain;object-position:right bottom;
+  opacity:.88;filter:brightness(.72) saturate(.82) drop-shadow(0 15px 30px rgba(0,0,0,.82));
+  mask-image:linear-gradient(180deg,#000 0 82%,transparent 100%);-webkit-mask-image:linear-gradient(180deg,#000 0 82%,transparent 100%);
+  animation:intro-joe-breathe 7s ease-in-out infinite alternate;pointer-events:none;
+}
+.intro-location,.intro-open-space,.guide-dialog,.guide-npc-call,.tutorial-reward,.tutorial-system-toast,.tutorial-built,.tutorial-minimap,.tutorial-build-module{z-index:5}
+.intro-location{text-shadow:0 3px 16px #000}.intro-location small{color:#d29a61}.intro-location span{color:#9eabb2}
+.guide-portrait{background:#0b1114}
+.guide-portrait img{width:100%;height:100%;object-fit:cover;object-position:center 5%;transform:scale(2.35);transform-origin:50% 14%;filter:saturate(.86) contrast(1.08) brightness(.92)}
+@keyframes intro-joe-breathe{from{transform:scale(1) translate3d(0,0,0)}to{transform:scale(1.012) translate3d(-.3%,-.2%,0)}}
+
+/* Full-viewport story cutscene shown by first-contact and quest-progression triggers. */
+body.story-scene-active{overflow:hidden;overscroll-behavior:none}
+.story-cutscene{
+  --story-accent:#60d8f5;--story-accent-rgb:96,216,245;
+  position:fixed;z-index:7200;inset:0;display:grid;place-items:center;overflow:hidden;
+  background:#010406;opacity:0;transition:opacity .22s ease;isolation:isolate;
+}
+.story-cutscene.is-visible{opacity:1}.story-cutscene.is-closing{opacity:0;pointer-events:none}
+.story-cutscene.bio{--story-accent:#69e0aa;--story-accent-rgb:105,224,170}
+.story-cutscene.engineer,.story-cutscene.miner{--story-accent:#e1aa52;--story-accent-rgb:225,170,82}
+.story-cutscene.command,.story-cutscene.combat,.story-cutscene.guard{--story-accent:#e36b73;--story-accent-rgb:227,107,115}
+.story-cutscene.phase{--story-accent:#ba8dff;--story-accent-rgb:186,141,255}
+.story-cutscene.archive{--story-accent:#a6bdca;--story-accent-rgb:166,189,202}
+.story-cutscene.navigator{--story-accent:#7fc8ff;--story-accent-rgb:127,200,255}
+.story-cutscene-frame{
+  position:relative;width:min(100%,520px);height:100%;min-height:0;overflow:hidden;isolation:isolate;background:#02070b;
+  box-shadow:0 0 90px rgba(0,0,0,.9);
+}
+.story-cutscene-frame::before{
+  content:'';position:absolute;z-index:2;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(1,4,7,.34) 0,transparent 23%,rgba(1,5,8,.08) 47%,rgba(1,5,8,.7) 72%,#020609 91%),linear-gradient(90deg,rgba(1,5,8,.28),transparent 48%,rgba(1,5,8,.08));
+}
+.story-cutscene-bg{
+  position:absolute;z-index:0;inset:-2%;width:104%;height:104%;object-fit:cover;object-position:center 45%;
+  filter:saturate(.82) contrast(1.08) brightness(.73);transform:scale(1.025);animation:story-scene-drift 14s ease-out both;pointer-events:none;
+}
+.story-cutscene-portrait{
+  position:absolute;z-index:1;right:-8%;bottom:19%;width:78%;height:70%;object-fit:cover;object-position:center top;
+  opacity:.94;filter:saturate(.86) contrast(1.07) brightness(.8) drop-shadow(-18px 12px 28px rgba(0,0,0,.7));
+  mask-image:linear-gradient(90deg,transparent 0,#000 17% 92%,transparent 100%),linear-gradient(180deg,#000 0 82%,transparent 100%);
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 17% 92%,transparent 100%),linear-gradient(180deg,#000 0 82%,transparent 100%);
+  mask-composite:intersect;-webkit-mask-composite:source-in;
+  animation:story-portrait-enter .65s cubic-bezier(.2,.7,.2,1) both,story-portrait-breathe 8s ease-in-out .7s infinite alternate;pointer-events:none;
+}
+.story-cutscene-scan{
+  position:absolute;z-index:3;inset:0;opacity:.28;pointer-events:none;mix-blend-mode:screen;
+  background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(var(--story-accent-rgb),.024) 3px 4px);
+}
+.story-cutscene-head{
+  position:absolute;z-index:5;left:0;right:0;top:0;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:max(18px,calc(env(safe-area-inset-top) + 12px)) 17px 20px;color:#afc1ca;text-shadow:0 2px 8px #000;
+  background:linear-gradient(180deg,rgba(1,5,8,.78),transparent);
+}
+.story-cutscene-head span{display:flex;align-items:center;min-width:0;gap:7px}.story-cutscene-head i{flex:none;width:5px;height:5px;border-radius:50%;background:var(--story-accent);box-shadow:0 0 9px var(--story-accent)}
+.story-cutscene-head small{overflow:hidden;color:var(--story-accent);font:700 6.5px/1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:1.25px;text-overflow:ellipsis;white-space:nowrap}
+.story-cutscene-head em{flex:none;color:#9fb0b8;font:normal 7px/1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.7px}
+.story-cutscene-dialog{
+  position:absolute;z-index:6;left:0;right:0;bottom:0;display:grid;grid-template-columns:52px minmax(0,1fr);gap:7px 10px;
+  padding:58px 17px max(14px,calc(env(safe-area-inset-bottom) + 10px));
+  background:linear-gradient(180deg,transparent 0,rgba(2,6,9,.76) 20%,rgba(2,6,9,.96) 46%,#020609 100%);
+}
+.story-cutscene-speaker{grid-column:1/-1;display:flex;align-items:center;gap:9px;min-width:0}
+.story-cutscene-avatar{flex:none;width:46px;height:46px;overflow:hidden;border:1px solid rgba(var(--story-accent-rgb),.68);border-radius:4px;background:#050b0f;box-shadow:inset 0 0 14px rgba(var(--story-accent-rgb),.1),0 0 16px rgba(var(--story-accent-rgb),.1)}
+.story-cutscene-avatar img{width:100%;height:100%;object-fit:cover;object-position:center 5%;transform:scale(2.35);transform-origin:50% 14%;filter:saturate(.87) contrast(1.08) brightness(.92)}
+.story-cutscene-speaker>span:last-child{min-width:0}.story-cutscene-speaker small,.story-cutscene-speaker b{display:block}.story-cutscene-speaker small{color:var(--story-accent);font:700 6px/1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:1.2px}.story-cutscene-speaker b{margin-top:4px;color:#eef7fa;font-size:15px;letter-spacing:1.6px;text-shadow:0 2px 8px #000}
+.story-cutscene-copy{grid-column:1/-1;min-width:0;padding-left:11px;border-left:1px solid rgba(var(--story-accent-rgb),.58)}
+.story-cutscene-copy>small{display:block;color:rgba(var(--story-accent-rgb),.76);font:700 6px/1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:1.4px}
+.story-cutscene-copy h2{margin:6px 0 0;color:#edf5f8;font-size:18px;line-height:1.18;font-weight:600;letter-spacing:.7px;text-shadow:0 2px 12px #000}
+.story-cutscene-copy p{max-height:18vh;margin:7px 0 0;overflow-y:auto;overscroll-behavior:contain;color:#b5c4ca;font-size:11px;line-height:1.68;text-shadow:0 2px 8px #000;scrollbar-width:thin;scrollbar-color:rgba(var(--story-accent-rgb),.42) transparent}
+#app~.story-cutscene button,.story-cutscene-next{
+  grid-column:1/-1;width:100%;min-height:43px;margin-top:3px;padding:9px 13px;display:flex;align-items:center;justify-content:space-between;
+  border:0;border-top:1px solid rgba(var(--story-accent-rgb),.72);border-bottom:1px solid rgba(var(--story-accent-rgb),.22);border-radius:0;
+  color:#d9f5fb;background:linear-gradient(90deg,transparent,rgba(var(--story-accent-rgb),.13) 18% 82%,transparent);
+  box-shadow:none;font:700 10px/1 inherit;letter-spacing:2px;text-align:left;cursor:pointer;
+}
+.story-cutscene-next span{display:grid;place-items:center;color:var(--story-accent)}.story-cutscene-next .ui-icon{width:16px;height:16px}.story-cutscene-next:active{filter:brightness(1.35)}
+@keyframes story-scene-drift{from{transform:scale(1.055) translate3d(-.5%,0,0)}to{transform:scale(1.025) translate3d(0,0,0)}}
+@keyframes story-portrait-enter{from{opacity:0;transform:translate3d(8%,2%,0);filter:blur(7px) brightness(.45)}to{opacity:.94;transform:translate3d(0,0,0)}}
+@keyframes story-portrait-breathe{from{transform:scale(1) translate3d(0,0,0)}to{transform:scale(1.012) translate3d(-.35%,-.2%,0)}}
+
+@media(max-height:700px){
+  .intro-guide-figure{bottom:18%;height:69%}.story-cutscene-portrait{bottom:24%;height:64%}
+  .story-cutscene-dialog{padding-top:42px}.story-cutscene-avatar{width:40px;height:40px}.story-cutscene-speaker b{font-size:13px}
+  .story-cutscene-copy h2{font-size:15px}.story-cutscene-copy p{max-height:15vh;font-size:9.5px;line-height:1.55}.story-cutscene-next{min-height:38px}
+}
+@media(prefers-reduced-motion:reduce){
+  .wake-guide-figure,.intro-guide-figure,.story-cutscene-bg,.story-cutscene-portrait{animation-duration:.01ms!important;animation-delay:0s!important}
+}

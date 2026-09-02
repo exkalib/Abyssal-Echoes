@@ -549,6 +549,47 @@ const NPC_PROFILE={
 function npcProfile(name){return NPC_PROFILE[name]||{portrait:'old-joe',role:'幸存者',unit:'现场联系人',bio:'暂时没有更多档案。',tone:'scout'};}
 function npcPortraitSrc(name){return 'assets/npc-portraits-v1/'+npcProfile(name).portrait+'.png?v=1';}
 function npcPortraitMarkup(name,cls){return '<img class="'+(cls||'npc-contact-portrait')+'" src="'+npcPortraitSrc(name)+'" alt="'+name+'立绘" draggable="false">';}
+const STORY_SCENE_ROOT='assets/story-scenes-v1/';
+const STORY_SCENE_ASSETS={
+  camp:'awakening-camp.jpg',surface:'surface-wreckage.jpg',habitat:'habitat-workshop.jpg',
+  engineering:'engineering-reactor.jpg',biolab:'biolab-nursery.jpg',garrison:'military-garrison.jpg',
+  mine:'deep-mine.jpg',archive:'bridge-archive.jpg',
+};
+const STORY_SCENE_LOCATIONS={
+  camp:'camp',joeCamp:'camp',setGate:'camp',setHub:'camp',
+  outer:'surface',cargoYard:'surface',blackwood:'surface',ridge:'surface',relayTower:'surface',floodChannel:'surface',coalRift:'surface',
+  layer2:'habitat',freightHub:'habitat',sealedCabin:'habitat',setWorkshop:'habitat',
+  layer3:'engineering',coolingGallery:'engineering',
+  layer4:'biolab',nursery:'biolab',fungal:'biolab',sporeTunnel:'biolab',setBio:'biolab',
+  layer5:'garrison',setGarrison:'garrison',
+  oldMine:'mine',underworks:'mine',abyss:'mine',ruinVestibule:'mine',
+  layer6:'archive',layer7:'archive',setArchive:'archive',
+};
+const NPC_FIRST_CONTACT={
+  '老乔':'一个背着旧测绘终端的男人守在你醒来的铺位旁。他先确认你的呼吸，才把视线移向远处仍在燃烧的方舟残骸。',
+  '陈嫂':'临时医护灯下，陈嫂一边压住孩子滚烫的额头，一边把最后几支药剂按使用顺序摆好。她没有求你，只是给你让出了一条通往制药台的路。',
+  '老周':'排水泵每转一圈都发出要散架的呻吟。老周浸在冷水里，敲了敲露出的检修门：门后就是工程区，但这里还缺能让泵撑住的零件。',
+  '阿珍':'阿珍把一段被反复读取的导航记录推到你面前。画面停在阿勇最后一次离开生活区的背影，时间戳之后，只剩人为抹去的空白。',
+  '阿拓':'塌方深处传来三短一长的敲击。矿灯扫过碎岩，你终于看见被困在采掘机旁的阿拓——他还活着，也还在守着一条通往船底的路。',
+  '林薇':'反应堆警报把她的声音切成断续的碎片。林薇站在泄漏的冷却环前，一只手压住临时补丁，另一只手指向正在熔化的隔离门。',
+  '小唐':'维修井的通讯噪声里挤出一声短促回应。小唐被困在辐射门后，护盾读数正在下降；你看得见他，却还隔着一整段致命的维修通道。',
+  '陈博士':'破裂培养舱之间，有人正在记录孢子放电。陈博士抬头看了你一眼，随后把两条完全重合的波形投到终端上——一条来自样本，一条来自地下。',
+  '哈里斯':'三枚巡逻信标沉默地躺在安保通道里。哈里斯守在失效炮塔的射界之外，要求你先找齐失联队员留下的记录，再谈这层究竟发生过什么。',
+  '纪遥':'隐藏培养室的原型终端亮起时，纪遥正站在被删除的参数前。她说标准科技树不会承认这台设备，但它或许能让人听见回响而不被回响吞掉。',
+  '哑叔':'舰桥里没有欢迎，也没有声音。哑叔把恢复出的最后七十二小时推到你面前，在终端上只写下一句：先看证据，再决定相信谁。',
+  '阿勇':'拘留舱门刚滑开，阿勇就把一段缺失航迹塞进你的手环。他没有道谢，只盯着你说：偏航那一晚，舰桥上根本没有人。',
+};
+function storySceneKey(location){
+  if(STORY_SCENE_LOCATIONS[location])return STORY_SCENE_LOCATIONS[location];
+  const profile=LOCATIONS[location]&&LOCATIONS[location].profile;
+  return ({wild:'surface',mine:'mine',facility:'habitat',lab:'biolab',depth:'mine',archive:'archive'})[profile]||'camp';
+}
+function storySceneSrc(location){return STORY_SCENE_ROOT+STORY_SCENE_ASSETS[storySceneKey(location)]+'?v=1';}
+function storyNpcFromGiver(giver){return NPC_NAMES.find(name=>giver===name||String(giver||'').includes(name))||null;}
+function storyLocationForQuest(q,npc){
+  const candidates=[q&&q.turnAt,q&&q.target,npc&&npcLocation(npc),state&&state.player&&state.player.location];
+  return candidates.find(id=>id&&LOCATIONS[id])||'camp';
+}
 function repairMinerProgression(announce){
   if(!state.flags||!state.flags.minerFreed||!state.flags.depthLampBuilt)return false;
   const learned=!state.flags.bp_miningHarness;state.flags.bp_miningHarness=true;discoverLocation('underworks',!!announce);return learned;
@@ -1497,7 +1538,7 @@ function activateAvailableQuests(announce){
   let changed=false;
   QUESTS.forEach(q=>{ if(questState(q.id)==='locked'&&questReqsDone(q)){ setQuestState(q.id,'active');
     if(q.type==='search') state.questStart[q.id]=state.areaSearch[q.target]||0; changed=true;
-    if(announce) log('📋 新任务【'+q.title+'】· '+q.objective,'sys'); } });
+    if(announce){log('📋 新任务【'+q.title+'】· '+q.objective,'sys');queueQuestStoryScene(q,'intro');} } });
   return changed;
 }
 function claimTruth(line){
@@ -1514,7 +1555,7 @@ function finishQuest(id,announce){
   if(q.reward&&q.reward.flag){ if(q.persist==='space')setMetaFlag(q.reward.flag);else state.flags[q.reward.flag]=true; }
   if(q.reward&&q.reward.reveal) discoverLocation(q.reward.reveal,announce);
   if(q.truth) claimTruth(q.truth);
-  if(announce){ divider(); log('✓ 完成任务【'+q.title+'】','sys'); log(q.done,'story'); divider(); setLogOpen(true); }
+  if(announce){ divider(); log('✓ 完成任务【'+q.title+'】','sys'); log(q.done,'story'); divider(); setLogOpen(true);queueQuestStoryScene(q,'complete'); }
   activateAvailableQuests(announce);
   return true;
 }
@@ -1596,7 +1637,7 @@ function nextDiscoveryMilestone(id){
 function areaEventNeed(id,index){return scheduledDiscoveryNeed('event',id,index,explorationPacingRange('event',id,index));}
 function npcDiscoveryNeed(name){const entry=NPC_FIELD_DISCOVERIES[name];return entry?scheduledDiscoveryNeed('npc',entry.at,NPC_NAMES.indexOf(name),entry.range):Infinity;}
 function applyNpcDiscoveries(id,count){
-  Object.entries(NPC_FIELD_DISCOVERIES).forEach(([name,entry])=>{const flag='fieldNpcFound_'+name;if(entry.at!==id||state.flags[flag]||count<npcDiscoveryNeed(name)||entry.requireFlag&&!state.flags[entry.requireFlag]||npcLocation(name)!==id)return;state.flags[flag]=true;const text='你从环境噪声里分离出一段微弱的人类信号。坐标确认：'+name+'仍在【'+LOCATIONS[id].name+'】。';setFieldReport(id,'发现幸存者信号',text,'good');log('◉ 发现现场联系人【'+name+'】。','good');});
+  Object.entries(NPC_FIELD_DISCOVERIES).forEach(([name,entry])=>{const flag='fieldNpcFound_'+name;if(entry.at!==id||state.flags[flag]||count<npcDiscoveryNeed(name)||entry.requireFlag&&!state.flags[entry.requireFlag]||npcLocation(name)!==id)return;state.flags[flag]=true;const text='你从环境噪声里分离出一段微弱的人类信号。坐标确认：'+name+'仍在【'+LOCATIONS[id].name+'】。';setFieldReport(id,'发现幸存者信号',text,'good');log('◉ 发现现场联系人【'+name+'】。','good');queueNpcFirstContact(name,id);});
 }
 function resourceSiteOf(id){
   const loc=LOCATIONS[id];if(!loc||id==='camp'||!loc.loot)return null;if(loc.resourceSite)return loc.resourceSite;
@@ -2039,6 +2080,62 @@ function playSfx(kind){
   pattern.forEach(([offset,freq,duration,level,type])=>spawnAudioTone(audioRuntime.sfxBus,freq,start+offset,duration,level,type));
 }
 let interactionFeedbackInstalled=false,feedbackBatch=null,feedbackFlushTimer=null,feedbackGeneration=0,inlineChange=null;
+let storySceneQueue=[],storySceneActive=false;
+const STORY_CINEMATIC_LINES=new Set(['main','survivor','signal','evidence','special']);
+const STORY_CINEMATIC_SKIP=new Set(['rescueTang','freeAyong']);
+function storySceneFlag(key){return 'storyScene_'+key;}
+function storyNpcMet(name){return !!(state&&state.flags&&state.flags['storyNpcMet_'+name]);}
+function markStoryNpcMet(name){if(state&&state.flags&&name)state.flags['storyNpcMet_'+name]=true;}
+function queueStoryScene(spec){
+  if(!spec||!spec.npc||!NPC_NAMES.includes(spec.npc)||tutorialActive())return false;
+  const key=spec.onceKey&&storySceneFlag(spec.onceKey);
+  if(key&&state.flags[key])return false;
+  if(key)state.flags[key]=true;
+  storySceneQueue.push({
+    npc:spec.npc,location:spec.location&&LOCATIONS[spec.location]?spec.location:'camp',
+    eyebrow:spec.eyebrow||'STORY EVENT',title:spec.title||spec.npc,text:spec.text||NPC_FIRST_CONTACT[spec.npc],
+    action:spec.action||'继续',kind:spec.kind||'story',
+  });
+  return true;
+}
+function queueNpcFirstContact(name,location,text){
+  if(!name||storyNpcMet(name))return false;
+  markStoryNpcMet(name);
+  return queueStoryScene({npc:name,location,onceKey:'npc-'+name,kind:'contact',eyebrow:'FIRST CONTACT // '+((LOCATIONS[location]&&LOCATIONS[location].zone)||'UNKNOWN'),title:'发现幸存者 · '+name,text:text||NPC_FIRST_CONTACT[name],action:'走近查看'});
+}
+function queueQuestStoryScene(q,phase){
+  const npc=q&&storyNpcFromGiver(q.giver);if(!npc)return false;
+  const location=storyLocationForQuest(q,npc);
+  if(phase==='intro')return queueNpcFirstContact(npc,location);
+  if(!STORY_CINEMATIC_LINES.has(q.line)||STORY_CINEMATIC_SKIP.has(q.id))return false;
+  if(!storyNpcMet(npc))queueNpcFirstContact(npc,location);
+  return queueStoryScene({npc,location,onceKey:'quest-'+q.id,kind:'chapter',eyebrow:'STORY UPDATE // '+q.chapter,title:q.title,text:q.done,action:'继续剧情'});
+}
+function closeStoryScene(node){
+  if(!node)return;node.classList.add('is-closing');
+  setTimeout(()=>{node.remove();storySceneActive=false;document.body.classList.remove('story-scene-active');flushStoryScenes();},180);
+}
+function resetStoryScenes(){
+  storySceneQueue=[];storySceneActive=false;
+  const current=document.querySelector('.story-cutscene');if(current)current.remove();
+  if(document.body)document.body.classList.remove('story-scene-active');
+}
+function flushStoryScenes(){
+  if(storySceneActive||!storySceneQueue.length||!document.body||document.querySelector('.story-cutscene'))return;
+  const scene=storySceneQueue.shift(),profile=npcProfile(scene.npc),location=LOCATIONS[scene.location]||LOCATIONS.camp;
+  storySceneActive=true;dismissActionFeedback(true);document.body.classList.add('story-scene-active');
+  const overlay=el('div','story-cutscene '+profile.tone+' '+scene.kind),frame=el('section','story-cutscene-frame');
+  overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label',scene.title);
+  const bg=el('img','story-cutscene-bg');bg.src=storySceneSrc(scene.location);bg.alt='';bg.draggable=false;
+  const portrait=el('img','story-cutscene-portrait');portrait.src=npcPortraitSrc(scene.npc);portrait.alt=scene.npc+'剧情立绘';portrait.draggable=false;
+  const scan=el('div','story-cutscene-scan'),head=el('header','story-cutscene-head');head.innerHTML='<span><i></i><small>'+scene.eyebrow+'</small></span><em>'+location.name+'</em>';
+  const footer=el('footer','story-cutscene-dialog'),speaker=el('div','story-cutscene-speaker'),avatar=el('span','story-cutscene-avatar'),avatarImg=el('img');
+  avatarImg.src=npcPortraitSrc(scene.npc);avatarImg.alt='';avatar.appendChild(avatarImg);speaker.appendChild(avatar);speaker.appendChild(el('span','','<small>'+profile.unit+'</small><b>'+scene.npc+'</b>'));
+  const copy=el('div','story-cutscene-copy');copy.appendChild(el('small','',scene.kind==='contact'?'现场接触':'剧情推进'));copy.appendChild(el('h2','',scene.title));copy.appendChild(el('p','',scene.text));
+  const next=el('button','story-cutscene-next',scene.action+'<span>'+uiIcon('chevron-right')+'</span>');next.onclick=()=>closeStoryScene(overlay);
+  footer.appendChild(speaker);footer.appendChild(copy);footer.appendChild(next);frame.appendChild(bg);frame.appendChild(portrait);frame.appendChild(scan);frame.appendChild(head);frame.appendChild(footer);overlay.appendChild(frame);document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add('is-visible'));
+}
 const pressedPointers=new Map();
 const FEEDBACK_PRIORITY={dim:0,story:1,sys:2,good:3,success:3,warn:4,warning:4,danger:5,error:5};
 function feedbackSpec(entries){
@@ -2127,7 +2224,8 @@ function finishWakeAnimation(){
 }
 function scheduleWakeAnimation(){
   if(!document.body||wakeTimer!==null||!tutorialActive()||state.tutorial.step!=='wake')return;
-  wakeTimer=setTimeout(finishWakeAnimation,2800);
+  const reduced=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  wakeTimer=setTimeout(finishWakeAnimation,reduced?320:6200);
 }
 function grantTutorialBracelet(){
   if(!tutorialActive())return;
@@ -2154,6 +2252,7 @@ function completeTutorial(){
   if(!state.tutorial)return;
   const learnedCollector=grantTutorialCollector();
   state.tutorial.step='done'; state.tutorial.complete=true; state.flags.guideDeparted=true;
+  markStoryNpcMet('老乔');
   Object.assign(state.flags,{braceletUnlocked:true,builderUnlocked:true,mapUnlocked:true,exploreUnlocked:true});
   state.quests.first_exit=state.quests.first_exit||'active'; state.tab='act'; state.campView='home'; state.mapOpen=false; state.mapLevel='world'; state.mapSelectedRegion='camp';
   state.discovered.setGate=true;if(learnedCollector)log('老乔授予副职业【入门拾荒者】。采集、开采等对应行动会自动采用职业作业方式。','good');renderPanelTop(); promptCampName();
@@ -2168,12 +2267,11 @@ function promptCampName(){
   input.onkeydown=e=>{if(e.key==='Enter')confirm.click();};card.appendChild(input);card.appendChild(confirm);shade.appendChild(card);document.body.appendChild(shade);setTimeout(()=>{input.focus();input.select();},0);
 }
 function guidePortrait(){
-  return '<span class="guide-portrait" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="21" r="11"/><path d="M13 57c2-15 10-23 19-23s17 8 19 23"/><path d="M23 18c4-8 15-11 22-3M21 42l11 7 11-7"/></svg><i></i></span>';
+  return '<span class="guide-portrait" aria-hidden="true"><img src="'+npcPortraitSrc('老乔')+'" alt="" draggable="false"><i></i></span>';
 }
 function tutorialCampScene(box){
   const scene=el('section','intro-camp-stage');
-  scene.innerHTML='<div class="intro-location"><small>PERSONAL // OUTPOST</small><b>幸存者营地</b><span>应急维生区 · 等待命名</span></div>'+
-    '<div class="camp-horizon" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><div class="camp-floor" aria-hidden="true"></div><div class="intro-open-space" aria-hidden="true"></div>';
+  scene.innerHTML='<img class="intro-scene-bg" src="'+storySceneSrc('camp')+'" alt="" draggable="false"><img class="intro-guide-figure" src="'+npcPortraitSrc('老乔')+'" alt="老乔立绘" draggable="false"><div class="intro-location"><small>PERSONAL // OUTPOST</small><b>幸存者营地</b><span>方舟坠毁带 · 应急维生区</span></div><div class="intro-open-space" aria-hidden="true"></div>';
   box.appendChild(scene); return scene;
 }
 function tutorialDialog(scene,text,action,fn){
@@ -2188,7 +2286,7 @@ function renderTutorialPanel(box){
   box.classList.add('tutorial-panel'); const step=state.tutorial.step||'wake';
   if(step==='wake'){
     const wake=el('section','wake-scene');
-    wake.innerHTML='<div class="wake-camp" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="wake-scan"></div><div class="wake-caption"><small>生命维持信号恢复</small><b>睁开眼</b></div><div class="wake-lid wake-top"></div><div class="wake-lid wake-bottom"></div>';
+    wake.innerHTML='<img class="wake-camp" src="'+storySceneSrc('camp')+'" alt="" draggable="false"><img class="wake-guide-figure" src="'+npcPortraitSrc('老乔')+'" alt="老乔守在铺位旁" draggable="false"><div class="wake-scan"></div><div class="wake-caption"><small>生命维持信号恢复</small><b>睁开眼</b></div><div class="wake-lid wake-top"></div><div class="wake-lid wake-bottom"></div>';
     box.appendChild(wake); scheduleWakeAnimation(); return;
   }
   const scene=tutorialCampScene(box);
@@ -2286,7 +2384,7 @@ function render(){ if(_npcCapturing)return; normalizePanelNavigationState();rend
     const t=el('span','ctitle',({char:'角色',bag:'背包',tech:'科技',task:'任务',set:'设置'})[state.tab]||'');
     cb.appendChild(x); cb.appendChild(t); box.appendChild(cb); }
   box.classList.toggle('tech-full', state.tab==='tech'||geneFull);
-  renderPanel(box); renderMapFab(); renderSiteSheet(box); renderTabbar(); save(); }
+  renderPanel(box); renderMapFab(); renderSiteSheet(box); renderTabbar(); save(); flushStoryScenes(); }
 function renderPanel(box){
   if (tutorialActive()) return renderTutorialPanel(box);
   if (state.combat) return renderCombatPanel(box);
@@ -2515,8 +2613,8 @@ function resolveTang(save){
   if(P().location!=='layer3'||!questActive('rescueTang'))return;
   if(save&&!environmentProtected('radiation')){ log('维修井辐射强度致命。先制作【辐射净化场组件】，再尝试救人。','warn'); return; }
   state.flags.tangResolved=true; state.flags.tangSaved=!!save; state.flags.tangLost=!save; divider();
-  if(save){ gainMat('ecomp',3); log('你穿过维修井，在隔离门彻底熔断前把小唐拖了出来。','story'); log('小唐交出抢救下来的反应堆数据芯片。获得：电子元件×3。','good'); }
-  else { state.flags.radiationSuppressed=true; log('你启动远程封舱。维修井辐射明显下降，但小唐的通讯也永远停了。','story'); }
+  if(save){ gainMat('ecomp',3); log('你穿过维修井，在隔离门彻底熔断前把小唐拖了出来。','story'); log('小唐交出抢救下来的反应堆数据芯片。获得：电子元件×3。','good');queueStoryScene({npc:'小唐',location:'layer3',onceKey:'tang-resolved',kind:'decision',eyebrow:'SURVIVOR RESCUED // ENGINEERING',title:'隔离门熔断前',text:'你把小唐拖过最后一道辐射门。他靠着舱壁喘了很久，才把抢救下来的反应堆数据芯片放进你手里：“防线的传感器……以后交给我。”',action:'带他离开'}); }
+  else { state.flags.radiationSuppressed=true; log('你启动远程封舱。维修井辐射明显下降，但小唐的通讯也永远停了。','story');queueStoryScene({npc:'小唐',location:'layer3',onceKey:'tang-resolved',kind:'decision',eyebrow:'SIGNAL LOST // ENGINEERING',title:'封舱指令',text:'远程闸门开始闭合。小唐的身影被红色警报灯切成越来越窄的一线，通讯里只剩一句没能说完的话，随后归于静默。',action:'关闭通讯'}); }
   divider(); syncQuestProgress(true); render();
 }
 function freeAyong(){
@@ -2524,6 +2622,7 @@ function freeAyong(){
   if(!has('accessCard')){ log('拘留舱需要巡逻队长的指挥权限卡。','warn'); return; }
   state.flags.ayongFreed=true; divider();
   log('权限卡划开拘留舱。阿勇第一句话不是道谢：“舰桥那晚没有人，航线是船自己改的。”','story');
+  markStoryNpcMet('阿勇');queueStoryScene({npc:'阿勇',location:'layer5',onceKey:'ayong-freed',kind:'contact',eyebrow:'DETENTION CELL // OPEN',title:'没有罪名的囚犯',text:NPC_FIRST_CONTACT['阿勇'],action:'听他讲完'});
   divider(); syncQuestProgress(true); render();
 }
 function resolveSeedChoice(mode){
@@ -4313,7 +4412,7 @@ function boot(){
   if(loaded)Object.entries(NPC_FIELD_DISCOVERIES).forEach(([name,entry])=>{if(state.visited[entry.at]||(state.areaSearch[entry.at]||0)>0)state.flags['fieldNpcFound_'+name]=true;});
   /* v1 引导之前的存档已经拥有完整 HUD、休眠仓和地图，直接兼容为已完成。 */
   if(!state.tutorial){state.tutorial={version:1,step:'done',complete:true};Object.assign(state.flags,{braceletUnlocked:true,builderUnlocked:true,mapUnlocked:true,exploreUnlocked:true,guideDeparted:true});}
-  if(state.tutorial.complete){state.tutorial.step='done';Object.assign(state.flags,{braceletUnlocked:true,builderUnlocked:true,mapUnlocked:true,exploreUnlocked:true,guideDeparted:true});state.discovered.setGate=true;state.inv.arkBand=Math.max(1,state.inv.arkBand||0);state.inv.builderGun=Math.max(1,state.inv.builderGun||0);state.inv.fieldMap=Math.max(1,state.inv.fieldMap||0);}
+  if(state.tutorial.complete){state.tutorial.step='done';Object.assign(state.flags,{braceletUnlocked:true,builderUnlocked:true,mapUnlocked:true,exploreUnlocked:true,guideDeparted:true});markStoryNpcMet('老乔');state.discovered.setGate=true;state.inv.arkBand=Math.max(1,state.inv.arkBand||0);state.inv.builderGun=Math.max(1,state.inv.builderGun||0);state.inv.fieldMap=Math.max(1,state.inv.fieldMap||0);}
   Object.keys(state.visited).filter(id=>state.visited[id]&&LOCATIONS[id]).forEach(id=>state.discovered[id]=true);if(P().location&&LOCATIONS[P().location])state.discovered[P().location]=true;
   /* 分层地图升级：已经走过旧路线的存档补齐中间节点和必要通行物，不强迫玩家重跑已完成章节。 */
   if(loaded){

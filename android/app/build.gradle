@@ -6,7 +6,7 @@ def generatedWebAssets = layout.buildDirectory.dir("generated/webAssets")
 
 tasks.register("syncBundledWeb", Sync) {
     from("../../prototype") {
-        include "index.html", "style.css", "ui-system.css", "game.js", "assets/**"
+        include "index.html", "style.css", "ui-system.css", "story-scenes.css", "game.js", "assets/**"
     }
     into(generatedWebAssets.map { it.dir("web") })
 }
