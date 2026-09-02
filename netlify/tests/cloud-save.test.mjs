@@ -8,6 +8,7 @@ import {
   normalizeCode,
 } from "../lib/cloud-save.mjs";
 import { BlobCloudSaveStore } from "../lib/blob-cloud-save.mjs";
+import cloudSaveHandler, { config as cloudSaveConfig } from "../functions/cloud-save.mjs";
 
 class MemoryCloudSaveStore {
   constructor() {
@@ -196,6 +197,40 @@ test("blob storage remains idle between explicit operations and retains one roll
   assert.equal(restored.revision, 3);
   assert.equal(restored.save.inv.scrap, 1);
   assert.deepEqual((await store.history(digest)).items.map((item) => item.revision), [3, 2]);
+});
+
+test("blob writes enforce a 30 second cooldown without extra storage records", async () => {
+  const blobs = new MemoryBlobStore();
+  const store = new BlobCloudSaveStore(blobs);
+  const digest = "c".repeat(64);
+
+  assert.equal(await store.create(digest, sampleSave(1), 100), true);
+  await assert.rejects(
+    store.save(digest, 1, sampleSave(2), 129),
+    (error) => error instanceof CloudSaveError
+      && error.status === 429
+      && error.code === "write_cooldown"
+      && error.details.retryAfter === 1,
+  );
+  assert.equal((await store.save(digest, 1, sampleSave(2), 130)).revision, 2);
+  assert.equal(blobs.entries.size, 1);
+});
+
+test("cloud endpoint allows only the 59 web origin and keeps the platform limiter", async () => {
+  const allowed = await cloudSaveHandler(new Request("https://example.test/api/cloud-save", {
+    method: "OPTIONS",
+    headers: { Origin: "http://59.110.144.30:9091" },
+  }));
+  assert.equal(allowed.status, 204);
+  assert.equal(allowed.headers.get("access-control-allow-origin"), "http://59.110.144.30:9091");
+  assert.equal(allowed.headers.get("access-control-max-age"), "86400");
+
+  const blocked = await cloudSaveHandler(new Request("https://example.test/api/cloud-save", {
+    method: "OPTIONS",
+    headers: { Origin: "https://attacker.example" },
+  }));
+  assert.equal(blocked.status, 403);
+  assert.equal(cloudSaveConfig.rateLimit.windowLimit, 8);
 });
 
 test("concurrent manual uploads atomically preserve the winning previous version", async () => {

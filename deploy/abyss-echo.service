@@ -1,15 +1,16 @@
 [Unit]
-Description=Abyss Echo static web prototype
+Description=Abyss Echo test web and update server
 After=network.target
 
 [Service]
 Type=simple
 WorkingDirectory=/srv/www/abyss-echo
-ExecStart=/usr/bin/python3 -m http.server 9091 --bind 0.0.0.0
+ExecStart=/usr/bin/python3 /srv/www/abyss-echo/serve_static.py
 Restart=always
 RestartSec=3
 User=nobody
 Group=nobody
+UMask=0077
 
 [Install]
 WantedBy=multi-user.target

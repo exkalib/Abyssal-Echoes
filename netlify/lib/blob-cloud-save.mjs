@@ -1,6 +1,7 @@
 import { CloudSaveError } from "./cloud-save.mjs";
 
 export const CLOUD_BLOB_STORE = "abyss-migration-saves";
+export const CLOUD_WRITE_COOLDOWN_SECONDS = 30;
 
 export function currentBlobKey(digest) {
   return `saves/${digest}`;
@@ -41,8 +42,9 @@ function publicRecord(record, includeSave = false) {
 }
 
 export class BlobCloudSaveStore {
-  constructor(store) {
+  constructor(store, options = {}) {
     this.store = store;
+    this.writeCooldownSeconds = options.writeCooldownSeconds ?? CLOUD_WRITE_COOLDOWN_SECONDS;
   }
 
   async read(key) {
@@ -60,6 +62,15 @@ export class BlobCloudSaveStore {
       revision: record.revision,
       updatedAt: record.updatedAt,
     });
+  }
+
+  enforceWriteCooldown(record, timestamp) {
+    const retryAfter = Math.ceil(record.updatedAt + this.writeCooldownSeconds - timestamp);
+    if (retryAfter > 0) {
+      throw new CloudSaveError(429, "write_cooldown", `云存档写入冷却中，请 ${retryAfter} 秒后重试`, {
+        retryAfter,
+      });
+    }
   }
 
   async create(digest, save, timestamp) {
@@ -85,6 +96,7 @@ export class BlobCloudSaveStore {
     const { entry, archive } = await this.current(digest);
     const record = archive.current;
     if (record.revision !== expected) this.conflict(record);
+    this.enforceWriteCooldown(record, timestamp);
 
     const revision = expected + 1;
     const next = {
@@ -121,6 +133,7 @@ export class BlobCloudSaveStore {
     const { entry, archive } = await this.current(digest);
     const record = archive.current;
     if (record.revision !== expected) this.conflict(record, "云端已有更新，已停止恢复");
+    this.enforceWriteCooldown(record, timestamp);
 
     if (!archive.previous) {
       throw new CloudSaveError(404, "backup_not_found", "上一个云端迁移版本已不存在");

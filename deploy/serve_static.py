@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Small threaded static server compatible with the server's Python 3.6."""
+"""Small threaded static test server compatible with Python 3.6+."""
 
 import mimetypes
 from http.server import HTTPServer, SimpleHTTPRequestHandler

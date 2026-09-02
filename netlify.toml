@@ -1,6 +1,7 @@
 [build]
-  publish = "prototype"
-  command = "npm test"
+  publish = "netlify/public"
+  command = "node --test netlify/tests/*.test.mjs"
+  ignore = "test $CACHED_COMMIT_REF != $COMMIT_REF && git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- netlify netlify.toml package.json package-lock.json"
 
 [build.environment]
   NODE_VERSION = "22"
@@ -13,9 +14,5 @@
   for = "/*"
   [headers.values]
     X-Content-Type-Options = "nosniff"
+    X-Robots-Tag = "noindex, nofollow"
     Referrer-Policy = "strict-origin-when-cross-origin"
-
-[[headers]]
-  for = "/app-update/*"
-  [headers.values]
-    Cache-Control = "no-store, no-cache, must-revalidate"

@@ -7,6 +7,10 @@ import {
 import { BlobCloudSaveStore, CLOUD_BLOB_STORE } from "../lib/blob-cloud-save.mjs";
 
 let service;
+const ALLOWED_WEB_ORIGINS = new Set([
+  "http://59.110.144.30:9091",
+  "https://abyssal-echoes-survival.netlify.app",
+]);
 
 function cloudSaveService() {
   if (!service) {
@@ -17,20 +21,40 @@ function cloudSaveService() {
   return service;
 }
 
-function json(body, status = 200) {
+function corsHeaders(request) {
+  const origin = request.headers.get("origin");
+  if (!origin || !ALLOWED_WEB_ORIGINS.has(origin)) return {};
+  return {
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Max-Age": "86400",
+    Vary: "Origin",
+  };
+}
+
+function json(request, body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       "Cache-Control": "no-store, no-cache, must-revalidate",
       "Content-Type": "application/json; charset=utf-8",
       "X-Content-Type-Options": "nosniff",
+      ...corsHeaders(request),
     },
   });
 }
 
 export default async function handler(request) {
+  const origin = request.headers.get("origin");
+  if (origin && !ALLOWED_WEB_ORIGINS.has(origin)) {
+    return json(request, { ok: false, error: "origin_not_allowed", message: "当前网页来源不能访问云存档" }, 403);
+  }
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders(request) });
+  }
   if (request.method !== "POST") {
-    return json({ ok: false, error: "method_not_allowed", message: "只支持 POST 请求" }, 405);
+    return json(request, { ok: false, error: "method_not_allowed", message: "只支持 POST 请求" }, 405);
   }
 
   try {
@@ -49,13 +73,13 @@ export default async function handler(request) {
     } catch {
       throw new CloudSaveError(400, "invalid_json", "请求内容不是有效 JSON");
     }
-    return json(await cloudSaveService().dispatch(payload));
+    return json(request, await cloudSaveService().dispatch(payload));
   } catch (error) {
     if (error instanceof CloudSaveError) {
-      return json({ ok: false, error: error.code, message: error.message, ...error.details }, error.status);
+      return json(request, { ok: false, error: error.code, message: error.message, ...error.details }, error.status);
     }
     console.error("Cloud-save function failed", error);
-    return json({ ok: false, error: "server_error", message: "云存档服务暂时不可用" }, 500);
+    return json(request, { ok: false, error: "server_error", message: "云存档服务暂时不可用" }, 500);
   }
 }
 
@@ -63,7 +87,7 @@ export const config = {
   path: "/api/cloud-save",
   rateLimit: {
     aggregateBy: ["ip", "domain"],
-    windowLimit: 12,
+    windowLimit: 8,
     windowSize: 60,
   },
 };

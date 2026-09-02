@@ -77,7 +77,7 @@ final class BundleUpdater {
 
     File activeRoot() {
         long build = prefs.getLong(ACTIVE_BUILD, 0L);
-        if (build <= 0L) return null;
+        if (build <= BuildConfig.BUNDLED_BUILD) return null;
         File root = releaseDir(build);
         return isValidBundle(root) ? root : null;
     }
@@ -102,7 +102,9 @@ final class BundleUpdater {
 
                 if (minShell > BuildConfig.SHELL_VERSION) {
                     String apkUrl = manifest.optString("apkUrl", BuildConfig.UPDATE_BASE_URL + "Abyssal-Echoes.apk");
-                    if (!apkUrl.startsWith("https://")) throw new IOException("安装包地址无效");
+                    if (!apkUrl.startsWith(BuildConfig.UPDATE_BASE_URL) || !apkUrl.endsWith(".apk")) {
+                        throw new IOException("安装包地址无效");
+                    }
                     UpdateInfo update = new UpdateInfo(build, version, true, apkUrl,
                             null, null, 0L);
                     post(() -> listener.onUpdateAvailable(update));

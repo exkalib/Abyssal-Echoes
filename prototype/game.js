@@ -1859,11 +1859,11 @@ function settleEcho(){ const r=state.runStats;
   return {total, fromKills, fromDmg, fromMat, kills:r.kills, wKill:r.wKill, dmg:r.dmg, mat:r.mat}; }
 
 const SAVE_KEY='abyss_echo_v2';
-const CLOUD_BINDING_KEY='abyss_echo_cloud_v1',LOCAL_ROLLBACK_KEY='abyss_echo_local_rollback_v1',TAB_LEASE_KEY='abyss_echo_tab_lease_v1',TAB_SESSION_KEY='abyss_echo_tab_id_v1';
-const CLOUD_ENDPOINT='/api/cloud-save',TAB_LEASE_MS=10000;
+const CLOUD_BINDING_KEY='abyss_echo_cloud_v1',CLOUD_COOLDOWN_KEY='abyss_echo_cloud_cooldown_v1',LOCAL_ROLLBACK_KEY='abyss_echo_local_rollback_v1',TAB_LEASE_KEY='abyss_echo_tab_lease_v1',TAB_SESSION_KEY='abyss_echo_tab_id_v1';
+const CLOUD_ENDPOINT='https://abyssal-echoes-survival.netlify.app/api/cloud-save',CLOUD_COOLDOWN_SECONDS={read:10,write:30},TAB_LEASE_MS=10000;
 let lastSavedJson='',tabLeaseOwner=true,tabLeasePreserved=false,tabLeaseTimer=null;
 const cloudUi={status:'',tone:'',preview:null,history:null,restoreConfirm:null,busy:false};
-const cloudPending=new Map();let cloudRequestId=0;
+const cloudPending=new Map();let cloudRequestId=0,cloudCooldowns={read:0,write:0},cloudCooldownTimer=null;
 
 function runtimeToken(){
   try{const bytes=new Uint8Array(12);globalThis.crypto.getRandomValues(bytes);return Array.from(bytes,x=>x.toString(16).padStart(2,'0')).join('');}
@@ -1871,6 +1871,10 @@ function runtimeToken(){
 }
 const TAB_ID=(()=>{try{let id=sessionStorage.getItem(TAB_SESSION_KEY);if(!id){id=runtimeToken();sessionStorage.setItem(TAB_SESSION_KEY,id);}return id;}catch(_){return runtimeToken();}})();
 function readJsonStorage(key){try{const value=localStorage.getItem(key);return value?JSON.parse(value):null;}catch(_){return null;}}
+{
+  const stored=readJsonStorage(CLOUD_COOLDOWN_KEY);
+  if(stored&&typeof stored==='object')cloudCooldowns={read:Number(stored.read)||0,write:Number(stored.write)||0};
+}
 function normalizeCloudCode(value){const raw=String(value||'').toUpperCase().replace(/[-\s]/g,'');return /^[2-9A-HJ-NP-Z]{24}$/.test(raw)?raw.match(/.{4}/g).join('-'):null;}
 function validGameSave(value){return !!value&&typeof value==='object'&&!Array.isArray(value)&&value.player&&typeof value.player==='object'&&value.inv&&typeof value.inv==='object'&&value.meta&&typeof value.meta==='object';}
 function cloudSaveSummary(value){if(!validGameSave(value))return '无效存档';const day=Math.floor(Math.max(0,Number(value.time)||0)/24)+1,loc=LOCATIONS[value.player.location],place=value.player.location==='camp'?'营地':loc?loc.name:'未知地点';return (value.campName||'幸存者营地')+' · 第'+day+'天 · Lv.'+(value.player.level||1)+' · '+place;}
@@ -1882,6 +1886,16 @@ function persistCloudBinding(){try{if(cloudBinding)localStorage.setItem(CLOUD_BI
 function setCloudStatus(text,tone){cloudUi.status=text||'';cloudUi.tone=tone||'';refreshCloudUi();}
 function refreshCloudUi(){if(state&&state.tab==='set'&&!cloudUi.rendering){cloudUi.rendering=true;try{render();}finally{cloudUi.rendering=false;}}}
 function markCloudArchiveOutdated(){if(!cloudBinding||cloudBinding.dirty)return;cloudBinding.dirty=true;persistCloudBinding();}
+function cloudCooldownKind(action){return action==='load'||action==='history'?'read':action==='create'||action==='save'||action==='restore'?'write':null;}
+function cloudCooldownRemaining(action,at){const kind=cloudCooldownKind(action);if(!kind)return 0;return Math.max(0,Math.ceil(((cloudCooldowns[kind]||0)-(at==null?Date.now():at))/1000));}
+function persistCloudCooldowns(){try{localStorage.setItem(CLOUD_COOLDOWN_KEY,JSON.stringify(cloudCooldowns));}catch(_){}}
+function refreshCloudCooldownButtons(){
+  cloudCooldownTimer=null;let active=false;
+  document.querySelectorAll('[data-cloud-cooldown]').forEach(button=>{const remaining=cloudCooldownRemaining(button.dataset.cloudCooldown);if(remaining>0)active=true;button.disabled=cloudUi.busy||remaining>0;button.textContent=remaining>0?button.dataset.cloudLabel+' · '+remaining+' 秒':button.dataset.cloudLabel;});
+  if(active)cloudCooldownTimer=setTimeout(refreshCloudCooldownButtons,1000);
+}
+function armCloudCooldownUi(){if(cloudCooldownTimer==null)cloudCooldownTimer=setTimeout(refreshCloudCooldownButtons,0);}
+function beginCloudCooldown(action){const kind=cloudCooldownKind(action);if(!kind)return;cloudCooldowns[kind]=Date.now()+CLOUD_COOLDOWN_SECONDS[kind]*1000;persistCloudCooldowns();armCloudCooldownUi();}
 
 function currentLease(){const lease=readJsonStorage(TAB_LEASE_KEY);return lease&&lease.id&&Number(lease.at)?lease:null;}
 function writeLease(){try{localStorage.setItem(TAB_LEASE_KEY,JSON.stringify({id:TAB_ID,at:Date.now()}));return true;}catch(_){return false;}}
@@ -1906,6 +1920,9 @@ globalThis.onAbyssCloudResponse=(requestId,status,responseText)=>{
   if(status>=200&&status<300&&data.ok)pending.resolve(data);else pending.reject(cloudError(status,data));
 };
 function cloudRequest(body){
+  const action=body&&body.action,remaining=cloudCooldownRemaining(action);
+  if(remaining>0)return Promise.reject(cloudError(429,{error:'client_cooldown',message:'云存档操作冷却中，还需 '+remaining+' 秒'}));
+  beginCloudCooldown(action);
   try{const bridge=globalThis.AbyssApp;if(bridge&&typeof bridge.cloudRequest==='function')return new Promise((resolve,reject)=>{const id='cloud-'+Date.now().toString(36)+'-'+(++cloudRequestId);const timeout=setTimeout(()=>{cloudPending.delete(id);reject(cloudError(0,{message:'云存档连接超时'}));},20000);cloudPending.set(id,{resolve,reject,timeout});bridge.cloudRequest(id,JSON.stringify(body));});}catch(_){}
   if(typeof fetch!=='function')return Promise.reject(cloudError(0,{message:'当前版本不支持云存档网络连接'}));
   return fetch(CLOUD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify(body)}).then(async response=>{let data;try{data=await response.json();}catch(_){throw cloudError(response.status,{message:'云存档响应格式异常'});}if(!response.ok||!data.ok)throw cloudError(response.status,data);return data;});
@@ -1920,7 +1937,7 @@ async function createCloudSave(){
   catch(error){setCloudStatus(error.message,'danger');}finally{cloudUi.busy=false;refreshCloudUi();}
 }
 async function previewCloudSave(rawCode){
-  const code=normalizeCloudCode(rawCode);if(!code){setCloudStatus('请输入完整的 24 位迁移码','danger');return;}cloudUi.busy=true;setCloudStatus('正在下载迁移存档…','');
+  if(cloudUi.busy)return;const code=normalizeCloudCode(rawCode);if(!code){setCloudStatus('请输入完整的 24 位迁移码','danger');return;}cloudUi.busy=true;setCloudStatus('正在下载迁移存档…','');
   try{const result=await cloudRequest({action:'load',code});cloudUi.preview={code,revision:result.revision,updatedAt:result.updatedAt,save:result.save};setCloudStatus('迁移存档已下载，确认后才会覆盖本机','good');}
   catch(error){cloudUi.preview=null;setCloudStatus(error.message,'danger');}finally{cloudUi.busy=false;refreshCloudUi();}
 }
@@ -3560,23 +3577,23 @@ function settingsVolume(key,labelText,enabled){
   const value=Math.round(state[key]*100),row=el('label','settings-volume','<span><b>'+labelText+'</b><em id="'+key+'-value">'+value+'%</em></span>'),input=document.createElement('input');input.type='range';input.min='0';input.max='100';input.step='5';input.value=String(value);input.disabled=!enabled;input.setAttribute('aria-label',labelText);
   input.oninput=()=>{setAudioVolume(key,Number(input.value)/100);const out=$(key+'-value');if(out)out.textContent=input.value+'%';};input.onchange=()=>{if(key==='soundVolume'&&state.sound)unlockAudio().then(ok=>{if(ok)playSfx('success');});};row.appendChild(input);return row;
 }
-function cloudAction(labelText,cls,handler){const button=el('button','cloud-action'+(cls?' '+cls:''),labelText);button.disabled=cloudUi.busy;button.onclick=handler;return button;}
+function cloudAction(labelText,cls,handler,cooldownAction){const remaining=cloudCooldownRemaining(cooldownAction),button=el('button','cloud-action'+(cls?' '+cls:''),remaining>0?labelText+' · '+remaining+' 秒':labelText);button.disabled=cloudUi.busy||remaining>0;if(cooldownAction){button.dataset.cloudCooldown=cooldownAction;button.dataset.cloudLabel=labelText;}button.onclick=handler;return button;}
 function cloudTime(timestamp){if(!timestamp)return '尚未上传';try{return new Date(timestamp*1000).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}catch(_){return '版本时间未知';}}
 function renderCloudSaveSettings(box){
   title(box,'<b>迁移存档</b> · 仅在手动操作时联网');const card=el('section','cloud-save-card ui-panel');
-  const head=el('header','cloud-save-head','<span class="cloud-save-mark">'+uiIcon('cargo')+'</span><span><small>MANUAL TRANSFER</small><b>'+(cloudBinding?'迁移码已保存在本机':'按需上传迁移副本')+'</b><em>游戏始终单机保存；游玩、切换页面和退出时都不会自动访问服务器。</em></span>');card.appendChild(head);
+  const head=el('header','cloud-save-head','<span class="cloud-save-mark">'+uiIcon('cargo')+'</span><span><small>MANUAL TRANSFER</small><b>'+(cloudBinding?'迁移码已保存在本机':'按需上传迁移副本')+'</b><em>游戏始终单机保存，不会自动访问服务器；读取冷却 10 秒，上传与覆盖冷却 30 秒。</em></span>');card.appendChild(head);
   const status=el('p','cloud-save-status'+(cloudUi.tone?' '+cloudUi.tone:''),cloudUi.status||(cloudBinding?(cloudBinding.dirty?'本机进度已变化；需要换设备时再手动上传':'云端保留着上次手动上传的迁移副本'):'上传当前进度生成迁移码，或输入迁移码下载存档'));card.appendChild(status);
   if(cloudBinding){
     const code=el('button','cloud-code');code.innerHTML='<small>迁移码 · 点击复制</small><b></b><em>云端 v'+cloudBinding.revision+' · '+cloudTime(cloudBinding.updatedAt)+'</em>';code.querySelector('b').textContent=cloudBinding.code;code.onclick=async()=>setCloudStatus(await copyText(cloudBinding.code)?'迁移码已复制':'请长按迁移码手动复制','good');card.appendChild(code);
-    const actions=el('div','cloud-actions');actions.append(cloudAction('上传当前进度','primary',uploadCloudSave),cloudAction('下载迁移存档','',()=>previewCloudSave(cloudBinding.code)),cloudAction('上一个云端版本','',loadCloudHistory),cloudAction('忘记迁移码','danger',detachCloudSave));card.appendChild(actions);
-    if(Array.isArray(cloudUi.history)){const history=el('section','cloud-history');history.appendChild(el('small','','MANUAL CLOUD VERSIONS · 最多保留当前与上一版'));cloudUi.history.forEach(item=>{const row=el('div','cloud-history-row'),copy=el('span','','<b>云端 v'+item.revision+'</b><em>'+cloudTime(item.savedAt)+'</em>'),button=cloudAction(item.revision===cloudBinding.revision?'当前版本':cloudUi.restoreConfirm===item.revision?'确认恢复':'恢复','',()=>restoreCloudHistory(item.revision));button.disabled=cloudUi.busy||item.revision===cloudBinding.revision;row.append(copy,button);history.appendChild(row);});card.appendChild(history);}
+    const actions=el('div','cloud-actions');actions.append(cloudAction('上传当前进度','primary',uploadCloudSave,'save'),cloudAction('下载迁移存档','',()=>previewCloudSave(cloudBinding.code),'load'),cloudAction('上一个云端版本','',loadCloudHistory,'history'),cloudAction('忘记迁移码','danger',detachCloudSave));card.appendChild(actions);
+    if(Array.isArray(cloudUi.history)){const history=el('section','cloud-history');history.appendChild(el('small','','MANUAL CLOUD VERSIONS · 最多保留当前与上一版'));cloudUi.history.forEach(item=>{const current=item.revision===cloudBinding.revision,row=el('div','cloud-history-row'),copy=el('span','','<b>云端 v'+item.revision+'</b><em>'+cloudTime(item.savedAt)+'</em>'),button=cloudAction(current?'当前版本':cloudUi.restoreConfirm===item.revision?'确认恢复':'恢复','',()=>restoreCloudHistory(item.revision),current?null:'restore');button.disabled=cloudUi.busy||current||button.disabled;row.append(copy,button);history.appendChild(row);});card.appendChild(history);}
   }else{
-    const create=cloudAction('上传当前进度并生成迁移码','primary',createCloudSave);create.classList.add('cloud-create');card.appendChild(create);
-    const linker=el('div','cloud-link'),input=document.createElement('input');input.id='cloud-code-input';input.placeholder='XXXX-XXXX-XXXX-XXXX-XXXX-XXXX';input.autocapitalize='characters';input.autocomplete='off';input.spellcheck=false;const read=cloudAction('下载迁移存档','',()=>previewCloudSave(input.value));linker.append(input,read);card.appendChild(linker);
+    const create=cloudAction('上传当前进度并生成迁移码','primary',createCloudSave,'create');create.classList.add('cloud-create');card.appendChild(create);
+    const linker=el('div','cloud-link'),input=document.createElement('input');input.id='cloud-code-input';input.placeholder='XXXX-XXXX-XXXX-XXXX-XXXX-XXXX';input.autocapitalize='characters';input.autocomplete='off';input.spellcheck=false;const read=cloudAction('下载迁移存档','',()=>previewCloudSave(input.value),'load');linker.append(input,read);card.appendChild(linker);
     card.appendChild(el('p','cloud-secret-note','迁移码就是恢复凭证。请勿公开发送；不使用迁移功能时，游戏不会产生任何云端请求。'));
   }
-  if(cloudUi.preview){const preview=el('section','cloud-preview');preview.innerHTML='<small>TRANSFER PACKAGE FOUND</small><b>已下载云端 v'+cloudUi.preview.revision+'</b>';const remote=el('p');remote.textContent='迁移存档：'+cloudSaveSummary(cloudUi.preview.save);const local=el('p');local.textContent='当前本机：'+cloudSaveSummary(state);const choices=el('div','cloud-actions');choices.append(cloudAction('覆盖本机并载入','primary',usePreviewCloud),cloudAction('上传本机覆盖云端','danger',overwritePreviewWithLocal));preview.append(remote,local,choices);card.appendChild(preview);}
-  box.appendChild(card);
+  if(cloudUi.preview){const preview=el('section','cloud-preview');preview.innerHTML='<small>TRANSFER PACKAGE FOUND</small><b>已下载云端 v'+cloudUi.preview.revision+'</b>';const remote=el('p');remote.textContent='迁移存档：'+cloudSaveSummary(cloudUi.preview.save);const local=el('p');local.textContent='当前本机：'+cloudSaveSummary(state);const choices=el('div','cloud-actions');choices.append(cloudAction('覆盖本机并载入','primary',usePreviewCloud),cloudAction('上传本机覆盖云端','danger',overwritePreviewWithLocal,'save'));preview.append(remote,local,choices);card.appendChild(preview);}
+  box.appendChild(card);armCloudCooldownUi();
 }
 function closeSaveTransfer(){const modal=$('save-transfer-modal');if(modal)modal.remove();}
 function saveTransferShell(titleText,description){closeSaveTransfer();const shade=el('div','save-transfer-modal');shade.id='save-transfer-modal';const card=el('section','save-transfer-card'),head=el('header','','<span><small>LOCAL BACKUP</small><b></b><em></em></span>');head.querySelector('b').textContent=titleText;head.querySelector('em').textContent=description;const close=el('button','ui-icon-button',uiIcon('close'));close.setAttribute('aria-label','关闭');close.onclick=closeSaveTransfer;head.appendChild(close);card.appendChild(head);shade.appendChild(card);shade.onclick=event=>{if(event.target===shade)closeSaveTransfer();};document.body.appendChild(shade);return card;}
