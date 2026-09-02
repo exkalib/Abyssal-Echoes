@@ -1638,7 +1638,7 @@ function nextDiscoveryMilestone(id){
 function areaEventNeed(id,index){return scheduledDiscoveryNeed('event',id,index,explorationPacingRange('event',id,index));}
 function npcDiscoveryNeed(name){const entry=NPC_FIELD_DISCOVERIES[name];return entry?scheduledDiscoveryNeed('npc',entry.at,NPC_NAMES.indexOf(name),entry.range):Infinity;}
 function applyNpcDiscoveries(id,count){
-  Object.entries(NPC_FIELD_DISCOVERIES).forEach(([name,entry])=>{const flag='fieldNpcFound_'+name;if(entry.at!==id||state.flags[flag]||count<npcDiscoveryNeed(name)||entry.requireFlag&&!state.flags[entry.requireFlag]||npcLocation(name)!==id)return;state.flags[flag]=true;state.flags['fieldNpcStory_'+name]=true;const text='你从环境噪声里分离出一段微弱的人类信号。坐标确认：'+name+'仍在【'+LOCATIONS[id].name+'】。';setFieldReport(id,'发现幸存者信号',text,'good');log('◉ 发现现场联系人【'+name+'】。','good');if(!queueNpcFirstContact(name,id))queueFieldNpcDiscovery(name,id);});
+  Object.entries(NPC_FIELD_DISCOVERIES).forEach(([name,entry])=>{const flag='fieldNpcFound_'+name;if(entry.at!==id||state.flags[flag]||count<npcDiscoveryNeed(name)||entry.requireFlag&&!state.flags[entry.requireFlag])return;state.flags[flag]=true;state.flags['fieldNpcStory_'+name]=true;const current=npcLocation(name),present=current===id,text=present?'你从环境噪声里分离出一段微弱的人类信号。坐标确认：'+name+'仍在【'+LOCATIONS[id].name+'】。':'测绘缓存还原出一段先前漏记的人类信号：'+name+'最初是在【'+LOCATIONS[id].name+'】被发现的。现场坐标已经补回地图。';setFieldReport(id,'发现幸存者信号',text,'good');log('◉ 发现现场联系人【'+name+'】。','good');if(!queueNpcFirstContact(name,id))queueFieldNpcDiscovery(name,id);});
 }
 function resourceSiteOf(id){
   const loc=LOCATIONS[id];if(!loc||id==='camp'||!loc.loot)return null;if(loc.resourceSite)return loc.resourceSite;
@@ -1707,12 +1707,12 @@ const FIELD_MARKER_SLOT_PREFERENCES={
 const FIELD_FOG_RADII={resource:[19,15],npc:[17,14],mission:[18,14],operation:[18,14],action:[17,14],threat:[15,12],system:[18,14],route:[15,12]};
 function fieldNpcMapped(name,id){
   const entry=NPC_FIELD_DISCOVERIES[name];
-  if(entry&&entry.at===id)return !!state.flags['fieldNpcFound_'+name];
+  if(entry&&entry.at===id)return !!state.flags['fieldNpcFound_'+name]||storyNpcMet(name)&&exploreAttempts(id)>0;
   return storyNpcMet(name)&&exploreAttempts(id)>0;
 }
 function fieldNpcMarkerNames(id){
   const names=new Set(NPC_NAMES.filter(name=>npcLocation(name)===id));
-  Object.entries(NPC_FIELD_DISCOVERIES).forEach(([name,entry])=>{if(entry.at===id&&state.flags['fieldNpcFound_'+name])names.add(name);});
+  Object.entries(NPC_FIELD_DISCOVERIES).forEach(([name,entry])=>{if(entry.at===id&&fieldNpcMapped(name,id))names.add(name);});
   return [...names];
 }
 function fieldHasLocalQuestAction(id){
@@ -1762,7 +1762,8 @@ function acknowledgeFieldFog(id,fog){
 }
 function fieldFogSvgMarkup(id,fog){
   const key=String(id).replace(/[^a-z0-9_-]/gi,''),maskId='field-fog-mask-'+key,softId='field-fog-soft-'+key,textureId='field-fog-texture-'+key,paintId='field-fog-paint-'+key;
-  const holes=fog.holes.map(hole=>'<ellipse cx="'+hole.x+'" cy="'+hole.y+'" rx="'+hole.rx+'" ry="'+hole.ry+'" fill="#000">'+(hole.fresh?'<animate attributeName="rx" from="0.1" to="'+hole.rx+'" dur="1.15s" calcMode="spline" keySplines=".16 .78 .22 1" fill="freeze"/><animate attributeName="ry" from="0.1" to="'+hole.ry+'" dur="1.15s" calcMode="spline" keySplines=".16 .78 .22 1" fill="freeze"/>':'')+'</ellipse>').join('');
+  /* 迷雾孔洞直接绘制到最终尺寸；新发现的动效由独立覆盖层负责，避免手机 GPU 重绘 SVG 滤镜时闪出黑块。 */
+  const holes=fog.holes.map(hole=>'<ellipse cx="'+hole.x+'" cy="'+hole.y+'" rx="'+hole.rx+'" ry="'+hole.ry+'" fill="#000"/>').join('');
   return '<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="'+paintId+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#13252b"/><stop offset=".48" stop-color="#071216"/><stop offset="1" stop-color="#02080b"/></linearGradient><filter id="'+softId+'" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="1.7"/></filter><filter id="'+textureId+'" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".035 .07" numOctaves="3" seed="17"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .42"/></feComponentTransfer></filter><mask id="'+maskId+'" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><g filter="url(#'+softId+')">'+holes+'</g></mask></defs><g mask="url(#'+maskId+')"><rect class="field-fog-veil" width="100" height="100" fill="url(#'+paintId+')"/><rect class="field-fog-texture" x="-4" y="-4" width="108" height="108" fill="#82949a" filter="url(#'+textureId+')"/></g></svg>';
 }
 function resourceDiscoveryNeed(id){const surveyBonus=skillUnlocked('salvageSense')||currentCareer('salvager')?1:0,range=explorationPacingRange('resource',id,0);return Math.max(range[0],scheduledDiscoveryNeed('resource',id,0,range)-surveyBonus);}
@@ -2157,6 +2158,7 @@ const STORY_CINEMATIC_SKIP=new Set(['rescueTang','freeAyong']);
 function storySceneFlag(key){return 'storyScene_'+key;}
 function storyNpcMet(name){return !!(state&&state.flags&&state.flags['storyNpcMet_'+name]);}
 function markStoryNpcMet(name){if(state&&state.flags&&name)state.flags['storyNpcMet_'+name]=true;}
+function markFieldNpcContact(name,location){const entry=NPC_FIELD_DISCOVERIES[name];if(entry&&entry.at===location&&state&&state.flags)state.flags['fieldNpcFound_'+name]=true;}
 function queueStoryScene(spec){
   if(!spec||!spec.npc||!NPC_NAMES.includes(spec.npc)||tutorialActive())return false;
   const key=spec.onceKey&&storySceneFlag(spec.onceKey);
@@ -2171,11 +2173,13 @@ function queueStoryScene(spec){
 }
 function queueNpcFirstContact(name,location,text){
   if(!name||storyNpcMet(name))return false;
+  markFieldNpcContact(name,location);
   markStoryNpcMet(name);
   return queueStoryScene({npc:name,location,onceKey:'npc-'+name,kind:'contact',eyebrow:'FIRST CONTACT // '+((LOCATIONS[location]&&LOCATIONS[location].zone)||'UNKNOWN'),title:'发现幸存者 · '+name,text:text||NPC_FIRST_CONTACT[name],action:'走近查看'});
 }
 function queueFieldNpcDiscovery(name,location){
   if(!name)return false;
+  markFieldNpcContact(name,location);
   markStoryNpcMet(name);
   return queueStoryScene({npc:name,location,onceKey:'field-npc-'+name,kind:'contact',eyebrow:'SURVIVOR SIGNAL // '+((LOCATIONS[location]&&LOCATIONS[location].zone)||'UNKNOWN'),title:'信号确认 · '+name,text:NPC_FIRST_CONTACT[name],action:'建立联系'});
 }
@@ -2447,8 +2451,8 @@ function panelView(){
   }
   return state.mapOpen?'explore-map':'explore';
 }
-function render(){ if(_npcCapturing)return; normalizePanelNavigationState();renderTop(); const box=$('panel'); box.innerHTML=''; box.classList.remove('camp-home','tutorial-panel','recipe-station-page','skill-console-page','npc-screen','field-console','expedition-board','settlement-console','map-mode','camp-map-page');
-  const activeView=panelView();box.dataset.view=activeView;
+function render(){ if(_npcCapturing)return; normalizePanelNavigationState();renderTop(); const box=$('panel'),activeView=panelView(),keepFieldViewport=fieldViewportCanStayMounted(box,activeView);if(keepFieldViewport)Array.from(box.children).forEach(node=>{if(node!==retainedFieldViewport)node.remove();});else box.innerHTML='';box.classList.remove('camp-home','tutorial-panel','recipe-station-page','skill-console-page','npc-screen','field-console','expedition-board','settlement-console','map-mode','camp-map-page');
+  box.dataset.view=activeView;
   const onboarding=tutorialActive(),hud=tutorialHudUnlocked();
   $('app').classList.toggle('tutorial-active',onboarding); $('app').classList.toggle('tutorial-nohud',onboarding&&!hud); $('app').classList.toggle('tutorial-hud',onboarding&&hud);
   $('app').classList.toggle('combat-active',!!state.combat);
@@ -3029,6 +3033,11 @@ function renderSettlementRecovery(box){
   const basic=el('button','camp-command-card medical','<span class="cc-copy"><small>DAILY CARE</small><b>基础医疗</b><em>生命与体力恢复 35% · 每日一次</em></span>');basic.disabled=used;basic.onclick=()=>settlementRecover('basic');sec.appendChild(basic);const fullCost={ration:2,serum:1},full=el('button','camp-command-card medical','<span class="cc-copy"><small>FULL TREATMENT</small><b>完整治疗</b><em>'+costText(fullCost)+' · 清除感染并恢复全部状态</em></span>');full.disabled=!canAfford(fullCost);full.onclick=()=>settlementRecover('full');sec.appendChild(full);box.appendChild(sec);
 }
 let retainedFieldViewport=null,fieldMarkerSelection=null;
+function fieldViewportCanStayMounted(box,activeView){
+  if(activeView!=='explore'||!retainedFieldViewport||retainedFieldViewport.parentNode!==box)return false;
+  const id=P().location,markers=fieldMapMarkers(id),fog=fieldFogState(id,markers);
+  return retainedFieldViewport.dataset.location===id&&retainedFieldViewport.dataset.visualKey===fieldMapVisualKey(id,markers,fog);
+}
 function fieldMarkerVisual(marker){
   return marker.kind==='npc'?npcPortraitMarkup(marker.target,'field-map-avatar'):uiIcon(marker.icon||'unknown');
 }
@@ -3072,20 +3081,31 @@ function restoreFieldMarkerSelection(viewport,drawer,markers,id){
   if(!marker||!button){fieldMarkerSelection=null;return;}
   viewport.querySelectorAll('.field-map-marker').forEach(node=>node.classList.remove('is-selected'));button.classList.add('is-selected');renderFieldMarkerDrawer(drawer,marker,id);
 }
+function settleFieldFogAnimation(viewport){
+  if(!viewport)return;
+  const fogLayer=viewport.querySelector('.field-fog-layer'),reveals=viewport.querySelector('.field-fog-reveals');
+  if(fogLayer){fogLayer.classList.remove('is-fresh');fogLayer.querySelectorAll('animate').forEach(node=>node.remove());}
+  if(reveals)reveals.innerHTML='';
+  viewport.querySelectorAll('.field-map-marker.is-fresh').forEach(node=>node.classList.remove('is-fresh'));
+}
 function renderFieldExpedition(box,id){
   const here=LOCATIONS[id],profile=REGION_PROFILES[here.profile],regionId=regionForLocation(id),region=WORLD_REGIONS[regionId],attempts=exploreAttempts(id),markers=fieldMapMarkers(id),fog=fieldFogState(id,markers),returnRoute=travelRoute(id,'camp'),visualKey=fieldMapVisualKey(id,markers,fog);
   box.classList.add('field-console','expedition-board');
   const head=el('header','field-map-head'),mark=el('span','field-map-head-mark',uiIcon('expedition')),copy=el('span','field-map-head-copy','<small>EXPEDITION // '+region.name+' // '+here.zone+'</small><b>'+here.name+'</b><em>区域测绘 '+fog.progress+'% · 地点 '+fog.revealed+'/'+fog.total+' · 勘察 '+attempts+' 次</em>'),tools=el('span','field-map-head-tools');
   const fullMap=el('button','field-head-tool ui-icon-button',uiIcon('map'));fullMap.type='button';fullMap.setAttribute('aria-label','打开完整区域地图');fullMap.onclick=openContextMap;tools.appendChild(fullMap);
   if(returnRoute){const back=el('button','field-head-tool field-return-tool ui-icon-button',uiIcon('camp'));back.type='button';back.setAttribute('aria-label','沿已知路线返回营地');back.title='返回营地 · 体力 -'+returnRoute.cost;back.onclick=()=>travelTo('camp');tools.appendChild(back);}
-  head.appendChild(mark);head.appendChild(copy);head.appendChild(tools);box.appendChild(head);
+  head.appendChild(mark);head.appendChild(copy);head.appendChild(tools);
   let viewport=retainedFieldViewport&&retainedFieldViewport.dataset.visualKey===visualKey?retainedFieldViewport:null;
-  if(viewport){const oldStatus=viewport.querySelector('.field-map-empty, .field-map-readout'),drawer=viewport.querySelector('.field-map-drawer'),status=fieldMapStatusNode(id,attempts,markers);if(oldStatus)oldStatus.replaceWith(status);else if(drawer)viewport.insertBefore(status,drawer);restoreFieldMarkerSelection(viewport,drawer,markers,id);box.appendChild(viewport);acknowledgeFieldFog(id,fog);}
+  const viewportMounted=!!viewport&&viewport.parentNode===box;if(viewportMounted)box.insertBefore(head,viewport);else box.appendChild(head);
+  if(viewport){
+    settleFieldFogAnimation(viewport);
+    const oldStatus=viewport.querySelector('.field-map-empty, .field-map-readout'),drawer=viewport.querySelector('.field-map-drawer'),status=fieldMapStatusNode(id,attempts,markers);if(oldStatus)oldStatus.replaceWith(status);else if(drawer)viewport.insertBefore(status,drawer);restoreFieldMarkerSelection(viewport,drawer,markers,id);if(!viewportMounted)box.appendChild(viewport);acknowledgeFieldFog(id,fog);
+  }
   else{
   viewport=el('section','field-map-viewport '+(profile?profile.tone:'surface'));retainedFieldViewport=viewport;viewport.dataset.visualKey=visualKey;viewport.dataset.location=id;const background=el('img','field-map-background');background.src=storySceneSrc(id);background.alt='';background.draggable=false;viewport.appendChild(background);viewport.appendChild(el('div','field-map-contours'));
   const fogLayer=el('div','field-fog-layer'+(fog.complete?' is-complete':'')+(fog.freshComplete?' is-fresh':''));fogLayer.innerHTML=fieldFogSvgMarkup(id,fog);viewport.appendChild(fogLayer);
   const reveals=el('div','field-fog-reveals');fog.holes.filter(hole=>hole.fresh).forEach(hole=>{const pulse=el('i','field-fog-reveal');pulse.style.left=hole.x+'%';pulse.style.top=hole.y+'%';pulse.style.setProperty('--fog-rx',hole.rx);pulse.style.setProperty('--fog-ry',hole.ry);reveals.appendChild(pulse);});if(fog.freshComplete)reveals.appendChild(el('i','field-fog-final-reveal'));viewport.appendChild(reveals);
-  const markerLayer=el('div','field-map-markers'),drawer=el('aside','field-map-drawer');markerLayer.setAttribute('aria-label','已发现地图地点');markers.forEach(marker=>{const button=el('button','field-map-marker marker-'+marker.kind,fieldMarkerVisual(marker)+'<span>'+marker.label+'</span>');button.type='button';button.dataset.sector=marker.sector;button.dataset.markerId=marker.id;button.style.left=marker.x+'%';button.style.top=marker.y+'%';button.setAttribute('aria-label',marker.label);button.onclick=()=>{fieldMarkerSelection={location:id,markerId:marker.id};markerLayer.querySelectorAll('.field-map-marker').forEach(node=>node.classList.remove('is-selected'));button.classList.add('is-selected');renderFieldMarkerDrawer(drawer,marker,id);};markerLayer.appendChild(button);});viewport.appendChild(markerLayer);
+  const freshMarkerIds=new Set(fog.holes.filter(hole=>hole.fresh).map(hole=>hole.id)),markerLayer=el('div','field-map-markers'),drawer=el('aside','field-map-drawer');markerLayer.setAttribute('aria-label','已发现地图地点');markers.forEach(marker=>{const button=el('button','field-map-marker marker-'+marker.kind+(freshMarkerIds.has(marker.id)?' is-fresh':''),fieldMarkerVisual(marker)+'<span>'+marker.label+'</span>');button.type='button';button.dataset.sector=marker.sector;button.dataset.markerId=marker.id;button.style.left=marker.x+'%';button.style.top=marker.y+'%';button.setAttribute('aria-label',marker.label);button.onclick=()=>{fieldMarkerSelection={location:id,markerId:marker.id};markerLayer.querySelectorAll('.field-map-marker').forEach(node=>node.classList.remove('is-selected'));button.classList.add('is-selected');renderFieldMarkerDrawer(drawer,marker,id);};markerLayer.appendChild(button);});viewport.appendChild(markerLayer);
   viewport.appendChild(fieldMapStatusNode(id,attempts,markers));viewport.appendChild(drawer);restoreFieldMarkerSelection(viewport,drawer,markers,id);box.appendChild(viewport);acknowledgeFieldFog(id,fog);
   }
   const dock=el('footer','field-explore-dock'),exploreButton=el('button','field-explore-button primary','<span class="field-explore-icon">'+uiIcon('scan')+'</span><span><small>PRIMARY SURVEY // '+String(attempts+1).padStart(2,'0')+'</small><b>'+(attempts?'继续探索':'开始探索')+'</b><em>'+(attempts?'扩大测绘范围并寻找新地点':'从当前落脚点建立第一段地图')+'</em></span><strong>体力 -'+areaActionCost(1)+uiIcon('chevron-right')+'</strong>');
@@ -4149,6 +4169,8 @@ function explore(mode){
   /* 先结算现场联系人，避免同一步触发的剧情事件把 NPC 迁回营地后跳过首次发现。 */
   applyNpcDiscoveries(id,attempts);
   const outcome=resolveInvestigation(id);
+  /* 区域事件可能在本次勘察中刚好救出或迁移 NPC；事件结算后再补一次，保证剧情与地图头像同步出现。 */
+  applyNpcDiscoveries(id,attempts);
   applyResourceDiscovery(id,attempts);applyDiscoveryMilestones(id,attempts);
   syncQuestProgress(true); if(P().hp<=0){die();return;}
   if(outcome==='combat')return;
