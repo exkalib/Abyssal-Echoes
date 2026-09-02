@@ -25,6 +25,7 @@ public final class MainActivity extends Activity {
     private WebView webView;
     private TextView updateStatus;
     private BundleUpdater updater;
+    private CloudSaveClient cloudSaves;
     private boolean rollbackAttempted;
     private boolean updateCheckRunning;
 
@@ -33,6 +34,7 @@ public final class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         configureFullscreen();
         updater = new BundleUpdater(this);
+        cloudSaves = new CloudSaveClient();
         buildUi();
         configureWebView();
         configureBackNavigation();
@@ -163,6 +165,17 @@ public final class MainActivity extends Activity {
             return "安卓 " + BuildConfig.VERSION_NAME + " · 外壳 " + BuildConfig.SHELL_VERSION
                     + " · 资源 " + updater.currentBuild();
         }
+
+        @JavascriptInterface
+        public void cloudRequest(String requestId, String body) {
+            if (requestId == null || requestId.length() > 80 || cloudSaves == null) return;
+            cloudSaves.request(body, (status, response) -> {
+                if (webView == null) return;
+                String script = "window.onAbyssCloudResponse&&window.onAbyssCloudResponse("
+                        + JSONObject.quote(requestId) + "," + status + "," + JSONObject.quote(response) + ");";
+                webView.evaluateJavascript(script, null);
+            });
+        }
     }
 
     private final Runnable hideStatusAction = this::hideStatus;
@@ -220,9 +233,11 @@ public final class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         if (updater != null) updater.shutdown();
+        if (cloudSaves != null) cloudSaves.shutdown();
         if (webView != null) {
             webView.stopLoading();
             webView.destroy();
+            webView = null;
         }
         super.onDestroy();
     }

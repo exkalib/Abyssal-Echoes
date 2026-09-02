@@ -1,20 +1,24 @@
 [build]
   publish = "prototype"
-  command = "node prototype/game.test.js"
+  command = "npm test"
 
 [build.environment]
   NODE_VERSION = "22"
 
-# Netlify 承载 HTTPS 前端；云存档暂时继续使用现有服务器，保持网页与 APK 存档互通。
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# 网页与云存档都留在同一个 Netlify 项目内，不再转发到旧服务器。
 [[redirects]]
   from = "/api/cloud-save"
-  to = "http://59.110.144.30:9091/api/cloud-save"
+  to = "/.netlify/functions/cloud-save"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/api/cloud-save/*"
-  to = "http://59.110.144.30:9091/api/cloud-save/:splat"
+  from = "/api/cloud-save/health"
+  to = "/.netlify/functions/cloud-save-health"
   status = 200
   force = true
 
@@ -23,3 +27,8 @@
   [headers.values]
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/app-update/*"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate"
