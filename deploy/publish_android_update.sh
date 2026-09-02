@@ -4,17 +4,19 @@ set -euo pipefail
 root_dir="$(cd "$(dirname "$0")/.." && pwd)"
 config_dir="${ABYSS_CONFIG_DIR:-$HOME/.config/abyss-echo}"
 signing_key="${ABYSS_UPDATE_KEY:-$config_dir/update-signing-key.pem}"
+apk_source="$root_dir/android-release/Abyssal-Echoes.apk"
 remote_host="${ABYSS_REMOTE_HOST:-aliyun-nrftw}"
 remote_dir="${ABYSS_REMOTE_DIR:-/srv/www/abyss-echo/app-update}"
 web_dir="${ABYSS_WEB_DIR:-/srv/www/abyss-echo}"
 build="${1:-$(date +%s)}"
 version="${2:-$(date +%Y.%m.%d-%H%M)}"
-min_shell="${3:-1}"
+min_shell="${3:-8}"
 
 [[ "$build" =~ ^[0-9]+$ ]] || { echo "build 必须是正整数" >&2; exit 1; }
 [[ "$min_shell" =~ ^[0-9]+$ ]] || { echo "minShell 必须是正整数" >&2; exit 1; }
 [[ "$version" =~ ^[0-9A-Za-z._-]+$ ]] || { echo "version 只能包含字母、数字、点、下划线和横线" >&2; exit 1; }
 [[ -f "$signing_key" ]] || { echo "缺少更新签名私钥：$signing_key" >&2; exit 1; }
+[[ -f "$apk_source" ]] || { echo "缺少 APK，请先运行 android/build-release.sh" >&2; exit 1; }
 
 work_dir="$(mktemp -d)"
 trap 'rm -rf "$work_dir"' EXIT
@@ -34,16 +36,17 @@ printf '{"schema":1,"build":%s,"version":"%s","minShell":%s,"bundle":"%s","sha25
 openssl dgst -sha256 -sign "$signing_key" -out "$work_dir/manifest.sig.bin" "$work_dir/manifest.json"
 base64 < "$work_dir/manifest.sig.bin" | tr -d '\n' > "$work_dir/manifest.sig"
 
-# 59 服务器只负责静态网页版与签名更新资源；云存档固定走 Netlify。
+# 59 服务器统一负责网页版、签名更新资源和手动云存档。
 scp "$root_dir/deploy/serve_static.py" "$remote_host:$web_dir/serve_static.py.new"
 scp "$root_dir/deploy/abyss-echo.service" "$remote_host:/etc/systemd/system/abyss-echo.service.new"
-ssh "$remote_host" "service_changed=0; if ! cmp -s '$web_dir/serve_static.py.new' '$web_dir/serve_static.py'; then install -m 755 '$web_dir/serve_static.py.new' '$web_dir/serve_static.py'; service_changed=1; fi; rm -f '$web_dir/serve_static.py.new'; if ! cmp -s /etc/systemd/system/abyss-echo.service.new /etc/systemd/system/abyss-echo.service; then install -m 644 /etc/systemd/system/abyss-echo.service.new /etc/systemd/system/abyss-echo.service; systemctl daemon-reload; service_changed=1; fi; rm -f /etc/systemd/system/abyss-echo.service.new; if [ \"\$service_changed\" = 1 ]; then systemctl restart abyss-echo.service; fi; for attempt in 1 2 3 4 5; do curl -fsS http://127.0.0.1:9091/ >/dev/null && exit 0; sleep 1; done; exit 1"
+ssh "$remote_host" "install -d -o nobody -g nobody -m 700 /var/lib/abyss-echo; install -d -m 700 /var/backups/abyss-echo; if [ -f /var/lib/abyss-echo/saves.sqlite3 ]; then sqlite3 /var/lib/abyss-echo/saves.sqlite3 \".backup '/var/backups/abyss-echo/saves-before-$build.sqlite3'\"; chmod 600 /var/backups/abyss-echo/saves-before-$build.sqlite3; fi; service_changed=0; if ! cmp -s '$web_dir/serve_static.py.new' '$web_dir/serve_static.py'; then install -m 755 '$web_dir/serve_static.py.new' '$web_dir/serve_static.py'; service_changed=1; fi; rm -f '$web_dir/serve_static.py.new'; if ! cmp -s /etc/systemd/system/abyss-echo.service.new /etc/systemd/system/abyss-echo.service; then install -m 644 /etc/systemd/system/abyss-echo.service.new /etc/systemd/system/abyss-echo.service; systemctl daemon-reload; service_changed=1; fi; rm -f /etc/systemd/system/abyss-echo.service.new; if [ \"\$service_changed\" = 1 ]; then systemctl restart abyss-echo.service; fi; for attempt in 1 2 3 4 5; do curl -fsS http://127.0.0.1:9091/api/cloud-save/health >/dev/null && exit 0; sleep 1; done; exit 1"
 
 ssh "$remote_host" "mkdir -p '$remote_dir'"
 scp "$work_dir/$bundle" "$remote_host:$remote_dir/$bundle"
+scp "$apk_source" "$remote_host:$remote_dir/Abyssal-Echoes.apk.new"
 scp "$work_dir/manifest.json" "$remote_host:$remote_dir/manifest.json.new"
 scp "$work_dir/manifest.sig" "$remote_host:$remote_dir/manifest.sig.new"
-ssh "$remote_host" "chmod 644 '$remote_dir/$bundle' '$remote_dir/manifest.json.new' '$remote_dir/manifest.sig.new' && mv '$remote_dir/manifest.sig.new' '$remote_dir/manifest.sig' && mv '$remote_dir/manifest.json.new' '$remote_dir/manifest.json'"
+ssh "$remote_host" "chmod 644 '$remote_dir/$bundle' '$remote_dir/Abyssal-Echoes.apk.new' '$remote_dir/manifest.json.new' '$remote_dir/manifest.sig.new' && mv '$remote_dir/Abyssal-Echoes.apk.new' '$remote_dir/Abyssal-Echoes.apk' && mv '$remote_dir/manifest.sig.new' '$remote_dir/manifest.sig' && mv '$remote_dir/manifest.json.new' '$remote_dir/manifest.json'"
 
 # Safari/浏览器直接读取站点根目录；资源先同步，入口文件最后切换，避免页面引用到尚未上传的文件。
 ssh "$remote_host" "mkdir -p '$web_dir/assets'"

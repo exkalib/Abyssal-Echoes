@@ -1,5 +1,5 @@
 [Unit]
-Description=Abyss Echo test web and update server
+Description=Abyss Echo web, update, and manual cloud-save server
 After=network.target
 
 [Service]

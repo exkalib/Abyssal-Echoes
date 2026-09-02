@@ -1860,7 +1860,7 @@ function settleEcho(){ const r=state.runStats;
 
 const SAVE_KEY='abyss_echo_v2';
 const CLOUD_BINDING_KEY='abyss_echo_cloud_v1',CLOUD_COOLDOWN_KEY='abyss_echo_cloud_cooldown_v1',LOCAL_ROLLBACK_KEY='abyss_echo_local_rollback_v1',TAB_LEASE_KEY='abyss_echo_tab_lease_v1',TAB_SESSION_KEY='abyss_echo_tab_id_v1';
-const CLOUD_ENDPOINT='https://abyssal-echoes-survival.netlify.app/api/cloud-save',CLOUD_COOLDOWN_SECONDS={read:10,write:30},TAB_LEASE_MS=10000;
+const CLOUD_ENDPOINT='/api/cloud-save',CLOUD_COOLDOWN_SECONDS={read:10,write:30},TAB_LEASE_MS=10000;
 let lastSavedJson='',tabLeaseOwner=true,tabLeasePreserved=false,tabLeaseTimer=null;
 const cloudUi={status:'',tone:'',preview:null,history:null,restoreConfirm:null,busy:false};
 const cloudPending=new Map();let cloudRequestId=0,cloudCooldowns={read:0,write:0},cloudCooldownTimer=null;
