@@ -1,6 +1,8 @@
 # 深渊回响 Android 外壳
 
-这是一个原生 WebView 外壳。APK 内置 `prototype/` 当前版本，离线也能启动；联网时自动检查服务器上的签名资源清单，也可在游戏设置页主动点击“检查更新”。
+这是一个原生 WebView 外壳。APK 内置 `prototype/` 当前版本，离线即可启动；只有玩家在游戏设置页主动点击“检查更新”时，才读取服务器上的签名资源清单。
+
+游戏进度始终先保存在设备本地。云端只提供手动迁移包：玩家明确点击上传、下载或查看上一版本时才调用接口；正常游玩、切换前后台和退出 App 都不会连接云存档服务。
 
 - 最低系统：Android 8.0（API 26）
 - 当前安装包：https://abyssal-echoes-survival.netlify.app/app-update/Abyssal-Echoes.apk

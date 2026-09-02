@@ -14,7 +14,8 @@ export default async function handler(request) {
   return new Response(JSON.stringify({
     ok: true,
     service: "cloud-save",
-    storage: "netlify-database",
+    mode: "manual-transfer-only",
+    storage: "netlify-blobs",
     historyLimit: HISTORY_LIMIT,
   }), {
     headers: {
@@ -24,3 +25,7 @@ export default async function handler(request) {
     },
   });
 }
+
+export const config = {
+  path: "/api/cloud-save/health",
+};

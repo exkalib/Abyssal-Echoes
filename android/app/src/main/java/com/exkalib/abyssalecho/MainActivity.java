@@ -39,7 +39,6 @@ public final class MainActivity extends Activity {
         configureWebView();
         configureBackNavigation();
         loadGame();
-        checkForUpdates();
     }
 
     private void buildUi() {
@@ -57,6 +56,7 @@ public final class MainActivity extends Activity {
         updateStatus.setGravity(Gravity.CENTER);
         updateStatus.setBackgroundColor(Color.argb(235, 10, 24, 36));
         updateStatus.setPadding(dp(16), dp(8), dp(16), dp(8));
+        updateStatus.setVisibility(View.GONE);
         FrameLayout.LayoutParams statusParams = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL);
         statusParams.topMargin = dp(12);

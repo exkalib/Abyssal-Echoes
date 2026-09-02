@@ -1,7 +1,7 @@
 import { createHash, randomInt } from "node:crypto";
 
 export const MAX_REQUEST_BYTES = 2 * 1024 * 1024;
-export const HISTORY_LIMIT = 20;
+export const HISTORY_LIMIT = 2;
 
 const CODE_ALPHABET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 const CODE_PATTERN = /^[2-9A-HJ-NP-Z]{24}$/;

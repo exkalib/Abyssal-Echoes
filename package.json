@@ -8,6 +8,7 @@
     "node": ">=22.12"
   },
   "dependencies": {
+    "@netlify/blobs": "^11.0.2",
     "@netlify/database": "2.0.0"
   }
 }

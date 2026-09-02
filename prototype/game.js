@@ -1861,8 +1861,8 @@ function settleEcho(){ const r=state.runStats;
 const SAVE_KEY='abyss_echo_v2';
 const CLOUD_BINDING_KEY='abyss_echo_cloud_v1',LOCAL_ROLLBACK_KEY='abyss_echo_local_rollback_v1',TAB_LEASE_KEY='abyss_echo_tab_lease_v1',TAB_SESSION_KEY='abyss_echo_tab_id_v1';
 const CLOUD_ENDPOINT='/api/cloud-save',TAB_LEASE_MS=10000;
-let lastSavedJson='',localSaveWasLoaded=false,tabLeaseOwner=true,tabLeasePreserved=false,tabLeaseTimer=null,cloudSyncTimer=null,cloudPollTimer=null,cloudSyncRunning=false,cloudStarting=false;
-const cloudUi={status:'',tone:'',preview:null,conflict:null,history:null,restoreConfirm:null,busy:false};
+let lastSavedJson='',tabLeaseOwner=true,tabLeasePreserved=false,tabLeaseTimer=null;
+const cloudUi={status:'',tone:'',preview:null,history:null,restoreConfirm:null,busy:false};
 const cloudPending=new Map();let cloudRequestId=0;
 
 function runtimeToken(){
@@ -1878,11 +1878,10 @@ function createLocalBackup(){return JSON.stringify({format:'abyss_echo_backup_v1
 function parseLocalBackup(text){const parsed=JSON.parse(String(text||'').trim()),save=parsed&&parsed.format==='abyss_echo_backup_v1'?parsed.save:parsed;if(!validGameSave(save))throw new Error('备份内容不是有效的《深渊回响》存档');return save;}
 
 let cloudBinding=(()=>{const value=readJsonStorage(CLOUD_BINDING_KEY),code=value&&normalizeCloudCode(value.code);return code?{code,revision:Math.max(0,Number(value.revision)||0),dirty:!!value.dirty,updatedAt:Number(value.updatedAt)||0}:null;})();
-cloudStarting=!!cloudBinding;
 function persistCloudBinding(){try{if(cloudBinding)localStorage.setItem(CLOUD_BINDING_KEY,JSON.stringify(cloudBinding));else localStorage.removeItem(CLOUD_BINDING_KEY);}catch(_){}}
 function setCloudStatus(text,tone){cloudUi.status=text||'';cloudUi.tone=tone||'';refreshCloudUi();}
-function refreshCloudUi(){const button=$('set-btn');if(button)button.classList.toggle('cloud-alert',!!cloudUi.conflict);if(state&&state.tab==='set'&&!cloudUi.rendering){cloudUi.rendering=true;try{render();}finally{cloudUi.rendering=false;}}}
-function markCloudDirty(){if(!cloudBinding||cloudStarting)return;cloudBinding.dirty=true;persistCloudBinding();scheduleCloudSync();}
+function refreshCloudUi(){if(state&&state.tab==='set'&&!cloudUi.rendering){cloudUi.rendering=true;try{render();}finally{cloudUi.rendering=false;}}}
+function markCloudArchiveOutdated(){if(!cloudBinding||cloudBinding.dirty)return;cloudBinding.dirty=true;persistCloudBinding();}
 
 function currentLease(){const lease=readJsonStorage(TAB_LEASE_KEY);return lease&&lease.id&&Number(lease.at)?lease:null;}
 function writeLease(){try{localStorage.setItem(TAB_LEASE_KEY,JSON.stringify({id:TAB_ID,at:Date.now()}));return true;}catch(_){return false;}}
@@ -1906,78 +1905,49 @@ globalThis.onAbyssCloudResponse=(requestId,status,responseText)=>{
   try{data=JSON.parse(responseText||'{}');}catch(_){pending.reject(cloudError(status,{message:'云存档响应格式异常'}));return;}
   if(status>=200&&status<300&&data.ok)pending.resolve(data);else pending.reject(cloudError(status,data));
 };
-function cloudRequest(body,keepalive){
+function cloudRequest(body){
   try{const bridge=globalThis.AbyssApp;if(bridge&&typeof bridge.cloudRequest==='function')return new Promise((resolve,reject)=>{const id='cloud-'+Date.now().toString(36)+'-'+(++cloudRequestId);const timeout=setTimeout(()=>{cloudPending.delete(id);reject(cloudError(0,{message:'云存档连接超时'}));},20000);cloudPending.set(id,{resolve,reject,timeout});bridge.cloudRequest(id,JSON.stringify(body));});}catch(_){}
   if(typeof fetch!=='function')return Promise.reject(cloudError(0,{message:'当前版本不支持云存档网络连接'}));
-  return fetch(CLOUD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',keepalive:!!keepalive,body:JSON.stringify(body)}).then(async response=>{let data;try{data=await response.json();}catch(_){throw cloudError(response.status,{message:'云存档响应格式异常'});}if(!response.ok||!data.ok)throw cloudError(response.status,data);return data;});
+  return fetch(CLOUD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify(body)}).then(async response=>{let data;try{data=await response.json();}catch(_){throw cloudError(response.status,{message:'云存档响应格式异常'});}if(!response.ok||!data.ok)throw cloudError(response.status,data);return data;});
 }
-function scheduleCloudSync(delay){if(!cloudBinding||!tabLeaseOwner)return;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>cloudSyncNow(),delay==null?700:delay);}
 function installSaveAndReload(save,binding){
   if(!validGameSave(save))throw new Error('云端存档内容不完整');state=save;const json=JSON.stringify(state);localStorage.setItem(SAVE_KEY,json);lastSavedJson=json;if(binding!==undefined){cloudBinding=binding;persistCloudBinding();}
   if(globalThis.location&&typeof globalThis.location.reload==='function'){tabLeasePreserved=true;globalThis.location.reload();}
 }
-async function pushCloudSave(keepalive){
-  if(!cloudBinding)return;const bindingAtStart=cloudBinding,snapshot=JSON.parse(JSON.stringify(state)),snapshotJson=JSON.stringify(snapshot);
-  const result=await cloudRequest({action:'save',code:bindingAtStart.code,baseRevision:bindingAtStart.revision,save:snapshot},keepalive);
-  if(!cloudBinding||cloudBinding.code!==bindingAtStart.code)return;cloudBinding.revision=result.revision;cloudBinding.updatedAt=result.updatedAt;cloudBinding.dirty=JSON.stringify(state)!==snapshotJson;persistCloudBinding();cloudUi.conflict=null;setCloudStatus(cloudBinding.dirty?'本机又有新进度，继续同步…':'已同步至云端','good');if(cloudBinding.dirty)scheduleCloudSync(200);
-}
-async function pullCloudSave(initial){
-  if(!cloudBinding)return;const bindingAtStart=cloudBinding,result=await cloudRequest({action:'load',code:bindingAtStart.code});if(!cloudBinding||cloudBinding.code!==bindingAtStart.code)return;
-  if(initial&&!localSaveWasLoaded){cloudBinding.revision=result.revision;cloudBinding.updatedAt=result.updatedAt;cloudBinding.dirty=false;persistCloudBinding();installSaveAndReload(result.save,cloudBinding);return;}
-  const localDirty=!!cloudBinding.dirty,localJson=JSON.stringify(state),remoteJson=JSON.stringify(result.save);
-  if(result.revision>cloudBinding.revision){
-    if(localDirty&&localJson!==remoteJson){cloudUi.conflict={revision:result.revision,updatedAt:result.updatedAt,save:result.save};setCloudStatus('云端与本机都有新进度，需要选择保留哪一份','danger');return;}
-    cloudBinding.revision=result.revision;cloudBinding.updatedAt=result.updatedAt;cloudBinding.dirty=false;persistCloudBinding();if(localJson!==remoteJson){setCloudStatus('发现云端新进度，正在载入…','good');installSaveAndReload(result.save,cloudBinding);return;}
-  }else if(result.revision<cloudBinding.revision){cloudUi.conflict={revision:result.revision,updatedAt:result.updatedAt,save:result.save};setCloudStatus('云端版本异常，已暂停自动覆盖','danger');return;}
-  else if(localJson!==remoteJson){cloudBinding.dirty=true;persistCloudBinding();await pushCloudSave();return;}
-  cloudBinding.revision=result.revision;cloudBinding.updatedAt=result.updatedAt;cloudBinding.dirty=false;persistCloudBinding();cloudUi.conflict=null;setCloudStatus(initial?'云存档已连接':'云端与本机进度一致','good');
-}
-async function cloudSyncNow(options){
-  if(!cloudBinding||cloudSyncRunning||!tabLeaseOwner)return;cloudSyncRunning=true;cloudUi.busy=true;setCloudStatus('正在同步云存档…','');
-  try{if(cloudBinding.dirty)await pushCloudSave(options&&options.keepalive);else await pullCloudSave(options&&options.initial);}
-  catch(error){if(error.status===409){cloudUi.conflict={revision:Number(error.data.revision)||0,updatedAt:Number(error.data.updatedAt)||0,save:null};setCloudStatus('云端已有更新，已阻止旧进度覆盖','danger');}else setCloudStatus(error.message,'danger');}
-  finally{cloudSyncRunning=false;cloudUi.busy=false;refreshCloudUi();}
-}
 async function createCloudSave(){
-  if(cloudUi.busy)return;cloudUi.busy=true;setCloudStatus('正在创建云存档…','');
-  try{const result=await cloudRequest({action:'create',save:state});cloudBinding={code:normalizeCloudCode(result.code),revision:result.revision,updatedAt:result.updatedAt,dirty:false};persistCloudBinding();cloudUi.preview=null;cloudUi.conflict=null;setCloudStatus('云存档已创建，请妥善保存存档码','good');copyText(cloudBinding.code);}
+  if(cloudUi.busy)return;cloudUi.busy=true;setCloudStatus('正在上传迁移存档…','');
+  try{const result=await cloudRequest({action:'create',save:state});cloudBinding={code:normalizeCloudCode(result.code),revision:result.revision,updatedAt:result.updatedAt,dirty:false};persistCloudBinding();cloudUi.preview=null;setCloudStatus('迁移存档已上传，请妥善保存迁移码','good');copyText(cloudBinding.code);}
   catch(error){setCloudStatus(error.message,'danger');}finally{cloudUi.busy=false;refreshCloudUi();}
 }
 async function previewCloudSave(rawCode){
-  const code=normalizeCloudCode(rawCode);if(!code){setCloudStatus('请输入完整的 24 位存档码','danger');return;}cloudUi.busy=true;setCloudStatus('正在读取云端存档…','');
-  try{const result=await cloudRequest({action:'load',code});cloudUi.preview={code,revision:result.revision,updatedAt:result.updatedAt,save:result.save};setCloudStatus('已读取云端存档，请选择保留哪份进度','good');}
+  const code=normalizeCloudCode(rawCode);if(!code){setCloudStatus('请输入完整的 24 位迁移码','danger');return;}cloudUi.busy=true;setCloudStatus('正在下载迁移存档…','');
+  try{const result=await cloudRequest({action:'load',code});cloudUi.preview={code,revision:result.revision,updatedAt:result.updatedAt,save:result.save};setCloudStatus('迁移存档已下载，确认后才会覆盖本机','good');}
   catch(error){cloudUi.preview=null;setCloudStatus(error.message,'danger');}finally{cloudUi.busy=false;refreshCloudUi();}
 }
-function usePreviewCloud(){const preview=cloudUi.preview;if(!preview)return;cloudUi.conflict=null;installSaveAndReload(preview.save,{code:preview.code,revision:preview.revision,updatedAt:preview.updatedAt,dirty:false});}
+function usePreviewCloud(){const preview=cloudUi.preview;if(!preview)return;installSaveAndReload(preview.save,{code:preview.code,revision:preview.revision,updatedAt:preview.updatedAt,dirty:false});}
 async function overwritePreviewWithLocal(){
-  const preview=cloudUi.preview;if(!preview||cloudUi.busy)return;cloudUi.busy=true;setCloudStatus('正在用本机进度建立新的云端版本…','');
-  try{const result=await cloudRequest({action:'save',code:preview.code,baseRevision:preview.revision,save:state});cloudBinding={code:preview.code,revision:result.revision,updatedAt:result.updatedAt,dirty:false};persistCloudBinding();cloudUi.preview=null;cloudUi.conflict=null;setCloudStatus('本机进度已上传并绑定','good');}
+  const preview=cloudUi.preview;if(!preview||cloudUi.busy)return;cloudUi.busy=true;setCloudStatus('正在上传本机迁移存档…','');
+  try{const result=await cloudRequest({action:'save',code:preview.code,baseRevision:preview.revision,save:state});cloudBinding={code:preview.code,revision:result.revision,updatedAt:result.updatedAt,dirty:false};persistCloudBinding();cloudUi.preview=null;setCloudStatus('本机进度已手动上传','good');}
   catch(error){setCloudStatus(error.message,'danger');}finally{cloudUi.busy=false;refreshCloudUi();}
 }
-async function resolveCloudConflict(useRemote){
-  if(!cloudBinding||cloudUi.busy)return;cloudUi.busy=true;setCloudStatus(useRemote?'正在载入云端进度…':'正在保留本机进度…','');
-  try{const remote=await cloudRequest({action:'load',code:cloudBinding.code});if(useRemote){cloudBinding.revision=remote.revision;cloudBinding.updatedAt=remote.updatedAt;cloudBinding.dirty=false;persistCloudBinding();cloudUi.conflict=null;installSaveAndReload(remote.save,cloudBinding);return;}
-    const saved=await cloudRequest({action:'save',code:cloudBinding.code,baseRevision:remote.revision,save:state});cloudBinding.revision=saved.revision;cloudBinding.updatedAt=saved.updatedAt;cloudBinding.dirty=false;persistCloudBinding();cloudUi.conflict=null;setCloudStatus('已保留本机进度，原云端版本仍在历史备份中','good');}
-  catch(error){setCloudStatus(error.message,'danger');}finally{cloudUi.busy=false;refreshCloudUi();}
+async function uploadCloudSave(){
+  if(!cloudBinding||cloudUi.busy)return;const bindingAtStart=cloudBinding;cloudUi.busy=true;setCloudStatus('正在上传本机迁移存档…','');
+  try{const result=await cloudRequest({action:'save',code:bindingAtStart.code,baseRevision:bindingAtStart.revision,save:state});if(!cloudBinding||cloudBinding.code!==bindingAtStart.code)return;cloudBinding.revision=result.revision;cloudBinding.updatedAt=result.updatedAt;cloudBinding.dirty=false;persistCloudBinding();cloudUi.preview=null;setCloudStatus('本机进度已手动上传；之后不会自动联网','good');}
+  catch(error){setCloudStatus(error.status===409?'云端迁移存档已变化，请先点“下载迁移存档”确认内容':error.message,'danger');}finally{cloudUi.busy=false;refreshCloudUi();}
 }
 async function loadCloudHistory(){if(!cloudBinding||cloudUi.busy)return;cloudUi.busy=true;try{const result=await cloudRequest({action:'history',code:cloudBinding.code});cloudUi.history=result.items||[];cloudUi.restoreConfirm=null;setCloudStatus('已读取最近 '+cloudUi.history.length+' 个云端版本','good');}catch(error){setCloudStatus(error.message,'danger');}finally{cloudUi.busy=false;refreshCloudUi();}}
 async function restoreCloudHistory(revision){
   if(cloudUi.restoreConfirm!==revision){cloudUi.restoreConfirm=revision;refreshCloudUi();return;}if(!cloudBinding||cloudUi.busy)return;cloudUi.busy=true;setCloudStatus('正在恢复云端历史版本…','');
-  try{const result=await cloudRequest({action:'restore',code:cloudBinding.code,baseRevision:cloudBinding.revision,targetRevision:revision});cloudBinding.revision=result.revision;cloudBinding.updatedAt=result.updatedAt;cloudBinding.dirty=false;persistCloudBinding();cloudUi.restoreConfirm=null;cloudUi.conflict=null;installSaveAndReload(result.save,cloudBinding);}
+  try{const result=await cloudRequest({action:'restore',code:cloudBinding.code,baseRevision:cloudBinding.revision,targetRevision:revision});cloudBinding.revision=result.revision;cloudBinding.updatedAt=result.updatedAt;cloudBinding.dirty=false;persistCloudBinding();cloudUi.restoreConfirm=null;installSaveAndReload(result.save,cloudBinding);}
   catch(error){setCloudStatus(error.message,'danger');}finally{cloudUi.busy=false;refreshCloudUi();}
 }
-function detachCloudSave(){cloudBinding=null;cloudUi.preview=null;cloudUi.conflict=null;cloudUi.history=null;cloudUi.status='已解除本机绑定；云端备份仍保留，可用原存档码重新连接';cloudUi.tone='';persistCloudBinding();refreshCloudUi();}
+function detachCloudSave(){cloudBinding=null;cloudUi.preview=null;cloudUi.history=null;cloudUi.status='本机已忘记迁移码；云端迁移存档仍保留';cloudUi.tone='';persistCloudBinding();refreshCloudUi();}
 async function copyText(text){try{if(navigator.clipboard&&globalThis.isSecureContext){await navigator.clipboard.writeText(text);return true;}}catch(_){}try{const input=document.createElement('textarea');input.value=text;input.style.position='fixed';input.style.opacity='0';document.body.appendChild(input);input.select();const ok=document.execCommand('copy');input.remove();return ok;}catch(_){return false;}}
-function setupCloudSync(){
-  cloudStarting=false;if(cloudBinding)setTimeout(()=>cloudSyncNow({initial:true}),0);
-  addEventListener('online',()=>cloudSyncNow());addEventListener('visibilitychange',()=>{if(document.hidden){if(cloudBinding&&cloudBinding.dirty)cloudSyncNow({keepalive:true});}else{if(!tabLeaseOwner){showTabLeaseOverlay();return;}cloudSyncNow();}});
-  cloudPollTimer=setInterval(()=>{if(!document.hidden)cloudSyncNow();},45000);
-}
 
 function save(){
-  try{const json=JSON.stringify(state);if(json===lastSavedJson)return true;if(!tabLeaseOwner){showTabLeaseOverlay();return false;}localStorage.setItem(SAVE_KEY,json);lastSavedJson=json;markCloudDirty();return true;}catch(_){return false;}
+  try{const json=JSON.stringify(state);if(json===lastSavedJson)return true;if(!tabLeaseOwner){showTabLeaseOverlay();return false;}localStorage.setItem(SAVE_KEY,json);lastSavedJson=json;markCloudArchiveOutdated();return true;}catch(_){return false;}
 }
-function load(){try{const raw=localStorage.getItem(SAVE_KEY);if(raw){const loaded=JSON.parse(raw);if(validGameSave(loaded)){state=loaded;lastSavedJson=raw;localSaveWasLoaded=true;return true;}}}catch(_){}return false;}
+function load(){try{const raw=localStorage.getItem(SAVE_KEY);if(raw){const loaded=JSON.parse(raw);if(validGameSave(loaded)){state=loaded;lastSavedJson=raw;return true;}}}catch(_){}return false;}
 
 /* ================= DOM ================= */
 const $=id=>document.getElementById(id);
@@ -3558,7 +3528,7 @@ function appVersionInfo(){
 function setUpdateUi(text,busy){
   updateUi.text=text||''; updateUi.busy=!!busy;
   const status=$('update-status'),button=$('check-update-btn');
-  if(status) status.textContent=updateUi.text||'启动时会自动检查，也可以现在手动检查。';
+  if(status) status.textContent=updateUi.text||'只在点击按钮时联网检查；启动游戏不会访问更新服务器。';
   if(button){ button.disabled=updateUi.busy; button.textContent=updateUi.busy?'正在检查…':'检查更新'; }
 }
 function checkAppUpdate(){
@@ -3591,22 +3561,21 @@ function settingsVolume(key,labelText,enabled){
   input.oninput=()=>{setAudioVolume(key,Number(input.value)/100);const out=$(key+'-value');if(out)out.textContent=input.value+'%';};input.onchange=()=>{if(key==='soundVolume'&&state.sound)unlockAudio().then(ok=>{if(ok)playSfx('success');});};row.appendChild(input);return row;
 }
 function cloudAction(labelText,cls,handler){const button=el('button','cloud-action'+(cls?' '+cls:''),labelText);button.disabled=cloudUi.busy;button.onclick=handler;return button;}
-function cloudTime(timestamp){if(!timestamp)return '尚未同步';try{return new Date(timestamp*1000).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}catch(_){return '版本时间未知';}}
+function cloudTime(timestamp){if(!timestamp)return '尚未上传';try{return new Date(timestamp*1000).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}catch(_){return '版本时间未知';}}
 function renderCloudSaveSettings(box){
-  title(box,'<b>云存档</b> · 跨浏览器、跨设备与 APK 共用');const card=el('section','cloud-save-card ui-panel');
-  const head=el('header','cloud-save-head','<span class="cloud-save-mark">'+uiIcon('cargo')+'</span><span><small>CLOUD ARCHIVE</small><b>'+(cloudBinding?'自动同步已连接':'尚未连接云存档')+'</b><em>本地存档始终保留；离线进度会在恢复网络后继续上传。</em></span>');card.appendChild(head);
-  const status=el('p','cloud-save-status'+(cloudUi.tone?' '+cloudUi.tone:''),cloudUi.status||(cloudBinding?(cloudBinding.dirty?'本机有尚未上传的进度':'云端与本机已同步'):'创建新存档码，或输入已有存档码恢复进度'));card.appendChild(status);
+  title(box,'<b>迁移存档</b> · 仅在手动操作时联网');const card=el('section','cloud-save-card ui-panel');
+  const head=el('header','cloud-save-head','<span class="cloud-save-mark">'+uiIcon('cargo')+'</span><span><small>MANUAL TRANSFER</small><b>'+(cloudBinding?'迁移码已保存在本机':'按需上传迁移副本')+'</b><em>游戏始终单机保存；游玩、切换页面和退出时都不会自动访问服务器。</em></span>');card.appendChild(head);
+  const status=el('p','cloud-save-status'+(cloudUi.tone?' '+cloudUi.tone:''),cloudUi.status||(cloudBinding?(cloudBinding.dirty?'本机进度已变化；需要换设备时再手动上传':'云端保留着上次手动上传的迁移副本'):'上传当前进度生成迁移码，或输入迁移码下载存档'));card.appendChild(status);
   if(cloudBinding){
-    const code=el('button','cloud-code');code.innerHTML='<small>你的存档码 · 点击复制</small><b></b><em>云端 v'+cloudBinding.revision+' · '+cloudTime(cloudBinding.updatedAt)+'</em>';code.querySelector('b').textContent=cloudBinding.code;code.onclick=async()=>setCloudStatus(await copyText(cloudBinding.code)?'存档码已复制':'请长按存档码手动复制','good');card.appendChild(code);
-    const actions=el('div','cloud-actions');actions.append(cloudAction('立即同步','primary',()=>cloudSyncNow()),cloudAction('历史备份','',loadCloudHistory),cloudAction('解除本机绑定','danger',detachCloudSave));card.appendChild(actions);
-    if(cloudUi.conflict){const conflict=el('section','cloud-conflict');conflict.innerHTML='<small>SYNC CONFLICT</small><b>检测到两份不同进度</b><p>系统已停止自动覆盖。无论选择哪一份，被替换的云端版本仍保留在历史备份中。</p>';const choices=el('div','cloud-actions');choices.append(cloudAction('使用云端进度','primary',()=>resolveCloudConflict(true)),cloudAction('保留本机进度','danger',()=>resolveCloudConflict(false)));conflict.appendChild(choices);card.appendChild(conflict);}
-    if(Array.isArray(cloudUi.history)){const history=el('section','cloud-history');history.appendChild(el('small','','RECENT CLOUD VERSIONS · 最近 20 代'));cloudUi.history.forEach(item=>{const row=el('div','cloud-history-row'),copy=el('span','','<b>云端 v'+item.revision+'</b><em>'+cloudTime(item.savedAt)+'</em>'),button=cloudAction(item.revision===cloudBinding.revision?'当前版本':cloudUi.restoreConfirm===item.revision?'确认恢复':'恢复','',()=>restoreCloudHistory(item.revision));button.disabled=cloudUi.busy||item.revision===cloudBinding.revision;row.append(copy,button);history.appendChild(row);});card.appendChild(history);}
+    const code=el('button','cloud-code');code.innerHTML='<small>迁移码 · 点击复制</small><b></b><em>云端 v'+cloudBinding.revision+' · '+cloudTime(cloudBinding.updatedAt)+'</em>';code.querySelector('b').textContent=cloudBinding.code;code.onclick=async()=>setCloudStatus(await copyText(cloudBinding.code)?'迁移码已复制':'请长按迁移码手动复制','good');card.appendChild(code);
+    const actions=el('div','cloud-actions');actions.append(cloudAction('上传当前进度','primary',uploadCloudSave),cloudAction('下载迁移存档','',()=>previewCloudSave(cloudBinding.code)),cloudAction('上一个云端版本','',loadCloudHistory),cloudAction('忘记迁移码','danger',detachCloudSave));card.appendChild(actions);
+    if(Array.isArray(cloudUi.history)){const history=el('section','cloud-history');history.appendChild(el('small','','MANUAL CLOUD VERSIONS · 最多保留当前与上一版'));cloudUi.history.forEach(item=>{const row=el('div','cloud-history-row'),copy=el('span','','<b>云端 v'+item.revision+'</b><em>'+cloudTime(item.savedAt)+'</em>'),button=cloudAction(item.revision===cloudBinding.revision?'当前版本':cloudUi.restoreConfirm===item.revision?'确认恢复':'恢复','',()=>restoreCloudHistory(item.revision));button.disabled=cloudUi.busy||item.revision===cloudBinding.revision;row.append(copy,button);history.appendChild(row);});card.appendChild(history);}
   }else{
-    const create=cloudAction('为当前进度创建云存档码','primary',createCloudSave);create.classList.add('cloud-create');card.appendChild(create);
-    const linker=el('div','cloud-link'),input=document.createElement('input');input.id='cloud-code-input';input.placeholder='XXXX-XXXX-XXXX-XXXX-XXXX-XXXX';input.autocapitalize='characters';input.autocomplete='off';input.spellcheck=false;const read=cloudAction('读取存档码','',()=>previewCloudSave(input.value));linker.append(input,read);card.appendChild(linker);
-    card.appendChild(el('p','cloud-secret-note','存档码就是恢复凭证。请不要公开发送；换浏览器或 APK 时输入同一串码即可。'));
+    const create=cloudAction('上传当前进度并生成迁移码','primary',createCloudSave);create.classList.add('cloud-create');card.appendChild(create);
+    const linker=el('div','cloud-link'),input=document.createElement('input');input.id='cloud-code-input';input.placeholder='XXXX-XXXX-XXXX-XXXX-XXXX-XXXX';input.autocapitalize='characters';input.autocomplete='off';input.spellcheck=false;const read=cloudAction('下载迁移存档','',()=>previewCloudSave(input.value));linker.append(input,read);card.appendChild(linker);
+    card.appendChild(el('p','cloud-secret-note','迁移码就是恢复凭证。请勿公开发送；不使用迁移功能时，游戏不会产生任何云端请求。'));
   }
-  if(cloudUi.preview){const preview=el('section','cloud-preview');preview.innerHTML='<small>CLOUD SAVE FOUND</small><b>已找到云端 v'+cloudUi.preview.revision+'</b>';const remote=el('p');remote.textContent='云端：'+cloudSaveSummary(cloudUi.preview.save);const local=el('p');local.textContent='本机：'+cloudSaveSummary(state);const choices=el('div','cloud-actions');choices.append(cloudAction('使用云端存档','primary',usePreviewCloud),cloudAction('用本机进度覆盖云端','danger',overwritePreviewWithLocal));preview.append(remote,local,choices);card.appendChild(preview);}
+  if(cloudUi.preview){const preview=el('section','cloud-preview');preview.innerHTML='<small>TRANSFER PACKAGE FOUND</small><b>已下载云端 v'+cloudUi.preview.revision+'</b>';const remote=el('p');remote.textContent='迁移存档：'+cloudSaveSummary(cloudUi.preview.save);const local=el('p');local.textContent='当前本机：'+cloudSaveSummary(state);const choices=el('div','cloud-actions');choices.append(cloudAction('覆盖本机并载入','primary',usePreviewCloud),cloudAction('上传本机覆盖云端','danger',overwritePreviewWithLocal));preview.append(remote,local,choices);card.appendChild(preview);}
   box.appendChild(card);
 }
 function closeSaveTransfer(){const modal=$('save-transfer-modal');if(modal)modal.remove();}
@@ -3615,7 +3584,7 @@ function openLocalExport(){
   const text=createLocalBackup(),card=saveTransferShell('导出本地备份','复制备份文本，或在浏览器中下载 JSON 文件。'),area=document.createElement('textarea');area.value=text;area.readOnly=true;area.setAttribute('aria-label','存档备份文本');card.appendChild(area);const actions=el('div','save-transfer-actions'),copy=el('button','primary','复制备份文本'),download=el('button','','下载 JSON 文件');copy.onclick=async()=>{const ok=await copyText(text);copy.textContent=ok?'已复制':'复制失败，请长按文本';};download.onclick=()=>{try{const blob=new Blob([text],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='abyss-echo-save-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(_){download.textContent='当前环境请使用复制';}};actions.append(copy,download);card.appendChild(actions);
 }
 function openLocalImport(prefill){
-  const card=saveTransferShell('导入本地备份','导入会替换本机进度并解除当前云绑定，不会删除原云端备份。'),area=document.createElement('textarea');area.placeholder='在这里粘贴备份文本';area.value=prefill||'';area.setAttribute('aria-label','粘贴存档备份');const result=el('p','save-transfer-result','先校验备份，确认信息无误后再覆盖。'),actions=el('div','save-transfer-actions'),apply=el('button','primary','校验备份'),cancel=el('button','','取消');let parsed=null;apply.onclick=()=>{if(!parsed){try{parsed=parseLocalBackup(area.value);result.textContent='备份有效：'+cloudSaveSummary(parsed);result.className='save-transfer-result good';apply.textContent='确认覆盖本机存档';}catch(error){result.textContent=error.message;result.className='save-transfer-result danger';}}else{try{if(lastSavedJson)localStorage.setItem(LOCAL_ROLLBACK_KEY,lastSavedJson);cloudBinding=null;persistCloudBinding();installSaveAndReload(parsed,null);}catch(error){result.textContent='导入失败：'+error.message;result.className='save-transfer-result danger';}}};cancel.onclick=closeSaveTransfer;actions.append(apply,cancel);card.append(area,result,actions);area.focus();
+  const card=saveTransferShell('导入本地备份','导入会替换本机进度并忘记当前迁移码，不会删除云端迁移存档。'),area=document.createElement('textarea');area.placeholder='在这里粘贴备份文本';area.value=prefill||'';area.setAttribute('aria-label','粘贴存档备份');const result=el('p','save-transfer-result','先校验备份，确认信息无误后再覆盖。'),actions=el('div','save-transfer-actions'),apply=el('button','primary','校验备份'),cancel=el('button','','取消');let parsed=null;apply.onclick=()=>{if(!parsed){try{parsed=parseLocalBackup(area.value);result.textContent='备份有效：'+cloudSaveSummary(parsed);result.className='save-transfer-result good';apply.textContent='确认覆盖本机存档';}catch(error){result.textContent=error.message;result.className='save-transfer-result danger';}}else{try{if(lastSavedJson)localStorage.setItem(LOCAL_ROLLBACK_KEY,lastSavedJson);cloudBinding=null;persistCloudBinding();installSaveAndReload(parsed,null);}catch(error){result.textContent='导入失败：'+error.message;result.className='save-transfer-result danger';}}};cancel.onclick=closeSaveTransfer;actions.append(apply,cancel);card.append(area,result,actions);area.focus();
 }
 function restoreLocalRollback(){const raw=localStorage.getItem(LOCAL_ROLLBACK_KEY);if(raw)openLocalImport(raw);}
 function renderLocalBackupSettings(box){
@@ -3636,7 +3605,7 @@ function renderSetPanel(box){
   renderCloudSaveSettings(box);renderLocalBackupSettings(box);
   title(box,'重置存档');
   if(resetConfirming) grid(box,[
-    {label:'确认清空并重看序章',cost:'本机将解除云绑定；原云档仍可用存档码找回',cls:'danger',fn:hardReset},
+    {label:'确认清空并重看序章',cost:'本机将忘记迁移码；云端迁移存档不会删除',cls:'danger',fn:hardReset},
     {label:'取消',cost:'保留当前进度',fn:()=>{resetConfirming=false;render();}}
   ]);
   else grid(box,[{label:'重新开始(清空本档)',cost:'点击后在页面内再次确认',cls:'danger',full:true,fn:()=>{resetConfirming=true;render();}}]);
@@ -4359,6 +4328,6 @@ function boot(){
   if(state.checkpoint&&!state.checkpoint.discovered)state.checkpoint.discovered=JSON.parse(JSON.stringify(state.discovered));
   if(!state.checkpoint||!state.checkpoint.meta)updateCheckpoint();
   addEventListener('resize',()=>{ if(state.mapOpen)render(); else if(state.tab==='tech')requestAnimationFrame(drawTechLines); else if(state.tab==='char'&&state.charView==='genes')requestAnimationFrame(()=>{drawGeneTreeLines();geneTreeApply();}); });
-  if(!loaded) intro();setupTabLease();render();setupCloudSync();
+  if(!loaded) intro();setupTabLease();render();
 }
 boot();

@@ -1,16 +1,17 @@
-import { getDatabase } from "@netlify/database";
+import { getStore } from "@netlify/blobs";
 import {
   CloudSaveError,
   MAX_REQUEST_BYTES,
   createCloudSaveService,
 } from "../lib/cloud-save.mjs";
-import { PostgresCloudSaveStore } from "../lib/postgres-cloud-save.mjs";
+import { BlobCloudSaveStore, CLOUD_BLOB_STORE } from "../lib/blob-cloud-save.mjs";
 
 let service;
 
 function cloudSaveService() {
   if (!service) {
-    const store = new PostgresCloudSaveStore(getDatabase().pool);
+    const blobs = getStore({ name: CLOUD_BLOB_STORE, consistency: "strong" });
+    const store = new BlobCloudSaveStore(blobs);
     service = createCloudSaveService(store);
   }
   return service;
@@ -57,3 +58,12 @@ export default async function handler(request) {
     return json({ ok: false, error: "server_error", message: "云存档服务暂时不可用" }, 500);
   }
 }
+
+export const config = {
+  path: "/api/cloud-save",
+  rateLimit: {
+    aggregateBy: ["ip", "domain"],
+    windowLimit: 12,
+    windowSize: 60,
+  },
+};

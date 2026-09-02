@@ -7,9 +7,9 @@ signing_key="${ABYSS_UPDATE_KEY:-$config_dir/update-signing-key.pem}"
 apk_source="${ABYSS_APK_FILE:-$root_dir/android-release/Abyssal-Echoes.apk}"
 output_dir="$root_dir/prototype/app-update"
 public_url="${ABYSS_PUBLIC_URL:-https://abyssal-echoes-survival.netlify.app}"
-build="${1:-13}"
-version="${2:-0.4.0-netlify}"
-min_shell="${3:-4}"
+build="${1:-14}"
+version="${2:-0.4.1-manual-transfer}"
+min_shell="${3:-5}"
 
 [[ "$build" =~ ^[0-9]+$ ]] || { echo "build 必须是正整数" >&2; exit 1; }
 [[ "$min_shell" =~ ^[0-9]+$ ]] || { echo "minShell 必须是正整数" >&2; exit 1; }
