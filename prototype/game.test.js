@@ -51,6 +51,7 @@ source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,to
 source += `\n;Object.assign(this.api,{costText,recipeMaterialText,renderConstruction,renderSiteSheet,craft,smelt,batchQuantity,scaledCost,craftStationPresentation,skillLv,skillProgressText,careerSkillYieldMult,careerSkillCost,skillLevelEffectText,normalizeCloudCode,validGameSave,createLocalBackup,parseLocalBackup,cloudSaveSummary,fieldActionPresentation,fieldDirective,flavor});`;
 source += `\n;Object.assign(this.api,{EXPLORATION_PACING,NPC_FIELD_DISCOVERIES,explorationPacingRange,scheduledDiscoveryNeed,milestoneNeed,areaEventNeed,npcDiscoveryNeed,resourceDiscoveryNeed,applyResourceDiscovery,applyDiscoveryMilestones,applyNpcDiscoveries,fieldEncounterChance,rollFieldEncounter,recordFieldSafeAction});`;
 source += `\n;Object.assign(this.api,{NPC_NAMES,NPC_PROFILE,STORY_SCENE_ASSETS,STORY_SCENE_LOCATIONS,NPC_FIRST_CONTACT,storySceneKey,storySceneSrc,storyNpcFromGiver,storyLocationForQuest,queueStoryScene,queueNpcFirstContact,queueQuestStoryScene,flushStoryScenes,resetStoryScenes});`;
+source += `\n;Object.assign(this.api,{FIELD_MAP_SLOT_COORDS,FIELD_FOG_RADII,fieldNpcMapped,assignFieldMarkerSlots,fieldMapMarkerCandidates,fieldMapMarkers,fieldFogRecord,fieldFogState,acknowledgeFieldFog,fieldFogSvgMarkup,renderFieldExpedition});`;
 vm.runInContext(source,sandbox);
 const a=sandbox.api;
 function reset(){ sandbox.Math.random=Math.random; const s=a.freshState(); a.setState(s); return s; }
@@ -394,7 +395,7 @@ function hasClass(node,name){return String(node&&node.className||'').split(/\s+/
   assert.doesNotMatch(css,/#59612a|#242818/,'区域地图入口不得脱离营地的冷蓝终端配色');
   assert.match(js,/const ACTION_ICON=\{investigate:'scan',gather:'salvage',hunt:'combat'\}/,'探索操作必须复用语义化 SVG 图标映射');
   assert.match(js,/box\.classList\.add\('field-console'\)/,'探索页必须启用统一的远征终端布局');
-  assert.match(js,/scene-metrics[\s\S]*SURVEY[\s\S]*HAZARD[\s\S]*RETURN/,'探索区域头部必须提供测绘、风险和返程读数');
+  assert.match(js,/field-map-head-copy[\s\S]{0,240}区域测绘[\s\S]{0,120}勘察/,'探索区域头部必须用紧凑读数显示当前地点、测绘率与勘察次数');
   assert.match(css,/\.region-actions\s*\{[^}]*grid-template-columns:1fr/s,'现场行动在浏览器与手机上都必须保持单列');
   assert.doesNotMatch(css,/\.region-actions\s*\{[^}]*grid-template-columns:repeat\(2/s,'现场行动不得因桌面浏览器宽度误切为两列');
   assert.doesNotMatch(js,/b\.innerHTML='<span>'\+nl\.icon/,'探索路线不得继续混用地点 Emoji 图标');
@@ -402,11 +403,11 @@ function hasClass(node,name){return String(node&&node.className||'').split(/\s+/
   assert.match(js,/if\(state\.mapOpen\)\{box\.classList\.add\('map-mode'\);renderWorldMap\(box\);return;\}/,'手机展开地图时不得继续渲染下方行动长页面');
   assert.match(css,/#panel \.map-back\s*\{[^}]*height:27px[^}]*min-height:27px/s,'世界地图返回按钮必须与相邻地图工具等高');
   assert.match(css,/\.route-list \{ display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x proximity/,'移动路线必须始终使用横向快捷条以缩短页面');
-  assert.match(js,/const returnRoute=travelRoute\(loc,'camp'\)/,'野外场景应只保留一键返营入口');
+  assert.match(js,/function renderFieldExpedition\(box,id\)[\s\S]{0,520}returnRoute=travelRoute\(id,'camp'\)[\s\S]{0,900}field-return-tool/,'野外地图头部必须保留一键返营入口');
   assert.doesNotMatch(js,/点按目的地直接前往/,'野外场景不应再重复展示完整目的地列表');
   assert.match(css,/\.field-console:not\(\.map-mode\) \.scene-card\{padding:7px 9px 0\}/,'区域信息摘要必须直接适配应用的手机容器，不能依赖外层视口宽度');
   assert.match(css,/\.scene-metrics>span\{padding:5px 8px\}/,'手机端区域读数必须使用紧凑间距');
-  assert.match(js,/const returnRoute=travelRoute\(loc,'camp'\)[\s\S]*FIELD \/\//,'探索页必须把一键返营与地点化现场行动放在同一屏');
+  assert.match(js,/function renderFieldExpedition\(box,id\)[\s\S]*field-map-viewport[\s\S]*field-explore-dock/,'探索页必须把返营、地点标记和底部主探索行动放在同一屏');
   assert.doesNotMatch(js,/fieldView==='routes'/,'探索页不得保留行动/路线双模式，避免移动后还要手动切回行动页');
   assert.match(js,/if\(state\.mapOpen\)\{box\.classList\.add\('map-mode'\);renderWorldMap\(box\);return;\}/,'地图必须独占探索页面');
   assert.doesNotMatch(css,/\.field-switch\{/,'双模式切换器已随合并视图移除，不得残留样式');
@@ -920,7 +921,7 @@ function hasClass(node,name){return String(node&&node.className||'').split(/\s+/
   resourceSites.forEach(([id,loc])=>{assert.equal(a.gatherLimit(id),['mine','lunar'].includes(loc.profile)?4:3,`${loc.name} 必须具有可恢复的资源容量`);loc.resourceSite.yield.forEach(item=>assert.ok(loc.loot[item]>0,`${loc.name} 必须实际产出标注资源 ${item}`));});
   const css=fs.readFileSync(__dirname+'/style.css','utf8'),js=fs.readFileSync(__dirname+'/game.js','utf8');
   assert.match(css,/\.site-sheet-backdrop\s*\{[^}]*position:fixed[^}]*max-width:520px/s,'入口与现场操作必须使用手机宽度内的底部弹层');
-  assert.match(js,/box\.appendChild\(ag\);\s*if\(surveyed\)\{renderFieldPrompt/s,'现场操作提示必须在首次探索后显示，并放在常驻探索按钮网格之外');
+  assert.match(js,/if\(opId\)markers\.push\(\{id:'operation:'[\s\S]{0,520}scheduledDiscoveryNeed\('map-operation'[\s\S]*renderFieldMarkerDrawer/,'现场操作必须按随机阈值出现在地图上，并通过地点详情弹层执行');
 }
 {
   let s=reset();s.player.location='relayTower';s.areaSearch.relayTower=1;s.inv.ecomp=2;
@@ -1237,6 +1238,21 @@ function hasClass(node,name){return String(node&&node.className||'').split(/\s+/
 {
   let s=reset();a.startCombat('rat');assert.equal(s.combat.maxHp,a.ENEMIES.rat.hp,'前期敌人不得读取后期基因适配');
   s=reset();s.player.level=75;a.GENE_NODES.forEach(g=>s.meta.geneNodes[g.id]=true);a.startCombat('gateCustodian');assert.equal(s.combat.adaptiveThreat,true);assert.ok(s.combat.maxHp>a.ENEMIES.gateCustodian.hp,'远航终局敌人必须能承接当前基因阶段的输出');assert.ok(s.combat.atk>a.ENEMIES.gateCustodian.atk,'远航终局敌人的威胁必须参考当前职业与基因生存能力');
+}
+{
+  const s=reset();s.tutorial={version:1,step:'done',complete:true};Object.assign(s.flags,{mapUnlocked:true,exploreUnlocked:true});s.player.location='outer';sandbox.Math.random=()=>0;
+  let markers=a.fieldMapMarkers('outer'),fog=a.fieldFogState('outer',markers);
+  assert.equal(markers.length,0,'首次进入现场时地图不得预先显示 NPC、资源或道路');assert.equal(fog.holes.length,0,'首次探索前必须保留一整层连续迷雾');assert.equal(fog.complete,false);assert.equal(fog.progress,0);
+  const box=new FakeElement();a.renderFieldExpedition(box,'outer');assert.deepEqual(box.children.map(node=>node.className),['field-map-head','field-map-viewport surface','field-explore-dock'],'现场页必须固定为顶部情报、中部地图、底部探索按钮三段');
+  const viewport=box.children[1],viewportNodes=[];(function walk(node){viewportNodes.push(node);(node.children||[]).forEach(walk);})(viewport);const fogLayer=viewportNodes.find(node=>node.className==='field-fog-layer'),markerLayer=viewportNodes.find(node=>node.className==='field-map-markers');
+  assert.match(fogLayer.innerHTML,/<mask[\s\S]*<rect[\s\S]*<\/mask>/,'迷雾必须是一张连续遮罩，而不是可见方格');assert.equal(markerLayer.children.length,0);assert.ok(viewportNodes.some(node=>node.className==='field-map-empty'),'全空地图必须给出未测绘状态而不伪造地点');assert.equal(typeof box.children.at(-1).children[0].onclick,'function','探索按钮必须保持在整页最底部并可执行');
+  s.exploreCount.outer=1;markers=a.fieldMapMarkers('outer');fog=a.fieldFogState('outer',markers);assert.equal(fog.holes.length,markers.length,'每个已发现地点必须从自己的坐标向外撕开迷雾');assert.ok(fog.holes.every(hole=>hole.fresh&&hole.rx>0&&hole.ry>0));assert.ok(markers.every(marker=>marker.kind==='route'),'第一次勘察只能显示引导已知路线，不得提前送出随机资源点');assert.match(a.fieldFogSvgMarkup('outer',fog),/<ellipse[\s\S]*<animate attributeName="rx"/,'新地点的迷雾孔洞必须带径向扩张动画');
+  a.acknowledgeFieldFog('outer',fog);fog=a.fieldFogState('outer',markers);assert.ok(fog.holes.every(hole=>!hole.fresh),'已播放过的地点驱散动画不得在每次渲染时重复播放');
+  s.exploreCount.outer=8;s.resourceSites.outer=true;s.resourcePools.outer={charges:4,updatedAt:0};markers=a.fieldMapMarkers('outer');fog=a.fieldFogState('outer',markers);const resource=markers.find(marker=>marker.kind==='resource'),resourceHole=fog.holes.find(hole=>hole.id===resource.id);assert.ok(resource&&resource.label,'达到随机阈值且资源被发现后，资源点必须成为可点地图标记');assert.deepEqual([resourceHole.x,resourceHole.y],[resource.x,resource.y],'地点出现时必须以该地点坐标为中心驱散周围迷雾');assert.equal(new Set(markers.map(marker=>marker.sector)).size,markers.length,'同一张现场地图的可点标记不得占用重叠槽位');
+  const packed=a.assignFieldMarkerSlots(Array.from({length:12},(_,index)=>({id:'m'+index,kind:'route'})));for(let i=0;i<packed.length;i++)for(let j=i+1;j<packed.length;j++){const dx=(packed[i].x-packed[j].x)*3.9,dy=(packed[i].y-packed[j].y)*3.4;assert.ok(Math.hypot(dx,dy)>=58,'手机宽度下十二个地图槽位必须留出可点击间距');}
+  a.fieldMapMarkerCandidates('outer').filter(marker=>marker.kind==='route').forEach(marker=>s.discovered[marker.target]=true);markers=a.fieldMapMarkers('outer');fog=a.fieldFogState('outer',markers);assert.equal(fog.complete,true,'当前场景全部特殊地点出现后必须触发整张地图清雾');assert.equal(fog.progress,100);assert.equal(fog.freshComplete,true);
+  a.acknowledgeFieldFog('outer',fog);a.updateCheckpoint();s.fieldFogSeen.outer={holes:[],complete:false};a.restoreCheckpoint();assert.equal(a.getState().fieldFogSeen.outer.complete,true,'整图清雾状态必须进入检查点，返营或死亡回档后不能重新变未知');assert.equal(a.fieldFogState('outer',a.fieldMapMarkers('outer')).complete,true);
+  const mapCss=fs.readFileSync(path.join(__dirname,'story-scenes.css'),'utf8');assert.match(mapCss,/#panel\.field-console\.expedition-board[\s\S]*grid-template-rows:auto minmax\(0,1fr\) auto/,'现场页必须锁定一屏而不是让整页滚动');assert.match(mapCss,/\.field-fog-layer svg\{[\s\S]*width:100%[\s\S]*height:100%/,'连续迷雾必须使用覆盖整张背景的遮罩');assert.match(mapCss,/@keyframes field-fog-radial-reveal[\s\S]*scale\(7\.4,6\.4\)/,'发现地点时必须播放从地点中心向外扩散的驱散动画');assert.match(mapCss,/\.field-fog-layer\.is-complete\.is-fresh[\s\S]*field-fog-final-clear/,'全部地点发现后必须播放整图清雾动画');assert.match(mapCss,/\.field-map-drawer-body\{[\s\S]*overflow-y:auto/,'地点详情必须在地图弹层内部滚动');
 }
 
 console.log('game.test.js: all assertions passed');

@@ -1365,7 +1365,7 @@ function freshState(keepMeta){
              equip:{head:null,body:null,hands:null,legs:null,feet:null,back:null,implant:null,module:null,offhand:null,weapon:'crowbar'} },
     inv:{scrap:0,wood:0,stone:0,coal:0,copperScrap:0,copperIngot:0,cloth:0,ecomp:0,ration:0,steel:0,crystal:0,biocore:0,core:0,ingot:0,crowbar:1,
       arkBand:returning?1:0,builderGun:returning?1:0,fieldMap:returning?1:0},
-    defenses:[], rests:0, skills:{}, skillSlots:[null,null,null], skillSlotSel:0, skillView:'active', skillSelected:null, charView:'overview', quests:{first_exit:'active'}, questStart:{}, flags:{}, areaSearch:{}, exploreCount:{}, discoveryThresholds:{}, resourceSites:{}, resourcePools:{}, investigationMisses:{}, discovered:{camp:true,outer:true,joeCamp:true}, dailyGather:{}, dailyLocation:{}, dailyFacility:{}, foodBuff:null, truthClaimed:null,
+    defenses:[], rests:0, skills:{}, skillSlots:[null,null,null], skillSlotSel:0, skillView:'active', skillSelected:null, charView:'overview', quests:{first_exit:'active'}, questStart:{}, flags:{}, areaSearch:{}, exploreCount:{}, discoveryThresholds:{}, fieldFogSeen:{}, resourceSites:{}, resourcePools:{}, investigationMisses:{}, discovered:{camp:true,outer:true,joeCamp:true}, dailyGather:{}, dailyLocation:{}, dailyFacility:{}, foodBuff:null, truthClaimed:null,
     runStats:{kills:0,wKill:0,dmg:0,mat:0}, checkpoint:null, expeditionStartInv:null, fieldEncounter:{pressure:0,safeSteps:0,cooldown:0}, mapUnread:false, time:0,
     tab:'act', screen:'play', campBuilding:null, campView:'home', bagView:'equipment', bagSel:null, techSel:null, combat:null, visited:{camp:true}, mapLevel:'world', mapRegion:'surface', siteSheet:null, meta, kills:0,
     sound:AUDIO_PREF_DEFAULTS.sound,music:AUDIO_PREF_DEFAULTS.music,vibration:AUDIO_PREF_DEFAULTS.vibration,soundVolume:AUDIO_PREF_DEFAULTS.soundVolume,musicVolume:AUDIO_PREF_DEFAULTS.musicVolume,
@@ -1626,6 +1626,7 @@ function applyDiscoveryMilestones(id,count){
     if(rule.flag)setProgressFlag(rule.flag,true);
     if(rule.special){divider();log('⌘ 发现特殊通路','sys');log(rule.special,'story');divider();setLogOpen(true);}
     const announced=discoverLocation(rule.reveal,true);
+    setFieldReport(id,'发现新路线 · '+LOCATIONS[rule.reveal].name,rule.special||('断续地形读数已经闭合。地图新增通往【'+LOCATIONS[rule.reveal].name+'】的路线；入口仍需现场确认。'),'good');
     /* 旧存档可能已经记住坐标但尚未触发机关；机关完成后仍要明确告诉玩家路线已经开放。 */
     if(!announced&&locationRevealed(rule.reveal))log('◈ 路线开放：【'+LOCATIONS[rule.reveal].name+'】','good');
   });
@@ -1695,11 +1696,76 @@ function fieldDirective(id){
   if(next)return {code:'TRAIL INCOMPLETE',title:'还有一段痕迹没有闭合',text:'现有地图仍有断点。深入勘察会继续推进路线与现场事件；定向采集和肃清不会推进测绘。'};
   return {code:'AREA MAPPED',title:'基础测绘已经完成',text:'可按目标选择：定向采集稳定拿材料，肃清主动找敌人；继续勘察仍可能取得零散物资与区域记录。'};
 }
+const FIELD_MAP_SLOT_COORDS=[
+  [11,16],[38,17],[68,18],[88,20],
+  [13,43],[45,42],[70,43],[88,47],
+  [17,68],[42,69],[68,68],[88,70],
+];
+const FIELD_MARKER_SLOT_PREFERENCES={
+  resource:[8],npc:[6,7],mission:[5],operation:[9],action:[10],threat:[2],system:[1],route:[0,3,4,11],
+};
+const FIELD_FOG_RADII={resource:[19,15],npc:[17,14],mission:[18,14],operation:[18,14],action:[17,14],threat:[15,12],system:[18,14],route:[15,12]};
+function fieldNpcMapped(name,id){
+  const entry=NPC_FIELD_DISCOVERIES[name];
+  if(entry&&entry.at===id)return !!state.flags['fieldNpcFound_'+name];
+  return storyNpcMet(name)&&exploreAttempts(id)>0;
+}
+function fieldHasLocalQuestAction(id){
+  if(QUESTS.some(q=>questActive(q.id)&&q.type==='submit'&&q.turnAt===id))return true;
+  return id==='layer6'&&questActive('bridge')||id==='layer3'&&questActive('rescueTang')||id==='layer5'&&questActive('freeAyong')||id==='sealedCabin'&&questActive('innerArchive')||id==='seedCitadel'&&questActive('exo_seed_choice')&&!metaFlag('verdantResolved')||id==='zeroGate'&&questActive('exo_frontier_choice')&&metaFlag('gateGuardianDown')&&!metaFlag('frontierDoctrineChosen');
+}
+function assignFieldMarkerSlots(markers){
+  const used=new Set(),kindIndex={};
+  return markers.slice(0,FIELD_MAP_SLOT_COORDS.length).map(marker=>{
+    const index=kindIndex[marker.kind]||0,prefs=FIELD_MARKER_SLOT_PREFERENCES[marker.kind]||[];kindIndex[marker.kind]=index+1;
+    let sector=prefs[index];if(sector==null||used.has(sector))sector=prefs.find(value=>!used.has(value));
+    if(sector==null)sector=FIELD_MAP_SLOT_COORDS.findIndex((_,value)=>!used.has(value));
+    used.add(sector);const point=FIELD_MAP_SLOT_COORDS[sector];return Object.assign({},marker,{sector,x:point[0],y:point[1]});
+  });
+}
+function fieldMapMarkerCandidates(id){
+  const attempts=exploreAttempts(id),markers=[],site=resourceSiteOf(id),opId=fieldOperationAt(id),locationAction=LOCATION_ACTIONS[id],enemies=LOCATIONS[id].enemies||[];
+  if(site)markers.push({id:'resource:'+id,kind:'resource',icon:'salvage',label:site.label,target:id,revealed:resourceSiteDiscovered(id)});
+  NPC_NAMES.filter(name=>npcLocation(name)===id).forEach(name=>markers.push({id:'npc:'+name,kind:'npc',label:name,target:name,revealed:fieldNpcMapped(name,id)}));
+  if(fieldHasLocalQuestAction(id))markers.push({id:'mission:'+id,kind:'mission',icon:'mission',label:'剧情任务',target:id,revealed:attempts>=scheduledDiscoveryNeed('map-mission',id,0,[1,3])});
+  if(opId)markers.push({id:'operation:'+opId,kind:'operation',icon:'construct',label:FIELD_OPERATIONS[opId].name,target:opId,revealed:attempts>=scheduledDiscoveryNeed('map-operation',id,0,[Math.max(1,FIELD_OPERATIONS[opId].minSearch||1),Math.max(3,(FIELD_OPERATIONS[opId].minSearch||1)+3)])});
+  if(locationAction)markers.push({id:'action:'+id,kind:'action',icon:locationAction.icon,label:locationAction.name,target:id,revealed:attempts>=scheduledDiscoveryNeed('map-action',id,0,[3,7])});
+  if(enemies.length)markers.push({id:'threat:'+id,kind:'threat',icon:'combat',label:'威胁活动',target:id,revealed:attempts>=scheduledDiscoveryNeed('threat',id,0,[2,4])});
+  const hasOutpost=!!outpostRegion()&&!!LOCATIONS[id].colonizable,hasRoute=state.meta.expansionUnlocked&&SPACE_ROUTES.some(route=>spaceRouteDirection(route));
+  if(hasOutpost||hasRoute)markers.push({id:'system:'+id,kind:'system',icon:hasOutpost?'camp':'expedition',label:hasOutpost?'前哨部署':'星际航线',target:id,revealed:attempts>=scheduledDiscoveryNeed('map-system',id,0,[2,5])});
+  neighbors(id,true).filter(dest=>dest!=='camp').forEach(dest=>markers.push({id:'route:'+dest,kind:'route',icon:'map',label:LOCATIONS[dest].name,target:dest,revealed:locationRevealed(dest)}));
+  return assignFieldMarkerSlots(markers);
+}
+function fieldMapMarkers(id){
+  if(!exploreAttempts(id))return [];
+  return fieldMapMarkerCandidates(id).filter(marker=>marker.revealed);
+}
+function fieldFogRecord(id){
+  const raw=state.fieldFogSeen&&state.fieldFogSeen[id];
+  if(raw&&!Array.isArray(raw)&&Array.isArray(raw.holes))return raw;
+  return {holes:[],complete:false};
+}
+function fieldFogState(id,markers){
+  const attempts=exploreAttempts(id),record=fieldFogRecord(id),seenHoles=new Map(record.holes.map(hole=>[hole.id,hole])),current=markers||fieldMapMarkers(id),candidates=fieldMapMarkerCandidates(id);
+  current.forEach(marker=>{const radius=FIELD_FOG_RADII[marker.kind]||[16,13];seenHoles.set(marker.id,{id:marker.id,x:marker.x,y:marker.y,rx:radius[0],ry:radius[1],fresh:!record.holes.some(hole=>hole.id===marker.id)});});
+  const revealed=attempts?candidates.filter(marker=>marker.revealed).length:0,total=candidates.length,complete=!!record.complete||attempts>0&&(total?revealed===total:true);
+  return {holes:Array.from(seenHoles.values()),complete,freshComplete:complete&&!record.complete,revealed,total,progress:complete?100:(total?Math.round(revealed/total*100):0)};
+}
+function acknowledgeFieldFog(id,fog){
+  if(!state.fieldFogSeen)state.fieldFogSeen={};
+  state.fieldFogSeen[id]={holes:fog.holes.map(hole=>({id:hole.id,x:hole.x,y:hole.y,rx:hole.rx,ry:hole.ry})),complete:!!fog.complete};
+}
+function fieldFogSvgMarkup(id,fog){
+  const key=String(id).replace(/[^a-z0-9_-]/gi,''),maskId='field-fog-mask-'+key,softId='field-fog-soft-'+key,textureId='field-fog-texture-'+key,paintId='field-fog-paint-'+key;
+  const holes=fog.holes.map(hole=>'<ellipse cx="'+hole.x+'" cy="'+hole.y+'" rx="'+hole.rx+'" ry="'+hole.ry+'" fill="#000">'+(hole.fresh?'<animate attributeName="rx" from="0.1" to="'+hole.rx+'" dur="1.15s" calcMode="spline" keySplines=".16 .78 .22 1" fill="freeze"/><animate attributeName="ry" from="0.1" to="'+hole.ry+'" dur="1.15s" calcMode="spline" keySplines=".16 .78 .22 1" fill="freeze"/>':'')+'</ellipse>').join('');
+  return '<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="'+paintId+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#13252b"/><stop offset=".48" stop-color="#071216"/><stop offset="1" stop-color="#02080b"/></linearGradient><filter id="'+softId+'" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="1.7"/></filter><filter id="'+textureId+'" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".035 .07" numOctaves="3" seed="17"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .42"/></feComponentTransfer></filter><mask id="'+maskId+'" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><g filter="url(#'+softId+')">'+holes+'</g></mask></defs><g mask="url(#'+maskId+')"><rect class="field-fog-veil" width="100" height="100" fill="url(#'+paintId+')"/><rect class="field-fog-texture" x="-4" y="-4" width="108" height="108" fill="#82949a" filter="url(#'+textureId+')"/></g></svg>';
+}
 function resourceDiscoveryNeed(id){const surveyBonus=skillUnlocked('salvageSense')||currentCareer('salvager')?1:0,range=explorationPacingRange('resource',id,0);return Math.max(range[0],scheduledDiscoveryNeed('resource',id,0,range)-surveyBonus);}
 function discoverResourceSite(id){
   const site=resourceSiteOf(id);if(!site||resourceSiteDiscovered(id))return false;
   state.resourceSites[id]=true;state.resourcePools[id]={charges:resourceCapacity(id),updatedAt:state.time};
-  log('◆ 发现可持续资源点【'+site.label+'】。定向采集产量更高，耗尽后会随时间恢复。','good');setLogOpen(true);return true;
+  const text='测绘终端已经固定坐标。现在可以从地图直接进入定向采集，耗尽后会随时间恢复。';
+  log('◆ 发现可持续资源点【'+site.label+'】。'+text,'good');setFieldReport(id,'发现资源点 · '+site.label,text,'good');setLogOpen(true);return true;
 }
 function applyResourceDiscovery(id,count){if(resourceSiteOf(id)&&count>=resourceDiscoveryNeed(id))discoverResourceSite(id);}
 function locationGate(id){
@@ -1885,10 +1951,10 @@ function exhaustionDeath(){
 }
 
 /* ================= 存档点/结算 ================= */
-function snapshot(){ return JSON.parse(JSON.stringify({player:P(),inv:state.inv,defenses:state.defenses,rests:state.rests,skills:state.skills,masteries:state.masteries,quests:state.quests,questStart:state.questStart,flags:state.flags,areaSearch:state.areaSearch,exploreCount:state.exploreCount,discoveryThresholds:state.discoveryThresholds,resourceSites:state.resourceSites,resourcePools:state.resourcePools,investigationMisses:state.investigationMisses,discovered:state.discovered,dailyGather:state.dailyGather,dailyLocation:state.dailyLocation,dailyFacility:state.dailyFacility,foodBuff:state.foodBuff,truthClaimed:state.truthClaimed,visited:state.visited,runStats:state.runStats,kills:state.kills,fieldEncounter:state.fieldEncounter,mapUnread:!!state.mapUnread,time:state.time,meta:state.meta,campName:state.campName,settlementRep:state.settlementRep,settlementCommissions:state.settlementCommissions})); }
+function snapshot(){ return JSON.parse(JSON.stringify({player:P(),inv:state.inv,defenses:state.defenses,rests:state.rests,skills:state.skills,masteries:state.masteries,quests:state.quests,questStart:state.questStart,flags:state.flags,areaSearch:state.areaSearch,exploreCount:state.exploreCount,discoveryThresholds:state.discoveryThresholds,fieldFogSeen:state.fieldFogSeen,resourceSites:state.resourceSites,resourcePools:state.resourcePools,investigationMisses:state.investigationMisses,discovered:state.discovered,dailyGather:state.dailyGather,dailyLocation:state.dailyLocation,dailyFacility:state.dailyFacility,foodBuff:state.foodBuff,truthClaimed:state.truthClaimed,visited:state.visited,runStats:state.runStats,kills:state.kills,fieldEncounter:state.fieldEncounter,mapUnread:!!state.mapUnread,time:state.time,meta:state.meta,campName:state.campName,settlementRep:state.settlementRep,settlementCommissions:state.settlementCommissions})); }
 function updateCheckpoint(){ state.checkpoint=snapshot(); }
 function restoreCheckpoint(){ const s=JSON.parse(JSON.stringify(state.checkpoint));
-  state.player=s.player;state.inv=s.inv;state.defenses=s.defenses;state.rests=s.rests;state.skills=s.skills;state.quests=s.quests;state.questStart=s.questStart||{};state.flags=s.flags||{};state.areaSearch=s.areaSearch||{};state.exploreCount=s.exploreCount||{};state.discoveryThresholds=s.discoveryThresholds||{};state.resourceSites=s.resourceSites||{};state.resourcePools=s.resourcePools||{};state.investigationMisses=s.investigationMisses||{};state.discovered=s.discovered||{camp:true,outer:true,joeCamp:true};state.dailyGather=s.dailyGather||{};state.dailyLocation=s.dailyLocation||{};state.dailyFacility=s.dailyFacility||{};state.foodBuff=s.foodBuff||null;state.truthClaimed=s.truthClaimed||null;state.visited=s.visited;state.runStats=s.runStats;state.kills=s.kills;state.fieldEncounter=s.fieldEncounter||{pressure:0,safeSteps:0,cooldown:0};state.mapUnread=!!s.mapUnread;state.time=s.time;state.meta=s.meta||state.meta;
+  state.player=s.player;state.inv=s.inv;state.defenses=s.defenses;state.rests=s.rests;state.skills=s.skills;state.quests=s.quests;state.questStart=s.questStart||{};state.flags=s.flags||{};state.areaSearch=s.areaSearch||{};state.exploreCount=s.exploreCount||{};state.discoveryThresholds=s.discoveryThresholds||{};state.fieldFogSeen=s.fieldFogSeen||{};state.resourceSites=s.resourceSites||{};state.resourcePools=s.resourcePools||{};state.investigationMisses=s.investigationMisses||{};state.discovered=s.discovered||{camp:true,outer:true,joeCamp:true};state.dailyGather=s.dailyGather||{};state.dailyLocation=s.dailyLocation||{};state.dailyFacility=s.dailyFacility||{};state.foodBuff=s.foodBuff||null;state.truthClaimed=s.truthClaimed||null;state.visited=s.visited;state.runStats=s.runStats;state.kills=s.kills;state.fieldEncounter=s.fieldEncounter||{pressure:0,safeSteps:0,cooldown:0};state.mapUnread=!!s.mapUnread;state.time=s.time;state.meta=s.meta||state.meta;
   state.campName=s.campName||'幸存者营地';state.settlementRep=Number(s.settlementRep)||0;state.settlementCommissions=s.settlementCommissions||{};syncCampName();
   state.masteries=s.masteries||state.masteries||{};
   migrateTechSnapshot(state);MATS.forEach(k=>{if(state.inv[k]==null)state.inv[k]=0;});Object.entries(state.meta.spaceItems||{}).forEach(([id,n])=>{if(ITEMS[id])state.inv[id]=Math.max(state.inv[id]||0,Number(n)||0);});Object.assign(state.quests,state.meta.spaceQuests||{});Object.assign(state.flags,state.meta.spaceFlags||{});Object.assign(state.discovered,state.meta.spaceDiscovered||{});repairMinerProgression(false);
@@ -2368,7 +2434,7 @@ function panelView(){
   }
   return state.mapOpen?'explore-map':'explore';
 }
-function render(){ if(_npcCapturing)return; normalizePanelNavigationState();renderTop(); const box=$('panel'); box.innerHTML=''; box.classList.remove('camp-home','tutorial-panel','recipe-station-page','skill-console-page','npc-screen');
+function render(){ if(_npcCapturing)return; normalizePanelNavigationState();renderTop(); const box=$('panel'); box.innerHTML=''; box.classList.remove('camp-home','tutorial-panel','recipe-station-page','skill-console-page','npc-screen','field-console','expedition-board','settlement-console','map-mode','camp-map-page');
   const activeView=panelView();box.dataset.view=activeView;
   const onboarding=tutorialActive(),hud=tutorialHudUnlocked();
   $('app').classList.toggle('tutorial-active',onboarding); $('app').classList.toggle('tutorial-nohud',onboarding&&!hud); $('app').classList.toggle('tutorial-hud',onboarding&&hud);
@@ -2505,7 +2571,8 @@ function closeContextMap(){
 }
 function renderMapFab(){
   const old=$('map-fab');if(old&&old.parentNode)old.parentNode.removeChild(old);
-  if(!state.flags.mapUnlocked||state.tab!=='act'||state.mapOpen||state.screen!=='play'||tutorialActive()||state.combat||state.campBuilding||state.npcTarget||state.settlementShopOpen)return;
+  const fieldView=P().location!=='camp'&&regionForLocation(P().location)!=='settlement';
+  if(!state.flags.mapUnlocked||state.tab!=='act'||state.mapOpen||state.screen!=='play'||tutorialActive()||state.combat||state.campBuilding||state.npcTarget||state.settlementShopOpen||fieldView)return;
   const world=P().location==='camp',unread=!!state.mapUnread,b=el('button','map-fab ui-icon-button'+(unread?' has-unread':''),uiIcon('map')+(unread?'<span class="map-fab-dot" aria-hidden="true"></span>':''));b.id='map-fab';b.setAttribute('aria-label',(world?'打开世界地图':'打开局部地图')+(unread?'，有新发现':''));b.title=(world?'世界地图':'局部地图')+(unread?' · 有新发现':'');b.onclick=openContextMap;$('app').appendChild(b);
 }
 function verticalMapLayout(canvas,positions,extra){
@@ -2948,6 +3015,55 @@ function renderSettlementRecovery(box){
   const used=state.dailyFacility.settlementRecovery===currentDay(),sec=el('section','settlement-services');sec.appendChild(el('div','camp-section-head','<span><small>LIFE SUPPORT CLINIC</small><b>生保区恢复</b></span><em>每日基础医疗 + 付费完整治疗</em>'));
   const basic=el('button','camp-command-card medical','<span class="cc-copy"><small>DAILY CARE</small><b>基础医疗</b><em>生命与体力恢复 35% · 每日一次</em></span>');basic.disabled=used;basic.onclick=()=>settlementRecover('basic');sec.appendChild(basic);const fullCost={ration:2,serum:1},full=el('button','camp-command-card medical','<span class="cc-copy"><small>FULL TREATMENT</small><b>完整治疗</b><em>'+costText(fullCost)+' · 清除感染并恢复全部状态</em></span>');full.disabled=!canAfford(fullCost);full.onclick=()=>settlementRecover('full');sec.appendChild(full);box.appendChild(sec);
 }
+function fieldMarkerVisual(marker){
+  return marker.kind==='npc'?npcPortraitMarkup(marker.target,'field-map-avatar'):uiIcon(marker.icon||'unknown');
+}
+function renderFieldMarkerDrawer(drawer,marker,id){
+  drawer.innerHTML='';drawer.className='field-map-drawer is-open marker-'+marker.kind;
+  const head=el('header','field-map-drawer-head','<span>'+fieldMarkerVisual(marker)+'</span><div><small>MAP CONTACT // '+marker.kind.toUpperCase()+'</small><b>'+marker.label+'</b></div>'),close=el('button','field-map-drawer-close ui-icon-button',uiIcon('close'));
+  close.type='button';close.setAttribute('aria-label','关闭地图地点详情');close.onclick=()=>{drawer.className='field-map-drawer';drawer.innerHTML='';};head.appendChild(close);drawer.appendChild(head);
+  const body=el('div','field-map-drawer-body');drawer.appendChild(body);
+  const action=(label,meta,disabled,fn,cls)=>{const button=el('button','field-map-drawer-action '+(cls||''),'<span><b>'+label+'</b><small>'+meta+'</small></span>'+uiIcon('chevron-right'));button.type='button';button.disabled=!!disabled;if(!disabled)button.onclick=fn;body.appendChild(button);};
+  if(marker.kind==='resource'){
+    const site=resourceSiteOf(id),work=resourceWorkStatus(id),remaining=gatherAvailable(id),careerSkill=activeFieldGatherSkill(id),careerStatus=careerSkill?fieldGatherSkillStatus(careerSkill,id):null,ready=remaining&&work.ok&&(!careerStatus||careerStatus.ok);
+    body.appendChild(el('p','',site?'已标定产出：'+site.yield.map(key=>ITEMS[key].name).join(' · '):'资源读数缺失'));
+    action('开始'+resourceActionVerb(site,LOCATIONS[id].profile),(remaining?'储量 '+remaining+'/'+gatherLimit(id)+' · ':'储量耗尽 · ')+(careerStatus?careerStatus.text:work.text),!ready,()=>explore('gather'),'resource');
+  }else if(marker.kind==='npc'){
+    const profile=npcProfile(marker.target);body.appendChild(el('p','',profile.role+' · '+profile.bio));action('与'+marker.target+'交谈','查看人物、任务与当前区域情报',false,()=>openNpcPanel(marker.target),'npc');
+  }else if(marker.kind==='route'){
+    const dest=marker.target,gate=locationGate(dest),obstacle=routeObstacle(id,dest),blocked=obstacle&&!state.flags[obstacle.flag],desc=blocked?obstacle.text:gate.ok?LOCATIONS[dest].desc:gate.text;
+    body.appendChild(el('p','',desc));action(gate.ok&&!blocked?'前往'+LOCATIONS[dest].name:'查看通行条件',gate.ok&&!blocked?'体力 -'+moveCost(id,dest):(blocked?obstacle.action:gate.text),false,()=>move(dest),'route');
+  }else if(marker.kind==='operation'){
+    const op=FIELD_OPERATIONS[marker.target],status=operationStatus(marker.target);body.appendChild(el('p','',op.desc));action(status.ok?'执行'+op.name:'查看修复条件',status.text,false,()=>openSiteSheet('operation',marker.target),'operation');
+  }else if(marker.kind==='action'){
+    const siteAction=LOCATION_ACTIONS[id],remaining=locationActionRemaining(id),status=locationActionStatus(id);body.appendChild(el('p','',siteAction.desc));action(siteAction.name,!remaining?'今日次数已用完':status.text,!remaining||!status.ok,()=>performLocationAction(id),'action');
+  }else if(marker.kind==='threat'){
+    const threats=(LOCATIONS[id].enemies||[]).map(key=>ENEMIES[key].name).join(' · ');body.appendChild(el('p','',threats+' 的活动痕迹已经被标进地图。主动追猎会立刻进入战斗，但不会推进测绘。'));action('追踪威胁','主动交战 · 不消耗探索体力',false,()=>explore('hunt'),'threat');
+  }else if(marker.kind==='mission'){
+    body.appendChild(el('p','','此处存在需要你亲自决定或交付的剧情节点。'));renderLocalQuestActions(body);
+  }else if(marker.kind==='system'){
+    renderOutpostPanel(body);renderSpaceRoutes(body,false);
+  }
+  drawer.scrollTop=0;
+}
+function renderFieldExpedition(box,id){
+  const here=LOCATIONS[id],profile=REGION_PROFILES[here.profile],regionId=regionForLocation(id),region=WORLD_REGIONS[regionId],attempts=exploreAttempts(id),markers=fieldMapMarkers(id),fog=fieldFogState(id,markers),returnRoute=travelRoute(id,'camp');
+  box.classList.add('field-console','expedition-board');
+  const head=el('header','field-map-head'),mark=el('span','field-map-head-mark',uiIcon('expedition')),copy=el('span','field-map-head-copy','<small>EXPEDITION // '+region.name+' // '+here.zone+'</small><b>'+here.name+'</b><em>区域测绘 '+fog.progress+'% · 地点 '+fog.revealed+'/'+fog.total+' · 勘察 '+attempts+' 次</em>'),tools=el('span','field-map-head-tools');
+  const fullMap=el('button','field-head-tool ui-icon-button',uiIcon('map'));fullMap.type='button';fullMap.setAttribute('aria-label','打开完整区域地图');fullMap.onclick=openContextMap;tools.appendChild(fullMap);
+  if(returnRoute){const back=el('button','field-head-tool field-return-tool ui-icon-button',uiIcon('camp'));back.type='button';back.setAttribute('aria-label','沿已知路线返回营地');back.title='返回营地 · 体力 -'+returnRoute.cost;back.onclick=()=>travelTo('camp');tools.appendChild(back);}
+  head.appendChild(mark);head.appendChild(copy);head.appendChild(tools);box.appendChild(head);
+  const viewport=el('section','field-map-viewport '+(profile?profile.tone:'surface')),background=el('img','field-map-background');background.src=storySceneSrc(id);background.alt='';background.draggable=false;viewport.appendChild(background);viewport.appendChild(el('div','field-map-contours'));
+  const fogLayer=el('div','field-fog-layer'+(fog.complete?' is-complete':'')+(fog.freshComplete?' is-fresh':''));fogLayer.innerHTML=fieldFogSvgMarkup(id,fog);viewport.appendChild(fogLayer);
+  const reveals=el('div','field-fog-reveals');fog.holes.filter(hole=>hole.fresh).forEach(hole=>{const pulse=el('i','field-fog-reveal');pulse.style.left=hole.x+'%';pulse.style.top=hole.y+'%';pulse.style.setProperty('--fog-rx',hole.rx);pulse.style.setProperty('--fog-ry',hole.ry);reveals.appendChild(pulse);});if(fog.freshComplete)reveals.appendChild(el('i','field-fog-final-reveal'));viewport.appendChild(reveals);
+  const markerLayer=el('div','field-map-markers'),drawer=el('aside','field-map-drawer');markerLayer.setAttribute('aria-label','已发现地图地点');markers.forEach(marker=>{const button=el('button','field-map-marker marker-'+marker.kind,fieldMarkerVisual(marker)+'<span>'+marker.label+'</span>');button.type='button';button.dataset.sector=marker.sector;button.style.left=marker.x+'%';button.style.top=marker.y+'%';button.setAttribute('aria-label',marker.label);button.onclick=()=>{markerLayer.querySelectorAll('.field-map-marker').forEach(node=>node.classList.remove('is-selected'));button.classList.add('is-selected');renderFieldMarkerDrawer(drawer,marker,id);};markerLayer.appendChild(button);});viewport.appendChild(markerLayer);
+  const directive=fieldDirective(id),report=state.lastFieldReport&&state.lastFieldReport.location===id?state.lastFieldReport:null;
+  if(!attempts)viewport.appendChild(el('div','field-map-empty','<span>'+uiIcon('scan')+'</span><small>UNSURVEYED TERRAIN</small><b>地图尚未建立</b><p>第一次探索前，迷雾下不会提前显示资源点、人物或道路。</p>'));
+  else viewport.appendChild(el('div','field-map-readout '+(report?report.tone:''),'<small>'+(report?('FIELD RECORD // '+fmtTimeAt(report.time)):directive.code)+'</small><b>'+(report?report.title:directive.title)+'</b><p>'+(report?report.text:directive.text)+'</p>'));
+  viewport.appendChild(drawer);box.appendChild(viewport);acknowledgeFieldFog(id,fog);
+  const dock=el('footer','field-explore-dock'),exploreButton=el('button','field-explore-button primary','<span class="field-explore-icon">'+uiIcon('scan')+'</span><span><small>PRIMARY SURVEY // '+String(attempts+1).padStart(2,'0')+'</small><b>'+(attempts?'继续探索':'开始探索')+'</b><em>'+(attempts?'扩大测绘范围并寻找新地点':'从当前落脚点建立第一段地图')+'</em></span><strong>体力 -'+areaActionCost(1)+uiIcon('chevron-right')+'</strong>');
+  exploreButton.type='button';exploreButton.onclick=()=>explore('investigate');dock.appendChild(exploreButton);box.appendChild(dock);
+}
 function renderActPanel(box){
   const loc=P().location;
   if(loc==='setHub'&&state.settlementShopOpen)return renderSettlementShop(box,true);
@@ -2960,39 +3076,9 @@ function renderActPanel(box){
     return renderCampHome(box);
   }
   if(regionForLocation(loc)==='settlement')return renderSettlementLocation(box,loc);
-  const here=LOCATIONS[loc],profile=REGION_PROFILES[here.profile],localNpcs=npcsAt(loc);
-  const regionId=regionForLocation(loc),region=WORLD_REGIONS[regionId];
   box.classList.add('field-console');
   if(state.mapOpen){box.classList.add('map-mode');renderWorldMap(box);return;}
-  const threats=(here.enemies||[]).map(id=>ENEMIES[id].name).join('、')||'无主动威胁';
-  const siteInfo=resourceSiteOf(loc),siteKnown=resourceSiteDiscovered(loc),surveyed=exploreAttempts(loc)>0,resources=siteKnown?siteInfo.yield.map(id=>ITEMS[id].name).join(' · '):'尚未勘明';
-  const siteTag=siteInfo&&siteKnown?'<i class="resource-site">资源点 '+siteInfo.label+' · 储量 '+gatherAvailable(loc)+'/'+gatherLimit(loc)+'</i>':'',buffTag=foodBuffText()?'<i class="meal-buff">'+foodBuffText()+'</i>':'';
-  const info=el('div','scene-card '+(profile?profile.tone:'camp'));
-  const mapped=regionDiscovery(regionId),backNeed=staminaToCamp(loc);
-  info.innerHTML='<div class="scene-head"><div class="scene-mark">'+uiIcon('expedition')+'<i></i></div><div class="scene-copy"><span class="lc-zone">EXPEDITION // '+region.name+' // '+here.zone+'</span><b>'+here.name+'</b><span>'+locationSceneDescription(loc)+'</span></div><span class="scene-online"><i></i>LINKED</span></div><div class="scene-tags"><i>资源 '+resources+'</i><i>威胁 '+threats+'</i>'+siteTag+buffTag+(surveyed&&localNpcs.length?'<i class="npc">NPC '+localNpcs.join(' · ')+'</i>':'')+'</div><div class="scene-metrics"><span><small>SURVEY</small><b>'+mapped.known+'/'+mapped.total+'</b><em>区域测绘</em></span><span><small>HAZARD</small><b>'+((here.enemies||[]).length?'ACTIVE':'CLEAR')+'</b><em>'+(profile?profile.label:'安全区')+'</em></span><span><small>RETURN</small><b>'+(Number.isFinite(backNeed)?String(backNeed).padStart(2,'0'):'--')+'</b><em>返程体力</em></span></div>';
-  box.appendChild(info);
-  const directive=fieldDirective(loc),briefing=el('section','field-directive');briefing.innerHTML='<span>'+uiIcon('scan')+'</span><div><small>'+directive.code+'</small><b>'+directive.title+'</b><p>'+directive.text+'</p></div>';box.appendChild(briefing);
-  const report=state.lastFieldReport&&state.lastFieldReport.location===loc?state.lastFieldReport:null;if(report){const card=el('section','field-last-report '+report.tone);card.innerHTML='<small>LAST FIELD RECORD // '+fmtTimeAt(report.time)+'</small><b>'+report.title+'</b><p>'+report.text+'</p>';box.appendChild(card);}
-  const returnRoute=travelRoute(loc,'camp');
-  if(returnRoute){
-    const cost=returnRoute.cost,hpCost=movementHealthCost(cost),route=el('div','quick-return');
-    route.innerHTML='<span>'+uiIcon('camp')+'</span><span><small>QUICK RETURN</small><b>返回幸存者营地</b></span><em>'+(hpCost?'体力不足 · 生命 -'+hpCost:'最短路线 · 体力 -'+cost)+'</em><i>'+uiIcon('chevron-right')+'</i>';
-    route.setAttribute('role','button');route.tabIndex=0;route.onclick=()=>travelTo('camp');route.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();travelTo('camp');}};box.appendChild(route);
-  }
-  box.appendChild(el('div','camp-section-head field-section-head','<span><small>FIELD // '+here.zone+'</small><b>在'+here.name+'行动</b></span><em>'+profile.label+'</em>'));
-  const ag=el('div','region-actions');
-  if(surveyed)renderLocationAction(ag,loc);
-  (profile.actions||[]).filter(a=>a.mode!=='gather'||siteKnown).forEach(a=>{ const work=a.mode==='gather'?resourceWorkStatus(loc):null,careerSkill=a.mode==='gather'?activeFieldGatherSkill(loc):null,careerStatus=careerSkill?fieldGatherSkillStatus(careerSkill,loc):null,cost=careerStatus?careerStatus.cost:(a.mode==='gather'?work.cost:areaActionCost(1)),b=el('button','region-action action-'+a.mode+' '+(a.mode==='investigate'?'primary':'') ),presentation=fieldActionPresentation(loc,a,siteInfo);
-    const remaining=a.mode==='gather'?gatherAvailable(loc):null;
-    const hazard=here.contamination&&!environmentProtected('contamination')?' · 生命 -3':'';
-    const actionMeta=(a.mode==='gather'?(remaining?(careerSkill?(careerStatus.ok?'职业自动 · '+careerStatus.text:careerStatus.text):(work.ok?'储量 '+remaining+'/'+gatherLimit(loc)+' · '+work.text:work.text)):'储量耗尽 · '+resourceRecoveryRemaining(loc)+'小时后恢复1次'):(a.mode==='investigate'?'本地记录 '+exploreAttempts(loc)+' 次 · 体力 -'+cost:'直接进入战斗 · 无体力消耗'))+(a.mode==='hunt'?'':hazard);
-    b.innerHTML='<span class="ra-atmosphere" aria-hidden="true"><i></i><i></i><i></i></span><span class="ra-icon">'+uiIcon(ACTION_ICON[a.mode]||'unknown')+'</span><span class="ra-copy"><small>'+presentation.eyebrow+'</small><b>'+presentation.name+'</b><em>'+presentation.desc+'</em></span><span class="ra-status"><small>'+presentation.statusLabel+'</small><b>'+actionMeta+'</b></span>';
-    if(a.mode==='gather'&&(!remaining||!work.ok||(careerStatus&&!careerStatus.ok)))b.disabled=true; else b.onclick=()=>explore(a.mode); ag.appendChild(b); });
-    if(surveyed)localNpcs.forEach(name=>{ const b=el('button','region-action npc-action'); b.innerHTML='<span class="ra-icon npc-ra-portrait">'+npcPortraitMarkup(name,'npc-field-portrait')+'</span><span class="ra-copy"><small>CONTACT // LOCAL</small><b>与'+name+'交谈</b><em>'+npcProfile(name).role+' · 询问任务、线索与当前区域情报</em></span><span class="ra-status"><small>互动</small><b>查看人物</b></span>'; b.onclick=()=>openNpcPanel(name); ag.appendChild(b); });
-    box.appendChild(ag);
-    if(surveyed){renderFieldPrompt(box,fieldOperationAt(loc));renderLocalQuestActions(box);renderOutpostPanel(box);}
-    renderSpaceRoutes(box,false);
-    if(P().infected) grid(box,[{label:'用血清清感染',cost:has('serum')?'清除':'无血清',disabled:!has('serum'),cls:'danger',fn:()=>useItem('serum')}],true);
+  renderFieldExpedition(box,loc);
 }
 
 /* ---------- 角色 · 属性 / 技能栏 / 成长入口 ---------- */
@@ -4407,7 +4493,7 @@ function boot(){
   const peek=$('log-peek'); if(peek)peek.onclick=()=>setLogOpen($('log').classList.contains('collapsed'));
   const loaded=load(); if(!loaded) state=freshState();normalizeAudioPrefs(state);
   MATS.forEach(k=>{if(state.inv[k]==null)state.inv[k]=0;});
-  if(!state.quests)state.quests={}; if(!state.questStart)state.questStart={}; if(!state.flags)state.flags={}; if(!state.areaSearch)state.areaSearch={}; if(!state.exploreCount)state.exploreCount={}; if(!state.discoveryThresholds)state.discoveryThresholds={}; if(!state.resourceSites)state.resourceSites={}; if(!state.resourcePools)state.resourcePools={}; if(!state.investigationMisses)state.investigationMisses={}; if(!state.discovered)state.discovered={camp:true,outer:true,joeCamp:true}; if(!state.dailyGather)state.dailyGather={}; if(!state.dailyLocation)state.dailyLocation={}; if(!state.dailyFacility)state.dailyFacility={};if(!state.fieldEncounter)state.fieldEncounter={pressure:0,safeSteps:0,cooldown:0}; if(state.foodBuff===undefined)state.foodBuff=null; if(state.truthClaimed===undefined)state.truthClaimed=null; if(state.mapUnread===undefined)state.mapUnread=false; if(!state.visited)state.visited={}; state.visited.camp=true;if(!state.campName){state.campName='幸存者营地';state.flags.campNamed=true;}if(state.settlementRep==null)state.settlementRep=0;if(!state.settlementCommissions)state.settlementCommissions={};syncCampName();
+  if(!state.quests)state.quests={}; if(!state.questStart)state.questStart={}; if(!state.flags)state.flags={}; if(!state.areaSearch)state.areaSearch={}; if(!state.exploreCount)state.exploreCount={}; if(!state.discoveryThresholds)state.discoveryThresholds={}; if(!state.fieldFogSeen)state.fieldFogSeen={}; if(!state.resourceSites)state.resourceSites={}; if(!state.resourcePools)state.resourcePools={}; if(!state.investigationMisses)state.investigationMisses={}; if(!state.discovered)state.discovered={camp:true,outer:true,joeCamp:true}; if(!state.dailyGather)state.dailyGather={}; if(!state.dailyLocation)state.dailyLocation={}; if(!state.dailyFacility)state.dailyFacility={};if(!state.fieldEncounter)state.fieldEncounter={pressure:0,safeSteps:0,cooldown:0}; if(state.foodBuff===undefined)state.foodBuff=null; if(state.truthClaimed===undefined)state.truthClaimed=null; if(state.mapUnread===undefined)state.mapUnread=false; if(!state.visited)state.visited={}; state.visited.camp=true;if(!state.campName){state.campName='幸存者营地';state.flags.campNamed=true;}if(state.settlementRep==null)state.settlementRep=0;if(!state.settlementCommissions)state.settlementCommissions={};syncCampName();
   if(loaded)Object.keys(LOCATIONS).forEach(id=>{if(state.exploreCount[id]==null)state.exploreCount[id]=state.areaSearch[id]||0;const oldGather=state.dailyGather[id];if((oldGather&&oldGather.count>0)||(state.areaSearch[id]||0)>0){state.resourceSites[id]=!!resourceSiteOf(id);if(state.resourceSites[id]&&!state.resourcePools[id])state.resourcePools[id]={charges:Math.max(0,resourceCapacity(id)-(oldGather&&oldGather.day===currentDay()?oldGather.count:0)),updatedAt:state.time};}});
   if(loaded)Object.entries(NPC_FIELD_DISCOVERIES).forEach(([name,entry])=>{if(state.visited[entry.at]||(state.areaSearch[entry.at]||0)>0)state.flags['fieldNpcFound_'+name]=true;});
   /* v1 引导之前的存档已经拥有完整 HUD、休眠仓和地图，直接兼容为已完成。 */
