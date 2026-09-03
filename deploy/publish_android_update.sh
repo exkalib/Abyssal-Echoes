@@ -69,7 +69,12 @@ ssh "$remote_host" "chmod 644 '$remote_dir/$bundle' '$remote_dir/manifest.json.n
 
 # Safari/浏览器直接读取站点根目录；资源先同步，入口文件最后切换，避免页面引用到尚未上传的文件。
 ssh "$remote_host" "mkdir -p '$web_dir/assets'"
-scp -r "$root_dir/prototype/assets" "$remote_host:$web_dir/"
+if [[ "$bundle_mode" == "full" ]]; then
+  scp -r "$root_dir/prototype/assets" "$remote_host:$web_dir/"
+else
+  ssh "$remote_host" "mkdir -p '$web_dir/assets/building-art-v1'"
+  scp "$root_dir/prototype/assets/building-art-v1/research.png" "$remote_host:$web_dir/assets/building-art-v1/research.png"
+fi
 for file in style.css ui-system.css story-scenes.css game.js index.html; do
   scp "$root_dir/prototype/$file" "$remote_host:$web_dir/$file.new"
 done
