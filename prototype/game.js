@@ -4235,11 +4235,11 @@ globalThis.onAbyssUpdateStatus=(text,finished)=>setUpdateUi(String(text||''),!fi
 function openOfficialQQGroup(){
   const button=$('official-qq-group'),label=button&&button.querySelector('b');
   if(label)label.textContent='正在打开 QQ…';
-  copyText(OFFICIAL_QQ_GROUP).then(ok=>{if(label&&!ok)label.textContent='群号 '+OFFICIAL_QQ_GROUP;});
   try{globalThis.location.href=OFFICIAL_QQ_GROUP_URI;}catch(_){if(label)label.textContent='群号 '+OFFICIAL_QQ_GROUP;}
   setTimeout(()=>{const current=$('official-qq-group'),text=current&&current.querySelector('b');if(text)text.textContent=OFFICIAL_QQ_GROUP;},2600);
 }
-function copyOfficialQQSlogan(){
+function copyOfficialQQSlogan(event){
+  if(event){event.preventDefault();event.stopPropagation();}
   const button=$('official-qq-slogan'),label=button&&button.querySelector('b');
   copyText(OFFICIAL_QQ_SLOGAN).then(ok=>{if(label)label.textContent=ok?'✓ 口令已复制':'长按复制口令';setTimeout(()=>{const current=$('official-qq-slogan'),text=current&&current.querySelector('b');if(text)text.textContent=OFFICIAL_QQ_SLOGAN;},2200);});
 }
@@ -4322,7 +4322,7 @@ function renderSetPanel(box){
   dashboard.appendChild(media);
   const storage=el('section','settings-storage ui-panel'),storageCopy=el('span','settings-storage-copy','<small>DATA // SECURITY</small><b>存档与迁移</b><em>'+(cloudBinding?(cloudBinding.dirty?'云端副本待手动更新':'迁移码已绑定'):'仅在手动操作时联网')+' · 加密备份修改即拒绝</em>'),storageActions=el('div','settings-storage-actions');
   storage.appendChild(el('span','settings-storage-mark',uiIcon('lock')));storage.appendChild(storageCopy);storageActions.append(cloudAction('管理迁移','',openCloudSettings),cloudAction('导出加密备份','primary',openLocalExport),cloudAction('导入备份','',()=>openLocalImport('')));if(localStorage.getItem(LOCAL_ROLLBACK_KEY)){storageActions.classList.add('has-rollback');storageActions.append(cloudAction('本机回滚','',restoreLocalRollback));}storage.appendChild(storageActions);dashboard.appendChild(storage);
-  const footer=el('footer','settings-footer'),community=el('button','settings-community',uiIcon('dialogue')+'<span><small>深渊回响官方群</small><b>'+OFFICIAL_QQ_GROUP+'</b><em>点击打开 QQ</em></span>');community.id='official-qq-group';community.type='button';community.setAttribute('aria-label','打开深渊回响官方群，QQ群 '+OFFICIAL_QQ_GROUP);community.onclick=openOfficialQQGroup;const slogan=el('button','settings-slogan','<span><small>验证口令 · 点此复制</small><b>'+OFFICIAL_QQ_SLOGAN+'</b></span>');slogan.id='official-qq-slogan';slogan.type='button';slogan.setAttribute('aria-label','复制加群验证口令：'+OFFICIAL_QQ_SLOGAN);slogan.onclick=copyOfficialQQSlogan;const reset=el('button','danger settings-reset','重新开始');reset.onclick=openResetConfirm;footer.append(community,slogan,reset);dashboard.appendChild(footer);
+  const footer=el('footer','settings-footer'),qqRow=el('div','settings-qq-row'),community=el('button','settings-community',uiIcon('qq')+'<span><small>加入深渊回响官方群</small><b>'+OFFICIAL_QQ_GROUP+'</b><em>点击打开 QQ</em></span>');community.id='official-qq-group';community.type='button';community.setAttribute('aria-label','打开深渊回响官方群，QQ群 '+OFFICIAL_QQ_GROUP);community.onclick=openOfficialQQGroup;const slogan=el('button','settings-slogan',uiIcon('document')+'<span><small>一键复制验证口令</small><b>'+OFFICIAL_QQ_SLOGAN+'</b></span>');slogan.id='official-qq-slogan';slogan.type='button';slogan.setAttribute('aria-label','复制加群验证口令：'+OFFICIAL_QQ_SLOGAN);slogan.onclick=copyOfficialQQSlogan;qqRow.append(community,slogan);const reset=el('button','danger settings-reset','重新开始');reset.onclick=openResetConfirm;footer.append(qqRow,reset);dashboard.appendChild(footer);
 }
 function hardReset(){ const prefs=audioPrefs(state);closeSaveTransfer();settingsView='main';try{localStorage.setItem(LOCAL_ROLLBACK_KEY,JSON.stringify(state));}catch(_){}cloudBinding=null;persistCloudBinding();localStorage.removeItem(SAVE_KEY);lastSavedJson=''; state=freshState();Object.assign(state,prefs);syncAudioState();updateCheckpoint(); $('log').innerHTML=''; intro(); render(); }
 

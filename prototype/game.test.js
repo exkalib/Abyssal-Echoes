@@ -244,11 +244,13 @@ pendingTests.push((async()=>{
   assert.match(source,/LOCAL_BACKUP_FORMAT='abyss_echo_backup_v2'[\s\S]*PBKDF2[\s\S]*AES-GCM/,'本地备份必须使用密码派生密钥与带认证加密');
   assert.match(source,/function renderSetPanel\(box\)\{[\s\S]{0,220}settingsView==='cloud'[\s\S]*settings-home/,'设置页必须将低频迁移详情收进二级页并保留紧凑概览');
   assert.match(source,/const OFFICIAL_QQ_GROUP='1148651999'[\s\S]{0,260}mqqapi:\/\/card\/show_pslcard/,'设置页官方群入口必须使用指定群号并直接拉起 QQ 群资料页');
-  assert.match(source,/function openOfficialQQGroup\(\)[\s\S]{0,500}copyText\(OFFICIAL_QQ_GROUP\)[\s\S]{0,500}location\.href=OFFICIAL_QQ_GROUP_URI/,'打开官方群时必须先复制群号，再尝试唤起 QQ');
+  assert.match(source,/function openOfficialQQGroup\(\)[\s\S]{0,500}location\.href=OFFICIAL_QQ_GROUP_URI/,'打开官方群必须直接尝试唤起 QQ');
+  assert.doesNotMatch(source,/copyText\(OFFICIAL_QQ_GROUP\)/,'加群入口不得再覆盖验证口令剪贴板');
   assert.match(source,/const OFFICIAL_QQ_SLOGAN='深渊无声，回响不灭'/,'设置页必须固定展示与群验证问题对应的口令');
-  assert.match(source,/function copyOfficialQQSlogan\(\)[\s\S]{0,320}copyText\(OFFICIAL_QQ_SLOGAN\)/,'设置页必须提供一键复制加群验证口令的操作');
-  assert.match(css,/#panel \.settings-community\{[^}]*grid-template-columns:18px minmax\(0,1fr\)/,'官方群入口必须保持为适配手机设置页的紧凑横向按钮');
-  assert.match(css,/#panel \.settings-slogan\{[^}]*min-height:29px/,'复制验证口令按钮必须与加群入口并排显示');
+  assert.match(source,/function copyOfficialQQSlogan\(event\)[\s\S]{0,360}copyText\(OFFICIAL_QQ_SLOGAN\)/,'设置页必须提供一键复制加群验证口令的操作');
+  assert.match(html,/id="icon-qq"[\s\S]{0,420}<circle cx="10\.2"/,'官方群入口必须使用专门绘制的 QQ 企鹅图标');
+  assert.match(css,/\.settings-qq-row\{[^}]*grid-template-columns:1fr 1fr/,'加群与复制口令必须独占同一行并拥有互不重叠的点击区域');
+  assert.match(css,/#panel \.settings-reset\{[^}]*width:100%/,'重新开始必须另起一整行');
   assert.match(html,/style\.css\?v=[^"']*cloudmanual1[\s\S]*game\.js\?v=[^"']*cloudmanual1/,'手动迁移脚本与样式必须同时更新缓存版本，避免 Safari 混用旧资源');
   assert.match(html,/style\.css\?v=[^"']*securebackup2settingsfit2[\s\S]*game\.js\?v=[^"']*securebackup2settingsfit2/,'加密备份与设置布局必须同步刷新缓存版本');
   assert.match(html,/id="action-feedback"[^>]*aria-live="polite"[^>]*aria-atomic="true"/,'操作反馈必须位于持久且可访问的实时提示层');
