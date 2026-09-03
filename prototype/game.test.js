@@ -239,9 +239,16 @@ pendingTests.push((async()=>{
   assert.match(css,/#panel \.station-detail-workbench \.station-quantity[^}]*height:26px!important[^}]*min-height:26px!important[^}]*padding:0 3px!important/,'数量输入框必须覆盖全局44px表单高度并与加减按钮齐平');
   assert.match(css,/\.local-backup-card small,\.local-backup-card b,\.local-backup-card em\{display:block\}/,'手机设置页的本地备份标签、标题与说明必须分层显示，不能横向重叠');
   assert.match(css,/#panel\[data-view="settings"\]\.settings-home\{[^}]*display:flex[^}]*overflow:hidden/,'设置概览必须锁定在一屏，不能继续依赖整页滚动');
-  assert.match(css,/\.settings-dashboard\{[^}]*grid-template-rows:auto minmax\(0,1fr\) auto auto/,'设置概览必须把声音区域压缩到剩余空间并固定存档与底部操作');
+  assert.match(css,/\.settings-dashboard\{[^}]*grid-template-rows:repeat\(4,auto\)[^}]*align-content:start/,'设置概览不得强制拉伸声音区域');
+  assert.match(css,/#panel\.settings-home \.settings-media\{[^}]*grid-template-rows:repeat\(3,minmax\(40px,auto\)\)/,'音效、音乐与触觉反馈必须各自只占一条紧凑设置行');
   assert.match(source,/LOCAL_BACKUP_FORMAT='abyss_echo_backup_v2'[\s\S]*PBKDF2[\s\S]*AES-GCM/,'本地备份必须使用密码派生密钥与带认证加密');
   assert.match(source,/function renderSetPanel\(box\)\{[\s\S]{0,220}settingsView==='cloud'[\s\S]*settings-home/,'设置页必须将低频迁移详情收进二级页并保留紧凑概览');
+  assert.match(source,/const OFFICIAL_QQ_GROUP='1148651999'[\s\S]{0,260}mqqapi:\/\/card\/show_pslcard/,'设置页官方群入口必须使用指定群号并直接拉起 QQ 群资料页');
+  assert.match(source,/function openOfficialQQGroup\(\)[\s\S]{0,500}copyText\(OFFICIAL_QQ_GROUP\)[\s\S]{0,500}location\.href=OFFICIAL_QQ_GROUP_URI/,'打开官方群时必须先复制群号，再尝试唤起 QQ');
+  assert.match(source,/const OFFICIAL_QQ_SLOGAN='深渊无声，回响不灭'/,'设置页必须固定展示与群验证问题对应的口令');
+  assert.match(source,/function copyOfficialQQSlogan\(\)[\s\S]{0,320}copyText\(OFFICIAL_QQ_SLOGAN\)/,'设置页必须提供一键复制加群验证口令的操作');
+  assert.match(css,/#panel \.settings-community\{[^}]*grid-template-columns:18px minmax\(0,1fr\)/,'官方群入口必须保持为适配手机设置页的紧凑横向按钮');
+  assert.match(css,/#panel \.settings-slogan\{[^}]*min-height:29px/,'复制验证口令按钮必须与加群入口并排显示');
   assert.match(html,/style\.css\?v=[^"']*cloudmanual1[\s\S]*game\.js\?v=[^"']*cloudmanual1/,'手动迁移脚本与样式必须同时更新缓存版本，避免 Safari 混用旧资源');
   assert.match(html,/style\.css\?v=[^"']*securebackup2settingsfit2[\s\S]*game\.js\?v=[^"']*securebackup2settingsfit2/,'加密备份与设置布局必须同步刷新缓存版本');
   assert.match(html,/id="action-feedback"[^>]*aria-live="polite"[^>]*aria-atomic="true"/,'操作反馈必须位于持久且可访问的实时提示层');
@@ -254,7 +261,7 @@ pendingTests.push((async()=>{
   assert.match(source,/pointerdown[^\n]*const audioReady=unlockAudio\(\),b=buttonFrom\(e\)/,'首次触摸任意位置都必须尝试启动背景音乐，不能只响应按钮');
   assert.match(source,/function stopAudioVoices\(voices\)[\s\S]*voice\.osc\.stop\(\)[\s\S]*stopAudioVoices\(audioRuntime\.musicVoices\)/,'关闭音乐时必须停止已排程声部，不能重新漏出尾音');
   assert.match(source,/document\.hidden\)[\s\S]*audioRuntime\.ctx\.suspend\(\)/,'应用进入后台时必须暂停音频上下文');
-  assert.match(source,/settingsVolume\('musicVolume'[\s\S]*settingsToggle\('vibration'/,'设置页必须提供震动开关和真实音量控制');
+  assert.match(source,/settingsToggle\('sound'[\s\S]{0,240}key:'soundVolume'[\s\S]{0,240}settingsToggle\('music'[\s\S]{0,240}key:'musicVolume'[\s\S]{0,240}settingsToggle\('vibration'/,'设置页必须把音效、音乐与触觉反馈收成三行并保留真实音量控制');
   assert.match(source,/pressedPointers=new Map\(\)[\s\S]*pressedPointers\.get\(e\.pointerId\)/,'滑出按钮后也必须按 pointerId 清理原始按压态');
   assert.match(source,/function flushFeedbackBatch\(batch\)[\s\S]*state&&state\.combat[\s\S]*dismissActionFeedback\(true\)/,'战斗中必须使用战斗反馈区并彻底清除旧提示');
   assert.match(source,/function upgradeFacility\(id\)[\s\S]{0,700}state\.siteSheet=null[\s\S]{0,200}toast:false/,'设施升级后必须关闭弹层、回到原设施并禁止冗余浮层通知');

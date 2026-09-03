@@ -4201,6 +4201,9 @@ function renderTaskPanel(box){
 }
 
 /* ---------- 设置 ---------- */
+const OFFICIAL_QQ_GROUP='1148651999';
+const OFFICIAL_QQ_GROUP_URI='mqqapi://card/show_pslcard?src_type=internal&version=1&uin='+OFFICIAL_QQ_GROUP+'&card_type=group&source=qrcode';
+const OFFICIAL_QQ_SLOGAN='深渊无声，回响不灭';
 const updateUi={text:'',busy:false};
 let settingsView='main';
 function appVersionInfo(){
@@ -4229,6 +4232,17 @@ function checkAppUpdate(){
   setUpdateUi('网页版由服务器直接提供，刷新页面就是最新版本。',false);
 }
 globalThis.onAbyssUpdateStatus=(text,finished)=>setUpdateUi(String(text||''),!finished);
+function openOfficialQQGroup(){
+  const button=$('official-qq-group'),label=button&&button.querySelector('b');
+  if(label)label.textContent='正在打开 QQ…';
+  copyText(OFFICIAL_QQ_GROUP).then(ok=>{if(label&&!ok)label.textContent='群号 '+OFFICIAL_QQ_GROUP;});
+  try{globalThis.location.href=OFFICIAL_QQ_GROUP_URI;}catch(_){if(label)label.textContent='群号 '+OFFICIAL_QQ_GROUP;}
+  setTimeout(()=>{const current=$('official-qq-group'),text=current&&current.querySelector('b');if(text)text.textContent=OFFICIAL_QQ_GROUP;},2600);
+}
+function copyOfficialQQSlogan(){
+  const button=$('official-qq-slogan'),label=button&&button.querySelector('b');
+  copyText(OFFICIAL_QQ_SLOGAN).then(ok=>{if(label)label.textContent=ok?'✓ 口令已复制':'长按复制口令';setTimeout(()=>{const current=$('official-qq-slogan'),text=current&&current.querySelector('b');if(text)text.textContent=OFFICIAL_QQ_SLOGAN;},2200);});
+}
 function toggleAudioPref(key){
   normalizeAudioPrefs(state);state[key]=!state[key];save();
   if(key==='vibration'&&state.vibration&&typeof navigator!=='undefined'&&navigator.vibrate)try{navigator.vibrate(16);}catch(_){}
@@ -4237,9 +4251,9 @@ function toggleAudioPref(key){
   render();
 }
 function setAudioVolume(key,value){normalizeAudioPrefs(state);state[key]=Math.max(0,Math.min(1,Number(value)||0));save();syncAudioState();}
-function settingsToggle(key,icon,titleText,desc){
-  const on=!!state[key],row=el('div','settings-control'),copy=el('span','settings-control-copy','<small>'+titleText.toUpperCase()+'</small><b>'+titleText+'</b><em>'+desc+'</em>'),mark=el('span','settings-control-mark',uiIcon(icon)),toggle=el('button','settings-switch'+(on?' on':''),'<span><i></i></span><b>'+(on?'开启':'关闭')+'</b>');
-  toggle.setAttribute('aria-label',titleText+'：'+(on?'开启':'关闭'));toggle.setAttribute('aria-pressed',on?'true':'false');toggle.onclick=()=>toggleAudioPref(key);row.append(mark,copy,toggle);return row;
+function settingsToggle(key,icon,titleText,desc,volume){
+  const on=!!state[key],row=el('div','settings-control'+(volume?' has-volume':'')),copy=el('span','settings-control-copy','<small>'+titleText.toUpperCase()+'</small><b>'+titleText+'</b><em>'+desc+'</em>'),mark=el('span','settings-control-mark',uiIcon(icon)),toggle=el('button','settings-switch'+(on?' on':''),'<span><i></i></span><b>'+(on?'开启':'关闭')+'</b>');
+  toggle.setAttribute('aria-label',titleText+'：'+(on?'开启':'关闭'));toggle.setAttribute('aria-pressed',on?'true':'false');toggle.onclick=()=>toggleAudioPref(key);row.append(mark,copy);if(volume)row.appendChild(settingsVolume(volume.key,volume.label,on));row.appendChild(toggle);return row;
 }
 function settingsVolume(key,labelText,enabled){
   const value=Math.round(state[key]*100),row=el('label','settings-volume','<span><b>'+labelText+'</b><em id="'+key+'-value">'+value+'%</em></span>'),input=document.createElement('input');input.type='range';input.min='0';input.max='100';input.step='5';input.value=String(value);input.disabled=!enabled;input.setAttribute('aria-label',labelText);
@@ -4302,13 +4316,13 @@ function renderSetPanel(box){
   update.appendChild(check);dashboard.appendChild(update);box.appendChild(dashboard);
   $('update-version').textContent=appVersionInfo(); setUpdateUi(updateUi.text,updateUi.busy);
   normalizeAudioPrefs(state);
-  const media=el('section','settings-media ui-panel');media.appendChild(settingsToggle('sound','sensor','音效','触摸、采集、警告与战斗均使用独立反馈音'));
-  media.appendChild(settingsVolume('soundVolume','音效音量',state.sound));media.appendChild(settingsToggle('music','energy','背景音乐','程序化深空环境乐，首次触摸后开始播放'));
-  media.appendChild(settingsVolume('musicVolume','音乐音量',state.music));media.appendChild(settingsToggle('vibration','bracelet','触觉反馈','安卓按钮轻触震动，可独立关闭'));
+  const media=el('section','settings-media ui-panel');media.appendChild(settingsToggle('sound','sensor','音效','触摸、采集、警告与战斗均使用独立反馈音',{key:'soundVolume',label:'音效音量'}));
+  media.appendChild(settingsToggle('music','energy','背景音乐','程序化深空环境乐，首次触摸后开始播放',{key:'musicVolume',label:'音乐音量'}));
+  media.appendChild(settingsToggle('vibration','bracelet','触觉反馈','安卓按钮轻触震动，可独立关闭'));
   dashboard.appendChild(media);
   const storage=el('section','settings-storage ui-panel'),storageCopy=el('span','settings-storage-copy','<small>DATA // SECURITY</small><b>存档与迁移</b><em>'+(cloudBinding?(cloudBinding.dirty?'云端副本待手动更新':'迁移码已绑定'):'仅在手动操作时联网')+' · 加密备份修改即拒绝</em>'),storageActions=el('div','settings-storage-actions');
   storage.appendChild(el('span','settings-storage-mark',uiIcon('lock')));storage.appendChild(storageCopy);storageActions.append(cloudAction('管理迁移','',openCloudSettings),cloudAction('导出加密备份','primary',openLocalExport),cloudAction('导入备份','',()=>openLocalImport('')));if(localStorage.getItem(LOCAL_ROLLBACK_KEY)){storageActions.classList.add('has-rollback');storageActions.append(cloudAction('本机回滚','',restoreLocalRollback));}storage.appendChild(storageActions);dashboard.appendChild(storage);
-  const footer=el('footer','settings-footer'),about=el('span','','<small>ABYSSAL ECHOES</small><b>《深渊回响》</b>');const reset=el('button','danger settings-reset','重新开始');reset.onclick=openResetConfirm;footer.append(about,reset);dashboard.appendChild(footer);
+  const footer=el('footer','settings-footer'),community=el('button','settings-community',uiIcon('dialogue')+'<span><small>深渊回响官方群</small><b>'+OFFICIAL_QQ_GROUP+'</b><em>点击打开 QQ</em></span>');community.id='official-qq-group';community.type='button';community.setAttribute('aria-label','打开深渊回响官方群，QQ群 '+OFFICIAL_QQ_GROUP);community.onclick=openOfficialQQGroup;const slogan=el('button','settings-slogan','<span><small>验证口令 · 点此复制</small><b>'+OFFICIAL_QQ_SLOGAN+'</b></span>');slogan.id='official-qq-slogan';slogan.type='button';slogan.setAttribute('aria-label','复制加群验证口令：'+OFFICIAL_QQ_SLOGAN);slogan.onclick=copyOfficialQQSlogan;const reset=el('button','danger settings-reset','重新开始');reset.onclick=openResetConfirm;footer.append(community,slogan,reset);dashboard.appendChild(footer);
 }
 function hardReset(){ const prefs=audioPrefs(state);closeSaveTransfer();settingsView='main';try{localStorage.setItem(LOCAL_ROLLBACK_KEY,JSON.stringify(state));}catch(_){}cloudBinding=null;persistCloudBinding();localStorage.removeItem(SAVE_KEY);lastSavedJson=''; state=freshState();Object.assign(state,prefs);syncAudioState();updateCheckpoint(); $('log').innerHTML=''; intro(); render(); }
 
