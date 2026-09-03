@@ -11,6 +11,7 @@ import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Build;
+import android.provider.Settings;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import java.io.File;
+
 public final class MainActivity extends Activity {
     private WebView webView;
     private TextView updateStatus;
@@ -33,6 +36,9 @@ public final class MainActivity extends Activity {
     private boolean updateCheckRunning;
     private boolean launchCheckStarted;
     private boolean launchResolved;
+    private BundleUpdater.UpdateInfo pendingNativeUpdate;
+    private File pendingNativeApk;
+    private boolean waitingForInstallPermission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +122,17 @@ public final class MainActivity extends Activity {
                 handleUpdateAvailable(update, startup, this);
             }
             @Override public void onProgress(int percent) {
-                if (startup) notifyLaunchState("downloading", "正在下载资源更新", "更新完成后将自动校验并安装。", percent);
-                else showStatus("正在下载资源更新 " + percent + "%", 0L);
+                boolean nativeUpdate = pendingNativeUpdate != null;
+                String target = nativeUpdate ? "安装包" : "资源更新";
+                if (startup) notifyLaunchState("downloading", "正在下载" + target,
+                        nativeUpdate ? "下载完成后将请求系统确认安装。" : "更新完成后将自动校验并加载。", percent);
+                else showStatus("正在下载" + target + " " + percent + "%", 0L);
+            }
+            @Override public void onNativeReady(File apk, BundleUpdater.UpdateInfo update) {
+                updateCheckRunning = false;
+                pendingNativeApk = apk;
+                pendingNativeUpdate = update;
+                installDownloadedApk();
             }
             @Override public void onReady(long build, String version) {
                 updateCheckRunning = false;
@@ -130,6 +145,14 @@ public final class MainActivity extends Activity {
             }
             @Override public void onError(String message) {
                 updateCheckRunning = false;
+                if (pendingNativeUpdate != null) {
+                    BundleUpdater.UpdateInfo failedUpdate = pendingNativeUpdate;
+                    pendingNativeApk = null;
+                    pendingNativeUpdate = null;
+                    waitingForInstallPermission = false;
+                    showNativeUpdateFallback(failedUpdate, message);
+                    return;
+                }
                 if (startup) releaseLaunchGate("offline", "更新节点不可用", "已切换离线模式，本地存档仍可正常游玩。");
                 else showStatus("离线运行 · " + message, 1600L);
             }
@@ -139,7 +162,7 @@ public final class MainActivity extends Activity {
     private void handleUpdateAvailable(BundleUpdater.UpdateInfo update, boolean startup,
                                        BundleUpdater.Listener listener) {
         String description = update.nativeShell
-                ? "检测到安卓外壳更新 " + update.version
+                ? "检测到安卓外壳更新 " + update.version + " · " + readableSize(update.expectedSize)
                 : "检测到资源更新 " + update.version + " · " + readableSize(update.expectedSize);
         if (startup) notifyLaunchState("checking", "发现可用更新", description, null);
         else showStatus(description, 0L);
@@ -162,10 +185,10 @@ public final class MainActivity extends Activity {
     private void startUpdate(BundleUpdater.UpdateInfo update, boolean startup,
                              BundleUpdater.Listener listener) {
         if (update.nativeShell) {
-            updateCheckRunning = false;
-            if (startup) notifyLaunchState("downloading", "正在打开安装包下载", "安装新版本后重新启动游戏。", null);
-            else notifyWebUpdateStatus("正在打开安卓外壳更新 " + update.version, true);
-            openNativeUpdate(update.apkUrl);
+            pendingNativeUpdate = update;
+            if (startup) notifyLaunchState("downloading", "正在下载安装包", "下载完成后将请求系统确认安装。", 0);
+            else notifyWebUpdateStatus("正在下载安装包 " + update.version, false);
+            updater.downloadNativeUpdate(update, listener);
             return;
         }
         if (startup) notifyLaunchState("downloading", "正在下载资源更新", "更新完成后将自动校验并安装。", 0);
@@ -208,16 +231,80 @@ public final class MainActivity extends Activity {
         webView.loadUrl(LocalContentWebViewClient.HOME);
     }
 
-    private void openNativeUpdate(String apkUrl) {
+    private void installDownloadedApk() {
+        BundleUpdater.UpdateInfo update = pendingNativeUpdate;
+        File apk = pendingNativeApk;
+        if (update == null || apk == null || !apk.isFile()) {
+            if (update != null) showNativeUpdateFallback(update, "已下载的安装包不存在");
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                && !getPackageManager().canRequestPackageInstalls()) {
+            notifyLaunchState("installing", "需要允许安装游戏更新",
+                    "安卓系统需要你确认一次“允许来自此来源”。授权后会继续安装。", 100);
+            new AlertDialog.Builder(this)
+                    .setTitle("允许安装游戏更新")
+                    .setMessage("请在系统设置中开启“允许来自此来源”，返回后会自动继续安装。")
+                    .setCancelable(false)
+                    .setPositiveButton("去开启权限", (dialog, which) -> openInstallPermissionSettings())
+                    .setNegativeButton("手动下载", (dialog, which) -> openManualUpdate(update.apkUrl))
+                    .show();
+            return;
+        }
+        try {
+            Uri uri = UpdateFileProvider.contentUri(getPackageName());
+            Intent install = new Intent(Intent.ACTION_VIEW)
+                    .setDataAndType(uri, "application/vnd.android.package-archive")
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(install);
+            pendingNativeApk = null;
+            pendingNativeUpdate = null;
+            finishAndRemoveTask();
+        } catch (Exception error) {
+            showNativeUpdateFallback(update, "系统安装界面未能启动");
+        }
+    }
+
+    private void openInstallPermissionSettings() {
+        waitingForInstallPermission = true;
+        try {
+            Intent settings = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                    Uri.parse("package:" + getPackageName()));
+            startActivity(settings);
+        } catch (Exception error) {
+            waitingForInstallPermission = false;
+            if (pendingNativeUpdate != null) {
+                showNativeUpdateFallback(pendingNativeUpdate, "无法打开安装权限设置");
+            }
+        }
+    }
+
+    private void showNativeUpdateFallback(BundleUpdater.UpdateInfo update, String reason) {
+        updateCheckRunning = false;
+        notifyLaunchState("installing", "自动安装未完成",
+                reason + "。可以改用系统浏览器手动下载安装包。", null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle("自动安装未完成")
+                .setMessage(reason + "。\n\n可以改用系统浏览器下载新版 APK；安装完成后重新打开游戏。")
+                .setCancelable(false)
+                .setPositiveButton("手动下载", (dialog, which) -> openManualUpdate(update.apkUrl))
+                .setNegativeButton("退出游戏", (dialog, which) -> finishAndRemoveTask());
+        if (pendingNativeApk != null && pendingNativeApk.isFile()) {
+            builder.setNeutralButton("重试安装", (ignored, which) -> installDownloadedApk());
+        }
+        builder.show();
+    }
+
+    private void openManualUpdate(String apkUrl) {
         try {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl)));
-            finishAndRemoveTask();
-        } catch (Exception ignored) {
+            notifyLaunchState("installing", "已打开手动下载",
+                    "请在浏览器下载并安装新版，完成后重新打开游戏。", null);
+        } catch (Exception error) {
             new AlertDialog.Builder(this)
-                    .setTitle("无法打开更新地址")
-                    .setMessage("请检查系统下载工具后重新启动游戏。")
-                    .setCancelable(false)
-                    .setPositiveButton("退出游戏", (dialog, which) -> finishAndRemoveTask())
+                    .setTitle("无法打开下载地址")
+                    .setMessage("请在浏览器访问：\n" + apkUrl)
+                    .setPositiveButton("知道了", null)
                     .show();
         }
     }
@@ -301,6 +388,19 @@ public final class MainActivity extends Activity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!waitingForInstallPermission) return;
+        waitingForInstallPermission = false;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+                || getPackageManager().canRequestPackageInstalls()) {
+            installDownloadedApk();
+        } else if (pendingNativeUpdate != null) {
+            showNativeUpdateFallback(pendingNativeUpdate, "尚未授予安装权限");
+        }
     }
 
     @Override

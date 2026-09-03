@@ -55,6 +55,7 @@ final class BundleUpdater {
         void onNoUpdate();
         void onUpdateAvailable(UpdateInfo update);
         void onProgress(int percent);
+        void onNativeReady(File apk, UpdateInfo update);
         void onReady(long build, String version);
         void onError(String message);
     }
@@ -63,7 +64,8 @@ final class BundleUpdater {
     private static final String ACTIVE_BUILD = "active_build";
     private static final String PREVIOUS_BUILD = "previous_build";
     private static final int MAX_MANIFEST_BYTES = 64 * 1024;
-    private static final long MAX_BUNDLE_BYTES = 30L * 1024L * 1024L;
+    private static final long MAX_BUNDLE_BYTES = 160L * 1024L * 1024L;
+    private static final long MAX_APK_BYTES = 200L * 1024L * 1024L;
 
     private final Context context;
     private final SharedPreferences prefs;
@@ -105,8 +107,12 @@ final class BundleUpdater {
                     if (!apkUrl.startsWith(BuildConfig.UPDATE_BASE_URL) || !apkUrl.endsWith(".apk")) {
                         throw new IOException("安装包地址无效");
                     }
+                    String apkHash = manifest.getString("apkSha256").toLowerCase(Locale.ROOT);
+                    if (!apkHash.matches("[0-9a-f]{64}")) throw new IOException("安装包校验值无效");
+                    long apkSize = manifest.getLong("apkSize");
+                    if (apkSize <= 0 || apkSize > MAX_APK_BYTES) throw new IOException("安装包大小异常");
                     UpdateInfo update = new UpdateInfo(build, version, true, apkUrl,
-                            null, null, 0L);
+                            null, apkHash, apkSize);
                     post(() -> listener.onUpdateAvailable(update));
                     return;
                 }
@@ -140,7 +146,7 @@ final class BundleUpdater {
             try {
                 post(() -> listener.onStatus("正在下载 " + update.version + "…"));
                 String actualHash = download(BuildConfig.UPDATE_BASE_URL + update.bundleName,
-                        zip, update.expectedSize, listener);
+                        zip, update.expectedSize, MAX_BUNDLE_BYTES, "更新包", listener);
                 if (!actualHash.equals(update.expectedHash)) throw new IOException("更新包校验失败");
                 post(() -> listener.onStatus("正在安装资源更新…"));
                 install(zip, update.build);
@@ -150,6 +156,29 @@ final class BundleUpdater {
             } finally {
                 //noinspection ResultOfMethodCallIgnored
                 zip.delete();
+            }
+        });
+    }
+
+    void downloadNativeUpdate(UpdateInfo update, Listener listener) {
+        if (update == null || !update.nativeShell || update.apkUrl == null
+                || update.expectedHash == null || update.expectedSize <= 0L) {
+            post(() -> listener.onError("安装包信息无效"));
+            return;
+        }
+        executor.execute(() -> {
+            File apk = new File(context.getCacheDir(), UpdateFileProvider.FILE_NAME);
+            try {
+                post(() -> listener.onStatus("正在下载安装包 " + update.version + "…"));
+                String actualHash = download(update.apkUrl, apk, update.expectedSize,
+                        MAX_APK_BYTES, "安装包", listener);
+                if (!actualHash.equals(update.expectedHash)) throw new IOException("安装包校验失败");
+                post(() -> listener.onStatus("安装包校验完成，正在请求系统安装…"));
+                post(() -> listener.onNativeReady(apk, update));
+            } catch (Exception error) {
+                //noinspection ResultOfMethodCallIgnored
+                apk.delete();
+                post(() -> listener.onError(error.getMessage() == null ? "安装包下载失败" : error.getMessage()));
             }
         });
     }
@@ -278,7 +307,8 @@ final class BundleUpdater {
         }
     }
 
-    private String download(String address, File destination, long expectedSize, Listener listener) throws Exception {
+    private String download(String address, File destination, long expectedSize, long maxBytes,
+                            String label, Listener listener) throws Exception {
         HttpURLConnection connection = open(address);
         try {
             int status = connection.getResponseCode();
@@ -291,7 +321,7 @@ final class BundleUpdater {
                 int count;
                 while ((count = input.read(buffer)) != -1) {
                     total += count;
-                    if (total > MAX_BUNDLE_BYTES) throw new IOException("更新包超过大小限制");
+                    if (total > maxBytes) throw new IOException(label + "超过大小限制");
                     digest.update(buffer, 0, count);
                     output.write(buffer, 0, count);
                     int percent = (int) Math.min(100L, total * 100L / expectedSize);
@@ -302,7 +332,7 @@ final class BundleUpdater {
                     }
                 }
             }
-            if (total != expectedSize) throw new IOException("更新包下载不完整");
+            if (total != expectedSize) throw new IOException(label + "下载不完整");
             return hex(digest.digest());
         } finally {
             connection.disconnect();

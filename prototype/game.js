@@ -5051,9 +5051,23 @@ function boot(){
 }
 
 /* ================= 启动舱门 ================= */
-let gameBooted=false,launchCanEnter=false;
+const REQUIRED_NATIVE_SHELL=10,NATIVE_APK_DOWNLOAD_URL='http://59.110.144.30:9091/app-update/Abyssal-Echoes.apk';
+let gameBooted=false,launchCanEnter=false,launchAction='enter',legacyDownloadOpened=false;
 function launchElements(){return {screen:$('launch-screen'),status:$('launch-status'),detail:$('launch-detail'),percent:$('launch-percent'),button:$('launch-enter')};}
 function prepareLocalGame(){if(gameBooted)return;gameBooted=true;boot();}
+function nativeShellVersion(){
+  try{const bridge=globalThis.AbyssApp,match=bridge&&typeof bridge.versionInfo==='function'&&String(bridge.versionInfo()).match(/外壳\s*(\d+)/);return match?Number(match[1]):0;}catch(_){return 0;}
+}
+function legacyNativeUpgradeRequired(){const version=nativeShellVersion();return version>0&&version<REQUIRED_NATIVE_SHELL;}
+function requestLegacyNativeUpgrade(){legacyDownloadOpened=true;try{globalThis.location.href=NATIVE_APK_DOWNLOAD_URL;}catch(_){} }
+function showLegacyNativeUpgrade(){
+  const ui=launchElements();if(!ui.screen)return;launchCanEnter=false;launchAction='upgrade';
+  ui.screen.classList.remove('is-checking');ui.screen.classList.add('has-progress');ui.screen.classList.remove('is-ready');
+  ui.screen.style.setProperty('--launch-progress','100%');ui.percent.textContent='APK';ui.status.textContent='需要更新安卓程序';
+  ui.detail.textContent='即将打开新版安装包；如果没有自动开始，请点击下方按钮。安装完成后重新打开游戏。';
+  ui.button.hidden=false;ui.button.disabled=false;ui.button.querySelector('span').textContent='下载新版 APK';ui.button.querySelector('small').textContent='INSTALL NATIVE UPDATE';
+  if(!legacyDownloadOpened)setTimeout(requestLegacyNativeUpgrade,650);
+}
 function updateLaunchScreen(kind,text,detail,progress){
   const ui=launchElements();if(!ui.screen)return;
   const ready=kind==='ready'||kind==='offline',value=Number(progress);
@@ -5063,11 +5077,15 @@ function updateLaunchScreen(kind,text,detail,progress){
   if(Number.isFinite(value)){const pct=Math.max(0,Math.min(100,Math.round(value)));ui.screen.style.setProperty('--launch-progress',pct+'%');ui.percent.textContent=pct+'%';}
   else ui.percent.textContent=ready?(kind==='offline'?'OFFLINE':'READY'):(kind==='installing'?'INSTALL':'LINK');
   if(text)ui.status.textContent=String(text);if(detail)ui.detail.textContent=String(detail);
-  if(ready){prepareLocalGame();launchCanEnter=true;ui.button.hidden=false;ui.button.disabled=false;ui.button.querySelector('span').textContent=kind==='offline'?'离线进入游戏':'进入游戏';}
+  if(ready){prepareLocalGame();launchAction='enter';launchCanEnter=true;ui.button.hidden=false;ui.button.disabled=false;ui.button.querySelector('span').textContent=kind==='offline'?'离线进入游戏':'进入游戏';ui.button.querySelector('small').textContent='ENTER THE WRECKAGE';}
   else{launchCanEnter=false;ui.button.hidden=true;ui.button.disabled=true;}
 }
-globalThis.onAbyssLaunchState=(kind,text,detail,progress)=>updateLaunchScreen(String(kind||'checking'),text,detail,progress);
+globalThis.onAbyssLaunchState=(kind,text,detail,progress)=>{
+  if(legacyNativeUpgradeRequired()&&(kind==='ready'||kind==='offline'))showLegacyNativeUpgrade();
+  else updateLaunchScreen(String(kind||'checking'),text,detail,progress);
+};
 function enterGameFromLaunch(){
+  if(launchAction==='upgrade'){requestLegacyNativeUpgrade();return;}
   if(!launchCanEnter)return;const ui=launchElements(),app=$('app');launchCanEnter=false;
   document.body.classList.remove('launch-pending');if(app){app.inert=false;app.removeAttribute('inert');app.removeAttribute('aria-hidden');}
   if(ui.screen){ui.screen.classList.add('is-exiting');ui.screen.setAttribute('aria-hidden','true');setTimeout(()=>{ui.screen.hidden=true;},520);}

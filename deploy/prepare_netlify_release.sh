@@ -34,9 +34,11 @@ bundle="bundle.zip"
 sha256="$(shasum -a 256 "$work_dir/$bundle" | awk '{print $1}')"
 size="$(wc -c < "$work_dir/$bundle" | tr -d ' ')"
 apk_url="${public_url%/}/app-update/Abyssal-Echoes.apk"
+apk_sha256="$(shasum -a 256 "$apk_source" | awk '{print $1}')"
+apk_size="$(wc -c < "$apk_source" | tr -d ' ')"
 
-printf '{"schema":1,"build":%s,"version":"%s","minShell":%s,"bundle":"%s","sha256":"%s","size":%s,"apkUrl":"%s"}\n' \
-  "$build" "$version" "$min_shell" "$bundle" "$sha256" "$size" "$apk_url" > "$work_dir/manifest.json"
+printf '{"schema":1,"build":%s,"version":"%s","minShell":%s,"bundle":"%s","sha256":"%s","size":%s,"apkUrl":"%s","apkSha256":"%s","apkSize":%s}\n' \
+  "$build" "$version" "$min_shell" "$bundle" "$sha256" "$size" "$apk_url" "$apk_sha256" "$apk_size" > "$work_dir/manifest.json"
 openssl dgst -sha256 -sign "$signing_key" -out "$work_dir/manifest.sig.bin" "$work_dir/manifest.json"
 base64 < "$work_dir/manifest.sig.bin" | tr -d '\n' > "$work_dir/manifest.sig"
 

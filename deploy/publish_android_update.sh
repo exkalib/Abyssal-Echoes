@@ -11,10 +11,12 @@ web_dir="${ABYSS_WEB_DIR:-/srv/www/abyss-echo}"
 build="${1:-$(date +%s)}"
 version="${2:-$(date +%Y.%m.%d-%H%M)}"
 min_shell="${3:-8}"
+bundle_mode="${4:-full}"
 
 [[ "$build" =~ ^[0-9]+$ ]] || { echo "build 必须是正整数" >&2; exit 1; }
 [[ "$min_shell" =~ ^[0-9]+$ ]] || { echo "minShell 必须是正整数" >&2; exit 1; }
 [[ "$version" =~ ^[0-9A-Za-z._-]+$ ]] || { echo "version 只能包含字母、数字、点、下划线和横线" >&2; exit 1; }
+[[ "$bundle_mode" == "full" || "$bundle_mode" == "lean" ]] || { echo "bundle_mode 只能是 full 或 lean" >&2; exit 1; }
 [[ -f "$signing_key" ]] || { echo "缺少更新签名私钥：$signing_key" >&2; exit 1; }
 [[ -f "$apk_source" ]] || { echo "缺少 APK，请先运行 android/build-release.sh" >&2; exit 1; }
 
@@ -23,16 +25,22 @@ trap 'rm -rf "$work_dir"' EXIT
 payload_dir="$work_dir/payload"
 mkdir -p "$payload_dir"
 cp "$root_dir/prototype/index.html" "$root_dir/prototype/style.css" "$root_dir/prototype/ui-system.css" "$root_dir/prototype/story-scenes.css" "$root_dir/prototype/game.js" "$payload_dir/"
-cp -R "$root_dir/prototype/assets" "$payload_dir/assets"
+bundle_files=(index.html style.css ui-system.css story-scenes.css game.js)
+if [[ "$bundle_mode" == "full" ]]; then
+  cp -R "$root_dir/prototype/assets" "$payload_dir/assets"
+  bundle_files+=(assets)
+fi
 
 bundle="bundle-$build.zip"
-(cd "$payload_dir" && zip -q -9 -r "$work_dir/$bundle" index.html style.css ui-system.css story-scenes.css game.js assets)
+(cd "$payload_dir" && zip -q -9 -r "$work_dir/$bundle" "${bundle_files[@]}")
 sha256="$(shasum -a 256 "$work_dir/$bundle" | awk '{print $1}')"
 size="$(wc -c < "$work_dir/$bundle" | tr -d ' ')"
 apk_url="http://59.110.144.30:9091/app-update/Abyssal-Echoes.apk"
+apk_sha256="$(shasum -a 256 "$apk_source" | awk '{print $1}')"
+apk_size="$(wc -c < "$apk_source" | tr -d ' ')"
 
-printf '{"schema":1,"build":%s,"version":"%s","minShell":%s,"bundle":"%s","sha256":"%s","size":%s,"apkUrl":"%s"}\n' \
-  "$build" "$version" "$min_shell" "$bundle" "$sha256" "$size" "$apk_url" > "$work_dir/manifest.json"
+printf '{"schema":1,"build":%s,"version":"%s","minShell":%s,"bundle":"%s","sha256":"%s","size":%s,"apkUrl":"%s","apkSha256":"%s","apkSize":%s}\n' \
+  "$build" "$version" "$min_shell" "$bundle" "$sha256" "$size" "$apk_url" "$apk_sha256" "$apk_size" > "$work_dir/manifest.json"
 openssl dgst -sha256 -sign "$signing_key" -out "$work_dir/manifest.sig.bin" "$work_dir/manifest.json"
 base64 < "$work_dir/manifest.sig.bin" | tr -d '\n' > "$work_dir/manifest.sig"
 
