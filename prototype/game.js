@@ -2280,7 +2280,9 @@ function queueStoryScene(spec){
   return true;
 }
 function queueNpcFirstContact(name,location,text){
-  if(!name||storyNpcMet(name))return false;
+  if(!name||storyNpcMet(name)||npcLocation(name)!==location||P().location!==location)return false;
+  const fieldEntry=fieldNpcDiscoveryEntry(name,location);
+  if(fieldEntry&&!state.flags[fieldNpcDiscoveryFlag(name,location)])return false;
   markFieldNpcContact(name,location);
   markStoryNpcMet(name);
   return queueStoryScene({npc:name,location,onceKey:'npc-'+name,kind:'contact',eyebrow:'FIRST CONTACT // '+((LOCATIONS[location]&&LOCATIONS[location].zone)||'UNKNOWN'),title:'发现幸存者 · '+name,text:text||NPC_FIRST_CONTACT[name],action:'走近查看'});

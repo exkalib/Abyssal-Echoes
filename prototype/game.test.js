@@ -537,6 +537,8 @@ function hasClass(node,name){return String(node&&node.className||'').split(/\s+/
   assert.equal(Object.keys(a.NPC_PROFILE).length,12,'十二名 NPC 都必须保留独立立绘档案');
   assert.equal(a.storySceneKey('layer3'),'engineering');assert.equal(a.storySceneKey('oldMine'),'mine');assert.equal(a.storySceneKey('layer6'),'archive');
   assert.match(a.storySceneSrc('layer3'),/story-scenes-v1\/engineering-reactor\.jpg/,'工程区剧情必须使用对应场景图');
+  s.player.location='cargoYard';const ridgeQuest=a.QUESTS.find(q=>q.id==='ridgeCache');assert.equal(a.queueQuestStoryScene(ridgeQuest,'intro'),false,'货柜坟场激活远处 NPC 的任务时不得伪造现场初见');assert.equal(s.flags.storyNpcMet_林薇,undefined,'错误区域的剧情不能提前把 NPC 标记为已经见过');
+  s.player.location='layer3';s.flags['fieldNpcFound_林薇_layer3']=true;
   assert.equal(a.queueNpcFirstContact('林薇','layer3'),true,'首次发现 NPC 必须排入一次性剧情过场');a.flushStoryScenes();
   const overlay=document.body.children.at(-1),sceneNodes=[];(function walk(node){sceneNodes.push(node);(node.children||[]).forEach(walk);})(overlay);
   const bg=sceneNodes.find(n=>n.className==='story-cutscene-bg'),portrait=sceneNodes.find(n=>n.className==='story-cutscene-portrait'),avatar=sceneNodes.find(n=>n.className==='story-cutscene-avatar'),dialog=sceneNodes.find(n=>n.className==='story-cutscene-dialog');
