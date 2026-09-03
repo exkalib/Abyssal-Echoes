@@ -10,7 +10,7 @@ remote_dir="${ABYSS_REMOTE_DIR:-/srv/www/abyss-echo/app-update}"
 web_dir="${ABYSS_WEB_DIR:-/srv/www/abyss-echo}"
 build="${1:-$(date +%s)}"
 version="${2:-$(date +%Y.%m.%d-%H%M)}"
-min_shell="${3:-8}"
+min_shell="${3:-1}"
 bundle_mode="${4:-full}"
 
 [[ "$build" =~ ^[0-9]+$ ]] || { echo "build 必须是正整数" >&2; exit 1; }
