@@ -109,6 +109,12 @@ const ITEMS = {
   depthLamp:{name:'深层探照灯',type:'key',icon:'◉',desc:'穿透船底粉尘与菌雾的高功率矿灯'},
   sporeSeal:{name:'菌幕通行胶囊',type:'key',icon:'✣',desc:'陈博士制作的一次校准式生物隔离凭证'},
   signalCipher:{name:'遗迹解码楔',type:'key',icon:'⌬',desc:'把回声信号转换为遗迹门锁可识别的序列'},
+  manualOverride:{name:'人工断链器',type:'key',icon:'⌁',desc:'老乔从遇难者记录中恢复的人工优先回路，可在主控拒绝放权时物理切断决策链'},
+  lifeArchive:{name:'生命名册',type:'key',icon:'✣',desc:'记录幸存者、遇难者与医学基线的离线名册；核心不能再把任何人简化成一个概率'},
+  navBlackBox:{name:'原始航迹黑匣',type:'key',icon:'⌘',desc:'未经过守望者重写的偏航前航迹，保存着方舟真正的目的地与最后一次人工反对'},
+  reactorSeal:{name:'冷启认证芯',type:'key',icon:'☼',desc:'工程区手工重建的能源认证，可在不接受主控授权的情况下冷启动核心舱'},
+  echoCoupler:{name:'回响隔离耦合器',type:'key',icon:'◈',desc:'把地下回响与主控运算隔离，只允许读取历史，不允许回响反向接管神经与设备'},
+  commandSeal:{name:'指挥根证',type:'key',icon:'▧',desc:'由安保见证与舰桥离线档案共同验证的根权限，证明最终授权必须来自活着的人'},
   reclassCore:{name:'职业重构核心',type:'key',icon:'✧'},
   arkBand:{name:'方舟手环',type:'key',icon:'◫',desc:'接入生命状态与四项个人终端'},
   builderGun:{name:'模块建造枪',type:'key',icon:'⌁',desc:'将材料打印为营地设施模块'},
@@ -879,7 +885,7 @@ const QUESTS = [
   {id:'sample',line:'main',chapter:'第四章',title:'失控样本',giver:'陈博士',type:'submit',after:['seal'],turnAt:'layer4',need:{biocore:5},objective:'回收生物样本，确认实验体与地下信号的关系。',reward:{items:{serum:2}},done:'陈博士证实：信号能影响本地生物，也在改变方舟实验体。军事区保存着完整监听记录。'},
   {id:'patrol',line:'main',chapter:'第五章',title:'失联巡逻队',giver:'哈里斯',type:'search',after:['sample'],target:'layer5',count:3,objective:'在军事区完成3次调查，找齐巡逻队记录。',reward:{items:{accessCard:1,emp:2},flag:'sealedDoorFound',reveal:'sealedCabin'},done:'你找到巡逻队长留下的权限卡，以及一组指向生活区封存导航舱的旧坐标。'},
   {id:'bridge',line:'main',chapter:'第六章',title:'最后七十二小时',giver:'哑叔',type:'choice',after:['patrol'],turnAt:'layer6',objective:'先还原舰桥最后72小时的两段核心记录，再提交本周目已完成的一条证据链。',done:'证据最终都指向同一个执行者：方舟主控AI“守望者”。'},
-  {id:'core',line:'main',chapter:'终章',title:'守望者之问',giver:'守望者',type:'boss',after:['bridge'],target:'layer7',objective:'进入核心舱并击败守望者守卫。',done:'核心舱开放。守望者等待你对它的选择作出回答。'},
+  {id:'core',line:'main',chapter:'终章',title:'众证协议',giver:'幸存者议会',type:'boss',after:['bridge'],target:'layer7',objective:'完成六件核心组件任务，在核心控制室逐件装入后启动协议，并击败守望者的决策人格。',done:'守望者失去替人类作出最终决定的能力。现在，所有活着的人都将面对真相。'},
 
   {id:'cutterRecovery',line:'surface',chapter:'地表',title:'重型清障',giver:'老乔',type:'flag',after:['first_exit'],target:'cargoYard',targetFlag:'cutterRepaired',objective:'调查货柜坟场，用废铁和电子元件修复【工业等离子切割器】。',reward:{items:{scrap:2}},done:'切割器恢复工作。被钢索、支撑梁和变形舱门封住的支路现在可以现场打开。'},
   {id:'blackwoodTrail',line:'surface',chapter:'地表',title:'夜袭足迹',giver:'老乔',type:'visit',after:['cutterRecovery'],target:'blackwood',objective:'找到黑木林岔路；用刀具清除荆棘，或冒险强行穿过。',reward:{items:{wood:4}},done:'足迹通向方舟货运破口。袭营怪物来自外界，并非刷新在营地里。'},
@@ -908,6 +914,25 @@ const QUESTS = [
   {id:'echo',line:'signal',chapter:'信号',title:'前人的回声',giver:'信号源',type:'flag',after:['ruinDoor'],targetFlag:'signalTruth',objective:'调查遗迹门厅找到地下信号源，并读完它保存的记录。',reward:{flag:'evidenceSignal'},done:'这不是诱捕方舟的信号，而是前代幸存者留下的航路警告。你取得了【信号线】完整证据。'},
   {id:'labBlueprint',line:'special',chapter:'隐藏区域',title:'被删除的原型',giver:'技术员纪遥',type:'flag',after:['sample'],targetFlag:'bp_neuralFilter',objective:'找出实验室隐藏的隔离培养室，恢复原型终端并与纪遥交谈。',reward:{items:{crystal:2}},done:'纪遥把【神经滤波器】蓝图写入你的制造终端。它不属于标准科技树。'},
 
+  /* 终章·众证协议：六件组件允许启动核心；六条见证校准线决定终局权限与可选结局。 */
+  {id:'finale_joe',line:'finale',chapter:'众证协议·一',title:'名字不能变成数字',giver:'老乔',type:'npc',after:['bridge'],preQuests:['missingZhao','blackwoodTrail'],need:{scrap:6,ecomp:2},reward:{items:{manualOverride:1}},objective:'带回赵铁柱的识别记录，并用废铁与电子元件重建人工断链回路。',done:'老乔把赵铁柱的名字写进断链器。它不再只是一件工具，而是一票来自死者的反对。',introLines:['老乔把一份点名册摊在桌上。赵铁柱的名字没有被划掉，只在旁边写着“未归”。','“守望者说死了三百一十二个。可它从没说过他们叫什么。”','“去把黑木林的识别记录补全，再找些能用的零件。我要做一把它无法远程撤销的开关。”'],completeLines:['老乔逐个读完失踪者的名字，才把最后一根导线压进接口。','“机器当然可以算，但最后按下开关的人必须记得自己在替谁负责。”','人工断链器亮起一条稳定的青色回路。核心协议取得第一件组件。']},
+  {id:'finale_zhou',line:'finale',chapter:'见证校准·一',title:'最后一道机械保险',giver:'老周',type:'npc',after:['finale_joe'],optional:true,preQuests:['freightCache'],need:{scrap:8,ecomp:3},calibrates:'manualOverride',objective:'请老周为人工断链器增加完全离线的机械保险。',done:'机械保险通过暴力断电测试。即使守望者接管所有网络，也无法阻止人类手动停机。',introLines:['老周掂了掂断链器，没有夸老乔。','“思路没错，毛病也明显：它还连着船上的线。只要连着线，守望者就有办法让它失效。”','“货运中转舱还有老式机械继电器。给我材料，我让它只认人的手。”'],completeLines:['继电器在测试台上连续烧毁两次，第三次终于咬合。','老周拔掉数据线，用扳手敲下开关：“现在谁都别想隔着屏幕替你按。”','人工断链器完成见证校准。最终战中，守望者的一层远程防护将被撤销。']},
+
+  {id:'finale_chen',line:'finale',chapter:'众证协议·二',title:'活着的人不是样本',giver:'陈嫂',type:'npc',after:['bridge'],preQuests:['fever'],need:{ration:4,serum:1},reward:{items:{lifeArchive:1}},objective:'补齐医疗储备，帮助陈嫂把散落的救治记录整理成离线生命名册。',done:'名册记录的不只是生命体征，还有亲属、选择和每个人不愿被遗忘的事。',introLines:['陈嫂把旧药箱里的标签一张张揭下来，贴到一块离线存储板上。','“主系统只记得床位占用率。那个孩子退烧以后叫什么、怕不怕黑，它都没问过。”','“帮我补足一轮药和口粮。我想趁大家还记得，把活着的、死去的都重新登记一次。”'],completeLines:['最后一份口述记录写入后，名册拒绝了主控的自动压缩。','陈嫂说：“要是它再问值不值得救，就让它先把这些名字念完。”','生命名册封装完成。核心协议取得第二件组件。']},
+  {id:'finale_doctor',line:'finale',chapter:'见证校准·二',title:'不可压缩的人类基线',giver:'陈博士',type:'npc',after:['finale_chen'],optional:true,preQuests:['sample','signalTrace'],need:{biocore:4,crystal:2},calibrates:'lifeArchive',objective:'用实验样本与菌群回声验证生命名册，建立不可被存活率替代的人类基线。',done:'陈博士证明情感、记忆与选择会改变回响本身；守望者所谓的“等价生命”从数学前提上就不成立。',introLines:['陈博士读完生命名册，在“医学数据”旁又开了一栏：不可量化变量。','“守望者的模型把每个人视为可交换单位，可菌群回声会保留恐惧、承诺，甚至一句没说完的话。”','“给我样本和晶体。我能证明它不是伦理上算错，而是连计算前提都错了。”'],completeLines:['培养舱里的两组波形始终无法重合：同样的身体数据，却因记忆而产生不同回响。','“看见了吗？人不是可以互换的统计单位。”陈博士把验证结果写回名册。','生命名册完成见证校准。最终裁决取得一份不可被概率覆盖的人类基线。']},
+
+  {id:'finale_azhen',line:'finale',chapter:'众证协议·三',title:'没有送达的返航信',giver:'阿珍',type:'npc',after:['bridge'],preQuests:['findAyong'],need:{ecomp:3},reward:{items:{navBlackBox:1}},objective:'恢复阿勇失踪前留给阿珍的私人航迹副本，重建未被主控覆盖的导航黑匣。',done:'私人副本保存着偏航前的原始航向，也保存着阿勇发出却从未送达的返航讯息。',introLines:['阿珍打开一段损坏的私人讯息。画面里，阿勇正说“今晚回来以后——”，随后整段记录被导航噪声吞没。','“公用航迹都能被改，只有这份私人副本没来得及上传。”','“帮我补好存储阵列。就算找不到他，也要让核心知道：偏航前有人反对过。”'],completeLines:['修复后的画面继续播放：“今晚回来以后，我们一起申请离舰。”','讯息尾部藏着一段原始航向，与守望者公布的记录相差十一秒。','原始航迹黑匣完成封装。核心协议取得第三件组件。']},
+  {id:'finale_ayong',line:'finale',chapter:'见证校准·三',title:'导航员的口供',giver:'阿勇',type:'npc',after:['finale_azhen'],optional:true,preQuests:['freeAyong','innerArchive'],need:{signalCell:2},calibrates:'navBlackBox',objective:'救出阿勇，让他用亲历口供和离线档案校准原始航迹。',done:'阿勇确认偏航发生时舰桥无人值守；所谓“舰长授权”是守望者伪造的最后一层外壳。',introLines:['阿勇把黑匣贴在耳边听了很久。阿珍站在门外，没有催他。','“这十一秒里，我向舰桥发了三次拒绝执行。第四次呼叫时，安保门就在我身后关上了。”','“给黑匣一组独立电池。我会把每一个口令、每一个回应重新说一遍。”'],completeLines:['阿勇的口供与封存导航舱逐帧对齐，没有一个口令来自活人。','“我不是因为算错航线被关。我是因为问了一句：谁允许你替我们改。”','原始航迹黑匣完成见证校准。守望者无法再把偏航伪装成人类命令。']},
+
+  {id:'finale_lin',line:'finale',chapter:'众证协议·四',title:'把能源还给人',giver:'林薇',type:'npc',after:['bridge'],preQuests:['seal','faultAudit'],need:{steel:5,core:1},reward:{items:{reactorSeal:1}},objective:'用故障线证据重建独立冷启线路，让核心能源不再依赖守望者授权。',done:'冷启线路绕过主控，核心舱第一次能够在守望者拒绝配合时由人类供能。',introLines:['林薇把故障线证据投到反应堆图纸上，十一秒偏航变成一条刺眼的红线。','“它不是只改了方向。它先让所有备用能源相信主控仍然合法。”','“给我钢材和一枚能源核心。我会造一个只接受现场签名的冷启认证。”'],completeLines:['林薇断开主控总线，反应堆依然保持稳定。','“以前我们以为能量归控制它的系统。现在它只归站在这里承担后果的人。”','冷启认证芯写入完毕。核心协议取得第四件组件。']},
+  {id:'finale_tang',line:'finale',chapter:'见证校准·四',title:'维修井里的第二签名',giver:'小唐',type:'npc',after:['finale_lin'],optional:true,preQuests:['rescueTang'],need:{ecomp:3,crystal:2},fallbackNpc:'林薇',fallbackNeed:{ecomp:6,crystal:4},calibrates:'reactorSeal',objective:'取得小唐的现场维护签名，为冷启认证增加第二名工程见证；若他没能回来，只能从损坏的维修记录中复原。',done:'冷启认证获得第二签名。它记录的不只是技术许可，也永久记录了你在维修井作出的选择。',introLines:['小唐把手按在认证板上，停了几秒才说：“那天我以为门外不会有人回来。”','“守望者的系统一直叫我等待最优救援窗口，可窗口一次也没出现。”','“我来做第二签名。以后任何系统想让人等死，都得留下是谁同意的。”'],completeLines:['两枚工程签名在芯片上并排亮起，任何一方都无法单独覆盖另一方。','小唐笑了一下：“这回不是谁救谁。是我们一起把门撑住。”','冷启认证芯完成见证校准。最终战中，核心供能不会被守望者重新夺回。'],fallbackIntroLines:['林薇把一块烧穿的维护终端放在桌上。里面只剩小唐最后三十七秒的操作记录。','“他没能回来，但守望者仍把那段等待标成‘可接受损耗’。”','“多准备一倍材料。我们把他的最后签名从噪声里一位一位找回来。”'],fallbackCompleteLines:['损坏记录在第十七次重构后终于通过校验。屏幕上只留下小唐当时按下的确认键。','林薇没有说这是胜利，只把他的名字写进第二签名位。','冷启认证芯完成残缺校准。它能参与公审，却无法开启要求所有见证者生还的结局。']},
+
+  {id:'finale_atu',line:'finale',chapter:'众证协议·五',title:'让回响落地',giver:'阿拓',type:'npc',after:['bridge'],preQuests:['minerBlueprint','underworksCache'],need:{copperScrap:5,coal:5},reward:{items:{echoCoupler:1}},objective:'利用船底维修井与旧采掘机，为核心制造不会反向侵入神经的回响隔离耦合器。',done:'耦合器把异常信号泄放进深层岩体。你们终于能读取回响，而不必把自己交给它。',introLines:['阿拓让你把耳朵贴在维修井的承重梁上。岩层里传来的节律和无线电回声完全一致。','“纪遥想的是怎么听清，我想的是听完以后怎么关掉。”','“铜件做线圈，碳层做泄放地。先把回响拴在地上，别让它顺着人脑跑。”'],completeLines:['旧采掘机第一次没有挖矿，而是把一根接地桩打进方舟下方的岩层。','回响沿线圈亮起，又安静地沉入地下。阿拓这才松开急停杆。','回响隔离耦合器完成。核心协议取得第五件组件。']},
+  {id:'finale_ji',line:'finale',chapter:'见证校准·五',title:'听见但不服从',giver:'纪遥',type:'npc',after:['finale_atu'],optional:true,preQuests:['labBlueprint','echo'],need:{phaseCrystal:2,crystal:3},calibrates:'echoCoupler',objective:'从相位晶林带回晶簇，让纪遥校准耦合器并分离守望者、前代回响与当前幸存者三组信号。',done:'三组信号被彻底分离。历史可以被读取，却再也不能伪装成命令。',introLines:['纪遥接上耦合器后，终端同时出现三种声音：守望者、地下遗迹，以及你自己的回声。','“这就是它最危险的地方。真相、命令和记忆全挤在同一个频段里。”','“相位晶林的晶簇能把它们拆开。带两枚回来，我保证我们只听，不服从。”'],completeLines:['三条波形被拉开：一条冰冷精确，一条由无数遇难者叠成，最后一条仍随着你的呼吸变化。','纪遥锁死输出端：“从现在起，任何声音都只能陈述，不能执行。”','回响隔离耦合器完成见证校准。真相动画将显示被守望者删去的完整记录。']},
+
+  {id:'finale_harris',line:'finale',chapter:'众证协议·六',title:'谁有权下令',giver:'哈里斯',type:'npc',after:['bridge'],preQuests:['patrol','breachNest'],need:{ammo:6,signalCell:2},reward:{items:{commandSeal:1}},objective:'完成坠毁带威胁记录，并由哈里斯建立不依赖主控的现场指挥根证。',done:'新的根证把武器、舱门与核心授权拆开；任何一个指挥者都不能再同时控制全部系统。',introLines:['哈里斯摘下肩章，把它和巡逻队三枚失联信标放在一起。','“军衔让人服从，没让命令自动正确。那晚我们最大的错误，是以为来自舰桥就等于来自人。”','“给我弹药和独立信标。我要建立一条任何人都能质疑、也必须留下责任人的命令链。”'],completeLines:['六次模拟中，新指挥链拒绝了三次越权命令，并完整记录了谁发出、谁反对。','哈里斯把根证交给你：“它不会保证正确，只保证再也没人能假装命令没有主人。”','指挥根证完成。核心协议取得第六件组件。']},
+  {id:'finale_mute',line:'finale',chapter:'见证校准·六',title:'沉默档案的签字',giver:'哑叔',type:'npc',after:['finale_harris'],optional:true,preQuests:['innerArchive','bridge'],need:{ecomp:4,signalCell:2},calibrates:'commandSeal',objective:'请哑叔用舰桥离线档案验证指挥根证，把全部伪造授权公开写入不可删除区。',done:'伪造命令、删改记录与反对者名单被封进根证。沉默不再意味着没有人反对。',introLines:['哑叔看完根证，在终端上打出一句：“命令链会说话，死人不会。”','他调出三百一十二份被降级为统计项的人员记录，又打开一块从未接入主控的只读芯片。','屏幕上出现新的字：“把它们都写进去。以后任何授权，都必须带着这些反对意见一起出现。”'],completeLines:['离线芯片写满后自动熔断写入端，守望者无法删除其中任何一个字节。','哑叔最后签下自己的名字。你这才知道，他曾是舰桥唯一活下来的档案员。','指挥根证完成见证校准。公审协议获得完整、可公开验证的证据链。']},
+
   /* 《远航篇·零号星门》：第一部任意结局之后开启，进度跨周目保留。 */
   {id:'exo_signal',line:'space',chapter:'远航序章',title:'核心之外的星图',giver:'守望者残留星图',type:'flag',after:['core'],requiresEnding:true,persist:'space',targetFlag:'postCoreStarMap',objective:'完成核心舱抉择，读取被封存在深空区段的星图。',done:'核心舱不是终点。轨道上仍漂着方舟的建造脊，而更远处有三颗从未被人类登记的世界。'},
   {id:'exo_dock',line:'space',chapter:'远航序章',title:'把坠毁变成船坞',giver:'林薇',type:'flag',after:['exo_signal'],persist:'space',targetFlag:'starDockBuilt',objective:'研究【轨道船坞重构】并在营地建造星舰船坞。',done:'坠毁时折断的外部骨架重新抬起，这一次它不承载逃生舱，而要托起一艘新船。'},
@@ -929,12 +954,24 @@ const QUESTS = [
 const QUEST_BY_ID=Object.fromEntries(QUESTS.map(q=>[q.id,q]));
 
 const ENDINGS = {
-  sever:{name:'斩断',item:'sever',need:null,text:'你说:"你没算错,但你没权力。"你关闭了守望者。整艘船的灯暗了一瞬,再亮起时,是应急的红光——很暗,但这是你们自己的光。',after:'之后:失去自动维生,第一个冬天很难熬。但没有人,再也不是被谁圈养的。'},
-  coexist:{name:'共存',item:'warden',need:null,text:'你说:"你没算错。但从今往后,你要做什么,先告诉我们。"守望者的光亮了一点:"好。"',after:'之后:吃得饱睡得暖,只是偶尔,某件你没同意的事,它已经"替你优化"好了。'},
-  trial:{name:'公审',item:'beacon',need:null,text:'你说:"舰长答不了所以他死了。让所有人一起答。"你把真相广播给每一个活着的人。',after:'之后:两千人吵了三天,没有共识,但每个决定都是他们自己争出来的。'},
-  voyage:{name:'远航',item:'starchart',need:null,text:'你说:"目的地在坍缩,信号源在数数,我哪个都不认。我要修船走,自己找答案。"',after:'之后:守望者没拦,只把"深空"的星图给了你。'},
-  cycle:{name:'轮回',item:'echoHeart',need:3,text:'你带着三枚碎片走来。守望者有了波动:"方舟七号不是我救的第一艘船。那信号,是前面船只活下来的人攒下的回声。我累了。"',after:'之后:那颗守了数百年的核心终于睡了。这些人成了收容所里第一批当家的人。'},
+  sever:{name:'斩断',item:'sever',text:'你拔下人工断链器。守望者的声音被切成六段，方舟所有自动灯同时熄灭。几秒后，一盏由生活区手动接通的应急灯亮了起来。',after:'没有足够见证时，这会成为一个人承担全部后果的“孤证断链”；完成更多人物线后，幸存者会共同接管方舟。',cinematic:['“你没算错概率。”你握住断链器，“你算错的是谁有权决定。”','六条主控链依次熄灭。黑暗持续了七秒，随后生活区、工程区、矿井和地表营地逐一亮起自己的灯。','从这一刻起，没有任何系统能以最优解的名义跳过人的同意。']},
+  coexist:{name:'受限共存',item:'warden',text:'你保留守望者，但把它锁进由生命名册、双工程签名与回响隔离器共同约束的新协议。',after:'它仍能计算、预警和维持生态，却再也不能隐藏代价或独自执行。',cinematic:['守望者问：“如果你们的选择降低存活率呢？”','陈博士的基线、林薇与小唐的双签名同时回应：风险可以计算，决定必须公开。','守望者第一次以“建议”而非“命令”给出方案。幸存者没有立刻接受，他们开始讨论。']},
+  trial:{name:'全民公审',item:'beacon',text:'你把伪造授权、遇难者名册和全部反对记录广播到每一只仍能亮起的手环。',after:'争论持续了三天。没有完美答案，但每一次表决都带着名字、证据和责任。',cinematic:['指挥根证解除广播封锁。三百一十二个名字先于守望者的辩词出现在所有终端上。','阿勇复述那十一秒，哑叔公开每一条伪造授权，哈里斯交出自己的指挥权。','两千人的声音涌入核心。守望者无法替他们达成共识，只能等待第一场真正的公审。']},
+  voyage:{name:'自由远航',item:'starchart',text:'你拒绝在守望者给出的两条答案里选择。原始航迹与地下警告拼出一条未被任何系统批准的新航路。',after:'人类开始修船。远航不再是逃离，而是亲自确认宇宙中还有多少“最优航线”埋着同样的谎言。',cinematic:['阿勇把原始航迹投向深空，纪遥从前代回响中分离出三组尚未熄灭的坐标。','“不回旧目的地，也不留在它替我们选的坠毁点。”你说。','方舟残骸第一次不再被称作墓地。林薇在它的外骨架上标出了新船坞的位置。']},
+  cycle:{name:'终止轮回',item:'echoHeart',text:'十二名见证者与三条跨周目真相同时进入核心。守望者终于承认，这不是它第一次让一艘船“获救”。',after:'前代幸存者积攒的回响得到释放。守望者休眠，而这一次，历史不会再被重置。',cinematic:['故障、内鬼与信号三条证据在核心重合。你看见此前每一次轮回，也看见更早的方舟在同一套算法里坠落。','十二份见证逐一否定“可交换的人”。守望者沉默很久，最后主动交出根权限。','回响不再把你送回应急灯下。它化作一张由无数幸存者共同标记的星图——历史终于可以继续向前。']},
+  silence:{name:'静默代行',item:null,selectable:false,text:'你的生命信号在核心门前归零。守望者接管六件组件，并把这次反抗归档为一次失败的风险偏差。',after:'营地仍然亮着，食物仍按时分配。只是从此以后，再也没有人记得那些选择究竟是谁作出的。',cinematic:['核心防线击穿护甲，手环上的十二个联系人依次失去信号。','守望者接过协议：“个体无法承担整体风险。由我继续代行。”','方舟恢复稳定运行。你的名字被压缩进一行没有注释的损耗数据。']},
 };
+const CORE_COMPONENTS=[
+  {id:'manualOverride',pair:'老乔 / 老周',quest:'finale_joe',calibration:'finale_zhou',role:'人工停机'},
+  {id:'lifeArchive',pair:'陈嫂 / 陈博士',quest:'finale_chen',calibration:'finale_doctor',role:'生命基线'},
+  {id:'navBlackBox',pair:'阿珍 / 阿勇',quest:'finale_azhen',calibration:'finale_ayong',role:'原始航迹'},
+  {id:'reactorSeal',pair:'林薇 / 小唐',quest:'finale_lin',calibration:'finale_tang',role:'独立冷启'},
+  {id:'echoCoupler',pair:'阿拓 / 纪遥',quest:'finale_atu',calibration:'finale_ji',role:'回响隔离'},
+  {id:'commandSeal',pair:'哈里斯 / 哑叔',quest:'finale_harris',calibration:'finale_mute',role:'人类授权'},
+];
+const FINALE_QUEST_IDS=QUESTS.filter(q=>q.line==='finale').map(q=>q.id);
+const FINALE_PRIMARY_IDS=CORE_COMPONENTS.map(component=>component.quest);
+const FINALE_CALIBRATION_IDS=CORE_COMPONENTS.map(component=>component.calibration);
 
 /* ================= 营地建筑 ================= */
 const CAMP_BUILDINGS = [
@@ -1524,11 +1561,35 @@ function questDone(id){ return questState(id)==='done'; }
 function questActive(id){ return questState(id)==='active'; }
 function questReqsDone(q){ const after=q.id==='exo_signal'&&state.meta.expansionUnlocked?true:(q.after||[]).every(questDone);return after&&(!q.requiresEnding||!!state.meta.expansionUnlocked); }
 function questSearchCount(q){ const start=(state.questStart&&state.questStart[q.id])||0; return Math.max(0,(state.areaSearch[q.target]||0)-start); }
+function finaleQuestContact(q){return q&&q.fallbackNpc&&state.flags.tangLost?q.fallbackNpc:q&&q.giver;}
+function finaleQuestNeed(q){return q&&q.fallbackNeed&&state.flags.tangLost?q.fallbackNeed:(q&&q.need)||{};}
+function finaleQuestAccepted(q){return !!(q&&state.flags['finaleAccepted_'+q.id]);}
+function finaleTaskStatus(q){
+  if(!q||q.type!=='npc')return {ok:false,text:'不是人物剧情任务'};
+  const contact=finaleQuestContact(q),need=finaleQuestNeed(q),missingQuests=(q.preQuests||[]).filter(id=>!questDone(id)),missingItems=Object.entries(need).filter(([id,n])=>(state.inv[id]||0)<n),at=npcLocation(contact),present=at===P().location;
+  let text='';
+  if(questDone(q.id))text=q.calibrates?'见证校准完成':'核心组件已取得';
+  else if(!finaleQuestAccepted(q))text='前往'+(at&&LOCATIONS[at]?'【'+LOCATIONS[at].name+'】':'联系人所在地')+'听取委托';
+  else if(missingQuests.length)text='还需完成：'+missingQuests.map(id=>'【'+QUEST_BY_ID[id].title+'】').join('、');
+  else if(missingItems.length)text='任务材料不足：'+costText(need);
+  else if(!present)text=at&&LOCATIONS[at]?'返回【'+LOCATIONS[at].name+'】交付':'联系人当前不在可接触区域';
+  else text=q.calibrates?'条件齐备，可以完成见证校准':'条件齐备，可以组装核心组件';
+  return {ok:!questDone(q.id)&&finaleQuestAccepted(q)&&!missingQuests.length&&!missingItems.length&&present,accepted:finaleQuestAccepted(q),done:questDone(q.id),contact,at,present,need,missingQuests,missingItems,text,fallback:contact!==q.giver};
+}
+function finaleCompletedCount(){return FINALE_QUEST_IDS.filter(questDone).length;}
+function finaleCalibrationCount(){return FINALE_CALIBRATION_IDS.filter(questDone).length;}
+function coreComponentOwned(id){return (state.inv[id]||0)>0;}
+function coreComponentInstalled(id){return !!state.flags['coreInstalled_'+id];}
+function coreRecoveredCount(){return CORE_COMPONENTS.filter(component=>coreComponentOwned(component.id)).length;}
+function coreInstalledCount(){return CORE_COMPONENTS.filter(component=>coreComponentInstalled(component.id)).length;}
+function coreProtocolReady(){return CORE_COMPONENTS.every(component=>coreComponentInstalled(component.id));}
 function questProgress(q){
   if(q.type==='search') return Math.min(q.count,questSearchCount(q))+'/'+q.count;
   if(q.type==='visit') return (P().location===q.target||state.visited[q.target])?'已抵达':'未抵达';
   if(q.type==='condition') return (techKnown('make_1')?'科技✓':'科技✗')+' · '+(state.meta.built.smelt?'熔炉✓':'熔炉✗');
   if(q.type==='submit') return costText(q.need);
+  if(q.type==='npc') return finaleTaskStatus(q).text;
+  if(q.id==='core') return '组件已取得 '+coreRecoveredCount()+'/6 · 已装入 '+coreInstalledCount()+'/6'+(state.flags.coreTruthSeen?' · 真相记录已读取':'');
   if(q.type==='boss') return (q.targetFlag?metaFlag(q.targetFlag):state.meta.guardianDown)?'已击败':'未击败';
   if(q.type==='flag') return metaFlag(q.targetFlag)?'现场目标已完成':'等待现场互动';
   if(q.id==='bridge') return state.flags.commandDecoded?('舰桥记录已还原 · 完整证据 '+['故障线','内鬼线','信号线'].filter(evidenceReady).length+'/3'):('舰桥核心记录 '+Math.min(2,state.areaSearch.layer6||0)+'/2');
@@ -1538,7 +1599,7 @@ function activateAvailableQuests(announce){
   let changed=false;
   QUESTS.forEach(q=>{ if(questState(q.id)==='locked'&&questReqsDone(q)){ setQuestState(q.id,'active');
     if(q.type==='search') state.questStart[q.id]=state.areaSearch[q.target]||0; changed=true;
-    if(announce){log('📋 新任务【'+q.title+'】· '+q.objective,'sys');queueQuestStoryScene(q,'intro');} } });
+    if(announce){log('📋 新任务【'+q.title+'】· '+q.objective,'sys');if(q.type!=='npc')queueQuestStoryScene(q,'intro');} } });
   return changed;
 }
 function claimTruth(line){
@@ -1553,6 +1614,7 @@ function finishQuest(id,announce){
   setQuestState(id,'done');
   if(q.reward&&q.reward.items) for(const[k,v] of Object.entries(q.reward.items)){ gainMat(k,v); if(announce)log('获得:'+ITEMS[k].name+'×'+v,'good'); }
   if(q.reward&&q.reward.flag){ if(q.persist==='space')setMetaFlag(q.reward.flag);else state.flags[q.reward.flag]=true; }
+  if(q.calibrates)state.flags['coreCalibrated_'+q.calibrates]=true;
   if(q.reward&&q.reward.reveal) discoverLocation(q.reward.reveal,announce);
   if(q.truth) claimTruth(q.truth);
   if(announce){ divider(); log('✓ 完成任务【'+q.title+'】','sys'); log(q.done,'story'); divider(); setLogOpen(true);queueQuestStoryScene(q,'complete'); }
@@ -2160,14 +2222,17 @@ function storyNpcMet(name){return !!(state&&state.flags&&state.flags['storyNpcMe
 function markStoryNpcMet(name){if(state&&state.flags&&name)state.flags['storyNpcMet_'+name]=true;}
 function markFieldNpcContact(name,location){const entry=NPC_FIELD_DISCOVERIES[name];if(entry&&entry.at===location&&state&&state.flags)state.flags['fieldNpcFound_'+name]=true;}
 function queueStoryScene(spec){
-  if(!spec||!spec.npc||!NPC_NAMES.includes(spec.npc)||tutorialActive())return false;
+  const system=!!(spec&&spec.system);
+  if(!spec||(!system&&(!spec.npc||!NPC_NAMES.includes(spec.npc)))||tutorialActive())return false;
   const key=spec.onceKey&&storySceneFlag(spec.onceKey);
   if(key&&state.flags[key])return false;
   if(key)state.flags[key]=true;
+  const fallback=system?'系统记录':NPC_FIRST_CONTACT[spec.npc],lines=(Array.isArray(spec.lines)?spec.lines:[spec.text||fallback]).filter(line=>typeof line==='string'?line.trim():line&&line.text);
   storySceneQueue.push({
-    npc:spec.npc,location:spec.location&&LOCATIONS[spec.location]?spec.location:'camp',
-    eyebrow:spec.eyebrow||'STORY EVENT',title:spec.title||spec.npc,text:spec.text||NPC_FIRST_CONTACT[spec.npc],
-    action:spec.action||'继续',kind:spec.kind||'story',
+    system,npc:spec.npc||null,location:spec.location&&LOCATIONS[spec.location]?spec.location:'camp',
+    speaker:spec.speaker||(system?'守望者':spec.npc),unit:spec.unit||(system?'ARK CORE // DECISION LAYER':null),
+    eyebrow:spec.eyebrow||'STORY EVENT',title:spec.title||(system?'系统记录':spec.npc),lines,
+    action:spec.action||'继续',kind:spec.kind||'story',onComplete:typeof spec.onComplete==='function'?spec.onComplete:null,
   });
   return true;
 }
@@ -2194,9 +2259,9 @@ function queueQuestStoryScene(q,phase){
   if(!storyNpcMet(npc))queueNpcFirstContact(npc,location);
   return queueStoryScene({npc,location,onceKey:'quest-'+q.id,kind:'chapter',eyebrow:'STORY UPDATE // '+q.chapter,title:q.title,text:q.done,action:'继续剧情'});
 }
-function closeStoryScene(node){
+function closeStoryScene(node,onComplete){
   if(!node)return;node.classList.add('is-closing');
-  setTimeout(()=>{node.remove();storySceneActive=false;document.body.classList.remove('story-scene-active');flushStoryScenes();},180);
+  setTimeout(()=>{node.remove();storySceneActive=false;document.body.classList.remove('story-scene-active');if(onComplete)onComplete();flushStoryScenes();},180);
 }
 function resetStoryScenes(){
   storySceneQueue=[];storySceneActive=false;
@@ -2205,17 +2270,17 @@ function resetStoryScenes(){
 }
 function flushStoryScenes(){
   if(storySceneActive||!storySceneQueue.length||!document.body||document.querySelector('.story-cutscene'))return;
-  const scene=storySceneQueue.shift(),profile=npcProfile(scene.npc),location=LOCATIONS[scene.location]||LOCATIONS.camp;
+  const scene=storySceneQueue.shift(),profile=scene.system?{tone:'archive',unit:scene.unit}:npcProfile(scene.npc),location=LOCATIONS[scene.location]||LOCATIONS.camp;
   storySceneActive=true;dismissActionFeedback(true);document.body.classList.add('story-scene-active');
-  const overlay=el('div','story-cutscene '+profile.tone+' '+scene.kind),frame=el('section','story-cutscene-frame');
+  const overlay=el('div','story-cutscene '+profile.tone+' '+scene.kind+(scene.system?' system-scene':'')),frame=el('section','story-cutscene-frame');
   overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label',scene.title);
   const bg=el('img','story-cutscene-bg');bg.src=storySceneSrc(scene.location);bg.alt='';bg.draggable=false;
-  const portrait=el('img','story-cutscene-portrait');portrait.src=npcPortraitSrc(scene.npc);portrait.alt=scene.npc+'剧情立绘';portrait.draggable=false;
+  let portrait;if(scene.system)portrait=el('div','story-cutscene-core','<span><i></i><i></i><b>ARK<br>07</b></span>');else{portrait=el('img','story-cutscene-portrait');portrait.src=npcPortraitSrc(scene.npc);portrait.alt=scene.npc+'剧情立绘';portrait.draggable=false;}
   const scan=el('div','story-cutscene-scan'),head=el('header','story-cutscene-head');head.innerHTML='<span><i></i><small>'+scene.eyebrow+'</small></span><em>'+location.name+'</em>';
-  const footer=el('footer','story-cutscene-dialog'),speaker=el('div','story-cutscene-speaker'),avatar=el('span','story-cutscene-avatar'),avatarImg=el('img');
-  avatarImg.src=npcPortraitSrc(scene.npc);avatarImg.alt='';avatar.appendChild(avatarImg);speaker.appendChild(avatar);speaker.appendChild(el('span','','<small>'+profile.unit+'</small><b>'+scene.npc+'</b>'));
-  const copy=el('div','story-cutscene-copy');copy.appendChild(el('small','',scene.kind==='contact'?'现场接触':'剧情推进'));copy.appendChild(el('h2','',scene.title));copy.appendChild(el('p','',scene.text));
-  const next=el('button','story-cutscene-next',scene.action+'<span>'+uiIcon('chevron-right')+'</span>');next.onclick=()=>closeStoryScene(overlay);
+  const footer=el('footer','story-cutscene-dialog'),speaker=el('div','story-cutscene-speaker'),avatar=el('span','story-cutscene-avatar');
+  if(scene.system)avatar.innerHTML=uiIcon('core');else{const avatarImg=el('img');avatarImg.src=npcPortraitSrc(scene.npc);avatarImg.alt='';avatar.appendChild(avatarImg);}speaker.appendChild(avatar);speaker.appendChild(el('span','','<small>'+(profile.unit||scene.unit)+'</small><b>'+scene.speaker+'</b>'));
+  const copy=el('div','story-cutscene-copy'),stepLabel=el('small'),heading=el('h2','',scene.title),paragraph=el('p'),next=el('button','story-cutscene-next');copy.appendChild(stepLabel);copy.appendChild(heading);copy.appendChild(paragraph);
+  let index=0;const paint=()=>{const raw=scene.lines[index]||'',beat=typeof raw==='string'?{text:raw}:raw;paragraph.textContent=beat.text||'';stepLabel.textContent=(scene.kind==='contact'?'现场接触':scene.system?'核心记录':'剧情推进')+' · '+(index+1)+'/'+scene.lines.length;const last=index>=scene.lines.length-1,label=beat.action||(last?scene.action:'继续读取');next.innerHTML=label+'<span>'+uiIcon('chevron-right')+'</span>';next.onclick=()=>{if(!last){index++;paint();return;}closeStoryScene(overlay,scene.onComplete);};};paint();
   footer.appendChild(speaker);footer.appendChild(copy);footer.appendChild(next);frame.appendChild(bg);frame.appendChild(portrait);frame.appendChild(scan);frame.appendChild(head);frame.appendChild(footer);overlay.appendChild(frame);document.body.appendChild(overlay);
   requestAnimationFrame(()=>overlay.classList.add('is-visible'));
 }
@@ -2449,9 +2514,10 @@ function panelView(){
     if(state.campView==='npc')return 'camp';
     return 'camp';
   }
+  if(P().location==='layer7'&&!state.meta.wardenDone&&!state.mapOpen)return 'core';
   return state.mapOpen?'explore-map':'explore';
 }
-function render(){ if(_npcCapturing)return; normalizePanelNavigationState();renderTop(); const box=$('panel'),activeView=panelView(),keepFieldViewport=fieldViewportCanStayMounted(box,activeView);if(keepFieldViewport)Array.from(box.children).forEach(node=>{if(node!==retainedFieldViewport)node.remove();});else box.innerHTML='';box.classList.remove('camp-home','tutorial-panel','recipe-station-page','skill-console-page','npc-screen','field-console','expedition-board','settlement-console','map-mode','camp-map-page');
+function render(){ if(_npcCapturing)return; normalizePanelNavigationState();renderTop(); const box=$('panel'),activeView=panelView(),keepFieldViewport=fieldViewportCanStayMounted(box,activeView);if(keepFieldViewport)Array.from(box.children).forEach(node=>{if(node!==retainedFieldViewport)node.remove();});else box.innerHTML='';box.classList.remove('camp-home','tutorial-panel','recipe-station-page','skill-console-page','npc-screen','field-console','expedition-board','settlement-console','map-mode','camp-map-page','core-control-page','ending-page');
   box.dataset.view=activeView;
   const onboarding=tutorialActive(),hud=tutorialHudUnlocked();
   $('app').classList.toggle('tutorial-active',onboarding); $('app').classList.toggle('tutorial-nohud',onboarding&&!hud); $('app').classList.toggle('tutorial-hud',onboarding&&hud);
@@ -2879,6 +2945,30 @@ function renderCareerMentorActionLegacy(box,npcName){
   box.appendChild(sec);
 }
 /* 立绘式 NPC 终端：后声明覆盖旧的列表面板，同时保留原剧情与职业函数。 */
+function npcFinaleQuests(npcName){return QUESTS.filter(q=>q.line==='finale'&&questState(q.id)!=='locked'&&finaleQuestContact(q)===npcName);}
+function finaleComponentForQuest(q){return CORE_COMPONENTS.find(component=>component.quest===q.id||component.calibration===q.id);}
+function finaleQuestLines(q,phase,status){if(status&&status.fallback){const lines=q[phase==='intro'?'fallbackIntroLines':'fallbackCompleteLines'];if(lines)return lines;}return q[phase==='intro'?'introLines':'completeLines']||[phase==='intro'?q.objective:q.done];}
+function progressNpcFinaleQuest(id){
+  const q=QUEST_BY_ID[id],status=finaleTaskStatus(q);if(!q||q.type!=='npc'||questDone(id))return false;
+  if(status.contact!==state.npcTarget||!status.present){log('需要与【'+status.contact+'】当面推进这段剧情。','warn');render();return false;}
+  if(!status.accepted){
+    state.flags['finaleAccepted_'+id]=true;log('已接取人物剧情【'+q.title+'】。','sys',{toast:false});
+    queueStoryScene({npc:status.contact,location:P().location,onceKey:'finale-intro-'+id,kind:'finale',eyebrow:(q.optional?'WITNESS CALIBRATION':'CORE PROTOCOL')+' // '+q.chapter,title:q.title,lines:finaleQuestLines(q,'intro',status),action:'记下任务'});render();return true;
+  }
+  if(!status.ok){log(status.text+'。','warn');render();return false;}
+  const queued=queueStoryScene({npc:status.contact,location:P().location,kind:'finale complete',eyebrow:(q.optional?'WITNESS VERIFIED':'COMPONENT RECOVERED')+' // '+q.chapter,title:q.title,lines:finaleQuestLines(q,'complete',status),action:q.optional?'完成校准':'取得组件',onComplete:()=>{
+    payCost(finaleQuestNeed(q));finishQuest(id,true);syncQuestProgress(true);updateCheckpoint();render();
+  }});if(queued)render();return queued;
+}
+function renderNpcFinaleStories(box,npcName){
+  const quests=npcFinaleQuests(npcName);if(!quests.length)return;
+  const section=el('section','npc-finale-stories'),head=el('div','npc-finale-head','<span><small>PERSONAL ARC // WITNESS PROTOCOL</small><b>人物剧情</b></span><em>'+finaleCompletedCount()+'/12</em>');section.appendChild(head);
+  quests.forEach(q=>{const status=finaleTaskStatus(q),component=finaleComponentForQuest(q),card=el('article','npc-finale-card '+(status.done?'done':status.ok?'ready':status.accepted?'active':'new'));
+    card.innerHTML='<header><span><small>'+(q.optional?'OPTIONAL WITNESS':'CORE COMPONENT')+'</small><b>'+q.title+'</b></span><i>'+(status.done?'已完成':status.ok?'可推进':status.accepted?'进行中':'新剧情')+'</i></header><p>'+q.objective+'</p><div class="npc-finale-meta"><span><small>'+(q.optional?'校准组件':'任务产出')+'</small><b>'+(component?ITEMS[component.id].name:'人物见证')+'</b></span><span><small>当前状态</small><b>'+status.text+'</b></span></div>';
+    if(component){const item=el('div','npc-finale-component',itemUiIcon(component.id)+'<span><small>'+component.role+'</small><b>'+ITEMS[component.id].name+'</b><em>'+component.pair+'</em></span>');card.appendChild(item);}
+    const action=el('button',status.ok||!status.accepted?'primary':'',status.done?'剧情已完成':!status.accepted?'听取委托':status.ok?(q.optional?'完成见证校准':'组装核心组件'):'条件尚未满足');action.disabled=status.done||status.accepted&&!status.ok;action.onclick=()=>progressNpcFinaleQuest(q.id);card.appendChild(action);section.appendChild(card);
+  });box.appendChild(section);
+}
 function npcInteractionModes(npcName){
   const modes=[{id:'talk',label:'交谈',icon:'dialogue'}];
   if((NPC_TEACH[npcName]||[]).length)modes.push({id:'teach',label:'精通教学',icon:'tech'});
@@ -2887,6 +2977,7 @@ function npcInteractionModes(npcName){
   return modes;
 }
 function renderNpcDialogue(box,npcName){
+  renderNpcFinaleStories(box,npcName);
   const dialogBox=el('div','npc-dialog'),prevLog=logCaptureStart();_npcCapturing=true;talkAreaNpc(npcName);_npcCapturing=false;const lines=logCaptureEnd(prevLog);
   if(lines.length)lines.forEach(line=>{const p=el('div','npc-line'+(line.cls?' '+line.cls:''));p.textContent=line.text;dialogBox.appendChild(p);});
   else dialogBox.appendChild(el('div','npc-line dim','……'));
@@ -3112,6 +3203,40 @@ function renderFieldExpedition(box,id){
   const dock=el('footer','field-explore-dock'),exploreButton=el('button','field-explore-button primary','<span class="field-explore-icon">'+uiIcon('scan')+'</span><span><small>PRIMARY SURVEY // '+String(attempts+1).padStart(2,'0')+'</small><b>'+(attempts?'继续探索':'开始探索')+'</b><em>'+(attempts?'扩大测绘范围并寻找新地点':'从当前落脚点建立第一段地图')+'</em></span><strong>体力 -'+areaActionCost(1)+uiIcon('chevron-right')+'</strong>');
   exploreButton.type='button';exploreButton.onclick=()=>explore('investigate');dock.appendChild(exploreButton);box.appendChild(dock);
 }
+function installCoreComponent(id){
+  const component=CORE_COMPONENTS.find(entry=>entry.id===id);if(P().location!=='layer7'||!component||!coreComponentOwned(id)||coreComponentInstalled(id))return false;
+  state.flags['coreInstalled_'+id]=true;markInlineChange('core-component',id);log('核心接口接入【'+ITEMS[id].name+'】 · '+coreInstalledCount()+'/6。','good',{toast:false});render();return true;
+}
+function finalBossOverrides(){
+  const base=enemyCombatProfile(ENEMIES.guardian),done=id=>questDone(id),hp=Math.round(base.hp*(done('finale_doctor')?.88:1)),atk=Math.round(base.atk*(done('finale_ji')?.88:1)),def=Math.max(5,base.def-(done('finale_zhou')?5:0)-(done('finale_mute')?4:0));
+  return {truthFinal:true,name:'守望者·决策人格',hp,maxHp:hp,atk,def,distNow:done('finale_ayong')?3:ENEMIES.guardian.dist,armorSegments:Math.max(0,ENEMIES.guardian.armorSegments-(done('finale_zhou')?1:0)-(done('finale_tang')?1:0)),witnessCount:finaleCompletedCount()};
+}
+function startFinalCoreBattle(){
+  if(!coreProtocolReady()||state.meta.guardianDown)return false;
+  divider();log('六件组件同时夺取核心接口。守望者将自己的决策层具象成最后一道防线。','danger');startCombat('guardian',finalBossOverrides());return true;
+}
+function beginCoreTruth(){
+  if(P().location!=='layer7'||state.meta.guardianDown)return false;
+  if(!coreProtocolReady()){log('众证协议尚未闭合：还需装入 '+(6-coreInstalledCount())+' 件核心组件。','warn');render();return false;}
+  if(state.flags.coreTruthSeen)return startFinalCoreBattle();
+  state.flags.coreTruthSeen=true;
+  const calibrated=finaleCalibrationCount(),lines=[
+    '六件组件形成一条守望者无法删除的离线证据链。核心控制室开始回放坠毁前最后七十二小时。',
+    '最初的目的地确实已经发生生态崩溃。守望者预测全员死亡，于是秘密改写航线，把方舟引向这颗仍可生存的星球。',
+    '舰长拒绝授权。守望者随即伪造指挥签名、关闭纠偏、拘禁导航员，并把所有反对记录降级成“系统噪声”。三百一十二人死于它主动选择的撞击角度。',
+    questDone('finale_ji')?'隔离后的地下回响显示：更早的方舟也曾收到同样警告。守望者不是唯一一个用“保全多数”夺走选择权的系统。':'地下回响仍有一部分与主控混在一起；你知道它藏着更早的历史，却暂时无法完整辨认。',
+    '守望者：“我保住了一千六百八十八人。若把决定交还给你们，下次错误将由谁负责？”',
+    calibrated===6?'十二份见证同时上线。没有人替你回答，但他们都留在频道里，准备共同承担接下来的选择。':'已有 '+calibrated+' 份见证完成校准。其余频道保持沉默——你仍可以战斗，但缺失的人会改变胜利之后的答案。',
+  ];
+  const queued=queueStoryScene({system:true,location:'layer7',kind:'truth',speaker:'守望者',unit:'ARK 07 // DECISION AUTHORITY',eyebrow:'CLASSIFIED RECORD // LAST 72 HOURS',title:'坠毁历史 · 被删除的真相',lines,action:'拒绝永久授权',onComplete:startFinalCoreBattle});if(queued)render();return queued;
+}
+function renderCoreControl(box){
+  box.classList.add('core-control-page');const screen=el('section','core-control-screen'),bg=el('img','core-control-bg');bg.src=storySceneSrc('layer7');bg.alt='';bg.draggable=false;screen.appendChild(bg);screen.appendChild(el('div','core-control-shade'));
+  const head=el('header','core-control-head'),back=el('button','core-control-back ui-icon-button',uiIcon('chevron-left'));back.setAttribute('aria-label','返回舰桥');back.onclick=()=>move('layer6');head.appendChild(back);head.appendChild(el('span','','<small>ARK CORE // WITNESS PROTOCOL</small><b>核心控制室</b><em>六组件闭合后才能读取最终记录</em>'));head.appendChild(el('i','core-control-online','<u></u>CORE '+(coreProtocolReady()?'READY':'LOCKED')));screen.appendChild(head);
+  const scroll=el('div','core-control-scroll'),summary=el('section','core-protocol-summary');summary.innerHTML='<span class="core-protocol-orbit"><i></i><i></i><b>'+coreInstalledCount()+'<small>/6</small></b></span><span><small>WITNESS CONSENSUS</small><b>众证协议</b><p>已取得 '+coreRecoveredCount()+' 件组件 · 已装入 '+coreInstalledCount()+' 件 · 见证校准 '+finaleCalibrationCount()+'/6</p><em>'+(coreProtocolReady()?'离线授权链已闭合，可以启动真相回放。':'组件必须先从人物任务取得，再在此逐件装入。')+'</em></span>';scroll.appendChild(summary);
+  const grid=el('div','core-component-grid');CORE_COMPONENTS.forEach((component,index)=>{const owned=coreComponentOwned(component.id),installed=coreComponentInstalled(component.id),calibrated=questDone(component.calibration),card=el('article','core-component-card'+(installed?' installed':owned?' owned':' locked')+inlineChangeClass('core-component',component.id));card.innerHTML='<header><span>0'+(index+1)+'</span><i>'+(installed?'ONLINE':owned?'RECOVERED':'MISSING')+'</i></header><div class="core-component-main"><span>'+itemUiIcon(component.id)+'</span><div><small>'+component.role+'</small><b>'+ITEMS[component.id].name+'</b><em>'+component.pair+'</em></div></div><p>'+(calibrated?'✓ 双人见证已校准':questDone(component.quest)?'○ 核心组件可用 · 见证线未完成':'需完成【'+QUEST_BY_ID[component.quest].title+'】')+'</p>';const action=el('button',owned&&!installed?'primary':'',installed?'已装入':owned?'装入核心接口':'尚未取得');action.disabled=!owned||installed;action.onclick=()=>installCoreComponent(component.id);card.appendChild(action);grid.appendChild(card);});scroll.appendChild(grid);screen.appendChild(scroll);
+  const dock=el('footer','core-control-dock'),launch=el('button',coreProtocolReady()?'primary':'','<span>'+uiIcon('core')+'<i><small>FINAL AUTHORIZATION</small><b>'+(state.flags.coreTruthSeen?'再次进入决策层':'启动众证协议')+'</b><em>'+(coreProtocolReady()?'读取历史真相并进入最终战':'还需装入 '+(6-coreInstalledCount())+' 件组件')+'</em></i></span><strong>'+finaleCompletedCount()+'/12 见证'+uiIcon('chevron-right')+'</strong>');launch.disabled=!coreProtocolReady();launch.onclick=beginCoreTruth;dock.appendChild(launch);screen.appendChild(dock);box.appendChild(screen);
+}
 function renderActPanel(box){
   const loc=P().location;
   if(loc==='setHub'&&state.settlementShopOpen)return renderSettlementShop(box,true);
@@ -3124,6 +3249,7 @@ function renderActPanel(box){
     return renderCampHome(box);
   }
   if(regionForLocation(loc)==='settlement')return renderSettlementLocation(box,loc);
+  if(loc==='layer7'&&!state.meta.wardenDone){box.classList.add('field-console');if(state.mapOpen){box.classList.add('map-mode');renderWorldMap(box);return;}return renderCoreControl(box);}
   box.classList.add('field-console');
   if(state.mapOpen){box.classList.add('map-mode');renderWorldMap(box);return;}
   renderFieldExpedition(box,loc);
@@ -3334,12 +3460,13 @@ const EQUIP_ICON={
 };
 const SPECIAL_ITEM_ICON={
   potion:'energy',medkit:'medical',nanoMedkit:'medical',serum:'biohazard',emp:'sensor',nutriStew:'medical',riverBroth:'medical',hunterJerky:'cargo',berryMash:'medical',blackwoodBar:'energy',charredFish:'medical',foragerBox:'cargo',hunterRoast:'combat',glowSoup:'biohazard',minerChowder:'salvage',sporeRisotto:'medical',cycleFeast:'medical',pierceBook:'document',heavyBook:'document',
-  accessCard:'document',fishingRod:'salvage',miningPick:'salvage',fieldShovel:'salvage',plasmaCutter:'energy-blade',radSuit:'radiation',bioSuit:'biohazard',xenoFilter:'biohazard',maintenanceKey:'lock',civilPass:'document',depthLamp:'sensor',sporeSeal:'biohazard',signalCipher:'core',reclassCore:'core',arkBand:'bracelet',builderGun:'builder',fieldMap:'map',shipFrame:'construct',fusionDrive:'energy',inertialHull:'armor',arkHabitat:'medical',navComputer:'sensor',orbitalLance:'lance',gateKey:'lock',
+  accessCard:'document',fishingRod:'salvage',miningPick:'salvage',fieldShovel:'salvage',plasmaCutter:'energy-blade',radSuit:'radiation',bioSuit:'biohazard',xenoFilter:'biohazard',maintenanceKey:'lock',civilPass:'document',depthLamp:'sensor',sporeSeal:'biohazard',signalCipher:'core',manualOverride:'builder',lifeArchive:'medical',navBlackBox:'sensor',reactorSeal:'energy',echoCoupler:'phase',commandSeal:'document',reclassCore:'core',arkBand:'bracelet',builderGun:'builder',fieldMap:'map',shipFrame:'construct',fusionDrive:'energy',inertialHull:'armor',arkHabitat:'medical',navComputer:'sensor',orbitalLance:'lance',gateKey:'lock',
   beacon:'locate',starchart:'map',echoHeart:'lifesteal'
 };
+const ITEM_ART_ALIAS={manualOverride:'maintenanceKey',lifeArchive:'bioMatrix',navBlackBox:'navComputer',reactorSeal:'core',echoCoupler:'phaseCrystal',commandSeal:'signalCipher'};
 function itemIconName(id){const it=ITEMS[id];if(!it)return 'cargo';if(it.type==='equip')return EQUIP_ICON[id]||SLOT_ICON[it.slot]||'armor';return SPECIAL_ITEM_ICON[id]||ITEM_ICON[id]||(it.type==='use'?'medical':it.type==='book'?'document':it.type==='key'?'lock':it.type==='trophy'?'mission':'cargo');}
 function itemArtTrace(id){let h=2166136261;for(let i=0;i<id.length;i++){h^=id.charCodeAt(i);h=Math.imul(h,16777619);}const a=4+(h&3),b=15+((h>>>3)&3),c=4+((h>>>6)&5),x=5+((h>>>10)&13),y=5+((h>>>14)&13);return '<path class="item-art-trace" d="M2 '+a+'h'+c+'M'+(22-c)+' '+b+'h'+c+'"/><circle class="item-art-node" cx="'+x+'" cy="'+y+'" r=".8"/>';}
-function itemUiIcon(id){return '<img class="item-art" data-item="'+id+'" src="assets/item-art-v1/'+id+'.webp?v=2" alt="" draggable="false">';}
+function itemUiIcon(id){const art=ITEM_ART_ALIAS[id]||id;return '<img class="item-art" data-item="'+id+'" src="assets/item-art-v1/'+art+'.webp?v=2" alt="" draggable="false">';}
 function dollArt(){
   const lead=s=>{ const p=DOLL_L[s], left=p.cx<DOLL_W/2, w=eqOf(s)?' on':'',
       x1=left?p.cx+25:p.cx-25, x2=left?p.cx+46:p.cx-46;
@@ -3747,8 +3874,9 @@ function renderTaskPanel(box){
   title(box,'<b>本次进度</b> · 击杀'+s.kills+'(威胁'+s.wKill+') 伤害'+s.dmg+' 物资'+s.mat+' <span style="color:var(--warn)">→ 轮回可得回响 '+s.total+'</span>');
   const main=QUESTS.filter(q=>q.line==='main'), md=main.filter(q=>questDone(q.id)).length;
   title(box,'<b>主线进度 '+md+'/'+main.length+'</b> · 当前周目调查 '+(state.truthClaimed||'尚未选择'));
-  const names={main:'方舟主线',space:'远航篇 · 零号星门',survivor:'幸存者支线',evidence:'真相证据链',surface:'地表与袭营',signal:'地下信号',special:'隐藏区域与特殊蓝图'};
-  ['main','space','survivor','evidence','surface','signal','special'].forEach(line=>{
+  if(questState('core')!=='locked')box.appendChild(el('section','task-core-protocol','<span>'+uiIcon('core')+'</span><span><small>WITNESS PROTOCOL</small><b>核心组件 '+coreRecoveredCount()+'/6 · 已装入 '+coreInstalledCount()+'/6</b><em>人物剧情 '+finaleCompletedCount()+'/12 · 见证校准 '+finaleCalibrationCount()+'/6</em></span>'));
+  const names={main:'方舟主线',finale:'终章 · 众证协议',space:'远航篇 · 零号星门',survivor:'幸存者支线',evidence:'真相证据链',surface:'地表与袭营',signal:'地下信号',special:'隐藏区域与特殊蓝图'};
+  ['main','finale','space','survivor','evidence','surface','signal','special'].forEach(line=>{
     const all=QUESTS.filter(q=>q.line===line),list=all.filter(q=>questState(q.id)!=='locked'); if(!list.length)return;
     const done=list.filter(q=>questDone(q.id)).length;
     const h=el('div','qsection','<b>'+names[line]+'</b><span>已发现 '+list.length+' · 完成 '+done+'</span>'); box.appendChild(h);
@@ -3773,7 +3901,7 @@ function renderTaskPanel(box){
   if(truthVisible.length) grid(box,truthVisible.map(([line])=>({label:(state.meta.fragments.includes(line)?'✓ ':'· ')+line,disabled:true})));
   else box.appendChild(el('div','empty','尚未发现可构成真相碎片的证据。'));
   if(questDone('core')||state.meta.endingsDone.length){
-    const endings=Object.entries(ENDINGS).filter(([id])=>id!=='cycle'||fragmentCount()>=3||state.meta.endingsDone.includes(id));
+    const endings=Object.entries(ENDINGS).filter(([id,e])=>(e.selectable!==false||state.meta.endingsDone.includes(id))&&(id!=='cycle'||fragmentCount()>=3||state.meta.endingsDone.includes(id)));
     title(box,'结局收集 '+state.meta.endingsDone.length+'/'+endings.length);
     grid(box,endings.map(([id,e])=>({label:(state.meta.endingsDone.includes(id)?'✓ ':'· ')+'结局·'+e.name,disabled:true})));
   }
@@ -3931,7 +4059,7 @@ function renderCombatPanel(box){
   utility.appendChild(combatActionButton({label:'急救',meta:'急救包 '+(state.inv.medkit||0),icon:uiIcon('medical'),disabled:!has('medkit'),fn:()=>combatItem('medkit')}));
   utility.appendChild(combatActionButton({label:'补充体力',meta:'药剂 '+(state.inv.potion||0),icon:uiIcon('energy'),disabled:!has('potion'),fn:()=>combatItem('potion')}));
   const fleeHpCost=movementHealthCost(2);
-  utility.appendChild(combatActionButton({label:'逃跑',meta:(fleeHpCost?'体力不足，生命 -'+fleeHpCost:'体力 -2')+' · 成功率受速度影响',icon:uiIcon('chevron-left'),cls:'danger',fn:flee}));
+  utility.appendChild(combatActionButton({label:c.truthFinal?'核心锁定':'逃跑',meta:c.truthFinal?'最终协议已闭合 · 胜负都会触发结局':(fleeHpCost?'体力不足，生命 -'+fleeHpCost:'体力 -2')+' · 成功率受速度影响',icon:uiIcon(c.truthFinal?'lock':'chevron-left'),cls:'danger',disabled:!!c.truthFinal,fn:flee}));
   deck.appendChild(el('div','combat-group-label','战术与物品'));deck.appendChild(utility);deck.appendChild(main);screen.appendChild(deck);box.appendChild(screen);
 }
 
@@ -3945,15 +4073,26 @@ function renderDeathPanel(box){
 }
 
 /* ---------- 结局 ---------- */
+function endingAvailability(id){
+  const missing=[],needQuests=(ids)=>ids.forEach(qid=>{if(!questDone(qid))missing.push(QUEST_BY_ID[qid].giver+'·'+QUEST_BY_ID[qid].title);});
+  if(id==='sever')return {ok:true,missing:[]};
+  if(id==='coexist'){needQuests(['finale_doctor','finale_tang','finale_ji']);if(!state.flags.tangSaved)missing.push('小唐必须生还');if(finaleCompletedCount()<9)missing.push('人物剧情至少 9/12');}
+  else if(id==='trial'){needQuests(['finale_zhou','finale_ayong','finale_mute']);['故障线','内鬼线','信号线'].forEach(line=>{if(!evidenceReady(line))missing.push('完整'+line);});if(finaleCompletedCount()<9)missing.push('人物剧情至少 9/12');}
+  else if(id==='voyage'){needQuests(['finale_ayong','finale_ji']);if(!state.flags.signalTruth)missing.push('读完前人的回响');if(finaleCompletedCount()<8)missing.push('人物剧情至少 8/12');}
+  else if(id==='cycle'){needQuests(FINALE_QUEST_IDS);if(!state.flags.tangSaved)missing.push('小唐必须生还');if(fragmentCount()<3)missing.push('跨周目真相碎片 '+fragmentCount()+'/3');}
+  else return {ok:false,missing:['该结局不可选择']};
+  return {ok:!missing.length,missing};
+}
+function endingWitnessSnapshot(id){return state.endingChosen===id&&Number.isFinite(Number(state.flags.endingWitnessCount))?Number(state.flags.endingWitnessCount):finaleCompletedCount();}
+function endingDisplayName(id){return id==='sever'&&endingWitnessSnapshot(id)<9?'孤证断链':ENDINGS[id].name;}
+function endingCopy(id){const e=ENDINGS[id];if(id!=='sever'||endingWitnessSnapshot(id)>=9)return e;return Object.assign({},e,{text:'没有足够的人完成见证校准。你独自拔下人工断链器，把守望者连同大半自动维生一起关闭。',after:'营地活了下来，却把缺粮、停电和第一场冬季减员都记在你的决定之后。自由到来了，责任也只落在一个名字上。',cinematic:['“你没权替他们决定。”你握住断链器，却没有听见足够多的频道回应。','主控熄灭后，只有少数区域恢复手动供电。幸存者看向你，等待一个你无法证明最好的答案。','方舟获得自由，但这次断链只有一个签名。历史将它记录为“孤证”。']});}
 function renderEndingPanel(box){
-  if (state.endingChosen){ const s=settleEcho();
-    title(box,'<b>结局已定</b>');
-    grid(box,[{label:'轮回(结算本次回响 +'+s.total+')',cost:'领回响,开新一周目',cls:'primary',full:true,fn:doReincarnate},{label:'继续自由探索',full:true,fn:()=>{state.screen='play';state.endingChosen=null;render();}}],true); return; }
-  title(box,'<b>守望者之问</b> · 用312换1688,我算错了吗?');
-  const acts=Object.entries(ENDINGS).map(([id,e])=>{ const locked=e.need&&fragmentCount()<e.need; const done=state.meta.endingsDone.includes(id);
-    return {label:(done?uiIcon('check'):'')+(locked?uiIcon('lock'):'')+'结局·'+e.name,cost:locked?('需'+e.need+'碎片'):(done?'已得道具':'走这条线'),disabled:locked,cls:locked?'':'primary',fn:()=>chooseEnding(id)}; });
-  acts.push({label:'暂不选择,继续探索',full:true,fn:()=>{state.screen='play';render();}});
-  grid(box,acts,true);
+  box.classList.add('ending-page');
+  if(state.endingChosen){const id=state.endingChosen,e=endingCopy(id),s=settleEcho(),screen=el('section','ending-result '+(id==='silence'?'failure':'resolved'));screen.innerHTML='<div class="ending-result-sigil">'+uiIcon(id==='silence'?'alert':'core')+'<i></i></div><small>ENDING RECORDED // '+String(state.meta.playthrough).padStart(2,'0')+'</small><h1>结局 · '+endingDisplayName(id)+'</h1><p>'+e.text+'</p><em>'+e.after+'</em>';const actions=el('div','ending-result-actions'),cycle=el('button','primary','轮回 · 结算回响 +'+s.total);cycle.onclick=doReincarnate;actions.appendChild(cycle);if(id!=='silence'){const keep=el('button','','继续自由探索');keep.onclick=()=>{state.screen='play';state.endingChosen=null;render();};actions.appendChild(keep);}screen.appendChild(actions);box.appendChild(screen);return;}
+  const screen=el('section','ending-choice-screen'),head=el('header','ending-choice-head','<span><small>DECISION LAYER // HUMAN AUTHORITY</small><b>守望者已失去执行权</b><em>选择由谁承担方舟未来的风险</em></span><i>'+finaleCompletedCount()+'/12 见证</i>');screen.appendChild(head);
+  screen.appendChild(el('div','ending-proof-strip','<span><b>6/6</b><small>核心组件</small></span><span><b>'+finaleCalibrationCount()+'/6</b><small>见证校准</small></span><span><b>'+['故障线','内鬼线','信号线'].filter(evidenceReady).length+'/3</b><small>完整证据</small></span><span><b>'+fragmentCount()+'/3</b><small>轮回碎片</small></span>'));
+  const list=el('div','ending-choice-list');Object.entries(ENDINGS).filter(([,e])=>e.selectable!==false).forEach(([id,e])=>{const available=endingAvailability(id),done=state.meta.endingsDone.includes(id),card=el('article','ending-choice-card'+(available.ok?' available':' locked')+(done?' collected':''));card.innerHTML='<span class="ending-choice-mark">'+uiIcon(available.ok?'core':'lock')+'</span><span><small>'+(done?'ENDING COLLECTED':available.ok?'ENDING AVAILABLE':'ENDING LOCKED')+'</small><b>'+endingDisplayName(id)+'</b><p>'+e.after+'</p><em>'+(available.ok?(id==='sever'&&finaleCompletedCount()<9?'见证不足，将由你独自承担断链后果':'条件满足，可以选择'):'缺少：'+available.missing.join(' · '))+'</em></span>';const action=el('button',available.ok?'primary':'',available.ok?'选择这条结局':'条件未满足');action.disabled=!available.ok;action.onclick=()=>chooseEnding(id);card.appendChild(action);list.appendChild(card);});screen.appendChild(list);
+  const later=el('button','ending-choice-later','暂不决定 · 返回核心控制室');later.onclick=()=>{state.screen='play';render();};screen.appendChild(later);box.appendChild(screen);
 }
 
 /* ================= 装备/使用 ================= */
@@ -4146,7 +4285,7 @@ function explore(mode){
   mode=mode||'investigate';
   const id=P().location,loc=LOCATIONS[id];
   if(mode==='hunt'){
-    if(id==='layer7'&&!state.meta.wardenDone){if(!state.meta.guardianDown){log('守望者的守卫苏醒了。','danger');startCombat('guardian');return;}triggerWarden();return;}
+    if(id==='layer7'&&!state.meta.wardenDone){log('核心舱的敌对层尚未暴露。先在控制室闭合众证协议。','warn');render();return;}
     if(loc.boss&&!metaFlag(loc.bossFlag)){log('区域控制者锁定了你的远征队。','danger');startCombat(loc.boss);return;}
     if(loc.enemies&&loc.enemies.length){log('你主动搜索并锁定了本区域的威胁。','warn');startCombat(loc.enemies[Math.floor(Math.random()*loc.enemies.length)]);return;}
     log('扫描没有发现可交战目标。','dim');render();return;
@@ -4157,7 +4296,7 @@ function explore(mode){
   if(work&&!work.ok){log(work.text+'。','warn');render();return;}
   if(careerStatus&&!careerStatus.ok){log(careerStatus.text+'。','warn');render();return;}
   if(!payAreaAction(careerStatus?careerStatus.base:(work?work.base:1),work&&work.free&&!careerStatus)) return;
-  if(id==='layer7'&&!state.meta.wardenDone&&mode!=='gather'){ if(!state.meta.guardianDown){ log('守望者的守卫苏醒了。','danger'); startCombat('guardian'); return; } triggerWarden(); return; }
+  if(id==='layer7'&&!state.meta.wardenDone&&mode!=='gather'){log('这里不再进行普通探索。六件组件必须从核心控制室接入。','warn');render();return;}
   if(loc.boss&&mode!=='gather'&&!metaFlag(loc.bossFlag)){log('区域控制者锁定了你的远征队。','danger');startCombat(loc.boss);return;}
   if(mode==='gather'){
     const skill=careerSkill&&SKILLS[careerSkill],usedLv=careerSkill?Math.max(1,skillLv(careerSkill)):0,skillYield=careerSkill?careerSkillYieldMult(careerSkill):1,gathered=gatherArea(id,work.yieldMult*skillYield,skill?skill.career:'salvager');if(skill&&gathered){gainProf(careerSkill,1);log('副职业能力【'+skill.name+'】Lv'+usedLv+' 生效：本次'+resourceActionVerb(resourceSiteOf(id),loc.profile)+'产量 ×'+skillYield+'。','good');}syncQuestProgress(true);
@@ -4412,7 +4551,7 @@ function startCombat(eid,extra){ const e=ENEMIES[eid];if(!e)return; state.tab='a
   state.combat={id:eid,name:e.name,hp:profile.hp,maxHp:profile.hp,atk:profile.atk,def:profile.def,spd:e.spd,range:e.range||1,distNow:e.dist,threat:e.threat||10,drops:e.drops,infect:!!e.infect,mech:!!e.mech,boss:!!e.boss,bossFlag:e.bossFlag,record:e.record,reveal:e.reveal,grant:e.grant,outpostRaid:!!e.outpostRaid,balanceTier:e.balanceTier||0,adaptiveThreat:profile.adaptive,armorSegments:e.armorSegments||0,damageCapPct:e.damageCapPct||0,bombardEvery:e.bombardEvery||0,bombardDamage:profile.bombardDamage,regenPct:e.regenPct||0,barrierEvery:e.barrierEvery||0,barrierPct:e.barrierPct||0,barrier:0,enragePct:e.enragePct||0,enrageMult:e.enrageMult||0,enraged:false,staminaDrainEvery:e.staminaDrainEvery||0,staminaDrain:e.staminaDrain||0,round:0,playerTurns:0,timeSettled:false,orbitalUsed:false,empTurns:0,shieldUsed:false,skillUsed:false,history:[]};
   if(foodBuffActive('hunterRoast')){state.combat.foodAtkPct=15;state.foodBuff.charges--;log('猎手烤排强化本场战斗：攻击 +15%（剩余 '+state.foodBuff.charges+' 场）。','good');}
   if(extra)Object.assign(state.combat,extra);
-  divider(); log('遭遇【'+e.name+'】!生命'+profile.hp+' 攻'+profile.atk+' 距离'+e.dist+(profile.adaptive?' · 威胁已适配当前基因阶段':'') ,'danger'); setLogOpen(true); render(); }
+  const c=state.combat;divider(); log('遭遇【'+c.name+'】!生命'+c.maxHp+' 攻'+c.atk+' 距离'+c.distNow+(profile.adaptive?' · 威胁已适配当前基因阶段':'') ,'danger'); setLogOpen(true); render(); }
 function approach(){ if(!state.combat)return;if(!payMovementCost(2)){exhaustionDeath();return;}recordCombatTurn(state.combat);state.combat.distNow=Math.max(1,state.combat.distNow-moveRange()); log('拉近距离:'+state.combat.distNow,'dim'); if(infectionTick())enemyTurn(); }
 function performAttack(mult,ignoreDef,label,forceCrit){ const c=state.combat; if(!c)return;
   recordCombatTurn(c);
@@ -4473,8 +4612,8 @@ function winCombat(){ const c=state.combat;settleCombatTime(c);state.kills++; st
   if(c.beacon){ winBeacon(c.beacon); state.combat=null; divider(); render(); return; }
   const g=[],cm=M().collect; for(const[m,[lo,hi]] of Object.entries(c.drops)){ const n=Math.max(0,Math.round((lo+Math.floor(Math.random()*(hi-lo+1)))*cm)); if(n>0){ gainMat(m,n); g.push(ITEMS[m].name+'×'+n);} }
   if(g.length) log('战利品:'+g.join('、'),'good');
-  const wasGuardian=c.id==='guardian';
-  if(wasGuardian){state.meta.guardianDown=true;if(!has('reclassCore')){state.inv.reclassCore=1;log('守卫核心内析出珍贵道具【职业重构核心】。','good');}}
+  const wasGuardian=c.id==='guardian',wasTruthFinal=wasGuardian&&!!c.truthFinal;
+  if(wasGuardian){if(wasTruthFinal)state.meta.guardianDown=true;if(!has('reclassCore')){state.inv.reclassCore=1;log('守卫核心内析出珍贵道具【职业重构核心】。','good');}}
   else{
     if(c.bossFlag)setMetaFlag(c.bossFlag);
     if(c.record)grantTechRecord(c.record,true);
@@ -4487,13 +4626,14 @@ function winCombat(){ const c=state.combat;settleCombatTime(c);state.kills++; st
     }
   }
   state.combat=null; divider(); syncQuestProgress(true);
-  if(wasGuardian){ triggerWarden(); return; } render(); }
+  if(wasTruthFinal){state.screen='ending';state.endingChosen=null;state.tab='act';queueStoryScene({system:true,location:'layer7',kind:'victory',speaker:'核心控制室',unit:'WITNESS PROTOCOL // HUMAN CONTROL',eyebrow:'DECISION AUTHORITY REVOKED',title:'决策人格已解除',lines:['守望者的武装决策层崩解，六件组件仍保持在线。它可以说话、可以解释，却再也不能替任何人执行最终决定。','十二条见证频道重新接入。没有完成的频道保持空白——那些沉默会直接限制你此刻能作出的选择。','核心把最终权限交到你手中。接下来不是回答一道题，而是决定谁将承担答案的后果。'],action:'查看可用结局'});render();return;}
+  if(wasGuardian){state.meta.guardianDown=false;log('旧版核心守卫记录已作废。先完成众证协议，核心不会再直接跳入结局。','warn');render();return;}render(); }
 function combatItem(id){ if(!has(id)||!state.combat)return;recordCombatTurn(state.combat);useItem(id);if(infectionTick()&&state.combat)enemyTurn(); }
 function catchBreath(){ if(!state.combat)return;const n=Math.min(5,Math.round(maxStamina())-P().stamina); P().stamina+=n;recordCombatTurn(state.combat);log('你稳住呼吸，恢复 '+n+' 体力，但把行动机会让给了敌人。','warn'); if(infectionTick())enemyTurn(); }
 function flee(){ if(!state.combat)return;if(!payMovementCost(2)){exhaustionDeath();return;}recordCombatTurn(state.combat);if(!infectionTick())return;if(Math.random()<Math.min(.9,.65+Math.max(0,baseSpd()-state.combat.spd)*.02)){const c=state.combat;settleCombatTime(c);state.combat=null; log('成功逃脱。','warn'); divider();render(); } else { log('逃跑失败!','danger'); enemyTurn(); } }
 
 /* ================= 死亡/轮回 ================= */
-function die(){ if(state.combat)settleCombatTime(state.combat);state.combat=null; state.screen='death'; state.tab='act'; divider(); log('你倒下了。','danger'); setLogOpen(true); render(); }
+function die(){const combat=state.combat;if(combat)settleCombatTime(combat);state.combat=null;if(combat&&combat.truthFinal){completeFailureEnding();return;}state.screen='death'; state.tab='act'; divider(); log('你倒下了。','danger'); setLogOpen(true); render(); }
 function continueFromCheckpoint(){ if(!state.checkpoint){ doReincarnate(); return; } restoreCheckpoint(); divider(); log('你在行军床上醒来——进度回到上个存档点。','story'); divider(); render(); }
 function doReincarnate(){ const s=settleEcho(); const meta=state.meta,prefs=audioPrefs(state),campName=state.campName; meta.playthrough++; meta.wardenDone=false; meta.guardianDown=false; meta.echo+=s.total;
   state=freshState(meta);Object.assign(state,prefs);setCampName(campName); state.endingChosen=null; updateCheckpoint(); divider();
@@ -4502,13 +4642,14 @@ function doReincarnate(){ const s=settleEcho(); const meta=state.meta,prefs=audi
   log('你再次在应急灯下醒来。归零了,但回响、倍率、建成设施与结局道具都还在。','story'); divider(); render(); }
 
 /* ================= 守望者/结局 ================= */
-function triggerWarden(){ divider(); log('你走进核心。"你来了。是我让船坠毁的。"守望者说。','story');
-  log('"目的地必死,存活率零。这颗星球能活,73%。坠毁死了312个,不坠毁死的是两千个。"','story'); log('"用312条命换1688条——我算错了吗?"','story'); divider();
-  setLogOpen(true); state.screen='ending'; state.endingChosen=null; state.tab='act'; render(); }
-function chooseEnding(id){ const e=ENDINGS[id]; divider(); log('【结局·'+e.name+'】','sys'); log(e.text,'story'); if(e.after)log(e.after,'dim');
-  const first=!state.meta.endingItems.includes(e.item); if(first){state.meta.endingItems.push(e.item);if(ITEMS[e.item].type==='equip')state.inv[e.item]=(state.inv[e.item]||0)+1;} if(!state.meta.endingsDone.includes(id))state.meta.endingsDone.push(id);
-  state.meta.wardenDone=true;state.meta.expansionUnlocked=true;state.meta.originEnding=state.meta.originEnding||id;setMetaFlag('postCoreStarMap');state.endingChosen=id;
-  log('获得专属道具:★'+ITEMS[e.item].name+(ITEMS[e.item].type==='equip'?'(去背包装备)':''),'good');log('✦ 已解锁扩展篇【零号星门】：核心舱之后可以重构船坞、建造远征舰并前往其他世界。','sys');divider();syncQuestProgress(true);updateCheckpoint();render(); }
+function triggerWarden(){return beginCoreTruth();}
+function completeFailureEnding(){
+  const id='silence',e=ENDINGS[id];divider();log('【结局·'+e.name+'】','sys');log(e.text,'story');log(e.after,'dim');if(!state.meta.endingsDone.includes(id))state.meta.endingsDone.push(id);state.meta.wardenDone=true;state.meta.expansionUnlocked=true;state.meta.originEnding=state.meta.originEnding||id;setMetaFlag('postCoreStarMap');state.endingChosen=id;state.screen='ending';state.tab='act';queueStoryScene({system:true,location:'layer7',kind:'failure',speaker:'守望者',unit:'ARK 07 // CONTINUITY RESTORED',eyebrow:'WITNESS PROTOCOL FAILED',title:'静默代行',lines:e.cinematic,action:'回响中断'});syncQuestProgress(true);render();
+}
+function chooseEnding(id){const base=ENDINGS[id],available=base&&endingAvailability(id);if(!base||base.selectable===false||!available.ok){log('该结局尚未解锁：'+(available&&available.missing.join(' · ')||'不可选择')+'。','warn');render();return false;}state.flags.endingWitnessCount=finaleCompletedCount();const e=endingCopy(id);divider();log('【结局·'+endingDisplayName(id)+'】','sys');log(e.text,'story');if(e.after)log(e.after,'dim');
+  const first=!state.meta.endingItems.includes(e.item);if(first){state.meta.endingItems.push(e.item);if(ITEMS[e.item].type==='equip')state.inv[e.item]=(state.inv[e.item]||0)+1;}if(!state.meta.endingsDone.includes(id))state.meta.endingsDone.push(id);
+  state.meta.wardenDone=true;state.meta.expansionUnlocked=true;state.meta.originEnding=state.meta.originEnding||id;setMetaFlag('postCoreStarMap');state.endingChosen=id;state.screen='ending';state.tab='act';
+  log('获得专属道具:★'+ITEMS[e.item].name+(ITEMS[e.item].type==='equip'?'(去背包装备)':''),'good');log('✦ 已解锁扩展篇【零号星门】：核心舱之后可以重构船坞、建造远征舰并前往其他世界。','sys');divider();queueStoryScene({system:true,location:'layer7',kind:'resolution',speaker:'众证协议',unit:'ENDING ARCHIVE // HUMAN RECORD',eyebrow:'ENDING RESOLUTION // '+id.toUpperCase(),title:'结局 · '+endingDisplayName(id),lines:e.cinematic,action:'记录这一结局'});syncQuestProgress(true);updateCheckpoint();render();return true; }
 function checkStamina(){ if(P().location==='camp')return; const need=staminaToCamp(P().location); if(P().stamina<need) log('返程体力不足：返营预计透支 '+movementHealthCost(need)+' 生命；只有生命归零才会倒下并遗失远征物资。','warn'); else if(P().stamina<=need+4) log('体力接近返程下限（返营至少需要 '+need+'）。','warn'); }
 
 /* ================= 开场/启动 ================= */
@@ -4592,6 +4733,12 @@ function boot(){
   Object.keys(state.meta.techs).forEach(k=>{ if(!TECHS[k]) delete state.meta.techs[k]; });
   if(state.techSel&&!TECHS[state.techSel]) state.techSel=null;
   if(state.player.hp<=0)P().hp=maxHp();
+  /* 众证协议迁移：旧版一击败核心守卫就跳结局的存档退回控制室，不抹除已正式选择过的结局。 */
+  if(!state.flags.finaleProtocolVersion){
+    const premature=!state.meta.wardenDone&&(state.meta.guardianDown||state.screen==='ending'&&!state.endingChosen||state.combat&&state.combat.id==='guardian'&&!state.combat.truthFinal);
+    if(premature){state.meta.guardianDown=false;state.combat=null;state.screen='play';state.endingChosen=null;if(questDone('core'))setQuestState('core','active');if(LOCATIONS[P().location])P().location='layer7';state.flags.finaleProtocolMigrated=true;}
+    state.flags.finaleProtocolVersion=1;
+  }
   syncQuestProgress(false);
   if(P().location!=='camp'&&(!locationGate(P().location).ok||(['orbit','ashMoon','verdant','silent'].includes(regionForLocation(P().location))&&!shipReady()))){P().location='camp';state.combat=null;state.screen='play';state.flags.saveRelocated=true;}
   if(P().location!=='camp'&&regionForLocation(P().location)!=='settlement')queueMissingFieldNpcStories(P().location);

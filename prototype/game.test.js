@@ -51,6 +51,7 @@ source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,to
 source += `\n;Object.assign(this.api,{costText,recipeMaterialText,renderConstruction,renderSiteSheet,craft,smelt,batchQuantity,scaledCost,craftStationPresentation,skillLv,skillProgressText,careerSkillYieldMult,careerSkillCost,skillLevelEffectText,normalizeCloudCode,validGameSave,createLocalBackup,parseLocalBackup,cloudSaveSummary,fieldActionPresentation,fieldDirective,flavor});`;
 source += `\n;Object.assign(this.api,{EXPLORATION_PACING,NPC_FIELD_DISCOVERIES,explorationPacingRange,scheduledDiscoveryNeed,milestoneNeed,areaEventNeed,npcDiscoveryNeed,resourceDiscoveryNeed,applyResourceDiscovery,applyDiscoveryMilestones,applyNpcDiscoveries,fieldEncounterChance,rollFieldEncounter,recordFieldSafeAction});`;
 source += `\n;Object.assign(this.api,{NPC_NAMES,NPC_PROFILE,STORY_SCENE_ASSETS,STORY_SCENE_LOCATIONS,NPC_FIRST_CONTACT,storySceneKey,storySceneSrc,storyNpcFromGiver,storyLocationForQuest,queueStoryScene,queueNpcFirstContact,queueQuestStoryScene,flushStoryScenes,resetStoryScenes});`;
+source += `\n;Object.assign(this.api,{ENDINGS,CORE_COMPONENTS,FINALE_QUEST_IDS,FINALE_PRIMARY_IDS,FINALE_CALIBRATION_IDS,questState,questDone,finishQuest,finaleQuestContact,finaleQuestNeed,finaleTaskStatus,finaleCompletedCount,finaleCalibrationCount,coreRecoveredCount,coreInstalledCount,coreProtocolReady,progressNpcFinaleQuest,installCoreComponent,finalBossOverrides,startFinalCoreBattle,beginCoreTruth,renderCoreControl,renderEndingPanel,endingAvailability,endingDisplayName,completeFailureEnding,triggerWarden,die});`;
 source += `\n;Object.assign(this.api,{FIELD_MAP_SLOT_COORDS,FIELD_FOG_RADII,fieldNpcMapped,assignFieldMarkerSlots,fieldMapMarkerCandidates,fieldMapMarkers,fieldFogRecord,fieldFogState,acknowledgeFieldFog,fieldFogSvgMarkup,renderFieldExpedition});`;
 vm.runInContext(source,sandbox);
 const a=sandbox.api;
@@ -272,9 +273,9 @@ function hasClass(node,name){return String(node&&node.className||'').split(/\s+/
   assert.match(source,/mchip',itemUiIcon\(id\)/,'材料分类必须继续使用统一物品实物图');
   assert.match(source,/iicon">'\+itemUiIcon\(id\)/,'装备和特殊道具分类必须继续使用统一物品实物图');
   const itemIds=vm.runInContext('Object.keys(ITEMS)',sandbox);
-  assert.equal(itemIds.length,124,'当前124个物品必须全部进入独立实物图系统');
-  itemIds.forEach(id=>{const asset=path.join(__dirname,'assets','item-art-v1',id+'.webp');assert.ok(fs.existsSync(asset),id+' 缺少科幻实物图');assert.ok(fs.statSync(asset).size>1000,id+' 的科幻实物图文件异常');});
-  assert.match(source,/function itemUiIcon\(id\)\{return '<img class="item-art" data-item="'\+id\+'" src="assets\/item-art-v1\/'\+id\+'\.webp\?v=2"/,'物品图必须统一从独立 WebP 实物资源加载并刷新新版防护组件缓存');
+  assert.equal(itemIds.length,130,'当前130个物品必须全部进入科幻实物图系统');
+  const aliases=vm.runInContext('ITEM_ART_ALIAS',sandbox);itemIds.forEach(id=>{const asset=path.join(__dirname,'assets','item-art-v1',(aliases[id]||id)+'.webp');assert.ok(fs.existsSync(asset),id+' 缺少科幻实物图');assert.ok(fs.statSync(asset).size>1000,id+' 的科幻实物图文件异常');});
+  assert.match(source,/function itemUiIcon\(id\)\{const art=ITEM_ART_ALIAS\[id\]\|\|id;return '<img class="item-art" data-item="'\+id\+'" src="assets\/item-art-v1\/'\+art\+'\.webp\?v=2"/,'物品图必须统一从独立 WebP 实物资源加载，并允许终章组件复用六种不同的既有设备图');
   assert.match(css,/\.item-detail-emblem \.item-art\{[^}]*width:58px[^}]*object-fit:contain/,'详情页必须以完整比例展示实物图');
   const buildingIds=vm.runInContext('[...CAMP_BUILDINGS,...OUTPOST_BUILDINGS].map(x=>x.id)',sandbox);
   assert.equal(buildingIds.length,25,'营地与行星前哨的25座建筑必须全部进入独立实物图系统');
@@ -1266,6 +1267,36 @@ function hasClass(node,name){return String(node&&node.className||'').split(/\s+/
   const s=reset();s.tutorial={version:1,step:'done',complete:true};s.player.location='nursery';s.exploreCount.nursery=7;s.flags.prototypeOnline=true;sandbox.Math.random=()=>0;a.resetStoryScenes();a.queueNpcFirstContact('纪遥','nursery');a.resetStoryScenes();delete s.flags['fieldNpcFound_纪遥'];
   a.applyNpcDiscoveries('nursery',7);assert.equal(s.flags['fieldNpcFound_纪遥'],true,'NPC 被同一步事件迁走后也必须补记首次发现坐标');assert.equal(s.flags['storyScene_field-npc-纪遥'],true,'NPC 即使在其他任务中露过面，现场发现时也必须触发对应场景剧情');
   const npcMarker=a.fieldMapMarkers('nursery').find(marker=>marker.id==='npc:纪遥');assert.ok(npcMarker&&npcMarker.kind==='npc','NPC 发现后即使剧情状态令其迁移，也必须在初遇地图保留可辨认头像记录');const npcMap=new FakeElement(),npcNodes=[];a.renderFieldExpedition(npcMap,'nursery');(function walk(node){npcNodes.push(node);(node.children||[]).forEach(walk);})(npcMap);const npcButton=npcNodes.find(node=>String(node.className).includes('marker-npc'));assert.ok(npcButton&&/npc-portraits-v1\/ji-yao\.png/.test(npcButton.innerHTML),'现场地图必须把 NPC 头像真正渲染进标记，而不是只保留发现文本');a.resetStoryScenes();
+}
+
+/* 终章不能再由一次普通探索直接触发；六件组件与十二人见证必须形成两层进度。 */
+{
+  const s=reset();s.tutorial={version:1,step:'done',complete:true};s.quests.bridge='done';a.activateAvailableQuests(false);
+  assert.equal(a.FINALE_PRIMARY_IDS.filter(id=>a.questState(id)==='active').length,6,'舰桥之后必须同时开放六条组件任务');assert.equal(a.FINALE_CALIBRATION_IDS.filter(id=>a.questState(id)==='locked').length,6,'双人见证线必须在对应组件任务后逐条开放');
+  s.player.location='layer7';s.screen='play';a.explore('hunt');assert.equal(s.combat,null,'进入核心或点击清理威胁不得再自动开始终战');assert.equal(s.screen,'play','没有闭合众证协议时不得直接进入结局');assert.equal(a.panelView(),'core','核心舱必须拥有独立控制室页面');
+  const core=new FakeElement();a.renderCoreControl(core);const coreNodes=[];(function walk(node){coreNodes.push(node);(node.children||[]).forEach(walk);})(core);assert.ok(coreNodes.some(node=>node.className==='core-component-grid'),'控制室必须显示六个组件槽');assert.equal(coreNodes.find(node=>String(node.className).includes('core-control-dock')).children[0].disabled,true,'组件不全时最终授权按钮必须禁用');
+}
+{
+  const s=reset();s.tutorial={version:1,step:'done',complete:true};s.quests.bridge='done';a.activateAvailableQuests(false);Object.assign(s.quests,{missingZhao:'done',blackwoodTrail:'done'});Object.assign(s.inv,{scrap:6,ecomp:2});s.player.location='setHub';s.npcTarget='老乔';
+  let status=a.finaleTaskStatus(a.QUESTS.find(q=>q.id==='finale_joe'));assert.equal(status.accepted,false);s.flags.finaleAccepted_finale_joe=true;status=a.finaleTaskStatus(a.QUESTS.find(q=>q.id==='finale_joe'));assert.equal(status.ok,true,'人物剧情必须在听取委托、前置和材料均满足后才能推进');
+  a.finishQuest('finale_joe',false);assert.equal(s.inv.manualOverride,1,'完成主要人物线必须获得对应核心组件');assert.equal(a.questState('finale_zhou'),'active','取得组件后必须开放搭档的可选见证校准线');
+  a.resetStoryScenes();let completed=0;a.queueStoryScene({npc:'老乔',location:'setHub',kind:'finale',title:'多段对话测试',lines:['第一句','第二句','第三句'],onComplete:()=>completed++});a.flushStoryScenes();const all=[];(function walk(node){all.push(node);(node.children||[]).forEach(walk);})(document.body);const next=all.filter(node=>node.className==='story-cutscene-next').at(-1);assert.ok(next,'人物任务必须使用与开幕一致的全屏剧情层');next.click();assert.equal(completed,0);next.click();assert.equal(completed,0);next.click();assert.equal(completed,1,'多段剧情读完之后才允许结算任务');a.resetStoryScenes();
+}
+{
+  const s=reset();s.tutorial={version:1,step:'done',complete:true};s.player.location='layer7';s.quests.bridge='done';a.activateAvailableQuests(false);a.FINALE_PRIMARY_IDS.forEach(id=>a.finishQuest(id,false));a.CORE_COMPONENTS.forEach(component=>{assert.ok(s.inv[component.id]>0,component.id+' 必须由对应人物任务产出');a.installCoreComponent(component.id);});assert.equal(a.coreProtocolReady(),true);assert.equal(a.coreInstalledCount(),6);
+  assert.equal(a.endingAvailability('sever').ok,true,'基础断链结局必须永远可达');assert.equal(a.endingDisplayName('sever'),'孤证断链','跳过多数见证剧情时基础结局必须降级');assert.equal(a.endingAvailability('coexist').ok,false,'未做搭档剧情时不得开放受限共存');assert.equal(a.endingAvailability('cycle').ok,false,'六件组件齐全不等于真结局条件齐全');
+  a.startFinalCoreBattle();assert.equal(s.combat.truthFinal,true);assert.equal(s.combat.name,'守望者·决策人格');assert.equal(a.panelView(),'combat');s.combat.hp=0;a.winCombat();assert.equal(s.meta.guardianDown,true);assert.equal(s.screen,'ending','只有最终决策人格被击败后才能进入结局选择');assert.equal(s.endingChosen,null);assert.equal(a.questDone('core'),true);
+  a.resetStoryScenes();
+}
+{
+  const s=reset();s.tutorial={version:1,step:'done',complete:true};s.player.location='layer7';s.quests.bridge='done';a.FINALE_QUEST_IDS.forEach(id=>s.quests[id]='done');a.CORE_COMPONENTS.forEach(component=>{s.inv[component.id]=1;s.flags['coreInstalled_'+component.id]=true;});Object.assign(s.flags,{tangSaved:true,evidenceFault:true,evidenceInner:true,evidenceSignal:true,signalTruth:true});s.meta.fragments=['故障线','内鬼线','信号线'];
+  ['coexist','trial','voyage','cycle'].forEach(id=>assert.equal(a.endingAvailability(id).ok,true,'完整人物、证据与救援线必须开放结局 '+id));const full=a.finalBossOverrides();assert.equal(full.armorSegments,0,'老周与小唐的见证校准必须实际削弱最终防护');assert.ok(full.hp<a.ENEMIES.guardian.hp||full.atk<a.ENEMIES.guardian.atk,'人物校准必须真实改变最终战参数');
+}
+{
+  const s=reset();s.tutorial={version:1,step:'done',complete:true};s.player.location='layer7';s.quests.bridge='done';a.FINALE_PRIMARY_IDS.forEach(id=>s.quests[id]='done');a.CORE_COMPONENTS.forEach(component=>{s.inv[component.id]=1;s.flags['coreInstalled_'+component.id]=true;});a.startFinalCoreBattle();a.die();assert.equal(s.screen,'ending');assert.equal(s.endingChosen,'silence','最终战失败必须进入独立坏结局，而不是普通检查点死亡');assert.ok(s.meta.endingsDone.includes('silence'));a.resetStoryScenes();
+}
+{
+  const storyCss=fs.readFileSync(path.join(__dirname,'story-scenes.css'),'utf8');assert.match(storyCss,/#panel\.core-control-page\{[^}]*height:100%[^}]*overflow:hidden/,'核心控制室必须固定一屏');assert.match(storyCss,/\.core-control-scroll\{[^}]*overflow-y:auto/,'组件较多时只能在控制室中部滚动');assert.match(storyCss,/\.npc-finale-stories\{/,'NPC 人物任务必须拥有交谈页内的专用样式');assert.match(source,/function renderNpcDialogue\(box,npcName\)\{\s*renderNpcFinaleStories\(box,npcName\)/,'NPC 人物任务必须留在原交谈页而不是挤出第五个手机 Tab');assert.match(storyCss,/\.story-cutscene-core[\s\S]*story-core-breathe/,'历史真相必须使用带动效的核心剧情画面');assert.match(storyCss,/#panel\.ending-page\{[^}]*height:100%[^}]*overflow:hidden/,'多结局选择也必须保持单屏外壳');assert.match(source,/function endingAvailability\(id\)[\s\S]*finale_doctor[\s\S]*finale_mute[\s\S]*fragmentCount\(\)<3/,'结局条件必须同时关联人物任务、证据和跨周目碎片');
 }
 
 console.log('game.test.js: all assertions passed');
