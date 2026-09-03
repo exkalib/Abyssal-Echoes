@@ -9,7 +9,7 @@ import { BlobCloudSaveStore, CLOUD_BLOB_STORE } from "../lib/blob-cloud-save.mjs
 let service;
 const ALLOWED_WEB_ORIGINS = new Set([
   "http://59.110.144.30:9091",
-  "https://abyssal-echoes-survival.netlify.app",
+  "https://abyssal-echoes-ark.netlify.app",
 ]);
 
 function cloudSaveService() {

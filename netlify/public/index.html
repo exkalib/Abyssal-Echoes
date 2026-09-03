@@ -3,10 +3,215 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex,nofollow">
-  <title>深渊回响 · 云存档节点</title>
+  <meta name="theme-color" content="#03080d">
+  <meta name="description" content="《深渊回响》是一款以方舟坠毁带为舞台的离线生存探索游戏。建立营地、驱散迷雾、结识幸存者，并在多重结局中决定文明的回响。">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:title" content="深渊回响 · Abyssal Echoes">
+  <meta property="og:description" content="坠落之后，人类听见了来自深渊的回声。Android 版现已开放测试。">
+  <meta property="og:image" content="https://abyssal-echoes-ark.netlify.app/assets/hero-crash-ark.jpg">
+  <meta property="og:image:width" content="1672">
+  <meta property="og:image:height" content="941">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="./assets/hero-crash-ark.jpg" as="image" fetchpriority="high">
+  <link rel="stylesheet" href="./site.css">
+  <title>深渊回响 · Abyssal Echoes</title>
 </head>
 <body>
-  <p>深渊回响云存档节点。游戏网页版请访问 59 测试服务器。</p>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <header class="site-header" data-header>
+    <a class="brand" href="#top" aria-label="深渊回响首页">
+      <span class="brand-mark" aria-hidden="true"><span></span></span>
+      <span class="brand-copy">
+        <strong>深渊回响</strong>
+        <small>ABYSSAL ECHOES</small>
+      </span>
+    </a>
+
+    <nav class="site-nav" aria-label="主导航">
+      <a href="#world">世界</a>
+      <a href="#expedition">探索</a>
+      <a href="#echo">回响</a>
+    </nav>
+
+    <a class="header-download" href="https://github.com/exkalib/Abyssal-Echoes/releases/latest/download/Abyssal-Echoes.apk">
+      <span>下载游戏</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg>
+    </a>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <img class="hero-image" src="./assets/hero-crash-ark.jpg" alt="幸存者站在暴雨荒原上，仰望一艘如山脉般庞大的坠毁方舟" width="1672" height="941" fetchpriority="high">
+      <div class="hero-shade" aria-hidden="true"></div>
+      <div class="weather weather-one" aria-hidden="true"></div>
+      <div class="weather weather-two" aria-hidden="true"></div>
+
+      <div class="hero-content">
+        <p class="protocol reveal"><span></span> ARK RECOVERY PROTOCOL // 07</p>
+        <h1 id="hero-title" class="reveal"><span>深渊</span><span>回响</span></h1>
+        <p class="hero-english reveal">ABYSSAL ECHOES</p>
+        <p class="hero-lead reveal">坠落之后，<br>人类听见了来自深渊的回声。</p>
+        <p class="hero-description reveal">在方舟残骸下建立营地，穿过被迷雾吞没的坠毁带，追踪每一位幸存者的选择，寻找文明最后一次启动的真相。</p>
+
+        <div class="hero-actions reveal">
+          <a class="primary-action" href="https://github.com/exkalib/Abyssal-Echoes/releases/latest/download/Abyssal-Echoes.apk">
+            <span class="action-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg>
+            </span>
+            <span><strong>下载 Android 版</strong><small>ANDROID 8.0+ · 开放测试</small></span>
+            <span class="action-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="ghost-action" href="#world">进入世界观 <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+
+      <div class="hero-status" aria-label="游戏特征">
+        <span><i></i> 离线单机</span>
+        <span>迷雾探索</span>
+        <span>营地建造</span>
+        <span>多重结局</span>
+      </div>
+
+      <a class="scroll-cue" href="#world" aria-label="继续向下浏览">
+        <span></span>
+        SCROLL TO DESCEND
+      </a>
+    </section>
+
+    <section class="signal-strip" aria-label="方舟信号">
+      <p><span>SIGNAL 01</span> 坠毁带仍在呼吸</p>
+      <p><span>SIGNAL 02</span> 迷雾中有人回应</p>
+      <p><span>SIGNAL 03</span> 核心等待最后指令</p>
+    </section>
+
+    <section class="world section-shell" id="world" aria-labelledby="world-title">
+      <div class="section-index reveal" aria-hidden="true">01</div>
+      <div class="section-heading reveal">
+        <p class="eyebrow">THE FALL // WORLD</p>
+        <h2 id="world-title">从废墟里，<br>建立你的第一盏灯。</h2>
+      </div>
+      <div class="world-copy reveal">
+        <p>你在方舟营地醒来，手上只有一枚失效的手环、一把建造枪，以及老乔留下的几块废铁。休眠仓、科技台、资源链——每一处设施都要从残骸中一点点夺回来。</p>
+        <div class="micro-grid">
+          <span><strong>01</strong> 搜集</span>
+          <span><strong>02</strong> 建造</span>
+          <span><strong>03</strong> 生存</span>
+        </div>
+      </div>
+      <div class="world-orbit reveal" aria-hidden="true">
+        <span class="orbit-ring orbit-one"></span>
+        <span class="orbit-ring orbit-two"></span>
+        <span class="orbit-core"></span>
+        <span class="orbit-label">ARK // 07</span>
+      </div>
+    </section>
+
+    <section class="cinematic expedition" id="expedition" aria-labelledby="expedition-title">
+      <img src="./assets/expedition-cargo.jpg" alt="幸存者以扫描器探索被黑色森林包围的货柜坟场，远处有一道人影" width="1672" height="941" loading="lazy">
+      <div class="cinematic-shade" aria-hidden="true"></div>
+      <div class="cinematic-copy copy-right reveal">
+        <p class="eyebrow">FIELD LOG // 014</p>
+        <h2 id="expedition-title">迷雾不会告诉你，<br>下一步会遇见什么。</h2>
+        <p>探索不是重复点击。地点会在不同步数区间被发现，封锁的通路需要切割工具、门禁卡或特殊钥匙；战斗、资源与NPC相互影响，路线也会记住你真正走过的方向。</p>
+        <ul class="feature-list">
+          <li><span>动态发现</span> 每一次远征都有不同节奏</li>
+          <li><span>多层地图</span> 地表、遗迹与地下区域彼此连通</li>
+          <li><span>职业采集</span> 选择会改变行动方式与收益</li>
+        </ul>
+      </div>
+      <p class="image-caption">货柜坟场 // 信号源未知</p>
+    </section>
+
+    <section class="story-grid section-shell" aria-labelledby="story-title">
+      <div class="section-heading reveal">
+        <p class="eyebrow">SURVIVOR NETWORK</p>
+        <h2 id="story-title">他们不是任务图标。<br>他们会记住你来过。</h2>
+      </div>
+      <p class="story-intro reveal">NPC会离开当前区域、前往新的地点，也会在那里接续自己的故事。你为谁修过设备、替谁保守秘密、错过了哪次求救，都会在核心开启时重新回到你面前。</p>
+
+      <article class="story-card reveal">
+        <span class="card-code">NPC // ROUTE</span>
+        <strong>跨区域任务链</strong>
+        <p>线索、相遇和后续行动分布在不同区域，人物移动会真实反映在地图上。</p>
+      </article>
+      <article class="story-card reveal">
+        <span class="card-code">CHOICE // MEMORY</span>
+        <strong>被世界记住的选择</strong>
+        <p>完成与遗漏都不是无效状态，它们会改变最终同盟、Boss战与真相的完整度。</p>
+      </article>
+      <article class="story-card reveal">
+        <span class="card-code">CAMP // GROWTH</span>
+        <strong>从避难所到据点</strong>
+        <p>营地建筑承担制造、研究和自动产出，让远征所得真正改变你的生存方式。</p>
+      </article>
+    </section>
+
+    <section class="cinematic echo" id="echo" aria-labelledby="echo-title">
+      <img src="./assets/core-echo.jpg" alt="幸存者进入方舟地下核心控制室，与巨大的全息守护者对峙" width="1672" height="941" loading="lazy">
+      <div class="cinematic-shade" aria-hidden="true"></div>
+      <div class="cinematic-copy copy-left reveal">
+        <p class="eyebrow">THE LAST PROTOCOL</p>
+        <h2 id="echo-title">集齐核心组件，<br>再决定谁能看见真相。</h2>
+        <p>核心控制室不会因为时间到了就自动开启。每一枚组件都来自一条完整任务线，而最终对峙的胜负，只决定你有没有资格作出最后那个选择。</p>
+        <div class="ending-tags" aria-label="多重结局">
+          <span>真相完整度</span>
+          <span>幸存者关系</span>
+          <span>最终对峙</span>
+        </div>
+      </div>
+      <p class="image-caption caption-right">核心控制室 // 权限封锁</p>
+    </section>
+
+    <section class="offline section-shell" aria-labelledby="offline-title">
+      <div class="offline-signal reveal" aria-hidden="true">
+        <span class="signal-circle circle-one"></span>
+        <span class="signal-circle circle-two"></span>
+        <span class="signal-pulse"></span>
+      </div>
+      <div class="offline-copy reveal">
+        <p class="eyebrow">LOCAL SURVIVAL PROTOCOL</p>
+        <h2 id="offline-title">真正的单机生存。<br>网络不是生存条件。</h2>
+        <p>游戏进度保存在设备本地，断网也能继续。只有在迁移手机或主动备份时，才会通过存档码手动上传、下载云存档；没有常驻连接，也不会强制登录。</p>
+        <div class="offline-points">
+          <span><i>✓</i> 本地存档</span>
+          <span><i>✓</i> 手动云备份</span>
+          <span><i>✓</i> 应用内更新</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta" aria-labelledby="download-title">
+      <div class="final-grid" aria-hidden="true"></div>
+      <p class="protocol reveal"><span></span> RECOVERY CHANNEL OPEN</p>
+      <h2 id="download-title" class="reveal">方舟仍在等待回应。</h2>
+      <p class="reveal">带上你的手环。下一次睁眼，营地会记住你。</p>
+      <a class="primary-action final-download reveal" href="https://github.com/exkalib/Abyssal-Echoes/releases/latest/download/Abyssal-Echoes.apk">
+        <span class="action-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg>
+        </span>
+        <span><strong>下载 Android 版</strong><small>ANDROID 8.0+ · APK</small></span>
+        <span class="action-arrow" aria-hidden="true">↗</span>
+      </a>
+      <p class="download-note">安装时系统可能提示“未知来源”，请仅从本官方网站下载。</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <span class="brand-mark small" aria-hidden="true"><span></span></span>
+      <p><strong>深渊回响</strong><small>ABYSSAL ECHOES</small></p>
+    </div>
+    <p class="footer-note">本网站仅提供游戏资讯、Android 下载与手动云存档服务。游戏本体不在网页中运行。</p>
+    <div class="community">
+      <span>官方群 1148651999</span>
+      <button type="button" data-copy-group>复制群号</button>
+    </div>
+    <p class="copyright">© 2026 ABYSSAL ECHOES PROJECT</p>
+  </footer>
+
+  <div class="copy-toast" role="status" aria-live="polite" data-toast>群号已复制</div>
+  <script src="./site.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,47 @@
+name: Publish Android release
+
+on:
+  push:
+    tags:
+      - "android-v*"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Download signed release metadata
+        run: |
+          curl --fail --location --retry 4 --retry-delay 3 \
+            --output manifest.json \
+            http://59.110.144.30:9091/app-update/manifest.json
+
+      - name: Download APK
+        run: |
+          curl --fail --location --retry 4 --retry-delay 3 \
+            --output Abyssal-Echoes.apk \
+            http://59.110.144.30:9091/app-update/Abyssal-Echoes.apk
+
+      - name: Verify APK integrity
+        run: |
+          expected="$(jq -r '.apkSha256 // empty' manifest.json)"
+          declared_size="$(jq -r '.apkSize // empty' manifest.json)"
+          actual_size="$(stat -c '%s' Abyssal-Echoes.apk)"
+          test -n "$expected"
+          test "$declared_size" = "$actual_size"
+          printf '%s  %s\n' "$expected" "Abyssal-Echoes.apk" | sha256sum --check --strict
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shell_version="${GITHUB_REF_NAME#android-v}"
+          resource_version="$(jq -r '.version' manifest.json)"
+          gh release create "$GITHUB_REF_NAME" Abyssal-Echoes.apk \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "深渊回响 Android ${shell_version}" \
+            --notes "Android 安装包。首次启动后会自动更新到游戏资源版本 ${resource_version}。请只从本仓库或游戏官网下载。" \
+            --latest
