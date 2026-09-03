@@ -56,10 +56,16 @@ ssh "$remote_host" "install -d -o nobody -g nobody -m 700 /var/lib/abyss-echo; i
 
 ssh "$remote_host" "mkdir -p '$remote_dir'"
 scp "$work_dir/$bundle" "$remote_host:$remote_dir/$bundle"
-scp "$apk_source" "$remote_host:$remote_dir/Abyssal-Echoes.apk.new"
+remote_apk_sha256="$(ssh "$remote_host" "if [ -f '$remote_dir/Abyssal-Echoes.apk' ]; then sha256sum '$remote_dir/Abyssal-Echoes.apk' | cut -d' ' -f1; fi")"
+if [[ "$remote_apk_sha256" != "$apk_sha256" ]]; then
+  scp "$apk_source" "$remote_host:$remote_dir/Abyssal-Echoes.apk.new"
+  ssh "$remote_host" "chmod 644 '$remote_dir/Abyssal-Echoes.apk.new' && mv '$remote_dir/Abyssal-Echoes.apk.new' '$remote_dir/Abyssal-Echoes.apk'"
+else
+  echo "服务器 APK 校验一致，跳过重复上传"
+fi
 scp "$work_dir/manifest.json" "$remote_host:$remote_dir/manifest.json.new"
 scp "$work_dir/manifest.sig" "$remote_host:$remote_dir/manifest.sig.new"
-ssh "$remote_host" "chmod 644 '$remote_dir/$bundle' '$remote_dir/Abyssal-Echoes.apk.new' '$remote_dir/manifest.json.new' '$remote_dir/manifest.sig.new' && mv '$remote_dir/Abyssal-Echoes.apk.new' '$remote_dir/Abyssal-Echoes.apk' && mv '$remote_dir/manifest.sig.new' '$remote_dir/manifest.sig' && mv '$remote_dir/manifest.json.new' '$remote_dir/manifest.json'"
+ssh "$remote_host" "chmod 644 '$remote_dir/$bundle' '$remote_dir/manifest.json.new' '$remote_dir/manifest.sig.new' && mv '$remote_dir/manifest.sig.new' '$remote_dir/manifest.sig' && mv '$remote_dir/manifest.json.new' '$remote_dir/manifest.json'"
 
 # Safari/浏览器直接读取站点根目录；资源先同步，入口文件最后切换，避免页面引用到尚未上传的文件。
 ssh "$remote_host" "mkdir -p '$web_dir/assets'"
