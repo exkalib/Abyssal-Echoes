@@ -538,6 +538,11 @@ const NPC_FIELD_DISCOVERIES={
   /* 纪遥必须早于培养室原型终端事件被定位，否则事件会把她迁往档案区。 */
   '纪遥':{at:'nursery',range:[5,7]},'哑叔':{at:'layer6',range:[10,16]},
 };
+/* NPC 换到另一个野外地点后，不会凭“已经认识”自动出现在地图上。
+   每段迁移都有独立搜索进度，发现时接续对应的现场剧情。 */
+const NPC_FIELD_RELOCATIONS={
+  '阿拓':{underworks:{range:[3,6],requireFlag:'depthLampBuilt',title:'井壁上传来的旧暗号',report:'你从采掘机噪声里辨出三短一长的敲击。阿拓已经先行抵达船底维修井，正在一处断裂运输轨旁等你。',lines:['维修井深处传来三短一长的金属敲击——和旧矿井塌方后听见的暗号一模一样。','你循声找到阿拓。他正蹲在断裂的运输轨旁，把最后一盏矿灯拧进支架：“我说过会先下来探路。这里比上面大得多。”','他用粉笔在井壁画出两条轨线：“从这里开始一起查。先把废弃运输轨修正，后面才能把深层矿料稳定送出去。”'],action:'与阿拓汇合'}},
+};
 const NPC_PROFILE={
   '老乔':{portrait:'old-joe',role:'坠毁带测绘员',unit:'前哨导师',bio:'旧地图只能带你抵达入口，真正可靠的路线都来自他的现场经验。',tone:'scout'},
   '陈嫂':{portrait:'aunt-chen',role:'生保区照料人',unit:'菌圃培育',bio:'她把有限的食物、药剂和活体样本维持在一条仍能称作生活的线上。',tone:'bio'},
@@ -602,7 +607,7 @@ function repairMinerProgression(announce){
 }
 function npcLocation(name){
   if(name==='老乔')return tutorialActive()?'camp':'setHub';
-  if(name==='阿拓')return state.flags.depthLampBuilt&&state.visited&&state.visited.underworks?'underworks':'oldMine';
+  if(name==='阿拓')return state.flags.depthLampBuilt?'underworks':'oldMine';
   if(name==='林薇')return questDone('seal')?'setHub':'layer3';
   if(name==='小唐')return state.flags.tangLost?null:(state.flags.tangSaved?'setGarrison':'layer3');
   if(name==='陈博士')return questDone('signalTrace')?'setBio':'layer4';
@@ -614,7 +619,23 @@ function npcLocation(name){
   if(['老周','阿珍'].includes(name))return 'setWorkshop';
   return null;
 }
-function fieldNpcVisible(name,id){const entry=NPC_FIELD_DISCOVERIES[name];if(!entry||entry.at!==id||npcLocation(name)!==id)return true;return !!state.flags['fieldNpcFound_'+name];}
+function fieldNpcDiscoveryEntry(name,id){
+  const first=NPC_FIELD_DISCOVERIES[name];
+  if(first&&first.at===id)return first;
+  const relocated=NPC_FIELD_RELOCATIONS[name]&&NPC_FIELD_RELOCATIONS[name][id];
+  if(relocated)return Object.assign({relocated:true},relocated);
+  if(id&&LOCATIONS[id]&&id!=='camp'&&regionForLocation(id)!=='settlement'&&storyNpcMet(name))return {range:[3,6],relocated:true};
+  return null;
+}
+function fieldNpcDiscoveryFlag(name,id){return 'fieldNpcFound_'+name+'_'+id;}
+function fieldNpcStoryFlag(name,id){return 'fieldNpcStory_'+name+'_'+id;}
+function fieldNpcSearchStartFlag(name,id){return 'fieldNpcSearchStart_'+name+'_'+id;}
+function fieldNpcSearchStart(name,id,entry){
+  const key=fieldNpcSearchStartFlag(name,id);
+  if(state.flags[key]==null)state.flags[key]=entry&&entry.relocated?exploreAttempts(id):0;
+  return Math.max(0,Number(state.flags[key])||0);
+}
+function fieldNpcVisible(name,id){return npcLocation(name)===id&&(!fieldNpcDiscoveryEntry(name,id)||!!state.flags[fieldNpcDiscoveryFlag(name,id)]);}
 function npcsAt(id){return NPC_NAMES.filter(name=>npcLocation(name)===id&&fieldNpcVisible(name,id));}
 const SETTLEMENT_SHOP = {
   cloth:{buy:{crystal:1,amount:3},sell:{amount:5,crystal:1}},
@@ -631,7 +652,7 @@ const SETTLEMENT_COMMISSIONS = {
 };
 function locationSceneDescription(id){
   if(id==='joeCamp'&&!tutorialActive())return '前哨仍保持供电，人员已经撤回曙光聚居地。';
-  if(id==='oldMine'&&state.flags.depthLampBuilt)return state.visited.underworks?'塌方矿道已经打通，旧采掘机恢复待机；阿拓已转移到船底维修井继续勘探。':'塌方矿道已经打通，旧采掘机恢复待机；阿拓会留在这里，直到你亲自抵达船底维修井。';
+  if(id==='oldMine'&&state.flags.depthLampBuilt)return '塌方矿道已经打通，旧采掘机恢复待机；阿拓已带着矿灯先行转移到船底维修井。';
   return LOCATIONS[id].desc;
 }
 
@@ -897,7 +918,8 @@ const QUESTS = [
   {id:'breachNest',line:'surface',chapter:'地表',title:'裂谷巢穴',giver:'哈里斯',type:'search',after:['channelCache'],target:'coalRift',count:2,objective:'沿排水渠进入碳脉裂谷，调查与维修井相连的兽穴。',reward:{items:{coal:6},flag:'nestSealed'},done:'你封住一条通往营地的兽道。今后的夜袭强度降低。'},
   {id:'minerBlueprint',line:'special',chapter:'隐藏区域',title:'塌方后的矿灯',giver:'矿工阿拓',type:'flag',after:['ridgeCache'],targetFlag:'bp_miningHarness',objective:'发现旧世界矿井，救出矿工阿拓并向他学习改造采掘外骨骼。',reward:{items:{copperScrap:3}},done:'阿拓留在矿井维护采掘机，并把【采掘外骨骼】蓝图交给了你。'},
   {id:'deepLamp',line:'surface',chapter:'地下入口',title:'照进船底',giver:'矿工阿拓',type:'flag',after:['minerBlueprint'],target:'oldMine',targetFlag:'depthLampBuilt',objective:'在旧世界矿井用采掘机灯组装配【深层探照灯】。',reward:{items:{ration:3}},done:'普通光束照不穿的粉尘被刺破，船底维修井的深层平台现在可以进入。'},
-  {id:'underworksCache',line:'surface',chapter:'资源据点',title:'维修井采掘线',giver:'矿工阿拓',type:'search',after:['deepLamp'],target:'underworks',count:2,objective:'进入船底维修井调查2次，修正废弃采掘运输轨。',reward:{items:{coal:5,copperScrap:3}},done:'船底维修井被登记为深层资源据点候选，未来可接入自动采掘建筑。'},
+  {id:'findAtuoUnderworks',line:'surface',chapter:'地下入口',title:'井下三短一长',giver:'矿工阿拓',type:'flag',after:['deepLamp'],target:'underworks',targetFlag:'fieldNpcFound_阿拓_underworks',objective:'进入船底维修井继续勘察，重新定位先行下井的阿拓。',done:'三短一长的敲击穿过井壁。你在断裂运输轨旁重新找到了阿拓。'},
+  {id:'underworksCache',line:'surface',chapter:'资源据点',title:'维修井采掘线',giver:'矿工阿拓',type:'search',after:['findAtuoUnderworks'],target:'underworks',count:2,objective:'与阿拓汇合后继续调查2次，共同修正废弃采掘运输轨。',reward:{items:{coal:5,copperScrap:3}},done:'船底维修井被登记为深层资源据点候选，未来可接入自动采掘建筑。'},
 
   {id:'rescueTang',line:'survivor',chapter:'工程区',title:'辐射门后的人',giver:'林薇',type:'flag',after:['drain'],targetFlag:'tangResolved',objective:'进入工程区，决定如何处理被困在高辐射维修井里的小唐。',done:'维修井的命运已经确定。林薇接受了你的选择，却不会忘记它。'},
   {id:'findAyong',line:'survivor',chapter:'生活区',title:'阿珍的丈夫',giver:'阿珍',type:'search',after:['drain'],target:'layer4',count:3,objective:'前往实验室调查3次，追查导航员阿勇失踪后的去向。',done:'安保记录证明阿勇没有死：他因质疑航线被押往军事区。'},
@@ -1698,9 +1720,24 @@ function nextDiscoveryMilestone(id){
   return (DISCOVERY_MILESTONES[id]||[]).map((rule,index)=>({rule,need:milestoneNeed(id,index,rule)})).filter(x=>!locationRevealed(x.rule.reveal)&&count<x.need).sort((a,b)=>a.need-b.need)[0]||null;
 }
 function areaEventNeed(id,index){return scheduledDiscoveryNeed('event',id,index,explorationPacingRange('event',id,index));}
-function npcDiscoveryNeed(name){const entry=NPC_FIELD_DISCOVERIES[name];return entry?scheduledDiscoveryNeed('npc',entry.at,NPC_NAMES.indexOf(name),entry.range):Infinity;}
+function npcDiscoveryNeed(name,id){
+  const first=NPC_FIELD_DISCOVERIES[name];id=id||(first&&first.at);
+  const entry=fieldNpcDiscoveryEntry(name,id);
+  return entry?scheduledDiscoveryNeed('npc',id,NPC_NAMES.indexOf(name),entry.range):Infinity;
+}
 function applyNpcDiscoveries(id,count){
-  Object.entries(NPC_FIELD_DISCOVERIES).forEach(([name,entry])=>{const flag='fieldNpcFound_'+name;if(entry.at!==id||state.flags[flag]||count<npcDiscoveryNeed(name)||entry.requireFlag&&!state.flags[entry.requireFlag])return;state.flags[flag]=true;state.flags['fieldNpcStory_'+name]=true;const current=npcLocation(name),present=current===id,text=present?'你从环境噪声里分离出一段微弱的人类信号。坐标确认：'+name+'仍在【'+LOCATIONS[id].name+'】。':'测绘缓存还原出一段先前漏记的人类信号：'+name+'最初是在【'+LOCATIONS[id].name+'】被发现的。现场坐标已经补回地图。';setFieldReport(id,'发现幸存者信号',text,'good');log('◉ 发现现场联系人【'+name+'】。','good');if(!queueNpcFirstContact(name,id))queueFieldNpcDiscovery(name,id);});
+  NPC_NAMES.forEach(name=>{
+    if(npcLocation(name)!==id)return;
+    const entry=fieldNpcDiscoveryEntry(name,id),flag=fieldNpcDiscoveryFlag(name,id);if(!entry||state.flags[flag]||entry.requireFlag&&!state.flags[entry.requireFlag])return;
+    const progress=Math.max(0,count-fieldNpcSearchStart(name,id,entry));if(progress<npcDiscoveryNeed(name,id))return;
+    state.flags[flag]=true;
+    /* 初始坐标保留旧标志只为兼容内部任务条件；地图永远只读取带地点的标志。 */
+    if(NPC_FIELD_DISCOVERIES[name]&&NPC_FIELD_DISCOVERIES[name].at===id)state.flags['fieldNpcFound_'+name]=true;
+    state.flags[fieldNpcStoryFlag(name,id)]=true;
+    const text=entry.report||('你从环境噪声里分离出一段微弱的人类信号。坐标确认：'+name+'就在【'+LOCATIONS[id].name+'】。');
+    setFieldReport(id,entry.relocated?'重新发现现场联系人':'发现幸存者信号',text,'good');log('◉ '+(entry.relocated?'重新定位':'发现现场联系人')+'【'+name+'】。','good');
+    if(!queueNpcFirstContact(name,id))queueFieldNpcDiscovery(name,id,entry);
+  });
 }
 function resourceSiteOf(id){
   const loc=LOCATIONS[id];if(!loc||id==='camp'||!loc.loot)return null;if(loc.resourceSite)return loc.resourceSite;
@@ -1768,14 +1805,13 @@ const FIELD_MARKER_SLOT_PREFERENCES={
 };
 const FIELD_FOG_RADII={resource:[19,15],npc:[17,14],mission:[18,14],operation:[18,14],action:[17,14],threat:[15,12],system:[18,14],route:[15,12]};
 function fieldNpcMapped(name,id){
-  const entry=NPC_FIELD_DISCOVERIES[name];
-  if(entry&&entry.at===id)return !!state.flags['fieldNpcFound_'+name]||storyNpcMet(name)&&exploreAttempts(id)>0;
-  return storyNpcMet(name)&&exploreAttempts(id)>0;
+  if(npcLocation(name)!==id)return false;
+  const entry=fieldNpcDiscoveryEntry(name,id);if(!entry)return true;
+  fieldNpcSearchStart(name,id,entry);
+  return !!state.flags[fieldNpcDiscoveryFlag(name,id)];
 }
 function fieldNpcMarkerNames(id){
-  const names=new Set(NPC_NAMES.filter(name=>npcLocation(name)===id));
-  Object.entries(NPC_FIELD_DISCOVERIES).forEach(([name,entry])=>{if(entry.at===id&&fieldNpcMapped(name,id))names.add(name);});
-  return [...names];
+  return NPC_NAMES.filter(name=>npcLocation(name)===id);
 }
 function fieldHasLocalQuestAction(id){
   if(QUESTS.some(q=>questActive(q.id)&&q.type==='submit'&&q.turnAt===id))return true;
@@ -1880,7 +1916,10 @@ function performFieldOperation(id){
   state.inv[op.grant]=(state.inv[op.grant]||0)+1; state.flags[op.flag]=true;
   divider();log('现场操作完成：【'+op.name+'】。','sys');log('获得关键道具：'+ITEMS[op.grant].name+'。','good');
   if(op.reveal)discoverLocation(op.reveal,true);
-  if(id==='assembleLamp'&&repairMinerProgression(false))log('获得特殊蓝图【采掘外骨骼】· 可在基础工作台制作。','good');
+  if(id==='assembleLamp'){
+    if(repairMinerProgression(false))log('获得特殊蓝图【采掘外骨骼】· 可在基础工作台制作。','good');
+    queueStoryScene({npc:'阿拓',location:'oldMine',onceKey:'npc-depart-阿拓-underworks',kind:'chapter',eyebrow:'CONTACT MOVING // DEEP ACCESS',title:'先下井的人',lines:['探照灯刺穿粉尘时，阿拓已经把两套绳索扣上升降架。','“我先去船底维修井。下面的旧采掘轨要是还能动，我们就能把矿料直接送回地表。”','他在无线电里敲了三短一长：“别追着地图上的头像走。到了井下继续搜，听见这个暗号再来找我。”'],action:'稍后在维修井汇合'});
+  }
   divider();setLogOpen(true);state.siteSheet=null;syncQuestProgress(true);render();return true;
 }
 function confirmEntry(id){
@@ -2220,7 +2259,11 @@ const STORY_CINEMATIC_SKIP=new Set(['rescueTang','freeAyong']);
 function storySceneFlag(key){return 'storyScene_'+key;}
 function storyNpcMet(name){return !!(state&&state.flags&&state.flags['storyNpcMet_'+name]);}
 function markStoryNpcMet(name){if(state&&state.flags&&name)state.flags['storyNpcMet_'+name]=true;}
-function markFieldNpcContact(name,location){const entry=NPC_FIELD_DISCOVERIES[name];if(entry&&entry.at===location&&state&&state.flags)state.flags['fieldNpcFound_'+name]=true;}
+function markFieldNpcContact(name,location){
+  if(!state||!state.flags||npcLocation(name)!==location||!fieldNpcDiscoveryEntry(name,location))return;
+  state.flags[fieldNpcDiscoveryFlag(name,location)]=true;
+  if(NPC_FIELD_DISCOVERIES[name]&&NPC_FIELD_DISCOVERIES[name].at===location)state.flags['fieldNpcFound_'+name]=true;
+}
 function queueStoryScene(spec){
   const system=!!(spec&&spec.system);
   if(!spec||(!system&&(!spec.npc||!NPC_NAMES.includes(spec.npc)))||tutorialActive())return false;
@@ -2242,14 +2285,16 @@ function queueNpcFirstContact(name,location,text){
   markStoryNpcMet(name);
   return queueStoryScene({npc:name,location,onceKey:'npc-'+name,kind:'contact',eyebrow:'FIRST CONTACT // '+((LOCATIONS[location]&&LOCATIONS[location].zone)||'UNKNOWN'),title:'发现幸存者 · '+name,text:text||NPC_FIRST_CONTACT[name],action:'走近查看'});
 }
-function queueFieldNpcDiscovery(name,location){
+function queueFieldNpcDiscovery(name,location,entry){
   if(!name)return false;
   markFieldNpcContact(name,location);
   markStoryNpcMet(name);
-  return queueStoryScene({npc:name,location,onceKey:'field-npc-'+name,kind:'contact',eyebrow:'SURVIVOR SIGNAL // '+((LOCATIONS[location]&&LOCATIONS[location].zone)||'UNKNOWN'),title:'信号确认 · '+name,text:NPC_FIRST_CONTACT[name],action:'建立联系'});
+  entry=entry||fieldNpcDiscoveryEntry(name,location)||{};
+  const place=LOCATIONS[location]&&LOCATIONS[location].name||'未知区域',lines=entry.lines||[name+'的现场信号已经重新接入手环。对方确实抵达了【'+place+'】，但在你找到这里之前，地图不会替你标出任何坐标。'];
+  return queueStoryScene({npc:name,location,onceKey:'field-npc-'+name+'-'+location,kind:'contact',eyebrow:(entry.relocated?'CONTACT REACQUIRED':'SURVIVOR SIGNAL')+' // '+((LOCATIONS[location]&&LOCATIONS[location].zone)||'UNKNOWN'),title:entry.title||((entry.relocated?'重新汇合 · ':'信号确认 · ')+name),lines,action:entry.action||'建立联系'});
 }
 function queueMissingFieldNpcStories(location){
-  Object.entries(NPC_FIELD_DISCOVERIES).forEach(([name,entry])=>{const flag='fieldNpcStory_'+name;if(entry.at!==location||!state.flags['fieldNpcFound_'+name]||state.flags[flag])return;state.flags[flag]=true;if(!queueNpcFirstContact(name,location))queueFieldNpcDiscovery(name,location);});
+  NPC_NAMES.forEach(name=>{const entry=fieldNpcDiscoveryEntry(name,location),flag=fieldNpcStoryFlag(name,location);if(npcLocation(name)!==location||!entry||!state.flags[fieldNpcDiscoveryFlag(name,location)]||state.flags[flag])return;state.flags[flag]=true;if(!queueNpcFirstContact(name,location))queueFieldNpcDiscovery(name,location,entry);});
 }
 function queueQuestStoryScene(q,phase){
   const npc=q&&storyNpcFromGiver(q.giver);if(!npc)return false;
@@ -3143,7 +3188,7 @@ function renderFieldMarkerDrawer(drawer,marker,id){
     body.appendChild(el('p','',site?'已标定产出：'+site.yield.map(key=>ITEMS[key].name).join(' · '):'资源读数缺失'));
     action('开始'+resourceActionVerb(site,LOCATIONS[id].profile),(remaining?'储量 '+remaining+'/'+gatherLimit(id)+' · ':'储量耗尽 · ')+(careerStatus?careerStatus.text:work.text),!ready,()=>explore('gather'),'resource');
   }else if(marker.kind==='npc'){
-    const profile=npcProfile(marker.target),current=npcLocation(marker.target),present=current===id;body.appendChild(el('p','',profile.role+' · '+profile.bio+(present?'':' 当前信号已转移至【'+(LOCATIONS[current]&&LOCATIONS[current].name||'未知地点')+'】，这里保留首次接触记录。')));if(present)action('与'+marker.target+'交谈','查看人物、任务与当前区域情报',false,()=>openNpcPanel(marker.target),'npc');else action('查看当前坐标','打开区域地图定位 '+(LOCATIONS[current]&&LOCATIONS[current].name||'行踪未知'),!current||!LOCATIONS[current],()=>{state.mapSelected=current;openContextMap();},'npc');
+    const profile=npcProfile(marker.target);body.appendChild(el('p','',profile.role+' · '+profile.bio));action('与'+marker.target+'交谈','查看人物、任务与当前区域情报',false,()=>openNpcPanel(marker.target),'npc');
   }else if(marker.kind==='route'){
     const dest=marker.target,gate=locationGate(dest),obstacle=routeObstacle(id,dest),blocked=obstacle&&!state.flags[obstacle.flag],desc=blocked?obstacle.text:gate.ok?LOCATIONS[dest].desc:gate.text;
     body.appendChild(el('p','',desc));action(gate.ok&&!blocked?'前往'+LOCATIONS[dest].name:'查看通行条件',gate.ok&&!blocked?'体力 -'+moveCost(id,dest):(blocked?obstacle.action:gate.text),false,()=>move(dest),'route');
@@ -4309,10 +4354,8 @@ function explore(mode){
   const mappedBefore=new Set(fieldMapMarkerCandidates(id).filter(marker=>marker.revealed).map(marker=>marker.id));
   state.exploreCount[id]=exploreAttempts(id)+1;
   const attempts=exploreAttempts(id);
-  /* 先结算现场联系人，避免同一步触发的剧情事件把 NPC 迁回营地后跳过首次发现。 */
-  applyNpcDiscoveries(id,attempts);
   const outcome=resolveInvestigation(id);
-  /* 区域事件可能在本次勘察中刚好救出或迁移 NPC；事件结算后再补一次，保证剧情与地图头像同步出现。 */
+  /* 先结算本步事件再确认联系人位置：已经动身的 NPC 不能在旧坐标被补记或播放剧情。 */
   applyNpcDiscoveries(id,attempts);
   applyResourceDiscovery(id,attempts);applyDiscoveryMilestones(id,attempts);
   syncQuestProgress(true);const mappedAfter=fieldMapMarkers(id),newMarkerIds=mappedAfter.map(marker=>marker.id).filter(markerId=>!mappedBefore.has(markerId)),nextFog=fieldFogState(id,mappedAfter);pendingFieldReveal=newMarkerIds.length?{location:id,markerIds:newMarkerIds,complete:nextFog.freshComplete}:null;if(P().hp<=0){die();return;}
