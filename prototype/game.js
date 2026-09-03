@@ -1047,6 +1047,7 @@ const FINALE_CALIBRATION_IDS=CORE_COMPONENTS.map(component=>component.calibratio
 /* ================= 营地建筑 ================= */
 const CAMP_BUILDINGS = [
   { id:'quarters',name:'休眠仓',icon:'🛏️',kind:'rest',tone:'cyan',desc:'休息、恢复并记录存档点',cost:{scrap:4,wood:4},upgrades:[{tech:'surv_1',name:'医疗床铺',cost:{cloth:5,wood:4},effect:'感染休息恢复提高至85%'},{tech:'surv_5',name:'深层维生舱',cost:{steel:3,biocore:4},effect:'感染休息也可完全恢复'}]},
+  { id:'research',name:'科技台',icon:'⌬',kind:'research',tone:'cyan',desc:'接入技术资料并推演七类科技路线',cost:{scrap:2,wood:2}},
   { id:'smelt',name:'熔炼炉',icon:'🔥',kind:'smelt',tone:'orange',desc:'把残骸与矿物冶炼成金属',cost:{scrap:6,stone:6},upgrades:[{tech:'make_3',name:'鼓风熔炉',cost:{ingot:3,copperIngot:2},effect:'每次基础熔炼额外产出1份'},{tech:'make_4',name:'电弧熔炉',cost:{steel:4,coal:6},effect:'每次基础熔炼额外产出2份'},{tech:'make_8',name:'真空合金炉',cost:{steel:8,ecomp:6,titaniumOre:5},effect:'允许稳定冶炼钛合金'},{tech:'make_11',name:'场约束材料炉',cost:{titanium:6,superconductor:3,nanites:2},effect:'高阶材料产率保持稳定，不受杂质影响'}]},
   { id:'work',name:'制造工坊',icon:'🔨',kind:'craft',st:'work',tone:'blue',desc:'打造武器与特殊工程装备',cost:{scrap:4,wood:4,stone:2},upgrades:[{tech:'make_4',name:'精密工坊',cost:{ingot:4,steel:2},effect:'提高耐久，降低袭营受损概率'},{tech:'make_5',name:'核心装配间',cost:{steel:5,core:1},effect:'进一步提高设施耐久'}]},
   { id:'warehouse',name:'仓储舱',icon:'📦',kind:'storage',tone:'blue',desc:'分类保存材料并降低力竭掉落',cost:{wood:6,stone:4,scrap:4},upgrades:[{tech:'make_3',name:'分区仓库',cost:{wood:6,ingot:3},effect:'力竭时远征材料损失降至30%'},{tech:'make_5',name:'自动仓储阵列',cost:{steel:6,ecomp:4},effect:'力竭时远征材料损失降至25%'}]},
@@ -2526,7 +2527,8 @@ function workspaceExit(label,fn,options){
   const button=el('button',(options.buttonClass?options.buttonClass+' ':'')+'ui-workspace__exit',uiIcon('close')+'<span>'+copy+'</span>');
   button.type='button';button.setAttribute('aria-label',options.ariaLabel||label);button.onclick=fn;footer.appendChild(button);return footer;
 }
-function buildingUiIcon(id){return '<img class="building-art" data-building="'+id+'" src="assets/building-art-v1/'+id+'.webp?v=1" alt="" draggable="false">';}
+const BUILDING_ART_EXT={research:'png'};
+function buildingUiIcon(id){const ext=BUILDING_ART_EXT[id]||'webp';return '<img class="building-art" data-building="'+id+'" src="assets/building-art-v1/'+id+'.'+ext+'?v=1" alt="" draggable="false">';}
 function btn(a){ const b=el('button',a.cls, a.label+(a.cost?'<span class="cost">'+a.cost+'</span>':'')); if(a.disabled)b.disabled=true; b.onclick=a.fn; return b; }
 function grid(box,items,one){ const g=el('div','grid'+(one?' one':'')); items.forEach(a=>g.appendChild(btn(a))); box.appendChild(g); }
 function tileCard(icon,name,desc,onclick,opts){ opts=opts||{}; const b=el('button','tilecard'+(opts.lock?' lock':''));
@@ -2629,8 +2631,8 @@ function renderTutorialPanel(box){
     return tutorialDialog(scene,'先戴上这个。它会把你的身体状态和方舟终端接起来。','接过手环',grantTutorialBracelet);
   }
   if(step==='bracelet'){
-    scene.appendChild(el('div','tutorial-system-toast','<small>ARK BAND // LINKED</small><b>个人终端已接入</b><span>状态栏与 4 个功能入口已解锁</span>'));
-    return tutorialDialog(scene,'上面会显示生命和行动能源；下面四个入口依次是角色、背包、科技和任务。先认清它们，等我走后再慢慢看。','记住了',()=>setTutorialStep('builder_offer'));
+    scene.appendChild(el('div','tutorial-system-toast','<small>ARK BAND // LINKED</small><b>个人终端已接入</b><span>状态栏与 3 个功能入口已解锁</span>'));
+    return tutorialDialog(scene,'上面会显示生命和行动能源；下面三个入口依次是角色、背包和任务。建筑与研究设备都留在营地，外出时不会占你的界面。','记住了',()=>setTutorialStep('builder_offer'));
   }
   if(step==='builder_offer'){
     tutorialReward(scene,'icon-builder','模块建造枪','营地模块打印 · 基础结构校准','CONSTRUCTION TOOL');
@@ -2653,7 +2655,7 @@ function renderTutorialPanel(box){
       setTutorialStep('gather_action'); });
   }
   if(step==='gather_action'){
-    return tutorialDialog(scene,'不错。以后每次采集都会让你更熟练,精通等级会自己涨。营地里其他人也有本事,找他们花材料学就是了。最后一样——拿着地图,别在外面迷路。','收下小地图',grantTutorialMap);
+    return tutorialDialog(scene,'不错。以后每次采集都会让你更熟练,精通等级会自己涨。剩下的材料正好够搭一座科技台；研究只能回营地操作设备。最后一样——拿着地图,别在外面迷路。','收下小地图',grantTutorialMap);
   }
   if(step==='farewell'){
     scene.appendChild(el('section','tutorial-minimap','<header><small>WORLD / LOCAL MAP // 01</small><b>初始测绘</b><em>ONLINE</em></header><div class="mini-route"><span class="mini-node current"><i></i><b>营地</b></span><span class="mini-line"></span><span class="mini-node"><i></i><b>地表坠毁带</b></span></div><div class="mini-known-points"><small>地表坠毁带 · 已知坐标</small><span>◈ 坠毁带入口</span><span>▰ 曙光聚居地</span></div><p>世界地图、局部地图与“开始探索”已解锁</p>'));
@@ -2672,6 +2674,8 @@ function renderTop(){
 }
 function renderTabbar(){ document.querySelectorAll('#tabbar .tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===state.tab)); const sb=$('set-btn'); if(sb) sb.classList.toggle('on', state.tab==='set'); }
 function normalizePanelNavigationState(){
+  /* 旧存档可能停在已经移除的科技底栏；统一安全返回当前场景。 */
+  if(state.tab==='tech')state.tab='act';
   if(P().location!=='camp')return;
   /* 营地地图只以 campView 为准。修复旧存档中 mapOpen 残留为 true 时，
      首页实际已返回营地、外层却仍按全屏地图隐藏底部菜单的问题。 */
@@ -2684,11 +2688,11 @@ function panelView(){
   if(state.combat)return 'combat';
   if(state.screen==='death'||state.screen==='ending')return state.screen;
   if(state.tab==='char')return state.charView==='genes'?'genes':state.charView==='careers'?'careers':state.charView==='skills'?'skills':'character';
-  if(state.tab==='bag'||state.tab==='tech'||state.tab==='task'||state.tab==='set')return ({bag:'bag',tech:'tech',task:'tasks',set:'settings'})[state.tab];
+  if(state.tab==='bag'||state.tab==='task'||state.tab==='set')return ({bag:'bag',task:'tasks',set:'settings'})[state.tab];
   if(P().location==='setHub'&&state.settlementShopOpen)return 'settlement-shop';
   if(state.npcTarget&&NPC_NAMES.includes(state.npcTarget)&&((P().location==='camp'&&state.campView==='npc')||npcLocation(state.npcTarget)===P().location))return 'npc';
   if(P().location==='camp'){
-    if(state.campBuilding&&state.meta.built[state.campBuilding])return 'facility';
+    if(state.campBuilding&&state.meta.built[state.campBuilding])return state.campBuilding==='research'?'tech':'facility';
     if(state.campView==='map')return 'camp-map';
     if(state.campView==='construct')return 'construction';
     if(state.campView==='npc')return 'camp';
@@ -2711,12 +2715,12 @@ function render(){ if(_npcCapturing)return; normalizePanelNavigationState();rend
   const panelOpen = !onboarding && !state.combat && state.screen==='play' && state.tab!=='act';
   $('app').classList.toggle('panel-open', panelOpen);
   const geneFull=state.tab==='char'&&state.charView==='genes';
-  if (panelOpen && !['tech','char','bag','task','set'].includes(state.tab)&&!geneFull){ const cb=el('div','closebar');
+  if (panelOpen && !['char','bag','task','set'].includes(state.tab)&&!geneFull){ const cb=el('div','closebar');
     const x=el('button','closebtn ui-icon-button',uiIcon('close')); x.setAttribute('aria-label','关闭');
     x.onclick=()=>{ state.tab='act'; state.campBuilding=null; state.bagSel=null; state.charView='overview'; render(); };
-    const t=el('span','ctitle',({char:'角色',bag:'背包',tech:'科技',task:'任务',set:'设置'})[state.tab]||'');
+    const t=el('span','ctitle',({char:'角色',bag:'背包',task:'任务',set:'设置'})[state.tab]||'');
     cb.appendChild(x); cb.appendChild(t); box.appendChild(cb); }
-  box.classList.toggle('tech-full', state.tab==='tech'||geneFull);
+  box.classList.toggle('tech-full', activeView==='tech'||geneFull);
   renderPanel(box); renderMapFab(); renderSiteSheet(box); renderTabbar(); save(); flushStoryScenes(); }
 function renderPanel(box){
   if (tutorialActive()) return renderTutorialPanel(box);
@@ -2725,7 +2729,6 @@ function renderPanel(box){
   if (state.screen==='ending') return renderEndingPanel(box);
   if (state.tab==='char') return renderCharPanel(box);
   if (state.tab==='bag') return renderBagPanel(box);
-  if (state.tab==='tech') return renderTechPanel(box);
   if (state.tab==='task') return renderTaskPanel(box);
   if (state.tab==='set') return renderSetPanel(box);
   return renderActPanel(box);
@@ -3015,7 +3018,7 @@ function renderLocalQuestActions(box){
   }
 }
 function renderPanelTop(){ render(); requestAnimationFrame(()=>{const panel=$('panel');if(panel)panel.scrollTop=0;}); }
-function openCampBuilding(id){ resetStationWorkbench(id);state.campBuilding=id; state.campView='home'; setLogOpen(false); renderPanelTop(); }
+function openCampBuilding(id){ resetStationWorkbench(id);state.campBuilding=id; state.campView='home';if(id==='research'){state.techZoom=null;state.techPanX=0;state.techPanY=0;state.techSel=null;}setLogOpen(false); renderPanelTop(); }
 function renderCampHero(box){ const guard=campDefenseStats();
   const unlocked=CAMP_BUILDINGS.filter(b=>!state.meta.built[b.id]&&hasBuildingTech(b.id)).length,hero=el('section','camp-hero');hero.innerHTML='<div class="camp-hero-head"><span class="camp-mark" aria-hidden="true"><svg><use href="#icon-camp"></use></svg><i></i></span><span class="camp-hero-copy"><small>PERSONAL // OUTPOST</small><h1>'+state.campName+'</h1><p>你的设施 · 你的防线 · 你的远征起点</p></span><span class="camp-online"><i></i>ONLINE</span></div><div class="camp-metrics defense-metrics"><span><small>OFFENSE</small><b>'+String(guard.attack).padStart(2,'0')+'</b><em>攻击</em></span><span><small>ARMOR</small><b>'+String(guard.defense).padStart(2,'0')+'</b><em>防御</em></span><span><small>SHIELD</small><b>'+String(guard.shield).padStart(2,'0')+'</b><em>护盾</em></span></div>';const build=el('button','camp-hero-build ui-icon-button',uiIcon('build-control')+'<span>建筑管理</span>'+(unlocked?'<b>'+unlocked+'</b>':''));build.setAttribute('aria-label','建筑管理'+(unlocked?'，'+unlocked+'项可建造':''));build.onclick=()=>{state.campView='construct';setLogOpen(false);renderPanelTop();};hero.appendChild(build);box.appendChild(hero); }
 function renderCampContacts(box){
@@ -3771,12 +3774,16 @@ function treeLayout(){ if(_layC.pos) return _layC;
   }
   function eraRank(id){if(rankCache[id])return rankCache[id];if(visiting.has(id))return 1;visiting.add(id);const era=eraOf(id),same=(TECHS[id].req||[]).filter(req=>TECHS[req]&&eraOf(req)===era);const rank=same.length?1+Math.max(...same.map(eraRank)):1;visiting.delete(id);return rankCache[id]=rank;}
   const maxRank=Array(13).fill(1);Object.keys(TECHS).forEach(id=>maxRank[eraOf(id)]=Math.max(maxRank[eraOf(id)],eraRank(id)));
-  const eraStart=Array(13).fill(0),x0=120,xStep=154,eraGap=96,y0=120,band=230;eraStart[1]=x0;for(let era=2;era<=12;era++)eraStart[era]=eraStart[era-1]+maxRank[era-1]*xStep+eraGap;
+  const eraStart=Array(13).fill(0),x0=120,xStep=154,eraGap=96,y0=76,band=106;eraStart[1]=x0;for(let era=2;era<=12;era++)eraStart[era]=eraStart[era-1]+maxRank[era-1]*xStep+eraGap;
   const groups={};Object.keys(TECHS).forEach(id=>{const t=TECHS[id],key=t.b+'|'+eraOf(id)+'|'+eraRank(id);(groups[key]=groups[key]||[]).push(id);});
   BRANCHES.forEach((branch,bi)=>{for(let era=1;era<=12;era++)for(let rank=1;rank<=maxRank[era];rank++){const ids=(groups[branch+'|'+era+'|'+rank]||[]).sort();ids.forEach((id,i)=>{const offset=(i-(ids.length-1)/2)*82,jitter=((era+rank+bi)%3-1)*8;pos[id]={x:eraStart[era]+(rank-1)*xStep,y:Math.round(y0+bi*band+offset+jitter)};});}});
+  /* 同一纵列最多会汇入八个节点。按分类顺序压紧并消除碰撞，让七类分支在
+     手机整屏内保持接近原尺寸，而不是把 1650px 高的旧画布缩成微缩图。 */
+  const columns={};Object.keys(pos).forEach(id=>(columns[pos[id].x]=columns[pos[id].x]||[]).push(id));
+  Object.values(columns).forEach(ids=>{let previous=-54;ids.sort((a,b)=>pos[a].y-pos[b].y).forEach(id=>{pos[id].y=Math.max(28,pos[id].y,previous+82);previous=pos[id].y;});});
   _layC.pos=pos;
   _layC.labels={};BRANCHES.forEach((branch,bi)=>_layC.labels[branch]={x:18,y:y0+bi*band+22});
-  _layC.W=eraStart[12]+maxRank[12]*xStep+LAY.cardW+100;_layC.H=y0+(BRANCHES.length-1)*band+150;
+  _layC.W=eraStart[12]+maxRank[12]*xStep+LAY.cardW+100;_layC.H=Math.max(y0+(BRANCHES.length-1)*band+150,...Object.values(pos).map(p=>p.y+LAY.cardH+56));
   _layC.stages=TECH_ERA_NAMES.map((_,i)=>eraStart[i+1]-36);
   _layC.stageNames=TECH_ERA_NAMES;_layC.maxTier=Math.max(...maxRank);
   return _layC; }
@@ -3842,11 +3849,15 @@ function treeSetZoom(z,ax,ay){
   state.techPanY=ay-(ay-(state.techPanY||0))*(z/z0);
   state.techZoom=z; treeApply();
 }
-function treeFit(){
+function techHeightFitZoom(viewHeight,canvasHeight){
+  const vh=Math.max(0,Number(viewHeight)||0),ch=Math.max(1,Number(canvasHeight)||1);
+  return Math.min(1.6,Math.max(TREE_ZOOM_MIN,(vh-12)/ch));
+}
+function treeFitHeight(){
   const vp=treeEl('.treevp'), cv=treeEl('.treecanvas'); if(!vp||!cv) return;
-  const cw=cv.offsetWidth, ch=cv.offsetHeight;
-  const z=Math.min(1.6, Math.max(TREE_ZOOM_MIN, Math.min(vp.clientWidth/cw, vp.clientHeight/ch)));
-  state.techZoom=z; state.techPanX=Math.min(0,(vp.clientWidth-cw*z)/2); state.techPanY=Math.min(0,(vp.clientHeight-ch*z)/2); treeApply();
+  const ch=cv.offsetHeight;
+  const z=techHeightFitZoom(vp.clientHeight,ch);
+  state.techZoom=z; state.techPanX=0; state.techPanY=Math.min(0,(vp.clientHeight-ch*z)/2); treeApply();
 }
 function treeReveal(tid){
   const vp=treeEl('.treevp'), cv=treeEl('.treecanvas'); if(!vp||!cv) return;
@@ -3898,10 +3909,12 @@ function drawTechLines(){
   cv.insertBefore(svg,cv.firstChild);
 }
 function renderTechPanel(box){
+  const fitOnOpen=state.techZoom==null;
+  if(fitOnOpen){state.techZoom=1;state.techPanX=0;state.techPanY=0;}
   const vp=el('div','treevp');
-  const x=el('button','tx-x ui-icon-button',uiIcon('close')); x.setAttribute('aria-label','关闭科技树'); x.onclick=()=>{ state.tab='act'; state.techSel=null; render(); }; vp.appendChild(x);
+  const x=el('button','tx-x ui-icon-button',uiIcon('close')); x.setAttribute('aria-label','关闭科技台'); x.onclick=()=>{ state.campBuilding=null;state.campView='home';state.techSel=null;renderPanelTop(); }; vp.appendChild(x);
   const tb=el('div','tzoom');
-  [['plus','放大科技树',()=>treeSetZoom(state.techZoom*1.22)],['minus','缩小科技树',()=>treeSetZoom(state.techZoom*0.82)],['fit','显示完整科技树',treeFit]].forEach(a=>{
+  [['plus','放大科技树',()=>treeSetZoom(state.techZoom*1.22)],['minus','缩小科技树',()=>treeSetZoom(state.techZoom*0.82)],['fit','按分类高度铺满',treeFitHeight]].forEach(a=>{
     const b=el('button','ui-icon-button',uiIcon(a[0])); b.setAttribute('aria-label',a[1]); b.onclick=a[2]; tb.appendChild(b); });
   vp.appendChild(tb);
   const F=techLitSet();
@@ -3914,13 +3927,12 @@ function renderTechPanel(box){
   Object.keys(L.pos).forEach(tid=>cv.appendChild(techNodeEl(tid,L.pos[tid],F)));
   vp.appendChild(cv); box.appendChild(vp);
   renderTechDetail(box);
-  if(state.techZoom==null){ state.techZoom=.22; state.techPanX=0; state.techPanY=0; }
-  requestAnimationFrame(()=>{ drawTechLines(); treeApply();
+  requestAnimationFrame(()=>{ drawTechLines(); if(fitOnOpen)treeFitHeight();else treeApply();
     attachTreeGestures(vp,cv); if(state._reveal){ treeReveal(state._reveal); state._reveal=null; } });
 }
 function renderTechDetail(box){
-  const d=el('div','tdet'), tid=state.techSel;
-  if(!tid){ d.classList.add('hint'); d.appendChild(el('div','tdet-hint','所有科技始终可见 · 投入材料研究 · 解锁建筑、加工与装备配方')); box.appendChild(d); return; }
+  const d=el('div','tdet tech-det'), tid=state.techSel;
+  if(!tid){ d.classList.add('hint'); d.appendChild(el('div','tdet-hint','七类研究已按屏幕高度展开 · 左右拖动查看文明阶段')); box.appendChild(d); return; }
   const t=TECHS[tid], st=techStatus(tid);
   const head=el('div','tdet-top');
   head.innerHTML='<span class="tdet-ic">'+techIcon(t)+'</span><span class="tdet-h"><b>'+t.n+'</b><span>'+t.b+' · '+
@@ -3949,7 +3961,9 @@ function renderTechDetail(box){
   }
   box.appendChild(d);
 }
+function researchStationReady(){return P().location==='camp'&&facilityOnline('research');}
 function research(tid){ const t=TECHS[tid]; if(!t||techKnown(tid))return;
+  if(!researchStationReady()){log('需要回到营地并建成在线的【科技台】。','warn');return;}
   if(!techPrereqsReady(tid)){ log('前置科技未研究。','warn'); return; }
   if(!recordKnown(t.rec)){ const missing=recordIds(t.rec).filter(id=>!recordKnown(id)).map(id=>TECH_RECORDS[id].name);log('缺少技术资料【'+missing.join('、')+'】。','warn'); return; }
   if(!techFacilitiesReady(tid)){ const missing=techFacilityIds(t).filter(id=>!facilityOnline(id)).map(facilityName);log('研究设施未在线：【'+missing.join('、')+'】。','warn');return; }
@@ -4035,6 +4049,7 @@ function renderRecipeWorkbench(parent,key,entries,opts){
 }
 function renderBuilding(box,id){
   const b=CAMP_BUILDINGS.find(x=>x.id===id);if(!b)return;if(state.meta.damaged[id]){state.campBuilding=null;render();return;}
+  if(b.kind==='research')return renderTechPanel(box);
   const hasSpecialRecipes=(b.kind==='shipyard'&&Object.keys(RECIPES).some(rid=>RECIPES[rid].st==='ship'&&hasRecipeTech(rid)))||(b.kind==='drone'&&Object.keys(RECIPES).some(rid=>RECIPES[rid].st==='drone'&&hasRecipeTech(rid))),splitStation=['smelt','craft','recycle','mess'].includes(b.kind)||hasSpecialRecipes,operationScreen=el('div','facility-operation-screen ui-workspace__shell');let page,detailParent=null;
   box.classList.add('facility-operation-page');box.appendChild(operationScreen);
   if(splitStation){box.classList.add('recipe-station-page');const screen=el('div','recipe-station-screen ui-workspace__main'),top=el('div','recipe-station-top ui-workspace__pane'),bottom=el('div','recipe-station-bottom ui-workspace__pane');screen.appendChild(top);screen.appendChild(bottom);operationScreen.appendChild(screen);page=top;detailParent=bottom;}
@@ -4982,7 +4997,7 @@ function migrateTechTree(){migrateTechSnapshot(state);}
 function boot(){
   const wire=(b,tabname)=>{ if(!b) return; b.onclick=()=>{ if(tutorialActive()||state.combat||state.screen!=='play')return; state.campBuilding=null; state.siteSheet=null; state.tab=(state.tab===tabname)?'act':tabname;if(tabname==='char'&&state.tab==='char')state.charView='overview';
     if(tabname==='set'&&state.tab==='set')settingsView='main';
-    if(state.tab==='tech'){ state.techZoom=.22; state.techPanX=0; state.techPanY=0; } render(); }; };
+    render(); }; };
   document.querySelectorAll('#tabbar .tab').forEach(b=>wire(b,b.dataset.tab));
   wire($('set-btn'),'set');
   installInteractionFeedback();
@@ -5046,7 +5061,7 @@ function boot(){
   if(P().location!=='camp'&&regionForLocation(P().location)!=='settlement')queueMissingFieldNpcStories(P().location);
   if(state.checkpoint&&!state.checkpoint.discovered)state.checkpoint.discovered=JSON.parse(JSON.stringify(state.discovered));
   if(!state.checkpoint||!state.checkpoint.meta)updateCheckpoint();
-  addEventListener('resize',()=>{ if(state.mapOpen)render(); else if(state.tab==='tech')requestAnimationFrame(drawTechLines); else if(state.tab==='char'&&state.charView==='genes')requestAnimationFrame(()=>{drawGeneTreeLines();geneTreeApply();}); });
+  addEventListener('resize',()=>{ if(state.mapOpen)render(); else if(P().location==='camp'&&state.campBuilding==='research')requestAnimationFrame(()=>{drawTechLines();treeApply();}); else if(state.tab==='char'&&state.charView==='genes')requestAnimationFrame(()=>{drawGeneTreeLines();geneTreeApply();}); });
   if(!loaded) intro();setupTabLease();render();
 }
 

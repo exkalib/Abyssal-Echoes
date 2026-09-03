@@ -29,6 +29,11 @@ bundle_files=(index.html style.css ui-system.css story-scenes.css game.js)
 if [[ "$bundle_mode" == "full" ]]; then
   cp -R "$root_dir/prototype/assets" "$payload_dir/assets"
   bundle_files+=(assets)
+else
+  # 精简热更新也要携带本版本新增的科技台图；旧 APK 的内置资源中没有它。
+  mkdir -p "$payload_dir/assets/building-art-v1"
+  cp "$root_dir/prototype/assets/building-art-v1/research.png" "$payload_dir/assets/building-art-v1/"
+  bundle_files+=(assets)
 fi
 
 bundle="bundle-$build.zip"
