@@ -2465,7 +2465,8 @@ function feedbackSound(spec){
 }
 function showActionFeedback(entries){
   const layer=$('action-feedback'),messages=$('feedback-messages'),label=$('feedback-label'),icon=$('feedback-icon-use'),spec=feedbackSpec(entries);if(!layer||!messages||!label||!icon||!spec.lines.length)return;
-  const generation=++feedbackGeneration;layer.hidden=false;layer.className='action-feedback ui-toast '+spec.tone;label.textContent=spec.label;icon.setAttribute('href','#icon-'+spec.icon);messages.textContent='';
+  const critical=spec.tone==='is-warning'||spec.tone==='is-error';
+  const generation=++feedbackGeneration;layer.hidden=false;layer.className='action-feedback ui-toast '+spec.tone;layer.setAttribute('role',critical?'alert':'status');layer.setAttribute('aria-live',critical?'assertive':'polite');label.textContent=spec.label;icon.setAttribute('href','#icon-'+spec.icon);messages.textContent='';
   spec.lines.forEach(entry=>{const p=document.createElement('p');p.className=entry.cls||'story';p.textContent=entry.text;messages.appendChild(p);});
   playSfx(feedbackSound(spec));
   layer.classList.remove('is-visible');void layer.offsetWidth;requestAnimationFrame(()=>{if(generation===feedbackGeneration)layer.classList.add('is-visible');});

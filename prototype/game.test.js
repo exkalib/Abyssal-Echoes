@@ -271,7 +271,9 @@ pendingTests.push((async()=>{
   assert.match(uiCss,/button\.is-touching[\s\S]*scale\(\.97\)/,'按钮按下态必须比原有轻微缩放更明显');
   assert.match(uiCss,/\.action-feedback\.is-visible\s*\{[^}]*opacity:1/,'文字反馈必须提供明确的出现状态');
   assert.match(uiCss,/\.action-feedback\[hidden\]\s*\{[^}]*display:none!important/,'无内容时反馈容器不得露出空框');
-  assert.match(uiCss,/\.action-feedback\s*\{[^}]*top:calc\([^}]*bottom:auto[^}]*pointer-events:none/s,'轻提示必须固定在顶部且完全不拦截页面操作');
+  assert.match(uiCss,/\.action-feedback\s*\{[^}]*top:auto[^}]*bottom:calc\(var\(--hud-tabs-h\)[^}]*pointer-events:none/s,'普通轻提示必须固定在底部导航上方且完全不拦截页面操作');
+  assert.match(uiCss,/\.action-feedback\.is-warning,[\s\S]*\.action-feedback\.is-error\s*\{[^}]*top:calc\(var\(--hud-status-h\)[^}]*bottom:auto/s,'只有警告与失败提示可以占用顶部警报位');
+  assert.match(source,/const critical=spec\.tone==='is-warning'\|\|spec\.tone==='is-error'[\s\S]{0,360}setAttribute\('role',critical\?'alert':'status'\)[\s\S]{0,180}setAttribute\('aria-live',critical\?'assertive':'polite'\)/,'普通状态与紧急警报必须使用匹配优先级的无障碍播报方式');
   assert.match(uiCss,/#feedback-messages p:last-child\s*\{[^}]*white-space:nowrap/,'轻提示只显示一行摘要，完整剧情留在现场记录');
   assert.match(uiCss,/\.settings-switch\.on[\s\S]*settings-volume input\[type="range"\]/,'声音设置必须使用统一开关与可触摸音量滑块组件');
   const manifest=fs.readFileSync(path.join(__dirname,'..','android','app','src','main','AndroidManifest.xml'),'utf8');

@@ -668,14 +668,14 @@ textarea:focus-visible,
   position:fixed;
   z-index:55;
   left:50%;
-  top:calc(var(--hud-status-h) + env(safe-area-inset-top,0px) + 7px);
-  bottom:auto;
-  width:min(390px,calc(100% - 24px));
+  top:auto;
+  bottom:calc(var(--hud-tabs-h) + env(safe-area-inset-bottom,0px) + 10px);
+  width:min(350px,calc(100% - 28px));
   grid-template-columns:24px minmax(0,1fr);
   padding:7px 9px;
   pointer-events:none;
   opacity:0;
-  transform:translate(-50%,-7px) scale(.985);
+  transform:translate(-50%,7px) scale(.985);
   box-shadow:0 8px 22px rgba(0,0,0,.46),inset 0 1px var(--ui-specular);
   transition:opacity 160ms ease,transform 180ms ease;
 }
@@ -683,7 +683,14 @@ textarea:focus-visible,
 .action-feedback.is-visible { opacity:1;transform:translate(-50%,0) scale(1); }
 .action-feedback.is-system { --toast:var(--ui-energy); }
 .action-feedback.is-story { --toast:var(--ui-anomaly); }
-#app.panel-open .action-feedback,#panel[data-view="camp"] + .action-feedback { bottom:auto; }
+.action-feedback.is-warning,
+.action-feedback.is-error {
+  top:calc(var(--hud-status-h) + env(safe-area-inset-top,0px) + 7px);
+  bottom:auto;
+  transform:translate(-50%,-7px) scale(.985);
+}
+.action-feedback.is-warning.is-visible,
+.action-feedback.is-error.is-visible { transform:translate(-50%,0) scale(1); }
 .af-mark { width:22px;height:22px;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--toast) 55%,var(--ui-line));color:var(--toast);background:#081119; }
 .af-mark .ui-icon { width:14px;height:14px; }
 .af-copy { min-width:0;display:block; }
@@ -1824,7 +1831,15 @@ textarea:focus-visible,
 }
 
 #app.workspace-fullpage .tdet { bottom:max(var(--ui-2),env(safe-area-inset-bottom,0px)); }
-#app.workspace-fullpage .action-feedback { top:max(var(--ui-3),env(safe-area-inset-top,0px)); }
+#app.workspace-fullpage .action-feedback:not(.is-warning):not(.is-error) {
+  top:auto;
+  bottom:calc(68px + env(safe-area-inset-bottom,0px));
+}
+#app.workspace-fullpage .action-feedback.is-warning,
+#app.workspace-fullpage .action-feedback.is-error {
+  top:max(var(--ui-3),env(safe-area-inset-top,0px));
+  bottom:auto;
+}
 
 @media (max-width:420px) {
   .ui-workspace__scroll { padding-inline:var(--ui-3); }
