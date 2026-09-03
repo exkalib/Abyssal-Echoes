@@ -221,11 +221,11 @@ body.story-scene-active{overflow:hidden;overscroll-behavior:none}
 .field-fog-layer.is-complete.is-fresh{visibility:visible;animation:field-fog-final-clear 1.55s cubic-bezier(.2,.72,.16,1) both}
 .field-fog-reveals{position:absolute;z-index:7;inset:0;overflow:hidden;pointer-events:none}
 .field-fog-reveal{
-  position:absolute;width:32px;height:32px;margin:-16px 0 0 -16px;border:1px solid rgba(var(--map-tone-rgb),.78);border-radius:50%;
+  position:absolute;box-sizing:border-box;width:32px;height:32px;aspect-ratio:1/1;margin:-16px 0 0 -16px;border:1px solid rgba(var(--map-tone-rgb),.78);border-radius:999px;
   background:radial-gradient(circle,rgba(var(--map-tone-rgb),.14),transparent 64%);box-shadow:0 0 12px rgba(var(--map-tone-rgb),.26);
   animation:field-fog-radial-reveal 1.05s cubic-bezier(.16,.72,.22,1) both;
 }
-.field-fog-reveal::after{content:'';position:absolute;inset:18%;border:1px solid rgba(222,248,255,.55);border-radius:50%;animation:field-fog-radial-core 1.05s ease-out both}
+.field-fog-reveal::after{content:'';position:absolute;inset:18%;aspect-ratio:1/1;border:1px solid rgba(222,248,255,.55);border-radius:999px;animation:field-fog-radial-core 1.05s ease-out both}
 .field-fog-final-reveal{
   position:absolute;left:-12%;right:-12%;top:48%;height:2px;
   background:linear-gradient(90deg,transparent,rgba(var(--map-tone-rgb),.96),#eaffff,rgba(var(--map-tone-rgb),.96),transparent);
@@ -242,7 +242,7 @@ body.story-scene-active{overflow:hidden;overscroll-behavior:none}
   clip-path:none!important;
 }
 #panel .field-map-marker.is-fresh{animation:field-marker-in .32s cubic-bezier(.2,.8,.2,1) both}
-#panel .field-map-marker::before{content:'';position:absolute;inset:-6px;border:1px solid color-mix(in srgb,var(--marker) 24%,transparent);border-radius:50%;animation:field-marker-ping 3.1s ease-out infinite;pointer-events:none}
+#panel .field-map-marker::before{content:'';position:absolute;inset:-6px;border:1px solid color-mix(in srgb,var(--marker) 24%,transparent);border-radius:50%;opacity:.22;pointer-events:none}
 #panel .field-map-marker>.ui-icon{width:17px;height:17px;margin:0}
 #panel .field-map-marker>span{
   position:absolute;left:50%;top:calc(100% + 4px);width:max-content;max-width:78px;padding:2px 4px;transform:translateX(-50%);

@@ -4304,7 +4304,9 @@ function explore(mode){
     if(danger){log('采集声引来了附近的敌对生物。','warn');startCombat(loc.enemies[Math.floor(Math.random()*loc.enemies.length)]);return;}
     checkStamina(); render(); return;
   }
-  const mappedBefore=new Set(fieldMapMarkers(id).map(marker=>marker.id));
+  /* 用底层“已发现”状态做差值，而不是用当前可见标记做差值。
+     新区域第一次勘察会把早已知晓的相邻路线显示出来；它们不是本次发现，不能补播解锁动画。 */
+  const mappedBefore=new Set(fieldMapMarkerCandidates(id).filter(marker=>marker.revealed).map(marker=>marker.id));
   state.exploreCount[id]=exploreAttempts(id)+1;
   const attempts=exploreAttempts(id);
   /* 先结算现场联系人，避免同一步触发的剧情事件把 NPC 迁回营地后跳过首次发现。 */
