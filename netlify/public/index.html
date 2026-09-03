@@ -42,7 +42,7 @@
   </header>
 
   <main id="main">
-    <section class="hero" id="top" aria-labelledby="hero-title">
+    <section class="hero page-panel" id="top" aria-labelledby="hero-title" data-page-panel>
       <img class="hero-image" src="./assets/hero-crash-ark.jpg" alt="幸存者站在暴雨荒原上，仰望一艘如山脉般庞大的坠毁方舟" width="1672" height="941" fetchpriority="high">
       <div class="hero-shade" aria-hidden="true"></div>
       <div class="weather weather-one" aria-hidden="true"></div>
@@ -80,35 +80,37 @@
       </a>
     </section>
 
-    <section class="signal-strip" aria-label="方舟信号">
-      <p><span>SIGNAL 01</span> 坠毁带仍在呼吸</p>
-      <p><span>SIGNAL 02</span> 迷雾中有人回应</p>
-      <p><span>SIGNAL 03</span> 核心等待最后指令</p>
-    </section>
-
-    <section class="world section-shell" id="world" aria-labelledby="world-title">
-      <div class="section-index reveal" aria-hidden="true">01</div>
-      <div class="section-heading reveal">
-        <p class="eyebrow">THE FALL // WORLD</p>
-        <h2 id="world-title">从废墟里，<br>建立你的第一盏灯。</h2>
+    <section class="world-screen page-panel" id="world" aria-labelledby="world-title" data-page-panel>
+      <div class="signal-strip" aria-label="方舟信号">
+        <p><span>SIGNAL 01</span> 坠毁带仍在呼吸</p>
+        <p><span>SIGNAL 02</span> 迷雾中有人回应</p>
+        <p><span>SIGNAL 03</span> 核心等待最后指令</p>
       </div>
-      <div class="world-copy reveal">
-        <p>你在方舟营地醒来，手上只有一枚失效的手环、一把建造枪，以及老乔留下的几块废铁。休眠仓、科技台、资源链——每一处设施都要从残骸中一点点夺回来。</p>
-        <div class="micro-grid">
-          <span><strong>01</strong> 搜集</span>
-          <span><strong>02</strong> 建造</span>
-          <span><strong>03</strong> 生存</span>
+
+      <div class="world section-shell">
+        <div class="section-index reveal" aria-hidden="true">01</div>
+        <div class="section-heading reveal">
+          <p class="eyebrow">THE FALL // WORLD</p>
+          <h2 id="world-title">从废墟里，<br>建立你的第一盏灯。</h2>
+        </div>
+        <div class="world-copy reveal">
+          <p>你在方舟营地醒来，手上只有一枚失效的手环、一把建造枪，以及老乔留下的几块废铁。休眠仓、科技台、资源链——每一处设施都要从残骸中一点点夺回来。</p>
+          <div class="micro-grid">
+            <span><strong>01</strong> 搜集</span>
+            <span><strong>02</strong> 建造</span>
+            <span><strong>03</strong> 生存</span>
+          </div>
+        </div>
+        <div class="world-orbit reveal" aria-hidden="true">
+          <span class="orbit-ring orbit-one"></span>
+          <span class="orbit-ring orbit-two"></span>
+          <span class="orbit-core"></span>
+          <span class="orbit-label">ARK // 07</span>
         </div>
       </div>
-      <div class="world-orbit reveal" aria-hidden="true">
-        <span class="orbit-ring orbit-one"></span>
-        <span class="orbit-ring orbit-two"></span>
-        <span class="orbit-core"></span>
-        <span class="orbit-label">ARK // 07</span>
-      </div>
     </section>
 
-    <section class="cinematic expedition" id="expedition" aria-labelledby="expedition-title">
+    <section class="cinematic expedition page-panel" id="expedition" aria-labelledby="expedition-title" data-page-panel>
       <img src="./assets/expedition-cargo.jpg" alt="幸存者以扫描器探索被黑色森林包围的货柜坟场，远处有一道人影" width="1672" height="941" loading="lazy">
       <div class="cinematic-shade" aria-hidden="true"></div>
       <div class="cinematic-copy copy-right reveal">
@@ -124,7 +126,7 @@
       <p class="image-caption">货柜坟场 // 信号源未知</p>
     </section>
 
-    <section class="story-grid section-shell" aria-labelledby="story-title">
+    <section class="story-grid section-shell page-panel" aria-labelledby="story-title" data-page-panel>
       <div class="section-heading reveal">
         <p class="eyebrow">SURVIVOR NETWORK</p>
         <h2 id="story-title">他们不是任务图标。<br>他们会记住你来过。</h2>
@@ -148,7 +150,7 @@
       </article>
     </section>
 
-    <section class="cinematic echo" id="echo" aria-labelledby="echo-title">
+    <section class="cinematic echo page-panel" id="echo" aria-labelledby="echo-title" data-page-panel>
       <img src="./assets/core-echo.jpg" alt="幸存者进入方舟地下核心控制室，与巨大的全息守护者对峙" width="1672" height="941" loading="lazy">
       <div class="cinematic-shade" aria-hidden="true"></div>
       <div class="cinematic-copy copy-left reveal">
@@ -164,7 +166,7 @@
       <p class="image-caption caption-right">核心控制室 // 权限封锁</p>
     </section>
 
-    <section class="offline section-shell" aria-labelledby="offline-title">
+    <section class="offline section-shell page-panel" aria-labelledby="offline-title" data-page-panel>
       <div class="offline-signal reveal" aria-hidden="true">
         <span class="signal-circle circle-one"></span>
         <span class="signal-circle circle-two"></span>
@@ -182,34 +184,36 @@
       </div>
     </section>
 
-    <section class="final-cta" aria-labelledby="download-title">
-      <div class="final-grid" aria-hidden="true"></div>
-      <p class="protocol reveal"><span></span> RECOVERY CHANNEL OPEN</p>
-      <h2 id="download-title" class="reveal">方舟仍在等待回应。</h2>
-      <p class="reveal">带上你的手环。下一次睁眼，营地会记住你。</p>
-      <a class="primary-action final-download reveal" href="https://github.com/exkalib/Abyssal-Echoes/releases/latest/download/Abyssal-Echoes.apk">
-        <span class="action-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg>
-        </span>
-        <span><strong>下载 Android 版</strong><small>ANDROID 8.0+ · APK</small></span>
-        <span class="action-arrow" aria-hidden="true">↗</span>
-      </a>
-      <p class="download-note">安装时系统可能提示“未知来源”，请仅从本官方网站下载。</p>
-    </section>
-  </main>
+    <div class="final-screen page-panel" data-page-panel>
+      <section class="final-cta" aria-labelledby="download-title">
+        <div class="final-grid" aria-hidden="true"></div>
+        <p class="protocol reveal"><span></span> RECOVERY CHANNEL OPEN</p>
+        <h2 id="download-title" class="reveal">方舟仍在等待回应。</h2>
+        <p class="reveal">带上你的手环。下一次睁眼，营地会记住你。</p>
+        <a class="primary-action final-download reveal" href="https://github.com/exkalib/Abyssal-Echoes/releases/latest/download/Abyssal-Echoes.apk">
+          <span class="action-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg>
+          </span>
+          <span><strong>下载 Android 版</strong><small>ANDROID 8.0+ · APK</small></span>
+          <span class="action-arrow" aria-hidden="true">↗</span>
+        </a>
+        <p class="download-note">安装时系统可能提示“未知来源”，请仅从本官方网站下载。</p>
+      </section>
 
-  <footer class="site-footer">
-    <div class="footer-brand">
-      <span class="brand-mark small" aria-hidden="true"><span></span></span>
-      <p><strong>深渊回响</strong><small>ABYSSAL ECHOES</small></p>
+      <footer class="site-footer">
+        <div class="footer-brand">
+          <span class="brand-mark small" aria-hidden="true"><span></span></span>
+          <p><strong>深渊回响</strong><small>ABYSSAL ECHOES</small></p>
+        </div>
+        <p class="footer-note">本网站仅提供游戏资讯、Android 下载与手动云存档服务。游戏本体不在网页中运行。</p>
+        <div class="community">
+          <span>官方群 1148651999</span>
+          <button type="button" data-copy-group>复制群号</button>
+        </div>
+        <p class="copyright">© 2026 ABYSSAL ECHOES PROJECT</p>
+      </footer>
     </div>
-    <p class="footer-note">本网站仅提供游戏资讯、Android 下载与手动云存档服务。游戏本体不在网页中运行。</p>
-    <div class="community">
-      <span>官方群 1148651999</span>
-      <button type="button" data-copy-group>复制群号</button>
-    </div>
-    <p class="copyright">© 2026 ABYSSAL ECHOES PROJECT</p>
-  </footer>
+  </main>
 
   <div class="copy-toast" role="status" aria-live="polite" data-toast>群号已复制</div>
   <script src="./site.js" defer></script>
