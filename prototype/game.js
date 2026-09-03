@@ -5081,7 +5081,7 @@ function boot(){
 }
 
 /* ================= 启动舱门 ================= */
-const REQUIRED_NATIVE_SHELL=10,NATIVE_APK_DOWNLOAD_URL='http://59.110.144.30:9091/app-update/Abyssal-Echoes.apk';
+const REQUIRED_NATIVE_SHELL=11,NATIVE_APK_DOWNLOAD_URL='https://github.com/exkalib/Abyssal-Echoes/releases/latest/download/Abyssal-Echoes.apk';
 let gameBooted=false,launchCanEnter=false,launchAction='enter',legacyDownloadOpened=false;
 function launchElements(){return {screen:$('launch-screen'),status:$('launch-status'),detail:$('launch-detail'),percent:$('launch-percent'),button:$('launch-enter')};}
 function prepareLocalGame(){if(gameBooted)return;gameBooted=true;boot();}

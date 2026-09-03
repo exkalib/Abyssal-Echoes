@@ -48,7 +48,7 @@ test("landing advances in locked full-screen panels without a visible scrollbar"
 
 test("tagged Android releases verify the APK before publishing", () => {
   const workflow = fs.readFileSync(path.join(root, ".github", "workflows", "publish-android-release.yml"), "utf8");
-  assert.match(workflow, /tags:[\s\S]*android-v\*/);
+  assert.match(workflow, /tags:[\s\S]*android-v\*[\s\S]*game-v\*/);
   assert.match(workflow, /apkSha256[\s\S]*apkSize[\s\S]*sha256sum --check --strict/);
-  assert.match(workflow, /gh release create[\s\S]*--latest/);
+  assert.match(workflow, /manifest\.sig[\s\S]*BUNDLE_NAME[\s\S]*bundle_hash[\s\S]*gh release create[\s\S]*--latest/);
 });

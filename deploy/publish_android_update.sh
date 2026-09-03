@@ -40,7 +40,7 @@ bundle="bundle-$build.zip"
 (cd "$payload_dir" && zip -q -9 -r "$work_dir/$bundle" "${bundle_files[@]}")
 sha256="$(shasum -a 256 "$work_dir/$bundle" | awk '{print $1}')"
 size="$(wc -c < "$work_dir/$bundle" | tr -d ' ')"
-apk_url="http://59.110.144.30:9091/app-update/Abyssal-Echoes.apk"
+apk_url="${ABYSS_APK_URL:-https://github.com/exkalib/Abyssal-Echoes/releases/latest/download/Abyssal-Echoes.apk}"
 apk_sha256="$(shasum -a 256 "$apk_source" | awk '{print $1}')"
 apk_size="$(wc -c < "$apk_source" | tr -d ' ')"
 

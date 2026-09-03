@@ -63,7 +63,7 @@ function hasClass(node,name){return String(node&&node.className||'').split(/\s+/
 {
   sandbox.AbyssApp={versionInfo:()=> '安卓 0.7.1 · 外壳 9 · 资源 1788416012'};
   assert.equal(a.nativeShellVersion(),9);assert.equal(a.legacyNativeUpgradeRequired(),true,'旧外壳必须进入桥接下载流程，不能继续触发原生闪退路径');
-  sandbox.AbyssApp={versionInfo:()=> '安卓 0.7.4 · 外壳 10 · 资源 1788420415'};
+  sandbox.AbyssApp={versionInfo:()=> '安卓 0.7.5 · 外壳 11 · 资源 1788441440'};
   assert.equal(a.legacyNativeUpgradeRequired(),false,'具备应用内安装能力的新外壳不得被桥接页拦截');
   delete sandbox.AbyssApp;
 }
@@ -287,11 +287,11 @@ pendingTests.push((async()=>{
   assert.match(adaptiveIcon,/ic_launcher_art_v2/,'自适应图标必须使用幸存者与坠毁方舟主视觉');
   assert.ok(fs.existsSync(path.join(__dirname,'..','android','app','src','main','res','drawable-nodpi','ic_launcher_art_v2.png')),'应用图标主视觉文件必须存在');
   const androidBuild=fs.readFileSync(path.join(__dirname,'..','android','app','build.gradle'),'utf8');
-  assert.match(androidBuild,/versionCode 14/,'当前发布 APK 必须提升安装版本');
-  assert.match(androidBuild,/versionName "0\.7\.4"/,'当前发布 APK 必须展示新的应用版本');
-  assert.match(androidBuild,/SHELL_VERSION", "10"/,'自动安装能力必须提升外壳协议版本');
-  assert.match(androidBuild,/BUNDLED_BUILD", "1788420415L"/,'最新 APK 必须内置本次完整资源版本');
-  assert.match(androidBuild,/UPDATE_BASE_URL[^\n]*http:\/\/59\.110\.144\.30:9091\/app-update\//,'APK 更新资源必须固定走 59 测试服务器');
+  assert.match(androidBuild,/versionCode 15/,'当前发布 APK 必须提升安装版本');
+  assert.match(androidBuild,/versionName "0\.7\.5"/,'当前发布 APK 必须展示新的应用版本');
+  assert.match(androidBuild,/SHELL_VERSION", "11"/,'GitHub 更新能力必须提升外壳协议版本');
+  assert.match(androidBuild,/BUNDLED_BUILD", "1788441440L"/,'最新 APK 必须内置本次完整资源版本');
+  assert.match(androidBuild,/UPDATE_BASE_URL[^\n]*https:\/\/github\.com\/exkalib\/Abyssal-Echoes\/releases\/latest\/download\//,'APK 更新资源必须固定走 GitHub Release');
   assert.match(androidBuild,/CLOUD_SAVE_URL[^\n]*http:\/\/59\.110\.144\.30:9091\/api\/cloud-save/,'APK 云存档必须固定走 59 私人服务器');
   assert.match(androidBuild,/CLOUD_SAVE_URL/,'安卓外壳必须提供独立云存档接口地址');
   const networkSecurity=fs.readFileSync(path.join(__dirname,'..','android','app','src','main','res','xml','network_security_config.xml'),'utf8');assert.match(networkSecurity,/base-config cleartextTrafficPermitted="false"[\s\S]*domain-config cleartextTrafficPermitted="true"[\s\S]*59\.110\.144\.30/,'明文网络只能为 59 私人服务器单独放行');
@@ -306,7 +306,7 @@ pendingTests.push((async()=>{
   const netlifyConfig=fs.readFileSync(path.join(__dirname,'..','netlify.toml'),'utf8');assert.doesNotMatch(netlifyConfig,/\.netlify\/functions\/cloud-save|59\.110\.144\.30/,'备用迁移接口不得暴露绕过限流的默认 Function 路径');assert.match(netlifyConfig,/publish = "netlify\/public"[\s\S]*ignore = "[^"]*git diff --quiet[^\n]*netlify/,'普通游戏提交必须继续跳过 Netlify 构建');
   const staticServer=fs.readFileSync(path.join(__dirname,'..','deploy','serve_static.py'),'utf8');assert.match(staticServer,/SAVE_API = "\/api\/cloud-save"[\s\S]*HISTORY_LIMIT = 2[\s\S]*WRITE_COOLDOWN_SECONDS = 30/,'59 必须直接提供仅保留当前与上一版的手动云存档接口');assert.match(staticServer,/class CloudSaveStore[\s\S]*BEGIN IMMEDIATE[\s\S]*_prune_history/,'59 云存档写入必须用 SQLite 事务和版本历史保护');assert.match(staticServer,/RATE_LIMIT_REQUESTS = 8[\s\S]*class RequestLimiter[\s\S]*rate_limited/,'59 云存档必须提供每 IP 请求限流');assert.match(staticServer,/ABYSS_SAVE_DB[^\n]*\/var\/lib\/abyss-echo\/saves\.sqlite3/,'59 云存档必须写入独立持久化目录');
   const updatePublisher=fs.readFileSync(path.join(__dirname,'..','deploy','publish_android_update.sh'),'utf8');assert.match(updatePublisher,/sqlite3 \/var\/lib\/abyss-echo\/saves\.sqlite3[\s\S]*saves-before-\$build\.sqlite3/,'每次发布前必须在线备份现有 SQLite 云存档');assert.match(updatePublisher,/remote_apk_sha256[\s\S]*if \[\[ "\$remote_apk_sha256" != "\$apk_sha256" \]\][\s\S]*scp "\$apk_source"[^\n]*Abyssal-Echoes\.apk\.new[\s\S]*mv[^\n]*Abyssal-Echoes\.apk\.new[^\n]*Abyssal-Echoes\.apk/,'只有服务器 APK 与本地校验不一致时才允许原子同步，资源热更新不得重复上传大包');assert.match(updatePublisher,/apkSha256[\s\S]*apkSize/,'签名更新清单必须包含 APK 哈希和大小');assert.match(updatePublisher,/bundle_mode[\s\S]*lean/,'旧外壳迁移时必须能发布小于其限制的精简桥接资源包');assert.match(updatePublisher,/min_shell="\$\{3:-1\}"/,'普通资源发布默认必须兼容全部已发行外壳，原生升级只能显式触发');
-  assert.match(source,/REQUIRED_NATIVE_SHELL=10[\s\S]*legacyNativeUpgradeRequired[\s\S]*requestLegacyNativeUpgrade/,'旧外壳必须先加载桥接资源，再打开新版 APK 下载而不是直接退出');
+  assert.match(source,/REQUIRED_NATIVE_SHELL=11[\s\S]*NATIVE_APK_DOWNLOAD_URL='https:\/\/github\.com\/exkalib\/Abyssal-Echoes\/releases\/latest\/download\/Abyssal-Echoes\.apk'[\s\S]*legacyNativeUpgradeRequired[\s\S]*requestLegacyNativeUpgrade/,'旧测试外壳的手动升级入口必须直接打开 GitHub 安装包');
   assert.match(source,/CLOUD_ENDPOINT='\/api\/cloud-save'/,'59 网页版必须同源调用私人服务器云存档接口');
   assert.match(source,/CLOUD_COOLDOWN_SECONDS=\{read:10,write:30\}[\s\S]*function cloudCooldownRemaining[\s\S]*function beginCloudCooldown/,'云存档客户端必须提供读取 10 秒和写入 30 秒冷却');
   assert.match(source,/function cloudRequest\(body\)\{[\s\S]{0,260}cloudCooldownRemaining\(action\)[\s\S]{0,260}beginCloudCooldown\(action\)/,'所有云端请求必须在网络调用前统一执行冷却检查');
