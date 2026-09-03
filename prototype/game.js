@@ -413,6 +413,8 @@ const MAP_LINKS = [
   ['xenoShore','livingCanopy'],['livingCanopy','seedCitadel'],
   ['precursorVault','zeroGate']
 ];
+/* 地点坐标与道路测绘分开保存：知道两个地名，不代表已经知道它们之间的捷径。 */
+const GUIDED_MAP_ROUTES=[['camp','outer'],['outer','setGate'],['outer','joeCamp']];
 const MAP_CANVAS={width:1608,height:460,nodeWidth:120,nodeHeight:48,layoutVersion:3};
 const WORLD_POS = {
   camp:[16,180],outer:[148,180],setGate:[280,340],setHub:[412,340],setWorkshop:[544,340],setGarrison:[544,400],setBio:[676,340],setArchive:[676,400],joeCamp:[148,80],cargoYard:[280,180],blackwood:[412,70],ridge:[412,220],floodChannel:[544,70],relayTower:[544,250],coalRift:[676,105],oldMine:[676,250],silicaField:[544,400],titaniumMine:[808,250],
@@ -440,7 +442,7 @@ const LOCAL_MAPS = {
   ark:{canvas:{width:1290,height:310,nodeWidth:120,nodeHeight:48,layoutVersion:3},pos:{layer2:[20,105],freightHub:[170,105],layer3:[320,105],coolingGallery:[470,105],layer4:[620,105],layer5:[790,105],layer6:[960,105],layer7:[1130,105],sealedCabin:[170,215],cryoVault:[470,215],nursery:[620,215],droneHangar:[790,215]}},
   depth:{canvas:{width:1010,height:260,nodeWidth:120,nodeHeight:48,layoutVersion:4},pos:{underworks:[20,105],fungal:[190,105],sporeTunnel:[360,105],abyss:[530,105],phaseGrove:[700,10],ruinVestibule:[700,105],signal:[870,105]}},
   camp:{canvas:{width:300,height:220,nodeWidth:120,nodeHeight:48,layoutVersion:1},pos:{camp:[90,86]}},
-  settlement:{canvas:{width:660,height:640,nodeWidth:140,nodeHeight:52,layoutVersion:2},pos:{setGate:[20,170],setHub:[180,170],setWorkshop:[340,35],setGarrison:[340,235],setBio:[500,35],setArchive:[500,235]}},
+  settlement:{canvas:{width:660,height:640,nodeWidth:140,nodeHeight:52,layoutVersion:3},pos:{setGate:[20,170],setHub:[180,170],setWorkshop:[340,35],setGarrison:[340,235],setBio:[500,35],setArchive:[500,235],camp:[20,350]},externalLocations:['camp'],externalLinks:[['setGate','camp','return']]},
   orbit:{canvas:{width:620,height:250,nodeWidth:140,nodeHeight:52,layoutVersion:1},pos:{orbitalGraveyard:[20,95],brokenRing:[240,95],wardenRelay:[460,95]}},
   ashMoon:{canvas:{width:620,height:250,nodeWidth:140,nodeHeight:52,layoutVersion:1},pos:{regolithSea:[20,95],iridiumCrater:[240,95],massDriver:[460,95]}},
   verdant:{canvas:{width:620,height:250,nodeWidth:140,nodeHeight:52,layoutVersion:1},pos:{xenoShore:[20,95],livingCanopy:[240,95],seedCitadel:[460,95]}},
@@ -904,7 +906,7 @@ const QUESTS = [
   {id:'drain',line:'main',chapter:'第二章',title:'恢复排水',giver:'老周',type:'submit',after:['fever'],turnAt:'layer2',need:{scrap:4,ecomp:2},objective:'修复生活区排水泵，打开工程区检修门。',reward:{items:{copperScrap:3}},done:'积水退下，工程区通道露了出来；门后传来反应堆警报。'},
   {id:'seal',line:'main',chapter:'第三章',title:'封堵泄漏',giver:'林薇',type:'submit',after:['drain'],turnAt:'layer3',need:{steel:6},objective:'带钢材到工程区封堵反应堆冷却环。',reward:{items:{crystal:2}},done:'泄漏得到控制。林薇恢复了通往实验室的升降机。'},
   {id:'sample',line:'main',chapter:'第四章',title:'失控样本',giver:'陈博士',type:'submit',after:['seal'],turnAt:'layer4',need:{biocore:5},objective:'回收生物样本，确认实验体与地下信号的关系。',reward:{items:{serum:2}},done:'陈博士证实：信号能影响本地生物，也在改变方舟实验体。军事区保存着完整监听记录。'},
-  {id:'patrol',line:'main',chapter:'第五章',title:'失联巡逻队',giver:'哈里斯',type:'search',after:['sample'],target:'layer5',count:3,objective:'在军事区完成3次调查，找齐巡逻队记录。',reward:{items:{accessCard:1,emp:2},flag:'sealedDoorFound',reveal:'sealedCabin'},done:'你找到巡逻队长留下的权限卡，以及一组指向生活区封存导航舱的旧坐标。'},
+  {id:'patrol',line:'main',chapter:'第五章',title:'失联巡逻队',giver:'哈里斯',type:'search',after:['sample'],target:'layer5',count:3,objective:'在军事区完成3次调查，找齐巡逻队记录。',reward:{items:{accessCard:1,emp:2},flag:'sealedDoorFound',reveal:'sealedCabin',routeFrom:'layer2'},done:'你找到巡逻队长留下的权限卡，以及一组指向生活区封存导航舱的旧坐标。'},
   {id:'bridge',line:'main',chapter:'第六章',title:'最后七十二小时',giver:'哑叔',type:'choice',after:['patrol'],turnAt:'layer6',objective:'先还原舰桥最后72小时的两段核心记录，再提交本周目已完成的一条证据链。',done:'证据最终都指向同一个执行者：方舟主控AI“守望者”。'},
   {id:'core',line:'main',chapter:'终章',title:'众证协议',giver:'幸存者议会',type:'boss',after:['bridge'],target:'layer7',objective:'完成六件核心组件任务，在核心控制室逐件装入后启动协议，并击败守望者的决策人格。',done:'守望者失去替人类作出最终决定的能力。现在，所有活着的人都将面对真相。'},
 
@@ -1425,7 +1427,7 @@ function freshState(keepMeta){
     inv:{scrap:0,wood:0,stone:0,coal:0,copperScrap:0,copperIngot:0,cloth:0,ecomp:0,ration:0,steel:0,crystal:0,biocore:0,core:0,ingot:0,crowbar:1,
       arkBand:returning?1:0,builderGun:returning?1:0,fieldMap:returning?1:0},
     defenses:[], rests:0, skills:{}, skillSlots:[null,null,null], skillSlotSel:0, skillView:'active', skillSelected:null, charView:'overview', quests:{first_exit:'active'}, questStart:{}, flags:{}, areaSearch:{}, exploreCount:{}, discoveryThresholds:{}, fieldFogSeen:{}, resourceSites:{}, resourcePools:{}, investigationMisses:{}, discovered:{camp:true,outer:true,joeCamp:true}, dailyGather:{}, dailyLocation:{}, dailyFacility:{}, foodBuff:null, truthClaimed:null,
-    runStats:{kills:0,wKill:0,dmg:0,mat:0}, checkpoint:null, expeditionStartInv:null, fieldEncounter:{pressure:0,safeSteps:0,cooldown:0}, mapUnread:false, time:0,
+    runStats:{kills:0,wKill:0,dmg:0,mat:0}, checkpoint:null, expeditionStartInv:null, fieldEncounter:{pressure:0,safeSteps:0,cooldown:0}, knownRoutes:{}, mapUnread:false, time:0,
     tab:'act', screen:'play', campBuilding:null, campView:'home', bagView:'equipment', bagSel:null, techSel:null, combat:null, visited:{camp:true}, mapLevel:'world', mapRegion:'surface', siteSheet:null, meta, kills:0,
     sound:AUDIO_PREF_DEFAULTS.sound,music:AUDIO_PREF_DEFAULTS.music,vibration:AUDIO_PREF_DEFAULTS.vibration,soundVolume:AUDIO_PREF_DEFAULTS.soundVolume,musicVolume:AUDIO_PREF_DEFAULTS.musicVolume,
     tutorial:returning?{version:1,step:'done',complete:true}:{version:1,step:'wake',complete:false},
@@ -1637,7 +1639,7 @@ function finishQuest(id,announce){
   if(q.reward&&q.reward.items) for(const[k,v] of Object.entries(q.reward.items)){ gainMat(k,v); if(announce)log('获得:'+ITEMS[k].name+'×'+v,'good'); }
   if(q.reward&&q.reward.flag){ if(q.persist==='space')setMetaFlag(q.reward.flag);else state.flags[q.reward.flag]=true; }
   if(q.calibrates)state.flags['coreCalibrated_'+q.calibrates]=true;
-  if(q.reward&&q.reward.reveal) discoverLocation(q.reward.reveal,announce);
+  if(q.reward&&q.reward.reveal){discoverLocation(q.reward.reveal,announce);if(q.reward.routeFrom)discoverRoute(q.reward.routeFrom,q.reward.reveal,false);}
   if(q.truth) claimTruth(q.truth);
   if(announce){ divider(); log('✓ 完成任务【'+q.title+'】','sys'); log(q.done,'story'); divider(); setLogOpen(true);queueQuestStoryScene(q,'complete'); }
   activateAvailableQuests(announce);
@@ -1706,18 +1708,33 @@ function routeSurveyBonus(){return (skillUnlocked('tacticalScan')?1:0)+(currentC
 function milestoneNeed(id,index,rule){const range=explorationPacingRange('route',id,index);return Math.max(range[0],scheduledDiscoveryNeed('route',id,index,range)-routeSurveyBonus());}
 function applyDiscoveryMilestones(id,count){
   (DISCOVERY_MILESTONES[id]||[]).forEach((rule,index)=>{
-    if(count<milestoneNeed(id,index,rule)||locationRevealed(rule.reveal))return;
+    if(count<milestoneNeed(id,index,rule))return;
+    const locationWasKnown=locationRevealed(rule.reveal),routeWasKnown=routeKnown(id,rule.reveal),flagPending=!!rule.flag&&!state.flags[rule.flag];
+    if(locationWasKnown&&routeWasKnown&&!flagPending)return;
     if(rule.flag)setProgressFlag(rule.flag,true);
     if(rule.special){divider();log('⌘ 发现特殊通路','sys');log(rule.special,'story');divider();setLogOpen(true);}
     const announced=discoverLocation(rule.reveal,true);
+    const routeAnnounced=discoverRoute(id,rule.reveal,false);
     setFieldReport(id,'发现新路线 · '+LOCATIONS[rule.reveal].name,rule.special||('断续地形读数已经闭合。地图新增通往【'+LOCATIONS[rule.reveal].name+'】的路线；入口仍需现场确认。'),'good');
     /* 旧存档可能已经记住坐标但尚未触发机关；机关完成后仍要明确告诉玩家路线已经开放。 */
-    if(!announced&&locationRevealed(rule.reveal))log('◈ 路线开放：【'+LOCATIONS[rule.reveal].name+'】','good');
+    if(!announced&&routeAnnounced)log('◈ 路线开放：【'+LOCATIONS[rule.reveal].name+'】','good');
   });
+}
+function neighborRouteNeed(id,dest){
+  const index=Math.max(0,neighbors(id,true).slice().sort().indexOf(dest)),range=[5+index*4,10+index*4];
+  return Math.max(range[0],thresholdFor('explore-v2:cross-route:'+id+':'+dest,range)-routeSurveyBonus());
+}
+function applyKnownNeighborRoutes(id,count){
+  const due=neighbors(id,true).filter(dest=>locationRevealed(dest)&&!routeKnown(id,dest)).map(dest=>({dest,need:neighborRouteNeed(id,dest)})).sort((a,b)=>a.need-b.need||a.dest.localeCompare(b.dest))[0];
+  if(!due||count<due.need||!discoverRoute(id,due.dest,false))return false;
+  const text='你沿着断裂地形完成反向测绘，确认这里可以直通【'+LOCATIONS[due.dest].name+'】。这条路线已同步到两地的地图。';
+  setFieldReport(id,'测出反向通路 · '+LOCATIONS[due.dest].name,text,'good');log('◈ '+text,'good');return true;
 }
 function nextDiscoveryMilestone(id){
   const count=exploreAttempts(id);
-  return (DISCOVERY_MILESTONES[id]||[]).map((rule,index)=>({rule,need:milestoneNeed(id,index,rule)})).filter(x=>!locationRevealed(x.rule.reveal)&&count<x.need).sort((a,b)=>a.need-b.need)[0]||null;
+  const fixed=(DISCOVERY_MILESTONES[id]||[]).map((rule,index)=>({rule,need:milestoneNeed(id,index,rule)})).filter(x=>(!locationRevealed(x.rule.reveal)||!routeKnown(id,x.rule.reveal))&&count<x.need);
+  const cross=neighbors(id,true).filter(dest=>locationRevealed(dest)&&!routeKnown(id,dest)).map(dest=>({rule:{reveal:dest,routeOnly:true},need:neighborRouteNeed(id,dest)})).filter(x=>count<x.need);
+  return fixed.concat(cross).sort((a,b)=>a.need-b.need)[0]||null;
 }
 function areaEventNeed(id,index){return scheduledDiscoveryNeed('event',id,index,explorationPacingRange('event',id,index));}
 function npcDiscoveryNeed(name,id){
@@ -1836,12 +1853,11 @@ function fieldMapMarkerCandidates(id){
   if(enemies.length)markers.push({id:'threat:'+id,kind:'threat',icon:'combat',label:'威胁活动',target:id,revealed:attempts>=scheduledDiscoveryNeed('threat',id,0,[2,4])});
   const hasOutpost=!!outpostRegion()&&!!LOCATIONS[id].colonizable,hasRoute=state.meta.expansionUnlocked&&SPACE_ROUTES.some(route=>spaceRouteDirection(route));
   if(hasOutpost||hasRoute)markers.push({id:'system:'+id,kind:'system',icon:hasOutpost?'camp':'expedition',label:hasOutpost?'前哨部署':'星际航线',target:id,revealed:attempts>=scheduledDiscoveryNeed('map-system',id,0,[2,5])});
-  neighbors(id,true).filter(dest=>dest!=='camp').forEach(dest=>markers.push({id:'route:'+dest,kind:'route',icon:'map',label:LOCATIONS[dest].name,target:dest,revealed:locationRevealed(dest)}));
+  neighbors(id,true).filter(dest=>dest!=='camp').forEach(dest=>markers.push({id:'route:'+dest,kind:'route',icon:'map',label:LOCATIONS[dest].name,target:dest,revealed:locationRevealed(dest)&&routeKnown(id,dest)}));
   return assignFieldMarkerSlots(markers);
 }
 function fieldMapMarkers(id){
-  const attempts=exploreAttempts(id);
-  return fieldMapMarkerCandidates(id).filter(marker=>marker.revealed&&(attempts>0||marker.kind==='route'&&(id!=='outer'||state.visited&&state.visited[marker.target])));
+  return fieldMapMarkerCandidates(id).filter(marker=>marker.revealed);
 }
 function fieldFogRecord(id){
   const raw=state.fieldFogSeen&&state.fieldFogSeen[id];
@@ -1892,6 +1908,28 @@ function locationGate(id){
 function entryFlag(id){ return 'entryOpened_'+id; }
 function entryNeedsConfirm(id){ return !!ENTRY_REQUIREMENTS[id]&&!state.flags[entryFlag(id)]; }
 function routeKey(a,b){return [a,b].sort().join('|');}
+function directMapLink(a,b){return MAP_LINKS.some(([from,to])=>from===a&&to===b||from===b&&to===a);}
+function guidedRoute(a,b){const key=routeKey(a,b);return GUIDED_MAP_ROUTES.some(([from,to])=>routeKey(from,to)===key);}
+function publicSettlementRoute(a,b){return LOCATIONS[a]&&LOCATIONS[b]&&LOCATIONS[a].zone==='聚居地'&&LOCATIONS[b].zone==='聚居地'&&!!(state.discovered&&state.discovered.setGate);}
+function routeKnown(a,b){
+  if(!directMapLink(a,b))return false;
+  const key=routeKey(a,b),guided=guidedRoute(a,b)&&(key==='camp|outer'||!!(state.flags&&state.flags.mapUnlocked)||!!(state.tutorial&&state.tutorial.complete));
+  return guided||publicSettlementRoute(a,b)||!!(state.knownRoutes&&state.knownRoutes[key]);
+}
+function discoverRoute(a,b,announce){
+  if(!directMapLink(a,b)||routeKnown(a,b))return false;
+  if(!state.knownRoutes)state.knownRoutes={};state.knownRoutes[routeKey(a,b)]=true;
+  if(announce){state.mapUnread=true;log('◈ 路线已测绘：【'+LOCATIONS[a].name+'】 ↔ 【'+LOCATIONS[b].name+'】','good');}
+  return true;
+}
+function rememberGuidedRoutes(){if(!state.knownRoutes)state.knownRoutes={};GUIDED_MAP_ROUTES.forEach(([a,b])=>state.knownRoutes[routeKey(a,b)]=true);}
+function repairKnownRoutes(){
+  if(!state.knownRoutes)state.knownRoutes={};
+  if(state.flags&&state.flags.mapUnlocked||state.tutorial&&state.tutorial.complete)rememberGuidedRoutes();
+  Object.entries(DISCOVERY_MILESTONES).forEach(([source,rules])=>{const count=exploreAttempts(source);if(!count)return;rules.forEach((rule,index)=>{if(count>=milestoneNeed(source,index,rule)&&locationRevealed(rule.reveal))state.knownRoutes[routeKey(source,rule.reveal)]=true;});});
+  Object.values(FIELD_OPERATIONS).forEach(op=>{if(op.reveal&&state.flags[op.flag]&&directMapLink(op.at,op.reveal))state.knownRoutes[routeKey(op.at,op.reveal)]=true;});
+  if(questDone('patrol'))state.knownRoutes[routeKey('layer2','sealedCabin')]=true;
+}
 function routeObstacle(from,to){return ROUTE_OBSTACLES[routeKey(from,to)]||null;}
 function routeObstacleTool(obstacle){return obstacle&&obstacle.tools.find(ownsItem)||null;}
 function routeNeedsConfirm(from,to){const obstacle=routeObstacle(from,to);return !!obstacle&&!state.flags[obstacle.flag];}
@@ -1915,7 +1953,7 @@ function performFieldOperation(id){
   Object.entries(op.cost||{}).forEach(([item,n])=>state.inv[item]-=n);
   state.inv[op.grant]=(state.inv[op.grant]||0)+1; state.flags[op.flag]=true;
   divider();log('现场操作完成：【'+op.name+'】。','sys');log('获得关键道具：'+ITEMS[op.grant].name+'。','good');
-  if(op.reveal)discoverLocation(op.reveal,true);
+  if(op.reveal){discoverLocation(op.reveal,true);discoverRoute(op.at,op.reveal,false);}
   if(id==='assembleLamp'){
     if(repairMinerProgression(false))log('获得特殊蓝图【采掘外骨骼】· 可在基础工作台制作。','good');
     queueStoryScene({npc:'阿拓',location:'oldMine',onceKey:'npc-depart-阿拓-underworks',kind:'chapter',eyebrow:'CONTACT MOVING // DEEP ACCESS',title:'先下井的人',lines:['探照灯刺穿粉尘时，阿拓已经把两套绳索扣上升降架。','“我先去船底维修井。下面的旧采掘轨要是还能动，我们就能把矿料直接送回地表。”','他在无线电里敲了三短一长：“别追着地图上的头像走。到了井下继续搜，听见这个暗号再来找我。”'],action:'稍后在维修井汇合'});
@@ -1957,7 +1995,7 @@ function repairLegacyDiscoveryFog(){
   }
   state.flags.discoveryFogV1=1;return massReveal;
 }
-function neighbors(id,includeHidden){ const out=[]; MAP_LINKS.forEach(([a,b])=>{ const other=a===id?b:(b===id?a:null); if(other&&(includeHidden||locationRevealed(other)))out.push(other); }); return out; }
+function neighbors(id,includeHidden){ const out=[]; MAP_LINKS.forEach(([a,b])=>{ const other=a===id?b:(b===id?a:null); if(other&&(includeHidden||locationRevealed(other)&&routeKnown(id,other)))out.push(other); }); return out; }
 function isAdjacent(a,b){ return neighbors(a).includes(b); }
 
 function travelRoute(from,to){
@@ -2058,10 +2096,10 @@ function exhaustionDeath(){
 }
 
 /* ================= 存档点/结算 ================= */
-function snapshot(){ return JSON.parse(JSON.stringify({player:P(),inv:state.inv,defenses:state.defenses,rests:state.rests,skills:state.skills,masteries:state.masteries,quests:state.quests,questStart:state.questStart,flags:state.flags,areaSearch:state.areaSearch,exploreCount:state.exploreCount,discoveryThresholds:state.discoveryThresholds,fieldFogSeen:state.fieldFogSeen,resourceSites:state.resourceSites,resourcePools:state.resourcePools,investigationMisses:state.investigationMisses,discovered:state.discovered,dailyGather:state.dailyGather,dailyLocation:state.dailyLocation,dailyFacility:state.dailyFacility,foodBuff:state.foodBuff,truthClaimed:state.truthClaimed,visited:state.visited,runStats:state.runStats,kills:state.kills,fieldEncounter:state.fieldEncounter,mapUnread:!!state.mapUnread,time:state.time,meta:state.meta,campName:state.campName,settlementRep:state.settlementRep,settlementCommissions:state.settlementCommissions})); }
+function snapshot(){ return JSON.parse(JSON.stringify({player:P(),inv:state.inv,defenses:state.defenses,rests:state.rests,skills:state.skills,masteries:state.masteries,quests:state.quests,questStart:state.questStart,flags:state.flags,areaSearch:state.areaSearch,exploreCount:state.exploreCount,discoveryThresholds:state.discoveryThresholds,fieldFogSeen:state.fieldFogSeen,resourceSites:state.resourceSites,resourcePools:state.resourcePools,investigationMisses:state.investigationMisses,discovered:state.discovered,knownRoutes:state.knownRoutes,dailyGather:state.dailyGather,dailyLocation:state.dailyLocation,dailyFacility:state.dailyFacility,foodBuff:state.foodBuff,truthClaimed:state.truthClaimed,visited:state.visited,runStats:state.runStats,kills:state.kills,fieldEncounter:state.fieldEncounter,mapUnread:!!state.mapUnread,time:state.time,meta:state.meta,campName:state.campName,settlementRep:state.settlementRep,settlementCommissions:state.settlementCommissions})); }
 function updateCheckpoint(){ state.checkpoint=snapshot(); }
 function restoreCheckpoint(){ const s=JSON.parse(JSON.stringify(state.checkpoint));
-  state.player=s.player;state.inv=s.inv;state.defenses=s.defenses;state.rests=s.rests;state.skills=s.skills;state.quests=s.quests;state.questStart=s.questStart||{};state.flags=s.flags||{};state.areaSearch=s.areaSearch||{};state.exploreCount=s.exploreCount||{};state.discoveryThresholds=s.discoveryThresholds||{};state.fieldFogSeen=s.fieldFogSeen||{};state.resourceSites=s.resourceSites||{};state.resourcePools=s.resourcePools||{};state.investigationMisses=s.investigationMisses||{};state.discovered=s.discovered||{camp:true,outer:true,joeCamp:true};state.dailyGather=s.dailyGather||{};state.dailyLocation=s.dailyLocation||{};state.dailyFacility=s.dailyFacility||{};state.foodBuff=s.foodBuff||null;state.truthClaimed=s.truthClaimed||null;state.visited=s.visited;state.runStats=s.runStats;state.kills=s.kills;state.fieldEncounter=s.fieldEncounter||{pressure:0,safeSteps:0,cooldown:0};state.mapUnread=!!s.mapUnread;state.time=s.time;state.meta=s.meta||state.meta;
+  state.player=s.player;state.inv=s.inv;state.defenses=s.defenses;state.rests=s.rests;state.skills=s.skills;state.quests=s.quests;state.questStart=s.questStart||{};state.flags=s.flags||{};state.areaSearch=s.areaSearch||{};state.exploreCount=s.exploreCount||{};state.discoveryThresholds=s.discoveryThresholds||{};state.fieldFogSeen=s.fieldFogSeen||{};state.resourceSites=s.resourceSites||{};state.resourcePools=s.resourcePools||{};state.investigationMisses=s.investigationMisses||{};state.discovered=s.discovered||{camp:true,outer:true,joeCamp:true};state.knownRoutes=s.knownRoutes||{};state.dailyGather=s.dailyGather||{};state.dailyLocation=s.dailyLocation||{};state.dailyFacility=s.dailyFacility||{};state.foodBuff=s.foodBuff||null;state.truthClaimed=s.truthClaimed||null;state.visited=s.visited;state.runStats=s.runStats;state.kills=s.kills;state.fieldEncounter=s.fieldEncounter||{pressure:0,safeSteps:0,cooldown:0};state.mapUnread=!!s.mapUnread;state.time=s.time;state.meta=s.meta||state.meta;
   state.campName=s.campName||'幸存者营地';state.settlementRep=Number(s.settlementRep)||0;state.settlementCommissions=s.settlementCommissions||{};syncCampName();
   state.masteries=s.masteries||state.masteries||{};
   migrateTechSnapshot(state);MATS.forEach(k=>{if(state.inv[k]==null)state.inv[k]=0;});Object.entries(state.meta.spaceItems||{}).forEach(([id,n])=>{if(ITEMS[id])state.inv[id]=Math.max(state.inv[id]||0,Number(n)||0);});Object.assign(state.quests,state.meta.spaceQuests||{});Object.assign(state.flags,state.meta.spaceFlags||{});Object.assign(state.discovered,state.meta.spaceDiscovered||{});repairMinerProgression(false);
@@ -2440,6 +2478,7 @@ function grantTutorialMap(){
   state.inv.fieldMap=Math.max(1,state.inv.fieldMap||0);
   if(!state.discovered)state.discovered={camp:true,outer:true,joeCamp:true};
   Object.assign(state.discovered,{camp:true,outer:true,joeCamp:true,setGate:true});
+  rememberGuidedRoutes();
   Object.assign(state.flags,{mapUnlocked:true,exploreUnlocked:true});
   setTutorialStep('farewell');
 }
@@ -2449,6 +2488,7 @@ function completeTutorial(){
   state.tutorial.step='done'; state.tutorial.complete=true; state.flags.guideDeparted=true;
   markStoryNpcMet('老乔');
   Object.assign(state.flags,{braceletUnlocked:true,builderUnlocked:true,mapUnlocked:true,exploreUnlocked:true});
+  rememberGuidedRoutes();
   state.quests.first_exit=state.quests.first_exit||'active'; state.tab='act'; state.campView='home'; state.mapOpen=false; state.mapLevel='world'; state.mapSelectedRegion='camp';
   state.discovered.setGate=true;if(learnedCollector)log('老乔授予副职业【入门拾荒者】。采集、开采等对应行动会自动采用职业作业方式。','good');renderPanelTop(); promptCampName();
 }
@@ -2758,10 +2798,10 @@ function renderRegionMap(box){
 }
 function renderLocalMap(box,regionId){
   if(!WORLD_REGIONS[regionId]||!regionUnlocked(regionId))regionId=regionForLocation(P().location);
-  const region=WORLD_REGIONS[regionId],rawLayout=LOCAL_MAPS[regionId],layout=verticalMapLayout(rawLayout.canvas,rawLayout.pos,{specialLinks:rawLayout.specialLinks||[]}),shell=createMapShell(box,region.name,region.defaultOpen?'公共区域默认开放 · 特殊地点随剧情解锁':'局部地图 · 调查地点发现新的路线',()=>{state.mapLevel='world';renderPanelTop();});shell.wrap.classList.add('local-level','terrain-map','terrain-'+regionId);
-  const d=regionDiscovery(regionId),hereInRegion=region.locations.includes(P().location),scope=el('div','map-scopebar');
+  const region=WORLD_REGIONS[regionId],rawLayout=LOCAL_MAPS[regionId],layout=verticalMapLayout(rawLayout.canvas,rawLayout.pos,{specialLinks:rawLayout.specialLinks||[],externalLinks:rawLayout.externalLinks||[]}),shell=createMapShell(box,region.name,region.defaultOpen?'公共区域默认开放 · 特殊地点随剧情解锁':'局部地图 · 调查地点发现新的路线',()=>{state.mapLevel='world';renderPanelTop();});shell.wrap.classList.add('local-level','terrain-map','terrain-'+regionId);
+  const d=regionDiscovery(regionId),mapLocations=region.locations.concat(rawLayout.externalLocations||[]),hereInRegion=mapLocations.includes(P().location),scope=el('div','map-scopebar');
   scope.innerHTML='<span><small>LOCAL SURVEY</small><b>已发现 '+d.known+'/'+d.total+' 个地点</b></span><em>'+(region.defaultOpen?'普通城区已登记；剧情区、封锁区和任务地点将在触发后补入地图。':'勘察结果并不固定：可能发现路线、物资、敌情，也可能一无所获。')+'</em>';shell.wrap.insertBefore(scope,shell.wrap.children[1]);
-  const ids=region.locations.filter(id=>layout.pos[id]&&locationRevealed(id)),links=MAP_LINKS.filter(([a,b])=>ids.includes(a)&&ids.includes(b)).concat((layout.specialLinks||[]).filter(([a,b])=>ids.includes(a)&&ids.includes(b)));
+  const ids=mapLocations.filter(id=>layout.pos[id]&&locationRevealed(id)),externalLinks=(layout.externalLinks||[]).filter(([a,b])=>ids.includes(a)&&ids.includes(b)),links=MAP_LINKS.filter(([a,b])=>ids.includes(a)&&ids.includes(b)&&routeKnown(a,b)).concat((layout.specialLinks||[]).filter(([a,b])=>ids.includes(a)&&ids.includes(b)),externalLinks);
   const nodes=[];ids.forEach(id=>{const loc=LOCATIONS[id],p=layout.pos[id],st=mapNodeState(id),gate=locationGate(id),n=el('button','mapnode '+st);n.style.left=p[0]+'px';n.style.top=p[1]+'px';n.dataset.loc=id;
     n.innerHTML='<span class="mn-icon">'+loc.icon+'</span><span class="mn-copy"><span class="mn-zone">'+loc.zone+(['known','locked'].includes(st)?' · 已标记':'')+'</span><span class="mn-name">'+loc.name+'</span></span>'+(st==='locked'?'<span class="mn-lock">'+gate.text+'</span>':'');n.onclick=()=>selectLocation(id);nodes.push(n);shell.cv.appendChild(n);});
   let selected=ids.includes(state.mapSelected)?state.mapSelected:(hereInRegion?P().location:region.entry);if(!ids.includes(selected))selected=ids[0];state.mapSelected=selected;
@@ -4359,7 +4399,7 @@ function explore(mode){
   const outcome=resolveInvestigation(id);
   /* 先结算本步事件再确认联系人位置：已经动身的 NPC 不能在旧坐标被补记或播放剧情。 */
   applyNpcDiscoveries(id,attempts);
-  applyResourceDiscovery(id,attempts);applyDiscoveryMilestones(id,attempts);
+  applyResourceDiscovery(id,attempts);applyDiscoveryMilestones(id,attempts);applyKnownNeighborRoutes(id,attempts);
   syncQuestProgress(true);const mappedAfter=fieldMapMarkers(id),newMarkerIds=mappedAfter.map(marker=>marker.id).filter(markerId=>!mappedBefore.has(markerId)),nextFog=fieldFogState(id,mappedAfter);pendingFieldReveal=newMarkerIds.length?{location:id,markerIds:newMarkerIds,complete:nextFog.freshComplete}:null;if(P().hp<=0){die();return;}
   if(outcome==='combat')return;
   checkStamina(); render();
@@ -4385,7 +4425,7 @@ function move(dest,routeHandled){
   const from=P().location,nl=LOCATIONS[dest],cost=moveCost(from,dest);
   if(from==='camp')beginExpedition();
   if(!payMovementCost(cost)){exhaustionDeath();return;}
-  advanceTime(cost?1:0); P().location=dest;fieldMarkerSelection=null;pendingFieldReveal=null;state.settlementShopOpen=false; discoverLocation(dest,false);if(dest==='setGate')WORLD_REGIONS.settlement.locations.filter(id=>!LOCATIONS[id].hiddenBy).forEach(id=>discoverLocation(id,false)); state.tab='act'; state.mapOpen=false; state.siteSheet=null; state.mapRegion=regionForLocation(dest);state.npcTarget=null; divider(); log('来到【'+nl.name+'】。','sys'); describe(dest);
+  advanceTime(cost?1:0);discoverRoute(from,dest,false);P().location=dest;fieldMarkerSelection=null;pendingFieldReveal=null;state.settlementShopOpen=false; discoverLocation(dest,false);if(dest==='setGate')WORLD_REGIONS.settlement.locations.filter(id=>!LOCATIONS[id].hiddenBy).forEach(id=>discoverLocation(id,false)); state.tab='act'; state.mapOpen=false; state.siteSheet=null; state.mapRegion=regionForLocation(dest);state.npcTarget=null; divider(); log('来到【'+nl.name+'】。','sys'); describe(dest);
   if(dest==='camp'){finishExpedition();state.campView='home';state.campBuilding=null;state.mapReturn=null;}
   if(!infectionTick())return;
   discoverTechRecord(dest);
@@ -4403,7 +4443,7 @@ function travelTo(dest){
   if(from==='camp')beginExpedition();
   if(!payMovementCost(route.cost)){exhaustionDeath();return;}
   for(let i=1;i<route.path.length;i++){
-    const next=route.path[i];P().location=next;if(publicSettlementTrip){discoverLocation(next,false);state.visited[next]=true;}advanceTime(1);
+    const next=route.path[i];discoverRoute(route.path[i-1],next,false);P().location=next;if(publicSettlementTrip){discoverLocation(next,false);state.visited[next]=true;}advanceTime(1);
     if(!infectionTick())return;
   }
   const nl=LOCATIONS[dest];fieldMarkerSelection=null;pendingFieldReveal=null;discoverLocation(dest,false);state.tab='act';state.mapOpen=false;state.siteSheet=null;state.mapSelected=dest;state.mapRegion=regionForLocation(dest);
@@ -4734,7 +4774,7 @@ function boot(){
   const peek=$('log-peek'); if(peek)peek.onclick=()=>setLogOpen($('log').classList.contains('collapsed'));
   const loaded=load(); if(!loaded) state=freshState();normalizeAudioPrefs(state);
   MATS.forEach(k=>{if(state.inv[k]==null)state.inv[k]=0;});
-  if(!state.quests)state.quests={}; if(!state.questStart)state.questStart={}; if(!state.flags)state.flags={}; if(!state.areaSearch)state.areaSearch={}; if(!state.exploreCount)state.exploreCount={}; if(!state.discoveryThresholds)state.discoveryThresholds={}; if(!state.fieldFogSeen)state.fieldFogSeen={}; if(!state.resourceSites)state.resourceSites={}; if(!state.resourcePools)state.resourcePools={}; if(!state.investigationMisses)state.investigationMisses={}; if(!state.discovered)state.discovered={camp:true,outer:true,joeCamp:true}; if(!state.dailyGather)state.dailyGather={}; if(!state.dailyLocation)state.dailyLocation={}; if(!state.dailyFacility)state.dailyFacility={};if(!state.fieldEncounter)state.fieldEncounter={pressure:0,safeSteps:0,cooldown:0}; if(state.foodBuff===undefined)state.foodBuff=null; if(state.truthClaimed===undefined)state.truthClaimed=null; if(state.mapUnread===undefined)state.mapUnread=false; if(!state.visited)state.visited={}; state.visited.camp=true;if(!state.campName){state.campName='幸存者营地';state.flags.campNamed=true;}if(state.settlementRep==null)state.settlementRep=0;if(!state.settlementCommissions)state.settlementCommissions={};syncCampName();
+  if(!state.quests)state.quests={}; if(!state.questStart)state.questStart={}; if(!state.flags)state.flags={}; if(!state.areaSearch)state.areaSearch={}; if(!state.exploreCount)state.exploreCount={}; if(!state.discoveryThresholds)state.discoveryThresholds={}; if(!state.fieldFogSeen)state.fieldFogSeen={}; if(!state.resourceSites)state.resourceSites={}; if(!state.resourcePools)state.resourcePools={}; if(!state.investigationMisses)state.investigationMisses={}; if(!state.discovered)state.discovered={camp:true,outer:true,joeCamp:true}; if(!state.knownRoutes)state.knownRoutes={}; if(!state.dailyGather)state.dailyGather={}; if(!state.dailyLocation)state.dailyLocation={}; if(!state.dailyFacility)state.dailyFacility={};if(!state.fieldEncounter)state.fieldEncounter={pressure:0,safeSteps:0,cooldown:0}; if(state.foodBuff===undefined)state.foodBuff=null; if(state.truthClaimed===undefined)state.truthClaimed=null; if(state.mapUnread===undefined)state.mapUnread=false; if(!state.visited)state.visited={}; state.visited.camp=true;if(!state.campName){state.campName='幸存者营地';state.flags.campNamed=true;}if(state.settlementRep==null)state.settlementRep=0;if(!state.settlementCommissions)state.settlementCommissions={};syncCampName();
   if(loaded)Object.keys(LOCATIONS).forEach(id=>{if(state.exploreCount[id]==null)state.exploreCount[id]=state.areaSearch[id]||0;const oldGather=state.dailyGather[id];if((oldGather&&oldGather.count>0)||(state.areaSearch[id]||0)>0){state.resourceSites[id]=!!resourceSiteOf(id);if(state.resourceSites[id]&&!state.resourcePools[id])state.resourcePools[id]={charges:Math.max(0,resourceCapacity(id)-(oldGather&&oldGather.day===currentDay()?oldGather.count:0)),updatedAt:state.time};}});
   if(loaded)Object.entries(NPC_FIELD_DISCOVERIES).forEach(([name,entry])=>{if(state.visited[entry.at]||(state.areaSearch[entry.at]||0)>0)state.flags['fieldNpcFound_'+name]=true;});
   /* v1 引导之前的存档已经拥有完整 HUD、休眠仓和地图，直接兼容为已完成。 */
@@ -4776,7 +4816,7 @@ function boot(){
   if(questDone('echo')&&!state.flags.evidenceSignal) state.flags.evidenceSignal=true;
   migrateTechTree();
   if(state.checkpoint)migrateTechSnapshot(state.checkpoint);
-  Object.assign(state.quests,state.meta.spaceQuests||{});Object.assign(state.flags,state.meta.spaceFlags||{});Object.assign(state.discovered,state.meta.spaceDiscovered||{});Object.entries(state.meta.spaceItems||{}).forEach(([id,n])=>{if(ITEMS[id])state.inv[id]=Math.max(state.inv[id]||0,Number(n)||0);});repairLegacyDiscoveryFog();
+  Object.assign(state.quests,state.meta.spaceQuests||{});Object.assign(state.flags,state.meta.spaceFlags||{});Object.assign(state.discovered,state.meta.spaceDiscovered||{});Object.entries(state.meta.spaceItems||{}).forEach(([id,n])=>{if(ITEMS[id])state.inv[id]=Math.max(state.inv[id]||0,Number(n)||0);});repairLegacyDiscoveryFog();repairKnownRoutes();
   Object.keys(state.meta.techs).forEach(k=>{ if(!TECHS[k]) delete state.meta.techs[k]; });
   if(state.techSel&&!TECHS[state.techSel]) state.techSel=null;
   if(state.player.hp<=0)P().hp=maxHp();
