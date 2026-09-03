@@ -63,7 +63,7 @@ function hasClass(node,name){return String(node&&node.className||'').split(/\s+/
 {
   sandbox.AbyssApp={versionInfo:()=> '安卓 0.7.1 · 外壳 9 · 资源 1788416012'};
   assert.equal(a.nativeShellVersion(),9);assert.equal(a.legacyNativeUpgradeRequired(),true,'旧外壳必须进入桥接下载流程，不能继续触发原生闪退路径');
-  sandbox.AbyssApp={versionInfo:()=> '安卓 0.7.2 · 外壳 10 · 资源 1788416740'};
+  sandbox.AbyssApp={versionInfo:()=> '安卓 0.7.4 · 外壳 10 · 资源 1788420415'};
   assert.equal(a.legacyNativeUpgradeRequired(),false,'具备应用内安装能力的新外壳不得被桥接页拦截');
   delete sandbox.AbyssApp;
 }
@@ -276,10 +276,10 @@ pendingTests.push((async()=>{
   assert.match(adaptiveIcon,/ic_launcher_art_v2/,'自适应图标必须使用幸存者与坠毁方舟主视觉');
   assert.ok(fs.existsSync(path.join(__dirname,'..','android','app','src','main','res','drawable-nodpi','ic_launcher_art_v2.png')),'应用图标主视觉文件必须存在');
   const androidBuild=fs.readFileSync(path.join(__dirname,'..','android','app','build.gradle'),'utf8');
-  assert.match(androidBuild,/versionCode 13/,'自动安装修复版 APK 必须提升安装版本');
-  assert.match(androidBuild,/versionName "0\.7\.2"/,'自动安装修复版 APK 必须展示新的应用版本');
+  assert.match(androidBuild,/versionCode 14/,'当前发布 APK 必须提升安装版本');
+  assert.match(androidBuild,/versionName "0\.7\.4"/,'当前发布 APK 必须展示新的应用版本');
   assert.match(androidBuild,/SHELL_VERSION", "10"/,'自动安装能力必须提升外壳协议版本');
-  assert.match(androidBuild,/BUNDLED_BUILD", "1788416740L"/,'最新 APK 必须内置本次完整资源版本');
+  assert.match(androidBuild,/BUNDLED_BUILD", "1788420415L"/,'最新 APK 必须内置本次完整资源版本');
   assert.match(androidBuild,/UPDATE_BASE_URL[^\n]*http:\/\/59\.110\.144\.30:9091\/app-update\//,'APK 更新资源必须固定走 59 测试服务器');
   assert.match(androidBuild,/CLOUD_SAVE_URL[^\n]*http:\/\/59\.110\.144\.30:9091\/api\/cloud-save/,'APK 云存档必须固定走 59 私人服务器');
   assert.match(androidBuild,/CLOUD_SAVE_URL/,'安卓外壳必须提供独立云存档接口地址');
@@ -583,7 +583,7 @@ pendingTests.push((async()=>{
 {
   const s=reset();s.tutorial.complete=true;s.player.location='camp';s.campView='npc';s.npcTarget='老乔';s.npcTab='talk';const box=new FakeElement(),nodes=[];a.renderNpcPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);
   const terminal=nodes.find(n=>hasClass(n,'npc-terminal')),content=nodes.find(n=>n.className==='npc-content-scroll'),exitbar=nodes.find(n=>hasClass(n,'npc-exitbar')),exit=nodes.find(n=>hasClass(n,'npc-exit'));
-  assert.ok(terminal&&content&&exitbar&&exit,'NPC 页面必须由全屏终端、内部滚动区与固定告别区组成');assert.equal(terminal.children.at(-1),exitbar,'告别按钮必须始终处于整页最底部');assert.ok(content.children.some(n=>n.className==='npc-dialog'),'对话内容必须装入中间滚动区');assert.equal(nodes.some(n=>n.className==='npc-stage-back ui-icon-button'),false,'NPC 页顶部不得再保留重复关闭按钮');assert.match(exit.innerHTML,/我走了[\s\S]*再见，老乔/,'底部按钮必须使用符合对话语境的告别文案');
+  assert.ok(terminal&&content&&exitbar&&exit,'NPC 页面必须由全屏终端、内部滚动区与固定告别区组成');assert.equal(terminal.children.at(-1),exitbar,'告别按钮必须始终处于整页最底部');assert.ok(content.children.some(n=>n.className==='npc-dialog'),'对话内容必须装入中间滚动区');assert.equal(nodes.some(n=>n.className==='npc-stage-back ui-icon-button'),false,'NPC 页顶部不得再保留重复关闭按钮');assert.match(exit.innerHTML,/我走了[\s\S]*再见，老乔/,'底部按钮必须使用符合对话语境的告别文案');assert.doesNotMatch(exit.innerHTML,/<svg|icon-close/,'已经写明“我走了”的告别按钮旁不得再重复放置叉号图标');
   assert.equal(a.panelView(),'npc','NPC 交互必须拥有独立全屏视图状态');
 }
 {

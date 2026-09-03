@@ -2524,7 +2524,7 @@ function workspaceExit(label,fn,options){
   options=options||{};
   const footer=el('footer',(options.footerClass?options.footerClass+' ':'')+'ui-workspace__footer');
   const copy=options.secondary?'<b>'+label+'</b><small>'+options.secondary+'</small>':'<b>'+label+'</b>';
-  const button=el('button',(options.buttonClass?options.buttonClass+' ':'')+'ui-workspace__exit',uiIcon('close')+'<span>'+copy+'</span>');
+  const icon=options.icon===false?'':uiIcon('close'),button=el('button',(options.buttonClass?options.buttonClass+' ':'')+'ui-workspace__exit',icon+'<span>'+copy+'</span>');
   button.type='button';button.setAttribute('aria-label',options.ariaLabel||label);button.onclick=fn;footer.appendChild(button);return footer;
 }
 const BUILDING_ART_EXT={research:'png'};
@@ -3231,7 +3231,7 @@ function renderNpcPanel(box){
   else if(state.npcTab==='commission')renderNpcCommissions(content,npcName);
   else renderNpcDialogue(content,npcName);
   console.appendChild(content);terminal.appendChild(console);
-  const closeNpc=()=>{state.npcTarget=null;if(P().location==='camp')state.campView='home';dismissActionFeedback(true);renderPanelTop();};terminal.appendChild(workspaceExit('我走了',closeNpc,{footerClass:'npc-exitbar ui-workspace__footer--portrait',buttonClass:'npc-exit ui-workspace__exit--portrait',secondary:'再见，'+npcName,ariaLabel:'结束与'+npcName+'交谈并返回'}));box.appendChild(terminal);
+  const closeNpc=()=>{state.npcTarget=null;if(P().location==='camp')state.campView='home';dismissActionFeedback(true);renderPanelTop();};terminal.appendChild(workspaceExit('我走了',closeNpc,{footerClass:'npc-exitbar ui-workspace__footer--portrait',buttonClass:'npc-exit ui-workspace__exit--portrait',secondary:'再见，'+npcName,ariaLabel:'结束与'+npcName+'交谈并返回',icon:false}));box.appendChild(terminal);
 }
 function renderCampHome(box){ state.campBuilding=null; state.campView='home'; box.classList.add('camp-home');
   renderCampHero(box);
