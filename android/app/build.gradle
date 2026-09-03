@@ -25,7 +25,7 @@ android {
         buildConfigField "int", "SHELL_VERSION", "11"
         buildConfigField "long", "BUNDLED_BUILD", "1788441440L"
         buildConfigField "String", "UPDATE_BASE_URL", '"https://github.com/exkalib/Abyssal-Echoes/releases/latest/download/"'
-        buildConfigField "String", "CLOUD_SAVE_URL", '"http://59.110.144.30:9091/api/cloud-save"'
+        buildConfigField "String", "CLOUD_SAVE_URL", '"https://abyssal-echoes-ark.netlify.app/api/cloud-save"'
         buildConfigField "String", "UPDATE_PUBLIC_KEY", '"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEV38qnk5xngW+U/kAezd6ubgNUn+y1eMAwlAgHTtsFQO/ffqaXYdxwa7c2Af7sDoiXicjyPH5E7SJtB/E9R0usA=="'
     }
 

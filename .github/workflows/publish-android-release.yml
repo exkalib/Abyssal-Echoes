@@ -55,5 +55,5 @@ jobs:
           gh release create "$GITHUB_REF_NAME" Abyssal-Echoes.apk manifest.json manifest.sig "$BUNDLE_NAME" \
             --repo "$GITHUB_REPOSITORY" \
             --title "深渊回响 ${resource_version}" \
-            --notes "Android 安装包与签名资源更新。安装后会直接从 GitHub Release 检查后续版本；云存档仍由私人服务器按需提供。" \
+            --notes "Android 安装包与签名资源更新。安装后会直接从 GitHub Release 检查后续版本；云存档由 Netlify 按需提供。" \
             --latest
