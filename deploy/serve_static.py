@@ -15,6 +15,7 @@ from socketserver import ThreadingMixIn
 from urllib.parse import urlsplit
 
 mimetypes.add_type("application/vnd.android.package-archive", ".apk")
+mimetypes.add_type("image/webp", ".webp")
 
 SAVE_API = "/api/cloud-save"
 MAX_REQUEST_BYTES = 2 * 1024 * 1024
@@ -299,6 +300,7 @@ class RequestLimiter(object):
 class AbyssHandler(SimpleHTTPRequestHandler):
     extensions_map = dict(SimpleHTTPRequestHandler.extensions_map)
     extensions_map[".apk"] = "application/vnd.android.package-archive"
+    extensions_map[".webp"] = "image/webp"
 
     def end_headers(self):
         path = urlsplit(self.path).path

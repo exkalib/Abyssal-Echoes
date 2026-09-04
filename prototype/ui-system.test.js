@@ -47,6 +47,7 @@ assert.equal((html.match(/<button data-tab="/g)||[]).length,5,'底部主导航�
 for(const tab of ['char','career','skill','bag','task'])assert.match(html,new RegExp(`data-tab="${tab}"`),`底部主导航缺少 ${tab} 入口`);
 for(const icon of ['icon-career','icon-skill'])assert.match(html,new RegExp(`symbol id="${icon}"`),`新增一级导航必须使用统一 SVG 图标：${icon}`);
 for(const id of ['pierce','heavy','pulse-burst','combat-rhythm','kinetic-brace','reactive-armor','phase-strike','weakpoint-model','salvage-sense','field-sorting','precision-fab','thermal-control','bio-cycle','adaptive-culture','quick-scavenge','pulse-mining','precision-dismantle','strata-excavation','field-repair','spore-boost','sterile-sampling','tactical-scan','shield-bash','heavy-blow'])assert.match(html,new RegExp(`symbol id="icon-skill-${id}"`),`技能必须拥有独立 SVG 图标：${id}`);
+for(const id of ['vanguard','bulwark','infiltrator','salvager','fabricator','biologist'])assert.match(html,new RegExp(`symbol id="icon-career-${id}"`),`职业必须拥有独立 SVG 纹章：${id}`);
 for(const role of ['vanguard','bulwark','infiltrator'])for(const sex of ['male','female'])assert.equal(fs.existsSync(path.join(root,'assets','career-portraits-v1',`${role}-${sex}.png`)),true,`主战职业缺少 ${role}-${sex} 立绘`);
 assert.match(game,/function activeCareerPortraitSrc\(\)[\s\S]*careerRecord\('main'\)[\s\S]*careerPortraitSrc/,'背包人物立绘必须只跟随当前主战职业');
 assert.match(game,/function lifeCareerModuleMarkup\(compact\)[\s\S]*careerRecords\('life'\)[\s\S]*life-module-rack/,'多个副职业必须以可并存模块挂载，不能替换人物立绘');
@@ -57,7 +58,11 @@ assert.match(game,/rootPage=\['camp','explore','character','skills','careers','b
 assert.match(game,/function skillPageEntries\(view\)[\s\S]*Object\.keys\(MASTERIES\)\.map[\s\S]*Object\.keys\(SKILLS\)\.filter/,'技能能力库必须保留锁定能力并展示解锁路径');
 assert.match(game,/function renderCareerPanel\(box\)[\s\S]*\['current','main','life'\][\s\S]*career-view-tabs/,'职业页必须把当前配置、战斗路线和生活路线分层');
 assert.match(system,/Primary progression pages[\s\S]*\.skill-library-card\.locked[\s\S]*\.career-path-card\.current/,'技能与职业一级页必须从统一视觉系统获得状态样式');
-assert.match(rules,/角色 \/ 职业 \/ 技能 \/ 背包 \/ 任务[\s\S]*主动技能槽 → 分类能力库 → 选中能力完整详情[\s\S]*当前配置 \/ 战斗路线 \/ 生活路线/,'统一规范必须固定五项主导航以及技能、职业的信息层级');
+assert.match(system,/RPG progression codex[\s\S]*\.tone-active[\s\S]*\.tone-field[\s\S]*\.career-primary-stage[\s\S]*\.career-life-dossiers/,'技能与职业必须使用统一 RPG 战典皮肤、语义色和主副职业层级');
+assert.match(game,/function renderSkillBrowser\(view,onMutate\)[\s\S]*replaceMountedNode\(detailHost\.children\[0\][\s\S]*function refreshSkillPanel\(\)[^\n]*_refreshSkillPanel/,'技能选择必须只替换详情，外部刷新必须委托已挂载的局部控制器');
+assert.match(game,/function switchView\(id\)[\s\S]*replaceMountedNode\(content,fresh,box\)[\s\S]*function refreshCareerPanel\(\)[^\n]*_refreshCareerPanel/,'职业分段必须只替换内容区，外部刷新必须委托已挂载的局部控制器');
+assert.doesNotMatch(game,/function refresh(?:Skill|Career)Panel\(\)[^\n]*replaceChildren/,'技能与职业刷新入口不得清空并重建整个页面');
+assert.match(rules,/角色 \/ 职业 \/ 技能 \/ 背包 \/ 任务[\s\S]*常驻战斗技能栏 → 主动 \/ 自动 \/ 精通分类 → 符文式图标图鉴 → 选中能力完整详情[\s\S]*当前配置 \/ 战斗路线 \/ 生活路线/,'统一规范必须固定五项主导航以及技能、职业的信息层级');
 assert.match(rules,/主战职业是唯一人物身份[\s\S]*男女两张同构全身立绘[\s\S]*副职业不是人物身份[\s\S]*可并存的资质徽章/,'统一规范必须固定主战立绘与多副职模块的边界');
 assert.match(rules,/每个技能 ID 必须拥有自己的[\s\S]*战斗按钮与释放动效复用同一个符号[\s\S]*普通攻击、敌方攻击和每种主动技能/,'统一规范必须固定技能图标与战斗反馈');
 assert.doesNotMatch(game,/<span class="cc-icon">(?:DNA|JOB|SKL)<\/span>/,'角色入口必须使用统一 SVG sprite，不能使用文字缩写冒充图标');
@@ -69,7 +74,7 @@ assert.doesNotMatch(game,/function facilityHeader\(box,b\)[\s\S]{0,800}facility-
 assert.match(system,/\.recipe-station-top \.facility-module-head \.facility-header-summary \{ display:flex; \}/,'分栏设施页不得用旧规则隐藏顶部属性总览');
 assert.match(system,/Beacon, recovery and mastery extensions[\s\S]*\.beacon-inline-picker[\s\S]*\.mastery-book-choice\.selected/,'信标、回收与精通手册必须由统一视觉系统提供材质和状态');
 assert.match(system,/Beacon, recovery and mastery extensions[\s\S]*\.beacon-console[\s\S]*\.beacon-rings \{[^}]*var\(--ui-anomaly\)[^}]*var\(--ui-surface-sunken\)/,'信标主体也必须使用统一材质和异常色令牌，不能只统一选层控件');
-assert.match(system,/\.garden-bed b \{[^}]*var\(--ui-type-secondary\)[^}]*\}[\s\S]*\.garden-bed small \{[^}]*var\(--ui-type-secondary\)/,'菌圃可读文字不得退回 6–8px 私有字号');
+assert.match(system,/\.garden-bed-main b \{[^}]*var\(--ui-type-secondary\)[^}]*\}[\s\S]*\.garden-bed-main small \{[^}]*var\(--ui-type-secondary\)[\s\S]*\.garden-bed-skill small \{[^}]*var\(--ui-type-code\)/,'菌圃可读文字不得退回 6–8px 私有字号');
 assert.doesNotMatch(layout,/\.beacon-inline-picker\{[^}]*(?:color|background|border|box-shadow):|\.mastery-book-batch\{[^}]*(?:color|background|border|box-shadow):/,'新设施组件不得在旧布局文件中维护私有视觉皮肤');
 for(const id of ['nutrient','blackwood','protein','glow','biosample','crystal'])assert.match(html,new RegExp(`symbol id="icon-garden-${id}"`),`菌圃缺少统一 SVG 培养图标：${id}`);
 assert.match(game,/maxQty:state\.inv\[id\]/,'装备拆解必须把实际闲置数量传给统一批量控件');
@@ -101,6 +106,10 @@ for(const asset of ['style.css','ui-system.css','game.js'])assert.match(html,new
 for(const asset of ['style.css','ui-system.css','game.js'])assert.match(html,new RegExp(asset.replace('.',String.raw`\.`)+String.raw`\?v=[^"\s]*progressiontabs1`),`技能职业一级页变更必须刷新 ${asset} 缓存参数`);
 for(const asset of ['style.css','ui-system.css','game.js'])assert.match(html,new RegExp(asset.replace('.',String.raw`\.`)+String.raw`\?v=[^"\s]*gamefx1`),`职业立绘、技能图标与战斗动效变更必须刷新 ${asset} 缓存参数`);
 for(const asset of ['style.css','ui-system.css','game.js'])assert.match(html,new RegExp(asset.replace('.',String.raw`\.`)+String.raw`\?v=[^"\s]*loadoutfx1`),`人物装备融合层变更必须刷新 ${asset} 缓存参数`);
+for(const asset of ['style.css','ui-system.css','game.js'])assert.match(html,new RegExp(asset.replace('.',String.raw`\.`)+String.raw`\?v=[^"\s]*stationfix2`),`建筑配方切换、培养块技能与菌圃图标变更必须刷新 ${asset} 缓存参数`);
+assert.match(game,/function buildRecipeWorkbenchDetail[\s\S]*const selectEntry=entry=>[\s\S]*buildRecipeWorkbenchDetail\(entry,ui,opts,refresh,tone\)/,'配方切换必须只重建受控详情区，不能重建上方选择器');
+assert.doesNotMatch(game,/function renderRecipeWorkbench[\s\S]{0,5000}shell\.replaceWith/,'建筑配方工作台不得继续依赖 replaceWith 更新选择结果');
+assert.match(system,/\.garden-bed-skill[\s\S]*\.garden-bed-skill\.active/,'每个培养块上的培育师技能必须由统一视觉系统提供可用与禁用状态');
 assert.match(game,/function equipmentPortraitLayers\(\)[\s\S]*data-equipped-item[\s\S]*slot==='back'\?'rear':'front'/,'每件已装备物品必须进入独立人物叠层，并把背架放到职业立绘后方');
 assert.match(layout,/\.doll-frame \{[^}]*z-index:1/,'主战职业立绘必须保持在背架与前景装备之间');
 assert.match(layout,/\.doll-equipment-layer\.rear\{z-index:0\}[\s\S]*\.doll-equipment-layer\.front\{z-index:2\}/,'装备融合层必须提供稳定的前后分层');

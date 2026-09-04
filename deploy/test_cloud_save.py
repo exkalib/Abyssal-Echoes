@@ -6,6 +6,7 @@ import unittest
 from unittest import mock
 
 from serve_static import (
+    AbyssHandler,
     HISTORY_LIMIT,
     WRITE_COOLDOWN_SECONDS,
     CloudSaveError,
@@ -84,6 +85,9 @@ class CloudSaveStoreTest(unittest.TestCase):
         self.assertEqual(cooldown.exception.status, 429)
         self.assertEqual(cooldown.exception.code, "write_cooldown")
         self.assertEqual(cooldown.exception.details["retryAfter"], WRITE_COOLDOWN_SECONDS)
+
+    def test_webp_assets_have_a_browser_safe_content_type(self):
+        self.assertEqual(AbyssHandler.extensions_map[".webp"], "image/webp")
 
 
 if __name__ == "__main__":
