@@ -39,6 +39,9 @@ assert.doesNotMatch(game,/<span class="cc-icon">(?:DNA|JOB|SKL)<\/span>/,'角色
 assert.match(game,/function uiModuleHeader\(/,'页面标题必须通过统一模块头构造器创建');
 for(const cls of ['construction-head','market-head','task-head','settings-head'])assert.match(game,new RegExp(`uiModuleHeader\\([^\n]+${cls}`),`${cls} 必须复用统一模块头而不是自建皮肤`);
 assert.match(game,/facility-nav facility-module-head ui-module-header[\s\S]*facility-header-art ui-module-header__mark ui-art-frame/,'设施操作页必须复用统一模块头和建筑插画框');
+assert.match(game,/function facilityHeaderDetail\(b\)[\s\S]*b\.kind==='defense'[\s\S]*campDefenseStats\(\)[\s\S]*b\.kind==='garden'[\s\S]*gardenSlotCount\(\)[\s\S]*b\.kind==='rest'/,'哨戒塔、菌圃与休眠仓的关键状态必须集中进顶部设施面板');
+assert.doesNotMatch(game,/function facilityHeader\(box,b\)[\s\S]{0,800}facility-hero/,'设施标题下方不得再次生成重复名称面板');
+assert.match(system,/\.recipe-station-top \.facility-module-head \.facility-header-summary \{ display:flex; \}/,'分栏设施页不得用旧规则隐藏顶部属性总览');
 assert.match(game,/task-overview ui-panel[\s\S]*task-metrics ui-stat-grid/,'任务总览必须复用统一面板和数据格');
 assert.match(game,/PRIMARY OBJECTIVE[\s\S]*NEXT ACTION \/\/ 下一步[\s\S]*完成回报/,'任务首页必须先集中展示首要目标、下一步和回报');
 assert.match(game,/taskBoardTab\('active','当前行动'[\s\S]*taskBoardTab\('main','主线进度'[\s\S]*taskBoardTab\('archive','调查档案'/,'任务面板必须把当前行动、主线与只读档案分层');

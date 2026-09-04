@@ -1010,6 +1010,14 @@ textarea:focus-visible,
   background:linear-gradient(155deg,var(--ui-surface-3),#09131c 74%);
 }
 .tnode.ready.can .tn-card { border-color:var(--ui-energy); background:linear-gradient(155deg,#143944,#0a1e27); }
+.tnode.ready.can .tn-card { border-width:2px; box-shadow:0 0 0 1px rgba(95,225,255,.18),0 0 16px rgba(57,211,235,.42); animation:tech-researchable-pulse 1.8s ease-in-out infinite; }
+.tnode.ready.can .tn-nm,.tnode.ready.can .tn-ic { color:#8beeff; }
+.tnode .tn-state { position:absolute; left:50%; bottom:-7px; transform:translateX(-50%); padding:2px 5px; border:1px solid #4bd9ef; border-radius:5px; color:#b8f5ff; background:#0b2a34; font:700 6px/1 var(--ui-font-tech); white-space:nowrap; box-shadow:0 0 7px rgba(57,211,235,.38); }
+.tnode.max .tn-card { border-color:#3fb87c; background:linear-gradient(155deg,#123426,#091b16); box-shadow:inset 0 0 12px rgba(63,184,124,.12); }
+.tnode.max .tn-nm,.tnode.max .tn-ic,.tnode.max .tn-complete { color:#70dba4; }
+.tnode.max.sel .tn-card { border-color:#78e8ae; box-shadow:0 0 0 1px #3fb87c,0 0 13px rgba(63,184,124,.32); }
+.tnode.ready.can.sel .tn-card { border-color:#b7f5ff; box-shadow:0 0 0 1px #39d3eb,0 0 18px rgba(57,211,235,.52); }
+@keyframes tech-researchable-pulse { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.16)} }
 .tnode.locked .tn-card { border-color:var(--ui-line); background:#071018; }
 .tnode.sel .tn-card { border-color:var(--ui-energy-hi); box-shadow:0 0 0 1px var(--ui-energy),0 0 12px rgba(57,211,235,.25); }
 .tnode .tn-ic .ui-icon { width:24px; height:24px; }
@@ -1265,6 +1273,101 @@ textarea:focus-visible,
 .defense-result .ui-icon { width:62%; height:62%; color:var(--ui-danger); filter:drop-shadow(0 0 7px color-mix(in srgb,var(--ui-danger) 38%,transparent)); }
 .defense-product.selected { border-color:var(--ui-danger)!important; box-shadow:inset 2px 0 var(--ui-danger),inset 0 1px var(--ui-specular)!important; }
 .defense-stat-profile .ui-stat-chip .ui-icon { width:13px; height:13px; vertical-align:-2px; color:var(--ui-danger); }
+
+/* The watch tower is a compact defense console, not a generic recipe page.
+   Its sticky header is full-bleed and opaque so scrolling modules can never
+   show through the safe-area gap or the rounded edges of the header card. */
+#panel.watch-defense-page .recipe-station-screen { grid-template-rows:minmax(0,46fr) minmax(0,54fr); }
+#panel.watch-defense-page .recipe-station-top {
+  padding:0 12px 10px;
+  background:var(--ui-bg-0);
+  isolation:isolate;
+}
+#panel.watch-defense-page .recipe-station-top .facility-module-head {
+  top:0;
+  z-index:10;
+  margin:0 -12px 8px;
+  padding:max(8px,env(safe-area-inset-top,0px)) 12px 8px;
+  border-width:0 0 1px;
+  border-radius:0;
+  background:var(--ui-surface-2);
+  box-shadow:inset 2px 0 var(--ui-danger),0 10px 18px var(--ui-bg-0);
+}
+#panel.watch-defense-page .facility-hero,
+#panel.watch-defense-page .watch-console { display:none; }
+#panel.watch-defense-page .defense-workbench { margin:0; padding:0; border:0; }
+#panel.watch-defense-page .defense-heading { min-height:31px; gap:8px; }
+#panel.watch-defense-page .station-product-grid { grid-template-columns:repeat(5,minmax(0,1fr)); gap:5px; }
+#panel.watch-defense-page .defense-product { min-height:76px; grid-template-rows:38px auto auto; padding:4px 2px!important; }
+#panel.watch-defense-page .defense-product-art { width:38px; height:38px; }
+#panel.watch-defense-page .defense-product-art .ui-icon { width:26px; height:26px; }
+#panel.watch-defense-page .defense-product>b { font-size:8px; }
+#panel.watch-defense-page .defense-product>small { font-size:6px; }
+#panel.watch-defense-page .defense-detail { border-color:color-mix(in srgb,var(--ui-danger) 32%,var(--ui-line)); }
+#panel.watch-defense-page .station-confirm { border-color:color-mix(in srgb,var(--ui-danger) 55%,var(--ui-line)); background:color-mix(in srgb,var(--ui-danger) 13%,var(--ui-surface-2)); }
+
+@media (max-width:360px) {
+  #panel.watch-defense-page .station-product-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+}
+
+/* Mycelium garden: active beds, culture catalog and automated harvesting. */
+.garden-workbench { display:grid; gap:8px; }
+.garden-bed-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
+#panel .garden-bed { min-width:0; min-height:78px; padding:6px 3px!important; display:grid; place-items:center; grid-template-rows:34px auto auto; text-align:center!important; border-color:var(--ui-line); background:var(--ui-plate-muted); }
+.garden-bed .item-art { width:34px; height:34px; object-fit:contain; }
+.garden-bed>.ui-icon { width:24px; height:24px; color:var(--ui-text-3); }
+.garden-bed b { max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ui-text-1); font-size:8px; }
+.garden-bed small { color:var(--ui-text-3)!important; font-size:6px!important; }
+#panel .garden-bed.growing { border-color:color-mix(in srgb,var(--ui-anomaly) 42%,var(--ui-line)); box-shadow:inset 0 -2px var(--ui-anomaly); }
+#panel .garden-bed.ready { border-color:var(--ui-success); background:color-mix(in srgb,var(--ui-success) 8%,var(--ui-plate-muted)); box-shadow:inset 0 -2px var(--ui-success),0 0 12px color-mix(in srgb,var(--ui-success) 14%,transparent); }
+.garden-crop-grid { grid-template-columns:repeat(3,minmax(0,1fr))!important; margin-top:0!important; }
+.garden-crop>small { white-space:normal!important; line-height:1.15; }
+.garden-detail-workbench { --station-tone:var(--ui-success); --station-deep:#246a47; }
+.garden-yield { margin-top:8px; padding:8px; border:1px solid color-mix(in srgb,var(--ui-success) 34%,var(--ui-line)); background:color-mix(in srgb,var(--ui-success) 6%,var(--ui-surface-sunken)); }
+.garden-yield small,.garden-yield b { display:block; }.garden-yield small { color:var(--ui-success)!important; font:700 6px ui-monospace,SFMono-Regular,Consolas,monospace; }.garden-yield b { margin-top:4px; color:var(--ui-text-1); font-size:9px; }
+.garden-automation { display:flex; align-items:center; gap:8px; margin:6px 8px 8px; padding:7px 8px; border:1px solid var(--ui-line); background:var(--ui-plate-muted); }
+.garden-automation>.ui-icon { width:18px; height:18px; color:var(--ui-success); }.garden-automation b,.garden-automation small { display:block; }.garden-automation b { color:var(--ui-text-1); font-size:8px; }.garden-automation small { margin-top:2px; color:var(--ui-text-3)!important; font-size:6px!important; }
+@media (max-width:360px) { .garden-bed-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+
+/* Shared sticky-header contract. Scroll content starts below an opaque,
+   full-bleed header; negative sticky offsets previously exposed moving cards
+   through the safe-area and side gutters on every workspace using this shell. */
+#panel.recipe-station-page .recipe-station-top {
+  padding-top:0;
+  background:var(--ui-bg-0);
+  isolation:isolate;
+}
+#panel.recipe-station-page .recipe-station-top .facility-module-head {
+  top:0;
+  z-index:10;
+  margin:0 -12px 8px;
+  padding:max(8px,env(safe-area-inset-top,0px)) 12px 8px;
+  border-width:0 0 1px;
+  border-radius:0;
+  background:var(--ui-surface-2);
+  box-shadow:inset 2px 0 var(--ui-energy),0 10px 18px var(--ui-bg-0);
+}
+#panel.skill-console-page .skill-page-top {
+  padding-top:0;
+  background:var(--ui-bg-0);
+  isolation:isolate;
+}
+#panel.skill-console-page .skill-nav {
+  top:0;
+  z-index:10;
+  margin:0 -12px 8px;
+  padding:max(8px,env(safe-area-inset-top,0px)) 12px 7px;
+  border-bottom:1px solid var(--ui-line-hi);
+  background:var(--ui-surface-2);
+  box-shadow:0 10px 18px var(--ui-bg-0);
+}
+#panel.tasks-console .task-board-nav {
+  top:0;
+  z-index:14;
+  margin-top:0;
+  background:var(--ui-bg-0);
+  box-shadow:0 -14px 0 var(--ui-bg-0),0 10px 18px var(--ui-bg-0);
+}
 
 .cf-icon,
 .bc-icon,
@@ -1613,6 +1716,20 @@ textarea:focus-visible,
 .facility-header-art { width:40px; height:40px; }
 .facility-header-art .building-art { width:38px; height:38px; }
 .facility-module-head .facility-nav-title { display:grid; gap:3px; }
+.facility-module-head .facility-header-summary {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:3px 8px;
+  min-width:0;
+  margin:0;
+  color:var(--ui-text-2);
+  font:600 var(--ui-type-code)/1.25 ui-monospace,SFMono-Regular,Consolas,monospace;
+  font-style:normal;
+}
+.facility-module-head .facility-header-summary > span { display:inline-flex; align-items:center; gap:3px; min-width:0; }
+.facility-module-head .facility-header-summary .ui-icon { width:11px; height:11px; flex:none; color:var(--ui-tone); }
+.recipe-station-top .facility-module-head .facility-header-summary { display:flex; }
 .facility-module-head .facility-nav-title small { color:var(--ui-tone); font:700 var(--ui-type-code)/1 var(--ui-font-tech); letter-spacing:1.1px; }
 .facility-module-head .facility-nav-title b { color:var(--ui-text-1); font-size:var(--ui-type-section); line-height:1.15; letter-spacing:.35px; }
 .facility-module-head .facility-nav-title em { color:var(--ui-text-3); font-size:var(--ui-type-secondary); line-height:1.35; }

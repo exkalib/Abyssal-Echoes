@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>深渊回响</title>
-  <link rel="stylesheet" href="style.css?v=explore3build2campnav1mapfull1terrain1closebottom10mapfab4buildvertical1tutorialhud1quickreturn1fieldscene2mapnotice1fieldtools1fieldlayout1combatturn1masterycompare1kitchen2stationsplit1lifeskill1facilityupgrade1npcportrait1charstats1profilematrix1careerui1careervisibility1bagcategories2equipslotart1combatcareer1mapmarkers1cloudsave2combatlayout1fieldbrief1cloudmanual1launch2facilityfull1npcfull1workspace3skin2enemyart1combatstage1securebackup2settingsfit2battlehud2taskboard1researchstation1npcgoodbye1settingscompact1qqgroup3">
-  <link rel="stylesheet" href="ui-system.css?v=explore3tophud8toastcompact1workspace3skin2enemyart1combatstage1battlehud2shopcatalog1taskboard1release070feedbackdock1mobiletouch3">
+  <link rel="stylesheet" href="style.css?v=explore3build2campnav1mapfull1terrain1closebottom10mapfab4buildvertical1tutorialhud1quickreturn1fieldscene2mapnotice1fieldtools1fieldlayout1combatturn1masterycompare1kitchen2stationsplit1lifeskill1facilityupgrade1npcportrait1charstats1profilematrix1careerui1careervisibility1bagcategories2equipslotart1combatcareer1mapmarkers1cloudsave2combatlayout1fieldbrief1cloudmanual1launch2facilityfull1npcfull1workspace3skin2enemyart1combatstage1securebackup2settingsfit2battlehud2taskboard1researchstation1npcgoodbye1settingscompact1qqgroup3appearance1">
+  <link rel="stylesheet" href="ui-system.css?v=explore3tophud8toastcompact1workspace3skin2enemyart1combatstage1battlehud2shopcatalog1taskboard1release070feedbackdock1mobiletouch3defenseconsole1stickymask1facilitysummary1">
   <link rel="stylesheet" href="story-scenes.css?v=storycut3fogmap2fogstable1revealtruecircle1witness1postcore1">
 </head>
 <body data-ui="abyss-frame" class="launch-pending">
@@ -206,6 +206,16 @@
     <symbol id="icon-exorig" viewBox="0 0 24 24">
       <path d="M8 3h8l2 6-2 4 3 7h-4l-3-5-3 5H5l3-7-2-4 2-6ZM9 7h6M12 3v12"/><circle cx="6" cy="9" r="2"/><circle cx="18" cy="9" r="2"/>
     </symbol>
+    <symbol id="icon-defense-wall" viewBox="0 0 24 24"><path d="M3 21V8h4V4h4v4h3V4h4v4h3v13H3Z"/><path d="M7 12h4v4H7zM15 12h3v4h-3M3 18h18" opacity=".55"/></symbol>
+    <symbol id="icon-defense-trap" viewBox="0 0 24 24"><path d="M3 18h18M5 18l3-8 4 8 4-8 3 8"/><circle cx="12" cy="6" r="2"/><path d="M12 2v2M8.5 3.5 10 5M15.5 3.5 14 5" opacity=".55"/></symbol>
+    <symbol id="icon-defense-gun" viewBox="0 0 24 24"><path d="M3 9h13l5 3-5 3H3V9ZM8 15v5M13 15l2 5M6 20h11"/><path d="M7 9V6h7v3M17 12h4" opacity=".55"/></symbol>
+    <symbol id="icon-defense-reinforced" viewBox="0 0 24 24"><path d="M3 21V7l4-3 5 3 5-3 4 3v14H3Z"/><path d="M7 4v17M12 7v14M17 4v17M3 14h18" opacity=".55"/></symbol>
+    <symbol id="icon-defense-laser" viewBox="0 0 24 24"><path d="M4 17h8l3 4H7l-3-4ZM8 17l2-8h5M15 6h6v6h-6z"/><path d="m15 9-5 3M18 3v3M22 7l-2 1M22 12l-2-1" opacity=".55"/></symbol>
+    <symbol id="icon-defense-plasma" viewBox="0 0 24 24"><path d="M3 13h13l5 3-5 3H3v-6ZM7 13V8h6l3 5M8 19v3M14 19l2 3"/><circle cx="18" cy="6" r="3"/><path d="M18 1v2M23 6h-2M21.5 2.5 20 4" opacity=".55"/></symbol>
+    <symbol id="icon-defense-shield" viewBox="0 0 24 24"><path d="M12 3 20 7v5c0 5-3.4 8-8 10-4.6-2-8-5-8-10V7l8-4Z"/><path d="M8 13a4 4 0 0 1 8 0M12 8v9M8 17h8" opacity=".55"/></symbol>
+    <symbol id="icon-defense-arc" viewBox="0 0 24 24"><path d="M5 21V9l7-5 7 5v12M3 21h18M9 21v-5h6v5"/><path d="m8 11 3-2-1 4 5-3-2 5 3-1"/></symbol>
+    <symbol id="icon-defense-drone" viewBox="0 0 24 24"><path d="M7 9h10l3 4-3 4H7l-3-4 3-4Z"/><circle cx="12" cy="13" r="2"/><path d="M7 9 4 5M17 9l3-4M7 17l-3 3M17 17l3 3M2 5h4M18 5h4" opacity=".55"/></symbol>
+    <symbol id="icon-defense-dome" viewBox="0 0 24 24"><path d="M3 19a9 9 0 0 1 18 0H3Z"/><path d="M6 19a6 6 0 0 1 12 0M12 10v9M3 22h18" opacity=".55"/><circle cx="12" cy="7" r="2"/></symbol>
   </svg>
   <section id="launch-screen" class="launch-screen is-checking" role="dialog" aria-modal="true" aria-labelledby="launch-title" aria-describedby="launch-detail">
     <div class="launch-art" aria-hidden="true"><i class="launch-haze haze-a"></i><i class="launch-haze haze-b"></i><i class="launch-scan"></i></div>
@@ -261,6 +271,6 @@
     </nav>
   </div>
 
-<script src="game.js?v=explore3cycle1build1campnav1mapfull4terrain1zoomedge1closebottom2mapfab1buildvertical1settingsclose1fieldscene2mapnotice1fieldtools1combatturn1settlementopen1fogrepair1bgm1settlementroute1charfix1masterycompare1kitchen2stationsplit1lifeskill2careerpath1worlddirect1facilityupgrade1npcportrait1careergate1charstats1profilematrix1marketconsole1careerui1skillpage2returnhome1careervisibility1mapknown1collision1bagcategories2uniqueguard1protection3balance1equipslotart1careerprogress1combatcareer1careerskills1bioisolation1multilife1minerroute1mapmarkers1cloudsave3combatlayout1fieldbrief1toastcompact1pacing2encounter1cloudmanual1launch2cloudserver1tabbarstate1facilityfull2recipestats1npcfull1workspace3storycut3fogmap2fieldflow1skin2enemyart1combatstage1securebackup2settingsfit2battlehud2fogstable1revealtruecircle1witness1shopcatalog1routegraph1taskboard1researchstation1npcgoodbye1settingscompact1qqgroup3feedbackdock1githubupdates1netlifycloud1mobiletouchmap2postcore1"></script>
+<script src="game.js?v=explore3cycle1build1campnav1mapfull4terrain1zoomedge1closebottom2mapfab1buildvertical1settingsclose1fieldscene2mapnotice1fieldtools1combatturn1settlementopen1fogrepair1bgm1settlementroute1charfix1masterycompare1kitchen2stationsplit1lifeskill2careerpath1worlddirect1facilityupgrade1npcportrait1careergate1charstats1profilematrix1marketconsole1careerui1skillpage2returnhome1careervisibility1mapknown1collision1bagcategories2uniqueguard1protection3balance1equipslotart1careerprogress1combatcareer1careerskills1bioisolation1multilife1minerroute1mapmarkers1cloudsave3combatlayout1fieldbrief1toastcompact1pacing2encounter1cloudmanual1launch2cloudserver1tabbarstate1facilityfull2recipestats1npcfull1workspace3storycut3fogmap2fieldflow1skin2enemyart1combatstage1securebackup2settingsfit2battlehud2fogstable1revealtruecircle1witness1shopcatalog1routegraph1taskboard1researchstation1npcgoodbye1settingscompact1qqgroup3feedbackdock1githubupdates1netlifycloud1mobiletouchmap2postcore1defenseconsole1facilitysummary1appearance1"></script>
 </body>
 </html>
