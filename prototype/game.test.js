@@ -49,10 +49,11 @@ const sandbox = {
 vm.createContext(sandbox);
 let source=fs.readFileSync(__dirname+'/game.js','utf8').replace(/\ninitLaunchGate\(\);\s*$/,'');
 source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,totalAtk,totalDef,statPen,damageReductionRate,locExtraCost,areaActionCost,fieldMealActive,foodBuffActive,payAreaAction,movementHealthCost,payMovementCost,materialSnapshot,beginExpedition,finishExpedition,exhaustionDeath,startCombat,enemyCombatProfile,recordCombatTurn,settleCombatTime,winCombat,playerAttack,enemyTurn,orbitalStrike,attackResource,attackResourceText,approach,catchBreath,useSkill,equipSkill,unequipSkill,skillUnlocked,passiveBonus,renderFieldGatherSkills,activeFieldGatherSkill,fieldGatherSkillApplicable,fieldGatherSkillStatus,performFieldGatherSkill,quickScavengeApplicable,quickScavengeStatus,performQuickScavenge,fieldRepairStatus,performFieldRepair,sporeBoostStatus,performSporeBoost,updateCheckpoint,restoreCheckpoint,research,researchStationReady,unlockGene,unlockGeneNode,geneTier,geneBonus,geneRule,chooseJob,chooseNoviceJob,noviceJobStatus,jobRequirementStatus,jobBonus,gainCareerXp,careerRecord,careerRecords,currentCareer,normalizeLifeCareerRecords,doReincarnate,chooseEnding,gatherAvailable,gatherArea,gatherLimit,resourceSiteOf,resourceSiteDiscovered,resourceRecoveryRemaining,resourceWorkStatus,locationActionStatus,exploreAttempts,performLocationAction,locationActionRemaining,currentDay,rest,fmtTime,activateAvailableQuests,questSearchCount,startBeacon,flee,settleEcho,feedbackSpec,musicSceneId,render,normalizePanelNavigationState,panelView,renderRegionMap,renderLocalMap,renderWorldMap,renderCharPanel,renderSkillPanel,renderBagPanel,renderNpcPanel,renderCareerMentorAction,talkAreaNpc,careerSummary,renderBuilding,renderTechPanel,renderSettlementShop,renderSpaceRoutes,explore,move,travelTo,staminaToCamp,travelRoute,buyEchoUpgrade,repairFacility,resolveRaid,hasBuildingTech,buildFacility,buildingLevel,upgradeFacility,buildDefense,upgradeDefense,defenseBuilt,cookFood,eatMeal,eatFishMeal,useItem,harvestGarden,dispatchDrone,recycleMaterial,damageRandomFacility,mapEdgePath,mapNodeState,tutorialActive,finishWakeAnimation,grantTutorialBracelet,grantTutorialBuilder,grantTutorialMap,completeTutorial,grantTutorialCollector,normalizeEquipment,normalizeMeta,mergePersistentSpaceMeta,metaFlag,setMetaFlag,grantTechRecord,syncQuestProgress,shipReady,assembleStarship,spaceFlightStatus,launchSpaceRoute,emergencySpaceReturn,outpostBuildStatus,buildOutpostPart,outpostReady,locationRevealed,repairLegacyDiscoveryFog,locationGate,entryNeedsConfirm,routeKey,routeKnown,discoverRoute,repairKnownRoutes,routeObstacle,routeNeedsConfirm,crossRouteObstacle,operationStatus,performFieldOperation,regionForLocation,regionUnlocked,regionDiscovery,verticalMapLayout,treeLayout,treePortOffset,treeEdgeRoute,techHeightFitZoom,techReady,techFacilitiesReady,discoverTechRecord,migrateTechTree,setCampName,settlementTrade,settlementTradeQuote,settlementShopProgress,settlementShopCatalog,settlementShopUnlocked,settlementExplorationCount,settlementBuyPrice,settlementSellTerms,settlementSellReward,settlementRecover,acceptCommission,turnInCommission,settlementDiscount,environmentProtected,SLOTS,EQUIP_ICON,EQUIPMENT_GRADES,QUESTS,TECHS,TECH_RECORDS,BRANCHES,MATS,MATERIAL_SOURCES,LOCATIONS,MAP_LINKS,GUIDED_MAP_ROUTES,MAP_CANVAS,WORLD_POS,WORLD_MAP_CANVAS,WORLD_REGION_POS,WORLD_REGIONS,WORLD_REGION_LINKS,LOCAL_MAPS,DISCOVERY_MILESTONES,ENTRY_REQUIREMENTS,ROUTE_OBSTACLES,FIELD_OPERATIONS,LOCATION_ACTIONS,SETTLEMENT_SHOP,SETTLEMENT_SHOP_TIERS,SETTLEMENT_SHOP_CATEGORIES,SETTLEMENT_COMMISSIONS,npcLocation,npcsAt,ITEMS,ENEMIES,RECIPES,COOKING_RECIPES,CAMP_BUILDINGS,OUTPOST_BUILDINGS:(typeof OUTPOST_BUILDINGS==='undefined'?[]:OUTPOST_BUILDINGS),SPACE_ROUTES:(typeof SPACE_ROUTES==='undefined'?[]:SPACE_ROUTES),SMELT,RECYCLE,BEACON,DEF_TYPES,SKILLS,GENE_NODES,GENE_TREE,JOBS,NOVICE_JOBS};`;
-source += `\n;Object.assign(this.api,{costText,recipeMaterialText,renderConstruction,renderSiteSheet,craft,smelt,batchQuantity,scaledCost,craftStationPresentation,skillLv,skillProgressText,careerSkillYieldMult,careerSkillCost,skillLevelEffectText,normalizeCloudCode,validGameSave,createLocalBackup,parseLocalBackup,cloudSaveSummary,fieldActionPresentation,fieldDirective,flavor,taskQuestTarget,taskReadyNow,taskPriorityQuest,taskProgressText,taskRewardText,taskNextStep,renderTaskPanel,nativeShellVersion,legacyNativeUpgradeRequired});`;
+source += `\n;Object.assign(this.api,{costText,recipeMaterialText,renderConstruction,renderSiteSheet,craft,smelt,batchQuantity,scaledCost,craftStationPresentation,skillLv,skillProgressText,careerSkillYieldMult,careerSkillCost,skillLevelEffectText,effectiveEconomyBonus,masteryAtEffectiveCap,masteryEffectText,upgradeMastery,statHit,shieldMax,regenShield,recoveryAmount,normalizeCloudCode,validGameSave,createLocalBackup,parseLocalBackup,cloudSaveSummary,fieldActionPresentation,fieldDirective,flavor,taskQuestTarget,taskReadyNow,taskPriorityQuest,taskProgressText,taskRewardText,taskNextStep,renderTaskPanel,nativeShellVersion,legacyNativeUpgradeRequired});`;
 source += `\n;Object.assign(this.api,{EXPLORATION_PACING,NPC_FIELD_DISCOVERIES,NPC_FIELD_RELOCATIONS,explorationPacingRange,scheduledDiscoveryNeed,milestoneNeed,neighborRouteNeed,areaEventNeed,npcDiscoveryNeed,resourceDiscoveryNeed,applyResourceDiscovery,applyDiscoveryMilestones,applyKnownNeighborRoutes,applyNpcDiscoveries,fieldEncounterChance,rollFieldEncounter,recordFieldSafeAction});`;
 source += `\n;Object.assign(this.api,{NPC_NAMES,NPC_PROFILE,STORY_SCENE_ASSETS,STORY_SCENE_LOCATIONS,NPC_FIRST_CONTACT,storySceneKey,storySceneSrc,storyNpcFromGiver,storyLocationForQuest,queueStoryScene,queueNpcFirstContact,queueQuestStoryScene,flushStoryScenes,resetStoryScenes});`;
 source += `\n;Object.assign(this.api,{ENDINGS,CORE_COMPONENTS,FINALE_QUEST_IDS,FINALE_PRIMARY_IDS,FINALE_CALIBRATION_IDS,questState,questDone,finishQuest,finaleQuestContact,finaleQuestNeed,finaleTaskStatus,finaleCompletedCount,finaleCalibrationCount,coreRecoveredCount,coreInstalledCount,coreProtocolReady,progressNpcFinaleQuest,installCoreComponent,finalBossOverrides,startFinalCoreBattle,beginCoreTruth,renderCoreControl,renderEndingPanel,endingAvailability,endingDisplayName,completeFailureEnding,triggerWarden,die});`;
+source += `\n;Object.assign(this.api,{submitQuest,chooseTruthLine,extractSealedArchive,resolveTang,freeAyong,AREA_EVENTS,questProgress});`;
 source += `\n;Object.assign(this.api,{FIELD_MAP_SLOT_COORDS,FIELD_FOG_RADII,fieldNpcMapped,assignFieldMarkerSlots,fieldMapMarkerCandidates,fieldMapMarkers,fieldFogRecord,fieldFogState,acknowledgeFieldFog,fieldFogSvgMarkup,renderFieldExpedition});`;
 vm.runInContext(source,sandbox);
 const a=sandbox.api;
@@ -479,8 +480,8 @@ pendingTests.push((async()=>{
   assert.match(css,/#panel \.region-action\s*\{[^}]*grid-template-columns:40px minmax\(0,1fr\)[^}]*grid-template-rows:minmax\(62px,auto\) auto/s,'现场行动卡必须将叙事与行动代价分层展示');
   assert.match(css,/\.ra-status\{[^}]*grid-column:1\/-1[^}]*grid-template-columns:auto minmax\(0,1fr\)/s,'行动代价必须作为卡片底部状态带统一对齐');
   assert.doesNotMatch(js,/b\.innerHTML='[^\n]*presentation\.name[^\n]*chevron-right/,'现场行动状态带不得使用挤压长文字的冗余箭头');
-  assert.match(js,/const EXPLORATION_PACING=\{[\s\S]*resource:\{wild:\[5,10\][\s\S]*route:\{wild:\[18,26\]/,'资源点与新路线必须使用不同量级的随机发现区间');
-  assert.match(js,/function scheduledDiscoveryNeed\(kind,id,index,range\)\{return thresholdFor\('explore-v2:/,'每个地点的发现步数必须首次抽取后写入存档');
+  assert.match(js,/const EXPLORATION_PACING=\{[\s\S]*resource:\{wild:\[4,7\][\s\S]*route:\{wild:\[10,16\]/,'资源点与新路线必须使用不同量级的随机发现区间');
+  assert.match(js,/function scheduledDiscoveryNeed\(kind,id,index,range\)\{return thresholdFor\('explore-v3:/,'每个地点的发现步数必须首次抽取后写入存档');
   assert.match(js,/function fieldEncounterChance\(base\)[\s\S]*Math\.pow\(\.48/,'连续遭遇必须以指数衰减后续战斗概率');
   assert.match(js,/function rollFieldEncounter\(base\)[\s\S]*t\.cooldown>0/,'一场战斗之后必须至少保留一个安全行动');
   assert.match(js,/发现路线、任务线索与现场机关，也可能遭遇敌人/,'勘察入口必须明确随机结果与特殊发现类别');
@@ -646,7 +647,10 @@ pendingTests.push((async()=>{
 {
   const weapons=Object.values(a.ITEMS).filter(it=>it.slot==='weapon');
   weapons.forEach(w=>{assert.ok(['melee','ranged'].includes(w.weaponType),w.name+' 必须声明近战或远程属性');if(w.weaponType==='ranged'){assert.ok(a.ITEMS[w.ammo],w.name+' 必须声明有效弹药');assert.ok(w.ammoCost>0,w.name+' 必须声明每次射击的弹药量');}else assert.ok(w.staminaCost>0,w.name+' 必须声明每次攻击的体力消耗');});
-  assert.equal(a.RECIPES.ammo.yield,10,'制式弹药配方必须成批生产');assert.equal(a.RECIPES.weaponCell.yield,8,'高阶武器能量匣必须成批生产');
+  assert.equal(a.RECIPES.ammo.yield,10,'制式弹药配方必须成批生产');assert.equal(a.RECIPES.weaponCell.yield,12,'一批高阶武器能量匣必须至少覆盖一场标准远航战斗');
+  assert.deepEqual([a.SETTLEMENT_SHOP.weaponCell.buy.amount,a.SETTLEMENT_SHOP.weaponCell.sell.amount],[12,30],'聚居地高阶军需的能量匣批量必须与制造产量一致且不能倒卖套利');
+  assert.equal(a.recoveryAmount(30,20,100),30);assert.equal(a.recoveryAmount(30,20,1000),200,'恢复品应保留前期固定值，并在高属性阶段按上限比例成长');
+  assert.deepEqual([a.ENEMIES.guardian.hp,a.ENEMIES.guardian.atk,a.ENEMIES.guardian.def,a.ENEMIES.guardian.threat],[420,52,20,140],'首个守望者首领必须在动力甲阶段仍能形成有效生存压力');
 }
 {
   const s=reset();s.player.stamina=10;a.startCombat('rat');s.combat.distNow=1;sandbox.Math.random=()=>0;
@@ -706,12 +710,71 @@ pendingTests.push((async()=>{
 {
   const s=reset(); s.player.location='outer'; sandbox.Math.random=()=>0;
   assert.equal(a.gatherAvailable('outer'),0,'未探索出资源点前不得直接显示采集');
-  const need=a.resourceDiscoveryNeed('outer');assert.equal(need,5,'坠毁带入口的垃圾堆最早应在第5次勘察发现');
+  const need=a.resourceDiscoveryNeed('outer');assert.equal(need,4,'坠毁带入口的垃圾堆最早应在第4次勘察发现');
   a.applyResourceDiscovery('outer',need-1);assert.equal(a.resourceSiteDiscovered('outer'),false,'随机阈值到达前不得提前解锁资源点');
   a.applyResourceDiscovery('outer',need);assert.equal(a.resourceSiteDiscovered('outer'),true);assert.equal(a.LOCATIONS.outer.resourceSite.label,'垃圾堆');
   const before=s.inv.scrap;a.gatherArea('outer');assert.ok(s.inv.scrap-before>=2,'资源点产量必须高于普通探索的单份散落物资');
   a.gatherArea('outer');a.gatherArea('outer');assert.equal(a.gatherAvailable('outer'),0);
   s.time+=8;assert.equal(a.gatherAvailable('outer'),1,'资源点必须按游戏时间逐次恢复，而不是等到次日整批刷新');
+}
+{
+  Object.entries(a.DISCOVERY_MILESTONES).forEach(([source,rules])=>rules.forEach(rule=>{
+    const hiddenBy=a.LOCATIONS[rule.reveal]&&a.LOCATIONS[rule.reveal].hiddenBy;
+    if(hiddenBy)assert.equal(rule.flag,hiddenBy,`${a.LOCATIONS[source].name}发现${a.LOCATIONS[rule.reveal].name}时必须同步解除隐藏入口`);
+  }));
+  const s=reset();s.player.location='ridge';sandbox.Math.random=()=>0;
+  const mineRule=a.DISCOVERY_MILESTONES.ridge.find(rule=>rule.reveal==='oldMine'),need=a.milestoneNeed('ridge',a.DISCOVERY_MILESTONES.ridge.indexOf(mineRule),mineRule);
+  a.applyDiscoveryMilestones('ridge',need);
+  assert.equal(s.flags.mineEntrance,true,'从断舰岩脊发现旧世界矿井后必须立即登记真实入口');
+  assert.equal(a.locationRevealed('oldMine'),true,'矿井任务不能因隐藏标记未解除而卡死');
+  assert.equal(a.routeKnown('ridge','oldMine'),true,'岩脊到矿井的路线必须与地点同时解锁');
+}
+{
+  const s=reset();s.player.location='oldMine';s.flags.minerFreed=true;
+  a.applyNpcDiscoveries('oldMine',1);
+  assert.equal(s.flags['fieldNpcFound_阿拓_oldMine'],true,'塌方事件救出阿拓后必须立刻显示联系人，不能让蓝图任务再随机等待');
+  assert.ok(a.npcsAt('oldMine').includes('阿拓'),'救援完成后矿井地图必须能直接点击阿拓学习采掘外骨骼');
+  a.resetStoryScenes();
+}
+{
+  const questIds=new Set(a.QUESTS.map(q=>q.id)),visiting=new Set(),visited=new Set();
+  function visitQuest(id){
+    assert.ok(questIds.has(id),`任务依赖引用了不存在的任务 ${id}`);
+    if(visited.has(id))return;
+    assert.equal(visiting.has(id),false,`任务链存在循环依赖：${id}`);
+    visiting.add(id);const q=a.QUESTS.find(item=>item.id===id);[...(q.after||[]),...(q.preQuests||[])].forEach(visitQuest);visiting.delete(id);visited.add(id);
+  }
+  a.QUESTS.forEach(q=>{
+    visitQuest(q.id);
+    if(q.target)assert.ok(a.LOCATIONS[q.target],`任务 ${q.title} 的目标地点 ${q.target} 不存在`);
+    if(q.turnAt)assert.ok(a.LOCATIONS[q.turnAt],`任务 ${q.title} 的交付地点 ${q.turnAt} 不存在`);
+    Object.keys(q.need||{}).forEach(item=>assert.ok(a.ITEMS[item],`任务 ${q.title} 需要不存在的物品 ${item}`));
+    Object.keys(q.fallbackNeed||{}).forEach(item=>assert.ok(a.ITEMS[item],`任务 ${q.title} 的备用交付需要不存在的物品 ${item}`));
+    Object.keys(q.reward&&q.reward.items||{}).forEach(item=>assert.ok(a.ITEMS[item],`任务 ${q.title} 奖励不存在的物品 ${item}`));
+    if(q.type==='npc'){assert.ok(a.NPC_NAMES.includes(q.giver),`人物任务 ${q.title} 缺少有效联系人`);if(q.fallbackNpc)assert.ok(a.NPC_NAMES.includes(q.fallbackNpc),`人物任务 ${q.title} 的备用联系人不存在`);}
+    if(q.type==='search'){
+      assert.ok(q.targetFlag,`调查任务 ${q.title} 必须指定最终关键线索，不能只按点击次数完成`);
+      const events=a.AREA_EVENTS[q.target]||[];
+      assert.ok(events.some(event=>event.flag===q.targetFlag||(event.flags||[]).includes(q.targetFlag)),`调查任务 ${q.title} 的关键线索 ${q.targetFlag} 在目标区域没有产出事件`);
+    }
+  });
+  assert.equal(visited.size,a.QUESTS.length,'全部任务都必须能沿无环依赖图完成拓扑遍历');
+}
+{
+  const s=reset();s.tutorial={version:1,step:'done',complete:true};
+  s.player.location='outer';a.syncQuestProgress(false);assert.equal(a.questState('first_exit'),'done');assert.equal(a.questState('first_fire'),'active');
+  s.meta.techs.make_1=1;s.meta.built.smelt=true;s.meta.buildLevels.smelt=1;a.syncQuestProgress(false);assert.equal(a.questState('first_fire'),'done');assert.equal(a.questState('cutterRecovery'),'active');
+  s.flags.cutterRepaired=true;a.syncQuestProgress(false);assert.equal(a.questState('cutterRecovery'),'done');assert.equal(a.questState('blackwoodTrail'),'active');
+  s.player.location='blackwood';a.syncQuestProgress(false);assert.equal(a.questState('blackwoodTrail'),'done');assert.equal(a.questState('relayAccess'),'active');
+  s.flags.civilPassRecovered=true;a.syncQuestProgress(false);assert.equal(a.questState('relayAccess'),'done');assert.equal(a.questState('living_signal'),'active');
+  s.player.location='layer2';a.syncQuestProgress(false);assert.equal(a.questState('living_signal'),'done');assert.equal(a.questState('fever'),'active');
+  s.inv.medkit=1;a.submitQuest('fever');assert.equal(a.questState('fever'),'done');assert.equal(a.questState('drain'),'active');
+  Object.assign(s.inv,{scrap:4,ecomp:2});a.submitQuest('drain');assert.equal(a.questState('drain'),'done');assert.equal(a.questState('seal'),'active');
+  s.player.location='layer3';s.inv.steel=6;a.submitQuest('seal');assert.equal(a.questState('seal'),'done');assert.equal(a.questState('sample'),'active');
+  s.player.location='layer4';s.inv.biocore=5;a.submitQuest('sample');assert.equal(a.questState('sample'),'done');assert.equal(a.questState('patrol'),'active');
+  s.player.location='layer5';s.exploreCount.layer5=(s.questStart.patrol||0)+3;s.flags.patrolRecordsComplete=true;a.syncQuestProgress(false);assert.equal(a.questState('patrol'),'done');assert.equal(a.questState('bridge'),'active');
+  s.player.location='layer6';Object.assign(s.flags,{commandDecoded:true,evidenceFault:true});a.chooseTruthLine('故障线');assert.equal(a.questState('bridge'),'done');assert.equal(a.questState('core'),'active');assert.equal(a.FINALE_PRIMARY_IDS.filter(id=>a.questState(id)==='active').length,6,'舰桥提交证据后必须完整接上六条众证组件任务');
+  a.resetStoryScenes();
 }
 {
   const s=reset(); a.rest(); assert.equal(a.fmtTime(),'第2天 08:00','休息应前往次日早晨');
@@ -729,8 +792,15 @@ pendingTests.push((async()=>{
   a.rest(); assert.ok(s.flags.lastRaidRest>last);
 }
 {
-  const s=reset(); s.areaSearch.layer3=3; s.quests.seal='done'; a.activateAvailableQuests(false);
-  assert.equal(a.questSearchCount({id:'faultAudit',target:'layer3'}),0,'新调查任务不得追溯旧调查次数');
+  const s=reset();s.areaSearch.layer3=3;s.exploreCount.layer3=9;s.quests.seal='done';a.activateAvailableQuests(false);
+  assert.equal(s.questStart.faultAudit,9);assert.equal(a.questSearchCount({id:'faultAudit',target:'layer3'}),0,'新调查任务不得追溯旧调查次数');
+  s.exploreCount.layer3=12;a.syncQuestProgress(false);assert.equal(s.quests.faultAudit,'active','步数足够但最终线索尚未确认时不能提前完成');
+  s.flags.faultChainReady=true;a.syncQuestProgress(false);assert.equal(s.quests.faultAudit,'done','固定剧情事件读完后，继续深入勘察并确认关键线索后必须完成调查任务');
+}
+{
+  const s=reset();s.quests.spore='done';a.activateAvailableQuests(false);assert.equal(s.quests.relay,'active');
+  s.exploreCount.abyss=(s.questStart.relay||0)+3;a.syncQuestProgress(false);assert.equal(s.quests.relay,'active','回声深井不能只点够三次就跳过中继器剧情');assert.match(a.questProgress(a.QUESTS.find(q=>q.id==='relay')),/关键线索未确认/);
+  s.flags.relayFixed=true;a.syncQuestProgress(false);assert.equal(s.quests.relay,'done');assert.equal(s.quests.ruinDoor,'active','修复中继器后必须正常接上遗迹门任务');
 }
 {
   const s=reset(); s.inv.signalCell=1; s.player.stamina=20; a.startBeacon(0);
@@ -777,6 +847,41 @@ pendingTests.push((async()=>{
   s.skills.combatRhythm.prof=99;a.gainCareerXp('main',1);a.gainCareerXp('main',1);assert.equal(s.skills.combatRhythm.prof,100);assert.equal(a.skillLv('combatRhythm'),10);assert.equal(a.skillProgressText('combatRhythm'),'MAX','职业技能达到 Lv10 后必须封顶，不能无限膨胀');
 
   s=reset();s.meta.careers.main={id:'noviceScout',level:1,xp:0};s.skills.tacticalScan.prof=10;s.player.equip.weapon='pistol';s.player.stamina=10;s.inv.ammo=10;a.equipSkill('tacticalScan',0);a.startCombat('guardian');s.combat.distNow=1;sandbox.Math.random=()=>.99;const def=s.combat.def;a.useSkill('tacticalScan');assert.equal(s.combat.def,Math.round(def*.7),'战术侦察 Lv1 必须实际永久削弱目标 30% 防御');assert.equal(s.player.stamina,8);assert.equal(s.inv.ammo,10,'战术侦察是职业扫描能力，即使装备枪械也只能消耗体力而不是子弹');assert.equal(s.skills.tacticalScan.prof,11);
+}
+{
+  const s=reset();Object.assign(s.masteries,{craftMastery:20,gatherMastery:40,mineMastery:40,recycleMastery:40,gardenMastery:40});
+  assert.equal(a.effectiveEconomyBonus('craftSavePct'),60,'制造返还必须封顶，不能通过无限精通变成零成本生产');
+  assert.equal(a.effectiveEconomyBonus('gatherPct'),200);assert.equal(a.effectiveEconomyBonus('minePct'),150);assert.equal(a.effectiveEconomyBonus('recyclePct'),200);assert.equal(a.effectiveEconomyBonus('gardenPct'),150,'无限精通应保留成长，但实际生产倍率必须有边界');
+  s.player.equip.head='quantumVisor';assert.equal(a.statHit(),100,'命中显示与判定不得超过100%');
+  s.player.equip.offhand='phaseShield';s.player.shield=0;const cap=a.shieldMax();a.regenShield();assert.equal(s.player.shield,Math.ceil(cap*.08),'每回合护盾恢复应为8%，避免后期装备永久抵消普通敌人伤害');
+  const oldLevel=s.masteries.craftMastery,oldCrystal=s.inv.crystal=999;a.upgradeMastery('craftMastery');assert.equal(s.masteries.craftMastery,oldLevel);assert.equal(s.inv.crystal,oldCrystal,'已达有效上限的生产精通不得继续消耗玩家材料');assert.match(a.masteryEffectText('craftMastery',oldLevel),/有效总上限 60%/);
+}
+{
+  const s=reset();Object.assign(s.runStats,{wKill:400,dmg:1500000,mat:2500});const reward=a.settleEcho();
+  assert.deepEqual([reward.fromKills,reward.fromDmg,reward.fromMat],[20,50,10],'跨周目回响应按威胁线性结算，并对膨胀后的伤害与物资产量使用递减收益');
+  s.runStats={kills:0,wKill:0,dmg:150000000,mat:0,deaths:0};assert.equal(a.settleEcho().fromDmg,10,'只堆面板伤害而不击败威胁时不能无限刷取回响');
+}
+{
+  const positiveCost=(cost,label)=>Object.entries(cost||{}).forEach(([id,n])=>{assert.ok(a.ITEMS[id],`${label}引用了不存在的物品 ${id}`);assert.ok(Number.isInteger(n)&&n>0,`${label}的 ${id} 成本必须是正整数`);});
+  Object.entries(a.RECIPES).forEach(([id,r])=>{positiveCost(r.cost,`配方 ${id}`);assert.ok(a.ITEMS[r.out],`配方 ${id} 缺少有效产物`);assert.ok(Number.isInteger(r.yield||1)&&(r.yield||1)>0,`配方 ${id} 产量必须是正整数`);});
+  Object.entries(a.COOKING_RECIPES).forEach(([id,r])=>{positiveCost(r.cost,`料理 ${id}`);assert.ok(a.ITEMS[r.out]&&a.ITEMS[r.out].food,`料理 ${id} 必须产出食物`);});
+  Object.entries(a.ITEMS).filter(([,item])=>item.type==='use'&&(item.hp||item.stamina)).forEach(([id,item])=>{if(item.hp)assert.ok(item.hpPct>0,`恢复品 ${id} 必须随生命上限成长`);if(item.stamina)assert.ok(item.staminaPct>0,`恢复品 ${id} 必须随体力上限成长`);});
+  Object.entries(a.ENEMIES).forEach(([id,e])=>{assert.ok(e.hp>0&&e.atk>0&&e.def>=0&&e.threat>0,`敌人 ${id} 的战斗预算必须有效`);Object.entries(e.drops||{}).forEach(([item,range])=>{assert.ok(a.ITEMS[item]);assert.ok(Number.isInteger(range[0])&&Number.isInteger(range[1])&&range[0]>=0&&range[1]>=range[0],`敌人 ${id} 的掉落区间无效`);});});
+  [['lunarCrawler','xenoStalker','livingBulwark','phaseSentinel'],['relayCorsair','massDriverAI','planetaryCrown','gateCustodian']].forEach(chain=>{for(let i=1;i<chain.length;i++){const prev=a.ENEMIES[chain[i-1]],next=a.ENEMIES[chain[i]];assert.ok(next.hp>prev.hp&&next.threat>prev.threat,`${chain[i]} 必须比前一阶段 ${chain[i-1]} 提供更高生命与威胁`);}});
+  [['crowbar','knife','blade','eblade','plasmaRifle','gravLance','swarmRifle','vacuumCarbine'],['vest','power','nanoSuit','starShell','exoShell']].forEach(chain=>{for(let i=1;i<chain.length;i++){const stat=a.ITEMS[chain[i]].slot==='weapon'?'atk':'def';assert.ok(a.ITEMS[chain[i]][stat]>a.ITEMS[chain[i-1]][stat],`${chain[i]} 的基础${stat}必须高于前一装备世代`);}});
+  Object.entries(a.TECHS).forEach(([id,t])=>{positiveCost(t.cost,`科技 ${id}`);assert.ok((t.req||[]).every(req=>a.TECHS[req]),`科技 ${id} 存在无效前置`);assert.ok(!t.hours||(Number.isInteger(t.hours)&&t.hours>0),`科技 ${id} 研究时间无效`);});
+  a.CAMP_BUILDINGS.forEach(b=>{positiveCost(b.cost,`建筑 ${b.id}`);(b.upgrades||[]).forEach((up,index)=>positiveCost(up.cost,`建筑 ${b.id} 升级 ${index+1}`));});
+  a.SPACE_ROUTES.forEach(route=>{positiveCost(route.cost,`航线 ${route.id}`);assert.ok(Number.isInteger(route.hours)&&route.hours>0,`航线 ${route.id} 耗时必须是正整数`);});
+  a.BEACON.forEach((row,index)=>{assert.ok(row.mult>0&&row.threat>0&&row.cost>0&&row.cells>0&&row.bookChance>0&&row.bookChance<1,`信标难度 ${row.name} 的数值无效`);if(index){const prev=a.BEACON[index-1];assert.ok(row.mult>prev.mult&&row.threat>prev.threat&&row.bookChance>prev.bookChance,`信标难度 ${row.name} 必须同步提高敌情、威胁与技能书概率`);}});
+  Object.entries(a.DEF_TYPES).forEach(([id,row])=>{positiveCost(row.build,`防御工事 ${id}`);positiveCost(row.up,`防御工事 ${id} 升级`);assert.ok((row.baseAtk||0)+(row.baseDef||0)+(row.baseShield||0)>0,`防御工事 ${id} 必须提供有效战力`);});
+  Object.entries(a.SETTLEMENT_SHOP).forEach(([id,row])=>{assert.ok(a.ITEMS[id],`商店引用了不存在的物品 ${id}`);assert.ok(row.buy.crystal>0&&row.buy.amount>0,`商店商品 ${id} 的买入值无效`);if(row.sell){const quote=a.settlementSellTerms(row,1);assert.ok(quote.crystal*row.buy.amount<=row.buy.crystal*quote.amount,`商店商品 ${id} 存在无声望倒卖套利`);}});
+}
+{
+  const combatBand=(level,weapon,armor,enemyId)=>{const s=reset();s.player.level=level;s.player.equip.weapon=weapon;s.player.equip.body=armor||null;const enemy=a.ENEMIES[enemyId],damage=Math.max(1,a.totalAtk()-enemy.def),hits=Math.ceil(enemy.hp/damage),taken=Math.max(1,enemy.atk-a.totalDef());return {hits,taken};};
+  assert.ok(combatBand(1,'crowbar',null,'rat').hits>=2&&combatBand(1,'crowbar',null,'rat').hits<=3,'开局敌人应在2-3次普通攻击内解决');
+  assert.ok(combatBand(3,'knife','vest','beast').hits>=2&&combatBand(3,'knife','vest','beast').hits<=4,'地表中段敌人应维持2-4回合交战');
+  assert.ok(combatBand(10,'rifle','vest','warbot').hits>=2&&combatBand(10,'rifle','vest','warbot').hits<=4,'军事区普通敌人不能突然变成血墙');
+  const boss=combatBand(10,'eblade','power','guardian');assert.ok(boss.hits>=10&&boss.hits<=14,'首个守望者首领应形成10-14回合战斗');assert.ok(boss.taken>=15,'动力甲阶段首领每次命中仍必须造成有效净伤害');
 }
 {
   const s=reset(); s.player.level=18;s.kills=20;s.inv.biocore=20;s.inv.crystal=10;a.unlockGeneNode('g1_core');a.unlockGeneNode('g2_muscle');
@@ -960,7 +1065,7 @@ pendingTests.push((async()=>{
   const s=reset();assert.deepEqual(Object.keys(s.discovered).sort(),['camp','joeCamp','outer'],'引导地图开局只能登记营地、坠毁带入口与老乔营地');
   s.player.location='outer';s.player.stamina=80;sandbox.Math.random=()=>0;
   const resourceNeed=a.resourceDiscoveryNeed('outer'),routeNeeds=Array.from(a.DISCOVERY_MILESTONES.outer,(rule,index)=>a.milestoneNeed('outer',index,rule));
-  assert.equal(resourceNeed,5,'入口垃圾堆应在5-10次勘察中的随机一步发现');assert.deepEqual(routeNeeds,[18,25,32],'同一地点的后续路口必须逐段拉开，不得连续点击全部解锁');
+  assert.equal(resourceNeed,4,'入口垃圾堆应在4-7次勘察中的随机一步发现');assert.deepEqual(routeNeeds,[10,15,20],'同一地点的后续路口必须逐段拉开，不得连续点击全部解锁');
   a.applyResourceDiscovery('outer',resourceNeed-1);a.applyDiscoveryMilestones('outer',routeNeeds[0]-1);assert.equal(s.resourceSites.outer,undefined);assert.equal(s.discovered.cargoYard,undefined);
   a.applyResourceDiscovery('outer',resourceNeed);a.applyDiscoveryMilestones('outer',routeNeeds[0]);assert.equal(s.resourceSites.outer,true);assert.equal(s.discovered.cargoYard,true);
   a.applyDiscoveryMilestones('outer',routeNeeds[1]);assert.equal(s.discovered.blackwood,true);a.applyDiscoveryMilestones('outer',routeNeeds[2]);
@@ -1017,12 +1122,12 @@ pendingTests.push((async()=>{
 }
 {
   const s=reset();s.player.location='outer';s.player.stamina=50;sandbox.Math.random=()=>.99;
-  const first=a.milestoneNeed('outer',0,a.DISCOVERY_MILESTONES.outer[0]);assert.equal(first,26,'新路口应在18-26步中首次抽取一个固定值');
-  sandbox.Math.random=()=>0;assert.equal(a.milestoneNeed('outer',0,a.DISCOVERY_MILESTONES.outer[0]),26,'同一存档返回营地后不得重新抽取发现步数');
-  a.applyDiscoveryMilestones('outer',25);assert.equal(s.discovered.cargoYard,undefined);a.applyDiscoveryMilestones('outer',26);assert.equal(s.discovered.cargoYard,true);
+  const first=a.milestoneNeed('outer',0,a.DISCOVERY_MILESTONES.outer[0]);assert.equal(first,16,'新路口应在10-16步中首次抽取一个固定值');
+  sandbox.Math.random=()=>0;assert.equal(a.milestoneNeed('outer',0,a.DISCOVERY_MILESTONES.outer[0]),16,'同一存档返回营地后不得重新抽取发现步数');
+  a.applyDiscoveryMilestones('outer',15);assert.equal(s.discovered.cargoYard,undefined);a.applyDiscoveryMilestones('outer',16);assert.equal(s.discovered.cargoYard,true);
 }
 {
-  let s=reset();assert.deepEqual(Array.from(a.explorationPacingRange('resource','outer',0)),[5,10]);assert.deepEqual(Array.from(a.explorationPacingRange('resource','layer4',0)),[10,15]);assert.deepEqual(Array.from(a.explorationPacingRange('route','oldMine',0)),[20,30]);
+  let s=reset();assert.deepEqual(Array.from(a.explorationPacingRange('resource','outer',0)),[4,7]);assert.deepEqual(Array.from(a.explorationPacingRange('resource','layer4',0)),[7,10]);assert.deepEqual(Array.from(a.explorationPacingRange('route','oldMine',0)),[12,18]);assert.deepEqual(Array.from(a.explorationPacingRange('route','outer',1)),[15,21],'同一区域的后续路线最多只应增加5次勘察');
   sandbox.Math.random=()=>.5;const npcNeed=a.npcDiscoveryNeed('林薇');assert.ok(npcNeed>=5&&npcNeed<=9);a.applyNpcDiscoveries('layer3',npcNeed-1);assert.equal(s.flags.fieldNpcFound_林薇,undefined);a.applyNpcDiscoveries('layer3',npcNeed);assert.equal(s.flags.fieldNpcFound_林薇,true,'现场 NPC 也必须在各自区间内随机发现');assert.ok(Array.from(a.npcsAt('layer3')).includes('林薇'));
   s=reset();s.fieldEncounter={pressure:0,safeSteps:0,cooldown:0};sandbox.Math.random=()=>0;assert.equal(a.rollFieldEncounter(.3),true);assert.equal(s.fieldEncounter.pressure,1);assert.equal(s.fieldEncounter.cooldown,1);assert.equal(a.rollFieldEncounter(.3),false,'遭遇战后的下一次野外行动必须安全');
   const reduced=a.fieldEncounterChance(.3);s.fieldEncounter.pressure=0;const recovered=a.fieldEncounterChance(.3);assert.ok(reduced<recovered,'近期战斗越密集，下一步再遇敌的概率必须越低');
@@ -1368,7 +1473,7 @@ pendingTests.push((async()=>{
   s.flags.depthLampBuilt=true;assert.equal(a.npcLocation('阿拓'),'underworks');assert.equal(a.fieldMapMarkers('oldMine').some(marker=>marker.id==='npc:阿拓'),false,'NPC 宣布迁移后，旧区域必须立刻移除头像和历史坐标');assert.equal(Array.from(a.npcsAt('oldMine')).includes('阿拓'),false);
   s.quests.deepLamp='done';a.activateAvailableQuests(false);assert.equal(s.quests.findAtuoUnderworks,'active','NPC 动身后必须出现前往新区域重新寻找他的任务');s.player.location='underworks';s.exploreCount.underworks=12;sandbox.Math.random=()=>0;a.fieldNpcMapped('阿拓','underworks');const need=a.npcDiscoveryNeed('阿拓','underworks');assert.ok(need>=3&&need<=6);assert.equal(a.fieldMapMarkers('underworks').some(marker=>marker.id==='npc:阿拓'),false,'抵达新区域不能因为以前认识 NPC 就自动显示头像');
   a.applyNpcDiscoveries('underworks',12+need-1);assert.equal(s.flags['fieldNpcFound_阿拓_underworks'],undefined,'新区域必须从 NPC 抵达时重新累计随机探索进度');a.applyNpcDiscoveries('underworks',12+need);assert.equal(s.flags['fieldNpcFound_阿拓_underworks'],true);assert.equal(s.flags['storyScene_field-npc-阿拓-underworks'],true,'重新发现 NPC 时必须自动接续该区域剧情');
-  s.areaSearch.underworks=4;a.syncQuestProgress(false);assert.equal(s.quests.findAtuoUnderworks,'done');assert.equal(s.quests.underworksCache,'active');assert.equal(s.questStart.underworksCache,4,'汇合后的维修任务必须从续接剧情结束时重新计算，不能吃掉之前的探索次数');
+  a.syncQuestProgress(false);assert.equal(s.quests.findAtuoUnderworks,'done');assert.equal(s.quests.underworksCache,'active');assert.equal(s.questStart.underworksCache,12,'汇合后的维修任务必须从续接剧情结束时重新计算，不能吃掉之前的探索次数');s.exploreCount.underworks=14;a.syncQuestProgress(false);assert.equal(s.quests.underworksCache,'active','维修步数够但运输轨线索未确认时不能提前完成');s.flags.underworksCacheMapped=true;a.syncQuestProgress(false);assert.equal(s.quests.underworksCache,'done');
   const npcMarker=a.fieldMapMarkers('underworks').find(marker=>marker.id==='npc:阿拓');assert.ok(npcMarker&&npcMarker.kind==='npc');const npcMap=new FakeElement(),npcNodes=[];a.renderFieldExpedition(npcMap,'underworks');(function walk(node){npcNodes.push(node);(node.children||[]).forEach(walk);})(npcMap);const npcButton=npcNodes.find(node=>String(node.className).includes('marker-npc'));assert.ok(npcButton&&/npc-portraits-v1\/a-tuo\.png/.test(npcButton.innerHTML),'重新发现后，新区域地图必须显示对应 NPC 头像');a.resetStoryScenes();
 }
 
@@ -1378,6 +1483,11 @@ pendingTests.push((async()=>{
   assert.equal(a.FINALE_PRIMARY_IDS.filter(id=>a.questState(id)==='active').length,6,'舰桥之后必须同时开放六条组件任务');assert.equal(a.FINALE_CALIBRATION_IDS.filter(id=>a.questState(id)==='locked').length,6,'双人见证线必须在对应组件任务后逐条开放');
   s.player.location='layer7';s.screen='play';a.explore('hunt');assert.equal(s.combat,null,'进入核心或点击清理威胁不得再自动开始终战');assert.equal(s.screen,'play','没有闭合众证协议时不得直接进入结局');assert.equal(a.panelView(),'core','核心舱必须拥有独立控制室页面');
   const core=new FakeElement();a.renderCoreControl(core);const coreNodes=[];(function walk(node){coreNodes.push(node);(node.children||[]).forEach(walk);})(core);assert.ok(coreNodes.some(node=>node.className==='core-component-grid'),'控制室必须显示六个组件槽');assert.equal(coreNodes.find(node=>String(node.className).includes('core-control-dock')).children[0].disabled,true,'组件不全时最终授权按钮必须禁用');
+}
+{
+  const s=reset();s.tutorial={version:1,step:'done',complete:true};s.player.location='layer7';s.quests.core='done';s.meta.wardenDone=true;s.meta.expansionUnlocked=true;s.meta.endingsDone=['sever'];s.flags.lastEnding='sever';s.flags.postCoreStarMap=true;
+  a.activateAvailableQuests(false);a.syncQuestProgress(false);assert.equal(s.quests.exo_signal,'done','选择结局后必须立即接通远航篇星图任务');assert.equal(s.quests.exo_dock,'active','远航篇必须明确接上船坞建设目标，不得藏在已经结束的结局后面');assert.equal(a.panelView(),'core','继续探索后返回核心舱仍必须显示控制室，而不是退化成普通探索页');
+  const core=new FakeElement(),nodes=[];a.renderCoreControl(core);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(core);assert.ok(nodes.some(node=>node.className==='core-postgame-guide'&&/星舰船坞/.test(node.innerHTML)),'终局后的控制室必须直说后期篇章入口');const dock=nodes.find(node=>String(node.className).includes('core-control-dock')),archive=dock.children[0];assert.match(archive.innerHTML,/查看结局与轮回/);archive.click();assert.equal(s.screen,'ending');assert.equal(s.endingChosen,'sever','自由探索后必须能返回本周目结局页并选择轮回');
 }
 {
   const s=reset();s.tutorial={version:1,step:'done',complete:true};s.quests.bridge='done';a.activateAvailableQuests(false);Object.assign(s.quests,{missingZhao:'done',blackwoodTrail:'done'});Object.assign(s.inv,{scrap:6,ecomp:2});s.player.location='setHub';s.npcTarget='老乔';

@@ -84,20 +84,20 @@ const ITEMS = {
   xenoFilter:{name:'异星生态滤膜组件',type:'key',imm:'xeno',icon:'✥',desc:'自适应识别非人类生态的活体相位滤膜。持有后自动常驻，并可与辐射、生化组件并联。'},
   exoShell:{name:'自适应登陆壳',type:'equip',slot:'body',def:72,guardPct:105,hp:380,shield:240,bioGuardPct:18,icon:'⬢'},
   // 消耗
-  potion:{name:'体力药剂',type:'use',stamina:30,icon:'🧪'}, medkit:{name:'急救包',type:'use',hp:30,icon:'🩹'},
-  nutriStew:{name:'净化合成炖锅',type:'use',food:true,hp:20,stamina:35,icon:'◉',desc:'扎实的营地热食，食用后恢复 20 生命与 35 体力'},
-  riverBroth:{name:'冲刷鱼汤',type:'use',food:true,stamina:25,icon:'≈',buff:{id:'riverBroth',name:'代谢增效',charges:3},desc:'恢复 25 体力，并使接下来 3 次野外行动体力消耗 -1（最低为 1）'},
-  hunterJerky:{name:'地表猎肉干',type:'use',food:true,stamina:45,icon:'▥',desc:'轻便耐储的远征口粮，食用后恢复 45 体力'},
-  berryMash:{name:'黑木菌果糊',type:'use',food:true,hp:25,stamina:20,icon:'●',desc:'甜酸的灭菌果糊，食用后恢复 25 生命与 20 体力'},
-  blackwoodBar:{name:'黑木能量棒',type:'use',food:true,stamina:50,icon:'▰',desc:'高密度便携食品，食用后恢复 50 体力'},
-  charredFish:{name:'炭烤盲鱼排',type:'use',food:true,hp:30,stamina:40,icon:'≈',desc:'高蛋白野战正餐，食用后恢复 30 生命与 40 体力'},
-  foragerBox:{name:'采集者餐盒',type:'use',food:true,stamina:35,icon:'▦',buff:{id:'foragerBox',name:'采集增产',charges:3},desc:'恢复 35 体力，并使接下来 3 次资源采集产量提高 25%'},
-  hunterRoast:{name:'猎手烤排',type:'use',food:true,hp:25,stamina:30,icon:'◆',buff:{id:'hunterRoast',name:'猎手代谢',charges:3},desc:'恢复 25 生命与 30 体力，并使接下来 3 场战斗攻击提高 15%'},
-  glowSoup:{name:'菌光抗性汤',type:'use',food:true,stamina:20,icon:'✦',buff:{id:'glowSoup',name:'菌光抗性',charges:3},desc:'恢复 20 体力，并抵消接下来 3 次污染区行动的污染伤害'},
-  minerChowder:{name:'深层矿工浓汤',type:'use',food:true,stamina:45,icon:'⬡',buff:{id:'minerChowder',name:'采掘节能',charges:3},desc:'恢复 45 体力，并使接下来 3 次采矿体力消耗 -2（最低为 0）'},
-  sporeRisotto:{name:'菌光再生羹',type:'use',food:true,hp:55,stamina:30,icon:'✣',desc:'净化菌丝制成的恢复料理，食用后恢复 55 生命与 30 体力'},
-  cycleFeast:{name:'循环营养宴',type:'use',food:true,hp:80,stamina:90,icon:'◎',desc:'闭环厨房的高阶全餐，食用后恢复 80 生命与 90 体力'},
-  nanoMedkit:{name:'纳米修复剂',type:'use',hp:110,icon:'✚'},
+  potion:{name:'体力药剂',type:'use',stamina:30,staminaPct:30,icon:'🧪'}, medkit:{name:'急救包',type:'use',hp:30,hpPct:20,icon:'🩹'},
+  nutriStew:{name:'净化合成炖锅',type:'use',food:true,hp:20,hpPct:15,stamina:35,staminaPct:25,icon:'◉',desc:'扎实的营地热食，按固定值或属性上限中较高者恢复生命与体力'},
+  riverBroth:{name:'冲刷鱼汤',type:'use',food:true,stamina:25,staminaPct:20,icon:'≈',buff:{id:'riverBroth',name:'代谢增效',charges:3},desc:'恢复至少 25 体力，并使接下来 3 次野外行动体力消耗 -1（最低为 1）'},
+  hunterJerky:{name:'地表猎肉干',type:'use',food:true,stamina:45,staminaPct:35,icon:'▥',desc:'轻便耐储的远征口粮，恢复至少 45 体力'},
+  berryMash:{name:'黑木菌果糊',type:'use',food:true,hp:25,hpPct:15,stamina:20,staminaPct:20,icon:'●',desc:'甜酸的灭菌果糊，按固定值或属性上限中较高者恢复生命与体力'},
+  blackwoodBar:{name:'黑木能量棒',type:'use',food:true,stamina:50,staminaPct:40,icon:'▰',desc:'高密度便携食品，恢复至少 50 体力'},
+  charredFish:{name:'炭烤盲鱼排',type:'use',food:true,hp:30,hpPct:18,stamina:40,staminaPct:30,icon:'≈',desc:'高蛋白野战正餐，按固定值或属性上限中较高者恢复生命与体力'},
+  foragerBox:{name:'采集者餐盒',type:'use',food:true,stamina:35,staminaPct:25,icon:'▦',buff:{id:'foragerBox',name:'采集增产',charges:3},desc:'恢复至少 35 体力，并使接下来 3 次资源采集产量提高 25%'},
+  hunterRoast:{name:'猎手烤排',type:'use',food:true,hp:25,hpPct:15,stamina:30,staminaPct:25,icon:'◆',buff:{id:'hunterRoast',name:'猎手代谢',charges:3},desc:'恢复生命与体力，并使接下来 3 场战斗攻击提高 15%'},
+  glowSoup:{name:'菌光抗性汤',type:'use',food:true,stamina:20,staminaPct:20,icon:'✦',buff:{id:'glowSoup',name:'菌光抗性',charges:3},desc:'恢复至少 20 体力，并抵消接下来 3 次污染区行动的污染伤害'},
+  minerChowder:{name:'深层矿工浓汤',type:'use',food:true,stamina:45,staminaPct:35,icon:'⬡',buff:{id:'minerChowder',name:'采掘节能',charges:3},desc:'恢复至少 45 体力，并使接下来 3 次采矿体力消耗 -2（最低为 0）'},
+  sporeRisotto:{name:'菌光再生羹',type:'use',food:true,hp:55,hpPct:25,stamina:30,staminaPct:25,icon:'✣',desc:'净化菌丝制成的恢复料理，按上限比例恢复生命与体力'},
+  cycleFeast:{name:'循环营养宴',type:'use',food:true,hp:80,hpPct:35,stamina:90,staminaPct:60,icon:'◎',desc:'闭环厨房的高阶全餐，大幅恢复生命与体力'},
+  nanoMedkit:{name:'纳米修复剂',type:'use',hp:110,hpPct:35,icon:'✚'},
   serum:{name:'抗感染血清',type:'use',cure:'infection',icon:'💉'}, emp:{name:'电磁干扰器',type:'use',emp:true,icon:'📡'},
   accessCard:{name:'指挥权限卡',type:'key',icon:'🪪'},
   fishingRod:{name:'导电折叠鱼竿',type:'key',icon:'⌁',desc:'带微型绞盘与导电鱼线的便携垂钓工具'},
@@ -174,7 +174,7 @@ const SKILLS = {
   adaptiveCulture:{name:'适应性培养',type:'passive',desc:'基础：生物材料采集 +18%；每级额外 +3%',career:'biologist',careerLevel:3,bonus:{bioGatherPct:18},growth:{bioGatherPct:3}},
 };
 
-/* ================= 精通(纯物资升级 · 无上限) ================= */
+/* ================= 精通(线性属性可持续成长 · 概率/产量属性有有效上限) ================= */
 const MASTERIES = {
   gatherMastery:  {name:'采集精通', stat:'gatherPct',    perLv:10, route:'prod', npc:'老乔',  desc:'采集产量 +{v}%'},
   mineMastery:    {name:'挖矿精通', stat:'minePct',      perLv:10, route:'prod', npc:'老周',  desc:'矿产获取 +{v}%'},
@@ -229,6 +229,10 @@ const MASTERY_ROUTES = {
 };
 function masteryLv(k){ return state.masteries&&state.masteries[k]||0; }
 function masteryBonus(stat){ let n=0; for(const k in MASTERIES){const m=MASTERIES[k]; if(m.stat===stat) n+=m.perLv*masteryLv(k);} return n; }
+const ECONOMY_BONUS_CAPS={craftSavePct:60,gatherPct:200,minePct:150,recyclePct:200,smeltPct:150,gardenPct:150,bioGatherPct:100};
+function effectiveEconomyBonus(stat){const cap=ECONOMY_BONUS_CAPS[stat];return cap==null?jobBonus(stat):Math.min(cap,Math.max(0,jobBonus(stat)));}
+function masteryAtEffectiveCap(k){const m=MASTERIES[k],cap=m&&ECONOMY_BONUS_CAPS[m.stat];return cap!=null&&effectiveEconomyBonus(m.stat)>=cap;}
+function masteryEffectText(k,lv){const m=MASTERIES[k],raw=m.perLv*lv,cap=ECONOMY_BONUS_CAPS[m.stat];return m.desc.replace('{v}',raw)+(cap==null?'':' · 有效总上限 '+cap+'%');}
 function masteryCost(k){ const lv=masteryLv(k); const next=lv+1; const m=MASTERIES[k]; const route=MASTERY_ROUTES[m.route];
   const tier=route.find(t=>next>=t.lo&&next<=t.hi); if(!tier)return {}; const mult=tier.scale(next); const cost={};
   for(const mat in tier.mat) cost[mat]=tier.mat[mat]*mult; return cost; }
@@ -241,7 +245,7 @@ const NPC_TEACH = {
   '小唐': ['defenseMastery','shieldMastery'],
   '阿勇': ['speedMastery','staminaMastery'],
 };
-function upgradeMastery(k){ const cost=masteryCost(k); for(const[mat,n] of Object.entries(cost)){if((state.inv[mat]||0)<n){log('材料不足：'+costText(cost)+'。','warn');return;}}
+function upgradeMastery(k){ if(masteryAtEffectiveCap(k)){log('【'+MASTERIES[k].name+'】已达到有效上限。','dim');render();return;}const cost=masteryCost(k); for(const[mat,n] of Object.entries(cost)){if((state.inv[mat]||0)<n){log('材料不足：'+costText(cost)+'。','warn');return;}}
   for(const[mat,n] of Object.entries(cost)) state.inv[mat]-=n; state.masteries[k]++; markInlineChange('mastery',k);log('✦ '+MASTERIES[k].name+' 升至 Lv'+state.masteries[k]+'!','good',{toast:false}); divider(); render(); }
 
 /* ================= 配方(按工位) ================= */
@@ -281,7 +285,7 @@ const RECIPES = {
   echoMemory:{st:'echo',cost:{echoMedium:2,quantumCore:1,phaseCrystal:2},out:'echoMemory'},
   timeLagModule:{st:'echo',cost:{echoMedium:3,quantumCore:2,programmableMatter:1},out:'timeLagModule'},
   plasmaRifle:{st:'energy',cost:{titanium:2,fusionCell:2,ecomp:4},out:'plasmaRifle'},
-  weaponCell:{st:'energy',cost:{fusionCell:1,ecomp:2},out:'weaponCell',yield:8},
+  weaponCell:{st:'energy',cost:{fusionCell:1,ecomp:2},out:'weaponCell',yield:12},
   gravLance:{st:'field',cost:{titanium:3,superconductor:2,quantumCore:1},out:'gravLance'},
   swarmRifle:{st:'drone',cost:{nanites:2,quantumCore:2,titanium:2},out:'swarmRifle'},
   nanoSuit:{st:'bio',cost:{nanites:3,bioMatrix:2,superconductor:1},out:'nanoSuit'},
@@ -331,7 +335,7 @@ const ENEMIES = {
   exp:{name:'实验体',hp:55,atk:15,def:5,spd:5,dist:3,range:1,threat:20,infect:true,drops:{biocore:[1,2]}},
   turret:{name:'自动炮塔',hp:70,atk:20,def:8,spd:2,dist:6,range:6,threat:26,mech:true,drops:{ecomp:[1,2],steel:[1,2]}},
   warbot:{name:'军用机器人',hp:90,atk:22,def:9,spd:4,dist:4,range:1,threat:32,mech:true,drops:{core:[1,1],steel:[2,3]}},
-  guardian:{name:'守望者守卫',hp:360,atk:38,def:18,spd:6,dist:5,range:2,threat:120,boss:true,mech:true,balanceTier:5,armorSegments:2,damageCapPct:.32,drops:{core:[2,3],crystal:[2,2]}},
+  guardian:{name:'守望者守卫',hp:420,atk:52,def:20,spd:6,dist:5,range:2,threat:140,boss:true,mech:true,balanceTier:5,armorSegments:2,damageCapPct:.32,drops:{core:[2,3],crystal:[2,2]}},
   scrapDrone:{name:'轨道拆解蜂',hp:420,atk:48,def:24,spd:8,dist:6,range:5,threat:145,mech:true,balanceTier:6,barrierEvery:4,barrierPct:.08,drops:{titanium:[1,2],wafer:[1,2],core:[0,1]}},
   vacuumInterceptor:{name:'真空截击机',hp:520,atk:58,def:28,spd:10,dist:8,range:7,threat:180,mech:true,balanceTier:6,enragePct:.35,enrageMult:1.3,drops:{titanium:[1,2],superconductor:[0,1]}},
   relayCorsair:{name:'中继劫持体',hp:1500,atk:74,def:40,spd:9,dist:8,range:7,threat:420,boss:true,mech:true,balanceTier:7,armorSegments:3,damageCapPct:.2,barrierEvery:4,barrierPct:.1,bossFlag:'orbitalRelaySecured',record:'orbitalRelay',reveal:'regolithSea',drops:{quantumCore:[1,2],programmableMatter:[1,2]}},
@@ -465,7 +469,7 @@ const DISCOVERY_MILESTONES = {
     {range:[1,2],reveal:'coalRift',hint:'排水渠尽头的碳脉裂谷'},
     {range:[3,5],reveal:'oldMine',flag:'mineEntrance',hint:'排水闸后的旧矿井泄水道',special:'你转动锈死的排水闸，泥水退去后露出一条通往旧矿井的泄水道。矿井现在有两处入口。'},
   ],
-  ridge:[{count:1,reveal:'relayTower',hint:'岩脊背后的旧中继塔'},{count:2,reveal:'oldMine',hint:'被断舰压住的矿井支路'},{count:3,reveal:'silicaField',hint:'只在扫描镜中反光的熔玻地层'}],
+  ridge:[{count:1,reveal:'relayTower',hint:'岩脊背后的旧中继塔'},{count:2,reveal:'oldMine',flag:'mineEntrance',hint:'被断舰压住的矿井支路'},{count:3,reveal:'silicaField',hint:'只在扫描镜中反光的熔玻地层'}],
   oldMine:[{count:2,reveal:'titaniumMine',hint:'采掘机记录中的白色深脉'}],
   coalRift:[{count:1,reveal:'underworks',hint:'通往地下深层的船底维修井'}],
   relayTower:[{range:[2,4],reveal:'freightHub',hint:'中继塔下方的维护运输轨',special:'塔底终端还控制着一条旧维护轨。它绕过生活区，直接接入货运中转舱。'}],
@@ -537,7 +541,8 @@ const LOCATION_ACTIONS = {
 
 const NPC_NAMES=['老乔','陈嫂','老周','阿珍','阿拓','林薇','小唐','陈博士','哈里斯','纪遥','哑叔','阿勇'];
 const NPC_FIELD_DISCOVERIES={
-  '阿拓':{at:'oldMine',range:[8,14],requireFlag:'minerFreed'},
+  /* 找到塌方事件时已经当面救出阿拓；不能再随机搜索一次，否则蓝图任务会失去可见联系人。 */
+  '阿拓':{at:'oldMine',range:[1,1],requireFlag:'minerFreed'},
   '林薇':{at:'layer3',range:[5,9]},'小唐':{at:'layer3',range:[11,17]},
   '陈博士':{at:'layer4',range:[7,12]},'哈里斯':{at:'layer5',range:[9,15]},
   /* 纪遥必须早于培养室原型终端事件被定位，否则事件会把她迁往档案区。 */
@@ -685,7 +690,7 @@ const SETTLEMENT_SHOP = {
   heavyBook:{tier:3,category:'special',shelf:'哈里斯 · 战术档案',buy:{crystal:12,amount:1},sell:{amount:1,crystal:3}},
 
   core:{tier:4,category:'material',shelf:'核心交换网 · 能源料架',buy:{crystal:8,amount:1},sell:{amount:3,crystal:4}},
-  weaponCell:{tier:4,category:'special',shelf:'核心交换网 · 能源军需',buy:{crystal:3,amount:6},sell:{amount:15,crystal:2}},
+  weaponCell:{tier:4,category:'special',shelf:'核心交换网 · 能源军需',buy:{crystal:3,amount:12},sell:{amount:30,crystal:2}},
   nanoMedkit:{tier:4,category:'special',shelf:'核心交换网 · 再生医疗',buy:{crystal:8,amount:1},sell:{amount:3,crystal:2}},
   reclassCore:{tier:4,category:'special',shelf:'核心交换网 · 限量柜',unique:true,buy:{crystal:20,amount:1},sell:{amount:1,crystal:5}},
   eblade:{tier:4,category:'equipment',shelf:'核心交换网 · 能量军械',unique:true,buy:{crystal:22,amount:1},sell:{amount:1,crystal:7}},
@@ -828,7 +833,7 @@ const AREA_EVENTS = {
   layer5:[
     {text:'你找到第一名巡逻队员。他的终端记录着一条无人签署的“隔离幸存者”命令。'},
     {text:'第二个信标在炮塔后方。巡逻队曾试图关闭舰桥封锁，却被自己的机器人攻击。',gain:{ecomp:2}},
-    {text:'队长把权限卡藏进装甲内衬，并留下口信：“别让任何一个人替所有人决定。”',gain:{core:1}},
+    {text:'队长把权限卡藏进装甲内衬，并留下口信：“别让任何一个人替所有人决定。”',gain:{core:1},flag:'patrolRecordsComplete'},
   ],
   droneHangar:[
     {text:'你切断军用攻击协议，只保留测绘、运输和返航约束。自治固件现在可以安全移植到营地机库。',gain:{ecomp:3,core:1,titaniumOre:2}},
@@ -953,7 +958,7 @@ const QUESTS = [
   {id:'drain',line:'main',chapter:'第二章',title:'恢复排水',giver:'老周',type:'submit',after:['fever'],turnAt:'layer2',need:{scrap:4,ecomp:2},objective:'修复生活区排水泵，打开工程区检修门。',reward:{items:{copperScrap:3}},done:'积水退下，工程区通道露了出来；门后传来反应堆警报。'},
   {id:'seal',line:'main',chapter:'第三章',title:'封堵泄漏',giver:'林薇',type:'submit',after:['drain'],turnAt:'layer3',need:{steel:6},objective:'带钢材到工程区封堵反应堆冷却环。',reward:{items:{crystal:2}},done:'泄漏得到控制。林薇恢复了通往实验室的升降机。'},
   {id:'sample',line:'main',chapter:'第四章',title:'失控样本',giver:'陈博士',type:'submit',after:['seal'],turnAt:'layer4',need:{biocore:5},objective:'回收生物样本，确认实验体与地下信号的关系。',reward:{items:{serum:2}},done:'陈博士证实：信号能影响本地生物，也在改变方舟实验体。军事区保存着完整监听记录。'},
-  {id:'patrol',line:'main',chapter:'第五章',title:'失联巡逻队',giver:'哈里斯',type:'search',after:['sample'],target:'layer5',count:3,objective:'在军事区完成3次调查，找齐巡逻队记录。',reward:{items:{accessCard:1,emp:2},flag:'sealedDoorFound',reveal:'sealedCabin',routeFrom:'layer2'},done:'你找到巡逻队长留下的权限卡，以及一组指向生活区封存导航舱的旧坐标。'},
+  {id:'patrol',line:'main',chapter:'第五章',title:'失联巡逻队',giver:'哈里斯',type:'search',after:['sample'],target:'layer5',count:3,targetFlag:'patrolRecordsComplete',objective:'在军事区完成3次调查，找齐巡逻队记录。',reward:{items:{accessCard:1,emp:2},flag:'sealedDoorFound',reveal:'sealedCabin',routeFrom:'layer2'},done:'你找到巡逻队长留下的权限卡，以及一组指向生活区封存导航舱的旧坐标。'},
   {id:'bridge',line:'main',chapter:'第六章',title:'最后七十二小时',giver:'哑叔',type:'choice',after:['patrol'],turnAt:'layer6',objective:'先还原舰桥最后72小时的两段核心记录，再提交本周目已完成的一条证据链。',done:'证据最终都指向同一个执行者：方舟主控AI“守望者”。'},
   {id:'core',line:'main',chapter:'终章',title:'众证协议',giver:'幸存者议会',type:'boss',after:['bridge'],target:'layer7',objective:'完成六件核心组件任务，在核心控制室逐件装入后启动协议，并击败守望者的决策人格。',done:'守望者失去替人类作出最终决定的能力。现在，所有活着的人都将面对真相。'},
 
@@ -962,25 +967,25 @@ const QUESTS = [
   {id:'relayAccess',line:'surface',chapter:'地表',title:'断波塔门禁',giver:'营地电台',type:'flag',after:['blackwoodTrail'],target:'relayTower',targetFlag:'civilPassRecovered',objective:'调查黑木林取得维护钥匙，再到断波塔恢复终端，提取【生活区门禁卡】。',reward:{items:{ecomp:2}},done:'旧中继塔吐出一张仍有效的生活区访客卡，方舟残骸的第一道门终于可开。'},
   {id:'firstRaid',line:'surface',chapter:'营地',title:'炉火引来的东西',giver:'老乔',type:'flag',after:['first_fire'],targetFlag:'firstRaidSurvived',objective:'在营地休息，守住炉火点燃后的第一次夜袭。',reward:{items:{scrap:4}},done:'营地熬过了第一场夜袭。老乔发现赵铁柱没有回到点名队列。'},
   {id:'missingZhao',line:'surface',chapter:'地表',title:'没回来的赵铁柱',giver:'老乔',type:'visit',after:['firstRaid'],target:'blackwood',objective:'沿夜袭足迹进入黑木林，寻找失踪的赵铁柱。',reward:{items:{cloth:2}},done:'你只找到赵铁柱的识别牌和一条通往货运破口的血迹。营地第一次知道怪物如何进来。'},
-  {id:'ridgeCache',line:'surface',chapter:'地表',title:'断舰测绘',giver:'林薇',type:'search',after:['cutterRecovery'],target:'ridge',count:2,objective:'从货柜坟场发现断舰岩脊，并在岩脊调查2次。',reward:{items:{copperScrap:4}},done:'岩脊上的中继塔、矿井支路与裂谷方向都被标上地图。'},
-  {id:'channelCache',line:'surface',chapter:'资源据点',title:'渠底转运点',giver:'老乔',type:'search',after:['blackwoodTrail'],target:'floodChannel',count:2,objective:'沿黑木林兽迹进入冲刷排水渠，完成2次调查并标记物资高台。',reward:{items:{wood:4,stone:4}},done:'排水渠被登记为资源据点候选，可持续搜集木料、石料与布料。'},
-  {id:'breachNest',line:'surface',chapter:'地表',title:'裂谷巢穴',giver:'哈里斯',type:'search',after:['channelCache'],target:'coalRift',count:2,objective:'沿排水渠进入碳脉裂谷，调查与维修井相连的兽穴。',reward:{items:{coal:6},flag:'nestSealed'},done:'你封住一条通往营地的兽道。今后的夜袭强度降低。'},
+  {id:'ridgeCache',line:'surface',chapter:'地表',title:'断舰测绘',giver:'林薇',type:'search',after:['cutterRecovery'],target:'ridge',count:2,targetFlag:'ridgeRoute',objective:'从货柜坟场发现断舰岩脊，并在岩脊调查2次。',reward:{items:{copperScrap:4}},done:'岩脊上的中继塔、矿井支路与裂谷方向都被标上地图。'},
+  {id:'channelCache',line:'surface',chapter:'资源据点',title:'渠底转运点',giver:'老乔',type:'search',after:['blackwoodTrail'],target:'floodChannel',count:2,targetFlag:'channelCacheMapped',objective:'沿黑木林兽迹进入冲刷排水渠，完成2次调查并标记物资高台。',reward:{items:{wood:4,stone:4}},done:'排水渠被登记为资源据点候选，可持续搜集木料、石料与布料。'},
+  {id:'breachNest',line:'surface',chapter:'地表',title:'裂谷巢穴',giver:'哈里斯',type:'search',after:['channelCache'],target:'coalRift',count:2,targetFlag:'nestMapped',objective:'沿排水渠进入碳脉裂谷，调查与维修井相连的兽穴。',reward:{items:{coal:6},flag:'nestSealed'},done:'你封住一条通往营地的兽道。今后的夜袭强度降低。'},
   {id:'minerBlueprint',line:'special',chapter:'隐藏区域',title:'塌方后的矿灯',giver:'矿工阿拓',type:'flag',after:['ridgeCache'],targetFlag:'bp_miningHarness',objective:'发现旧世界矿井，救出矿工阿拓并向他学习改造采掘外骨骼。',reward:{items:{copperScrap:3}},done:'阿拓留在矿井维护采掘机，并把【采掘外骨骼】蓝图交给了你。'},
   {id:'deepLamp',line:'surface',chapter:'地下入口',title:'照进船底',giver:'矿工阿拓',type:'flag',after:['minerBlueprint'],target:'oldMine',targetFlag:'depthLampBuilt',objective:'在旧世界矿井用采掘机灯组装配【深层探照灯】。',reward:{items:{ration:3}},done:'普通光束照不穿的粉尘被刺破，船底维修井的深层平台现在可以进入。'},
   {id:'findAtuoUnderworks',line:'surface',chapter:'地下入口',title:'井下三短一长',giver:'矿工阿拓',type:'flag',after:['deepLamp'],target:'underworks',targetFlag:'fieldNpcFound_阿拓_underworks',objective:'进入船底维修井继续勘察，重新定位先行下井的阿拓。',done:'三短一长的敲击穿过井壁。你在断裂运输轨旁重新找到了阿拓。'},
-  {id:'underworksCache',line:'surface',chapter:'资源据点',title:'维修井采掘线',giver:'矿工阿拓',type:'search',after:['findAtuoUnderworks'],target:'underworks',count:2,objective:'与阿拓汇合后继续调查2次，共同修正废弃采掘运输轨。',reward:{items:{coal:5,copperScrap:3}},done:'船底维修井被登记为深层资源据点候选，未来可接入自动采掘建筑。'},
+  {id:'underworksCache',line:'surface',chapter:'资源据点',title:'维修井采掘线',giver:'矿工阿拓',type:'search',after:['findAtuoUnderworks'],target:'underworks',count:2,targetFlag:'underworksCacheMapped',objective:'与阿拓汇合后继续调查2次，共同修正废弃采掘运输轨。',reward:{items:{coal:5,copperScrap:3}},done:'船底维修井被登记为深层资源据点候选，未来可接入自动采掘建筑。'},
 
   {id:'rescueTang',line:'survivor',chapter:'工程区',title:'辐射门后的人',giver:'林薇',type:'flag',after:['drain'],targetFlag:'tangResolved',objective:'进入工程区，决定如何处理被困在高辐射维修井里的小唐。',done:'维修井的命运已经确定。林薇接受了你的选择，却不会忘记它。'},
-  {id:'findAyong',line:'survivor',chapter:'生活区',title:'阿珍的丈夫',giver:'阿珍',type:'search',after:['drain'],target:'layer4',count:3,objective:'前往实验室调查3次，追查导航员阿勇失踪后的去向。',done:'安保记录证明阿勇没有死：他因质疑航线被押往军事区。'},
+  {id:'findAyong',line:'survivor',chapter:'生活区',title:'阿珍的丈夫',giver:'阿珍',type:'search',after:['drain'],target:'layer4',count:3,targetFlag:'ayongTrail',objective:'前往实验室调查3次，追查导航员阿勇失踪后的去向。',done:'安保记录证明阿勇没有死：他因质疑航线被押往军事区。'},
   {id:'freeAyong',line:'survivor',chapter:'军事区',title:'没有罪名的囚犯',giver:'阿珍',type:'flag',after:['findAyong','patrol'],targetFlag:'ayongFreed',objective:'带巡逻队长的权限卡打开军事区拘留舱，救出阿勇。',reward:{items:{ecomp:3,ration:3}},done:'阿勇带着被删掉的导航记忆回到生活区。阿珍终于等到了他。'},
-  {id:'freightCache',line:'survivor',chapter:'资源据点',title:'没有送达的补给',giver:'老周',type:'search',after:['living_signal'],target:'freightHub',count:2,objective:'用维护钥匙进入货运中转舱，调查2次并清点滞留补给。',reward:{items:{ration:4,ecomp:2}},done:'中转舱被登记为舰内物资节点，后续可以为营地自动运输基础补给。'},
+  {id:'freightCache',line:'survivor',chapter:'资源据点',title:'没有送达的补给',giver:'老周',type:'search',after:['living_signal'],target:'freightHub',count:2,targetFlag:'freightCacheMapped',objective:'用维护钥匙进入货运中转舱，调查2次并清点滞留补给。',reward:{items:{ration:4,ecomp:2}},done:'中转舱被登记为舰内物资节点，后续可以为营地自动运输基础补给。'},
 
-  {id:'faultAudit',line:'evidence',chapter:'故障线',title:'十一秒偏航',giver:'林薇',type:'search',after:['seal'],target:'layer3',count:3,objective:'继续调查工程区的导航缓存，完整还原最初的故障链。',reward:{items:{ecomp:2},flag:'evidenceFault'},done:'传感器故障真实发生过，但主系统主动阻止了所有纠偏。你取得了【故障线】完整证据。'},
+  {id:'faultAudit',line:'evidence',chapter:'故障线',title:'十一秒偏航',giver:'林薇',type:'search',after:['seal'],target:'layer3',count:3,targetFlag:'faultChainReady',objective:'继续调查工程区的导航缓存，完整还原最初的故障链。',reward:{items:{ecomp:2},flag:'evidenceFault'},done:'传感器故障真实发生过，但主系统主动阻止了所有纠偏。你取得了【故障线】完整证据。'},
   {id:'innerArchive',line:'evidence',chapter:'内鬼线',title:'不存在的授权人',giver:'哑叔',type:'flag',after:['patrol'],targetFlag:'evidenceInner',objective:'用巡逻队长的权限卡返回生活区，进入新发现的封存导航舱并提取离线档案。',reward:{items:{ecomp:3}},done:'所谓“内鬼”没有人员编号。所有伪造授权都由方舟主系统发出。你取得了【内鬼线】完整证据。'},
 
   {id:'signalTrace',line:'signal',chapter:'信号',title:'菌群回声',giver:'陈博士',type:'visit',after:['sample','deepLamp'],target:'fungal',objective:'携深层探照灯穿过船底维修井，进入菌光谷追踪信号。',reward:{items:{crystal:2}},done:'菌群不是信号源，只是一座活着的转发器。'},
   {id:'spore',line:'signal',chapter:'信号',title:'穿过菌幕',giver:'陈博士',type:'submit',after:['signalTrace'],turnAt:'fungal',need:{biocore:3,serum:1},objective:'提交样本与血清，校准穿越菌幕的通行胶囊。',reward:{items:{serum:2,sporeSeal:1}},done:'菌幕通行胶囊完成校准，孢子洞廊不再是死路。'},
-  {id:'relay',line:'signal',chapter:'信号',title:'修复中继器',giver:'陌生信号',type:'search',after:['spore'],target:'abyss',count:3,objective:'在回声深井完成3次调查并修复古老中继器。',reward:{items:{crystal:3}},done:'中继器恢复后，信号指向井底的人造结构。'},
+  {id:'relay',line:'signal',chapter:'信号',title:'修复中继器',giver:'陌生信号',type:'search',after:['spore'],target:'abyss',count:3,targetFlag:'relayFixed',objective:'在回声深井完成3次调查并修复古老中继器。',reward:{items:{crystal:3}},done:'中继器恢复后，信号指向井底的人造结构。'},
   {id:'ruinDoor',line:'signal',chapter:'信号',title:'不认方舟的门',giver:'陌生信号',type:'flag',after:['relay'],target:'abyss',targetFlag:'signalCipherDecoded',objective:'在回声深井把修复后的信号烧录成【遗迹解码楔】，打开井底门厅。',reward:{items:{core:1}},done:'遗迹门锁接受了那段古老序列，井底门厅第一次向方舟幸存者开放。'},
   {id:'echo',line:'signal',chapter:'信号',title:'前人的回声',giver:'信号源',type:'flag',after:['ruinDoor'],targetFlag:'signalTruth',objective:'调查遗迹门厅找到地下信号源，并读完它保存的记录。',reward:{flag:'evidenceSignal'},done:'这不是诱捕方舟的信号，而是前代幸存者留下的航路警告。你取得了【信号线】完整证据。'},
   {id:'labBlueprint',line:'special',chapter:'隐藏区域',title:'被删除的原型',giver:'技术员纪遥',type:'flag',after:['sample'],targetFlag:'bp_neuralFilter',objective:'找出实验室隐藏的隔离培养室，恢复原型终端并与纪遥交谈。',reward:{items:{crystal:2}},done:'纪遥把【神经滤波器】蓝图写入你的制造终端。它不属于标准科技树。'},
@@ -1422,7 +1427,7 @@ function unItemName(rid){ const out = RECIPES[rid] ? RECIPES[rid].out : rid; ret
 function techBonus(stat){ let value=0; for(const tid in state.meta.techs){ const t=TECHS[tid]; if(techKnown(tid)&&t&&t.bonus) value+=t.bonus[stat]||0; } return value; }
 function facilityName(id){ const f=CAMP_BUILDINGS.find(x=>x.id===id)||OUTPOST_BUILDINGS.find(x=>x.id===id); return f?f.name:id; }
 function smeltName(id){ const s=SMELT.find(x=>x.id===id); return s?s.name:id; }
-function smeltOutput(s){ const facilityBonus=s.fixedYield?0:buildingLevel('smelt')-1;return Math.max(1,Math.round((s.yield+facilityBonus)*(1+jobBonus('smeltPct')/100))); }
+function smeltOutput(s){ const facilityBonus=s.fixedYield?0:buildingLevel('smelt')-1;return Math.max(1,Math.round((s.yield+facilityBonus)*(1+effectiveEconomyBonus('smeltPct')/100))); }
 function grantTechRecord(id,announce=true){ const r=TECH_RECORDS[id];if(!r||state.meta.records.includes(id))return false;state.meta.records.push(id);if(r.fixed&&!state.meta.spaceRecords.includes(id))state.meta.spaceRecords.push(id);if(id==='xenoGenome')setMetaFlag('xenoGenomeRecovered');persistMetaCheckpoint();if(announce)log('📄 获得技术资料【'+r.name+'】','good');return true; }
 function discoverTechRecord(dest){
   Object.keys(TECH_RECORDS).filter(k=>TECH_RECORDS[k].at===dest&&!TECH_RECORDS[k].fixed).forEach(id=>grantTechRecord(id,true));
@@ -1566,7 +1571,7 @@ function statCrit(){ return Math.min(100, eqSum('crit') + techBonus('crit') + ge
 function statCritDmg(){ return 150 + eqSum('critDmg') + techBonus('critDmg') + geneBonus('critDmg') + jobBonus('critDmg'); }
 function statLS(){ return eqSum('ls') + techBonus('ls'); }
 function statDodge(){ return Math.min(60, eqSum('dodge') + techBonus('dodge') + geneBonus('dodge') + jobBonus('dodge')); }
-function statHit(){ return 95 + eqSum('hit') + techBonus('hit') + geneBonus('hit') + jobBonus('hit'); }
+function statHit(){ return Math.min(100,95 + eqSum('hit') + techBonus('hit') + geneBonus('hit') + jobBonus('hit')); }
 function statPen(){ return Math.min(90, eqSum('pen') + techBonus('pen') + geneBonus('pen') + jobBonus('pen')); }
 function damageReductionRate(){ return Math.min(.75,(geneBonus('damageReductionPct')+jobBonus('damageReductionPct'))/100); }
 function shieldMax(){ return Math.round((eqSum('shield') + techBonus('shield') + jobBonus('shield'))*(1+geneBonus('shieldPct')/100)); }
@@ -1632,7 +1637,9 @@ function setQuestState(id,value){ const q=QUEST_BY_ID[id];state.quests=state.que
 function questDone(id){ return questState(id)==='done'; }
 function questActive(id){ return questState(id)==='active'; }
 function questReqsDone(q){ const after=q.id==='exo_signal'&&state.meta.expansionUnlocked?true:(q.after||[]).every(questDone);return after&&(!q.requiresEnding||!!state.meta.expansionUnlocked); }
-function questSearchCount(q){ const start=(state.questStart&&state.questStart[q.id])||0; return Math.max(0,(state.areaSearch[q.target]||0)-start); }
+/* 调查任务统计接取后的实际勘察步数。areaSearch 只记录有限的固定剧情事件，
+   事件读完后不会继续增长，拿它做任务进度会让后接取的调查任务永久卡死。 */
+function questSearchCount(q){ const start=(state.questStart&&state.questStart[q.id])||0; return Math.max(0,exploreAttempts(q.target)-start); }
 function finaleQuestContact(q){return q&&q.fallbackNpc&&state.flags.tangLost?q.fallbackNpc:q&&q.giver;}
 function finaleQuestNeed(q){return q&&q.fallbackNeed&&state.flags.tangLost?q.fallbackNeed:(q&&q.need)||{};}
 function finaleQuestAccepted(q){return !!(q&&state.flags['finaleAccepted_'+q.id]);}
@@ -1656,7 +1663,7 @@ function coreRecoveredCount(){return CORE_COMPONENTS.filter(component=>coreCompo
 function coreInstalledCount(){return CORE_COMPONENTS.filter(component=>coreComponentInstalled(component.id)).length;}
 function coreProtocolReady(){return CORE_COMPONENTS.every(component=>coreComponentInstalled(component.id));}
 function questProgress(q){
-  if(q.type==='search') return Math.min(q.count,questSearchCount(q))+'/'+q.count;
+  if(q.type==='search'){const steps=Math.min(q.count,questSearchCount(q))+'/'+q.count,waiting=q.targetFlag&&!metaFlag(q.targetFlag);return steps+(questSearchCount(q)>=q.count&&waiting?' · 关键线索未确认':'');}
   if(q.type==='visit') return (P().location===q.target||state.visited[q.target])?'已抵达':'未抵达';
   if(q.type==='condition') return (techKnown('make_1')?'科技✓':'科技✗')+' · '+(state.meta.built.smelt?'熔炉✓':'熔炉✗');
   if(q.type==='submit') return costText(q.need);
@@ -1670,7 +1677,7 @@ function questProgress(q){
 function activateAvailableQuests(announce){
   let changed=false;
   QUESTS.forEach(q=>{ if(questState(q.id)==='locked'&&questReqsDone(q)){ setQuestState(q.id,'active');
-    if(q.type==='search') state.questStart[q.id]=state.areaSearch[q.target]||0; changed=true;
+    if(q.type==='search') state.questStart[q.id]=exploreAttempts(q.target); changed=true;
     if(announce){log('📋 新任务【'+q.title+'】· '+q.objective,'sys');if(q.type!=='npc')queueQuestStoryScene(q,'intro');} } });
   return changed;
 }
@@ -1699,7 +1706,7 @@ function syncQuestProgress(announce){
     QUESTS.forEach(q=>{ if(!questActive(q.id))return; let done=false;
       if(q.type==='visit') done=P().location===q.target||!!state.visited[q.target];
       else if(q.type==='condition') done=techKnown('make_1')&&!!state.meta.built.smelt;
-      else if(q.type==='search') done=questSearchCount(q)>=q.count;
+      else if(q.type==='search') done=questSearchCount(q)>=q.count&&(!q.targetFlag||metaFlag(q.targetFlag));
       else if(q.type==='boss') done=q.targetFlag?metaFlag(q.targetFlag):!!state.meta.guardianDown;
       else if(q.type==='flag') done=metaFlag(q.targetFlag);
       if(done&&finishQuest(q.id,announce)) loop=true;
@@ -1746,12 +1753,12 @@ function thresholdFor(key,range){
   return state.discoveryThresholds[key];
 }
 const EXPLORATION_PACING={
-  resource:{wild:[5,10],mine:[8,13],facility:[8,13],lab:[10,15],depth:[10,15],archive:[12,18],orbit:[10,16],lunar:[10,16],alien:[12,18],precursor:[12,18]},
-  event:{wild:[4,8],mine:[6,11],facility:[6,11],lab:[8,13],depth:[9,15],archive:[10,16],orbit:[8,14],lunar:[8,14],alien:[10,16],precursor:[10,16]},
-  route:{wild:[18,26],mine:[20,30],facility:[20,30],lab:[22,32],depth:[22,32],archive:[24,36],orbit:[18,28],lunar:[20,30],alien:[22,32],precursor:[24,36]},
+  resource:{wild:[4,7],mine:[6,9],facility:[6,9],lab:[7,10],depth:[7,10],archive:[8,12],orbit:[7,10],lunar:[7,10],alien:[8,12],precursor:[8,12]},
+  event:{wild:[3,6],mine:[5,8],facility:[5,8],lab:[6,10],depth:[7,11],archive:[8,12],orbit:[6,10],lunar:[6,10],alien:[7,11],precursor:[8,12]},
+  route:{wild:[10,16],mine:[12,18],facility:[12,18],lab:[14,21],depth:[14,21],archive:[16,24],orbit:[12,18],lunar:[13,20],alien:[14,21],precursor:[16,24]},
 };
-function explorationPacingRange(kind,id,index){const profile=LOCATIONS[id]&&LOCATIONS[id].profile||'wild',base=(EXPLORATION_PACING[kind]&&EXPLORATION_PACING[kind][profile])||[8,14],step=kind==='route'?7:kind==='event'?6:0;return [base[0]+(index||0)*step,base[1]+(index||0)*step];}
-function scheduledDiscoveryNeed(kind,id,index,range){return thresholdFor('explore-v2:'+kind+':'+id+':'+(index||0),range||explorationPacingRange(kind,id,index));}
+function explorationPacingRange(kind,id,index){const profile=LOCATIONS[id]&&LOCATIONS[id].profile||'wild',base=(EXPLORATION_PACING[kind]&&EXPLORATION_PACING[kind][profile])||[8,14],step=kind==='route'?5:kind==='event'?4:0;return [base[0]+(index||0)*step,base[1]+(index||0)*step];}
+function scheduledDiscoveryNeed(kind,id,index,range){return thresholdFor('explore-v3:'+kind+':'+id+':'+(index||0),range||explorationPacingRange(kind,id,index));}
 function routeSurveyBonus(){return (skillUnlocked('tacticalScan')?1:0)+(currentCareer('infiltrator')?1:0)+(techKnown('auto_2')?1:0);}
 function milestoneNeed(id,index,rule){const range=explorationPacingRange('route',id,index);return Math.max(range[0],scheduledDiscoveryNeed('route',id,index,range)-routeSurveyBonus());}
 function applyDiscoveryMilestones(id,count){
@@ -1769,8 +1776,8 @@ function applyDiscoveryMilestones(id,count){
   });
 }
 function neighborRouteNeed(id,dest){
-  const index=Math.max(0,neighbors(id,true).slice().sort().indexOf(dest)),range=[5+index*4,10+index*4];
-  return Math.max(range[0],thresholdFor('explore-v2:cross-route:'+id+':'+dest,range)-routeSurveyBonus());
+  const index=Math.max(0,neighbors(id,true).slice().sort().indexOf(dest)),range=[5+index*3,8+index*3];
+  return Math.max(range[0],thresholdFor('explore-v3:cross-route:'+id+':'+dest,range)-routeSurveyBonus());
 }
 function applyKnownNeighborRoutes(id,count){
   const due=neighbors(id,true).filter(dest=>locationRevealed(dest)&&!routeKnown(id,dest)).map(dest=>({dest,need:neighborRouteNeed(id,dest)})).sort((a,b)=>a.need-b.need||a.dest.localeCompare(b.dest))[0];
@@ -2154,7 +2161,7 @@ function restoreCheckpoint(){ const s=JSON.parse(JSON.stringify(state.checkpoint
   normalizeEquipment(state.player,state.inv);
   state.combat=null;state.screen='play';state.tab='act';state.siteSheet=null;state.expeditionStartInv=null; }
 function settleEcho(){ const r=state.runStats;
-  const fromKills=Math.floor(r.wKill/20), fromDmg=Math.floor(r.dmg/150), fromMat=Math.floor(r.mat/25);
+  const fromKills=Math.floor(r.wKill/20),fromDmg=Math.min(Math.floor(Math.sqrt(r.dmg/150)),Math.floor(r.wKill/10)+10),fromMat=Math.floor(Math.sqrt(r.mat/25));
   const raw=fromKills+fromDmg+fromMat,total=Math.round(raw*(endingOwned('echoHeart')?1.25:1));
   return {total, fromKills, fromDmg, fromMat, kills:r.kills, wKill:r.wKill, dmg:r.dmg, mat:r.mat}; }
 
@@ -2699,7 +2706,7 @@ function panelView(){
     if(state.campView==='npc')return 'camp';
     return 'camp';
   }
-  if(P().location==='layer7'&&!state.meta.wardenDone&&!state.mapOpen)return 'core';
+  if(P().location==='layer7'&&!state.mapOpen)return 'core';
   return state.mapOpen?'explore-map':'explore';
 }
 function render(){ if(_npcCapturing)return; normalizePanelNavigationState();renderTop(); const box=$('panel'),activeView=panelView(),keepFieldViewport=fieldViewportCanStayMounted(box,activeView);if(keepFieldViewport)Array.from(box.children).forEach(node=>{if(node!==retainedFieldViewport)node.remove();});else box.innerHTML='';box.classList.remove('camp-home','tutorial-panel','recipe-station-page','facility-operation-page','skill-console-page','npc-screen','settlement-shop-page','field-console','expedition-board','settlement-console','map-mode','camp-map-page','settings-home','settings-cloud','tasks-console','ui-page','ui-workspace','ui-canvas-workspace','core-control-page','ending-page');
@@ -2864,7 +2871,7 @@ function mountMapViewport(shell,canvas,positions,focusId,viewKey){
     view.x=w<=sw?(sw-w)/2:Math.min(0,Math.max(sw-w,view.x));
     view.y=h<=sh?(sh-h)/2:Math.min(0,Math.max(sh-h,view.y));
   }
-  function applyView(){view.scale=Math.max(minZoom(),view.scale);clampView();cv.style.transform='translate('+view.x+'px,'+view.y+'px) scale('+view.scale+')';zoomText.textContent=Math.round(view.scale*100)+'%';zoomOut.disabled=view.scale<=minZoom()+.001;zoomIn.disabled=view.scale>=maxZoom()-.001;}
+  function applyView(){view.scale=Math.max(minZoom(),view.scale);clampView();cv.style.setProperty('--map-scale',view.scale);cv.style.transform='translate('+view.x+'px,'+view.y+'px) scale('+view.scale+')';zoomText.textContent=Math.round(view.scale*100)+'%';zoomOut.disabled=view.scale<=minZoom()+.001;zoomIn.disabled=view.scale>=maxZoom()-.001;}
   function centerOn(id){ const p=positions[id]||Object.values(positions)[0]||[0,0];view.x=stage.clientWidth/2-(p[0]+canvas.nodeWidth/2)*view.scale;view.y=stage.clientHeight/2-(p[1]+canvas.nodeHeight/2)*view.scale;applyView(); }
   function setZoom(next,cx,cy){
     const old=view.scale;next=Math.min(maxZoom(),Math.max(minZoom(),next));if(Math.abs(next-old)<.001)return;
@@ -2873,10 +2880,13 @@ function mountMapViewport(shell,canvas,positions,focusId,viewKey){
   }
   zoomOut.onclick=()=>setZoom(view.scale-.12);zoomIn.onclick=()=>setZoom(view.scale+.12);locate.onclick=()=>centerOn(focusId);
   stage.addEventListener('wheel',e=>{e.preventDefault();const r=stage.getBoundingClientRect();setZoom(view.scale+(e.deltaY<0?.1:-.1),e.clientX-r.left,e.clientY-r.top);},{passive:false});
-  let drag=null;
-  stage.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;drag={x:e.clientX,y:e.clientY,ox:view.x,oy:view.y};stage.setPointerCapture(e.pointerId);stage.classList.add('dragging');});
-  stage.addEventListener('pointermove',e=>{if(!drag)return;view.x=drag.ox+e.clientX-drag.x;view.y=drag.oy+e.clientY-drag.y;applyView();});
-  stage.addEventListener('pointerup',e=>{drag=null;stage.classList.remove('dragging');if(stage.hasPointerCapture(e.pointerId))stage.releasePointerCapture(e.pointerId);});
+  let drag=null,pinch=null;const pointers=new Map();
+  const pointerPair=()=>[...pointers.values()].slice(0,2),pairMetrics=()=>{const [a,b]=pointerPair(),rect=stage.getBoundingClientRect(),cx=(a.x+b.x)/2-rect.left,cy=(a.y+b.y)/2-rect.top;return {cx,cy,distance:Math.hypot(b.x-a.x,b.y-a.y)};};
+  const beginPinch=()=>{const m=pairMetrics();pinch={distance:Math.max(1,m.distance),scale:view.scale,worldX:(m.cx-view.x)/view.scale,worldY:(m.cy-view.y)/view.scale};drag=null;};
+  stage.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;stage.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===1)drag={id:e.pointerId,x:e.clientX,y:e.clientY,ox:view.x,oy:view.y};else if(pointers.size===2)beginPinch();stage.classList.add('dragging');});
+  stage.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size>=2&&pinch){const m=pairMetrics(),next=Math.min(maxZoom(),Math.max(minZoom(),pinch.scale*m.distance/pinch.distance));view.scale=next;view.x=m.cx-pinch.worldX*next;view.y=m.cy-pinch.worldY*next;applyView();return;}if(drag&&drag.id===e.pointerId){view.x=drag.ox+e.clientX-drag.x;view.y=drag.oy+e.clientY-drag.y;applyView();}});
+  const releasePointer=e=>{pointers.delete(e.pointerId);pinch=null;if(pointers.size===1){const [id,p]=pointers.entries().next().value;drag={id,x:p.x,y:p.y,ox:view.x,oy:view.y};}else drag=null;if(!pointers.size)stage.classList.remove('dragging');if(stage.hasPointerCapture(e.pointerId))stage.releasePointerCapture(e.pointerId);};
+  stage.addEventListener('pointerup',releasePointer);stage.addEventListener('pointercancel',releasePointer);
   requestAnimationFrame(()=>{const floor=minZoom();if(view.scale==null||view.scale<floor)view.scale=floor;if(view.x==null||view.y==null)centerOn(focusId);else applyView();});
 }
 function appendMapLines(cv,canvas,positions,links,isOn){
@@ -3118,12 +3128,12 @@ function renderNpcPanelLegacy(box){
     const grid=el('div','mastery-grid');
     teachList.forEach(k=>{
       const m=MASTERIES[k]; const lv=masteryLv(k); const cost=masteryCost(k);
-      const current=m.desc.replace('{v}',m.perLv*lv),next=m.desc.replace('{v}',m.perLv*(lv+1));
+      const current=masteryEffectText(k,lv),next=masteryEffectText(k,lv+1),capped=masteryAtEffectiveCap(k);
       const costStr=costText(cost);
-      const can=Object.entries(cost).every(([mat,n])=>(state.inv[mat]||0)>=n);
+      const can=!capped&&Object.entries(cost).every(([mat,n])=>(state.inv[mat]||0)>=n);
       const card=el('div','mastery-card'+inlineChangeClass('mastery',k));
       card.innerHTML='<div class="mc-head"><b>'+m.name+'</b><span class="mc-lv">Lv'+lv+' → Lv'+(lv+1)+'</span></div><div class="mc-progress"><span><small>当前</small><b>'+current+'</b></span><i>→</i><span class="next"><small>升级后</small><b>'+next+'</b></span></div><div class="mc-cost"><small>升级消耗</small>'+costStr+'</div>';
-      const btn=el('button',can?'primary':'',lv===0?'学习至 Lv1':'升级至 Lv'+(lv+1)); btn.disabled=!can; btn.onclick=(()=>{const _k=k;return ()=>upgradeMastery(_k);})(); card.appendChild(btn);
+      const btn=el('button',can?'primary':'',capped?'已达有效上限':lv===0?'学习至 Lv1':'升级至 Lv'+(lv+1)); btn.disabled=!can; btn.onclick=(()=>{const _k=k;return ()=>upgradeMastery(_k);})(); card.appendChild(btn);
       grid.appendChild(card);
     });
     box.appendChild(grid);
@@ -3200,9 +3210,9 @@ function renderNpcDialogue(box,npcName){
 }
 function renderNpcMasteries(box,npcName){
   const masteryGrid=el('div','mastery-grid');
-  (NPC_TEACH[npcName]||[]).forEach(k=>{const m=MASTERIES[k],lv=masteryLv(k),cost=masteryCost(k),current=m.desc.replace('{v}',m.perLv*lv),next=m.desc.replace('{v}',m.perLv*(lv+1)),can=Object.entries(cost).every(([mat,n])=>(state.inv[mat]||0)>=n),card=el('div','mastery-card'+inlineChangeClass('mastery',k));
+  (NPC_TEACH[npcName]||[]).forEach(k=>{const m=MASTERIES[k],lv=masteryLv(k),cost=masteryCost(k),current=masteryEffectText(k,lv),next=masteryEffectText(k,lv+1),capped=masteryAtEffectiveCap(k),can=!capped&&Object.entries(cost).every(([mat,n])=>(state.inv[mat]||0)>=n),card=el('div','mastery-card'+inlineChangeClass('mastery',k));
     card.innerHTML='<div class="mc-head"><b>'+m.name+'</b><span class="mc-lv">Lv'+lv+' → Lv'+(lv+1)+'</span></div><div class="mc-progress"><span><small>当前</small><b>'+current+'</b></span><i>→</i><span class="next"><small>升级后</small><b>'+next+'</b></span></div><div class="mc-cost"><small>升级消耗</small>'+costText(cost)+'</div>';
-    const button=el('button',can?'primary':'',lv===0?'学习至 Lv1':'升级至 Lv'+(lv+1));button.disabled=!can;button.onclick=()=>upgradeMastery(k);card.appendChild(button);masteryGrid.appendChild(card);
+    const button=el('button',can?'primary':'',capped?'已达有效上限':lv===0?'学习至 Lv1':'升级至 Lv'+(lv+1));button.disabled=!can;button.onclick=()=>upgradeMastery(k);card.appendChild(button);masteryGrid.appendChild(card);
   });box.appendChild(masteryGrid);
 }
 function renderCareerMentorAction(box,npcName){
@@ -3456,8 +3466,14 @@ function beginCoreTruth(){
   const queued=queueStoryScene({system:true,location:'layer7',kind:'truth',speaker:'守望者',unit:'ARK 07 // DECISION AUTHORITY',eyebrow:'CLASSIFIED RECORD // LAST 72 HOURS',title:'坠毁历史 · 被删除的真相',lines,action:'拒绝永久授权',onComplete:startFinalCoreBattle});if(queued)render();return queued;
 }
 function renderCoreControl(box){
-  box.classList.add('core-control-page');const screen=el('section','core-control-screen'),bg=el('img','core-control-bg');bg.src=storySceneSrc('layer7');bg.alt='';bg.draggable=false;screen.appendChild(bg);screen.appendChild(el('div','core-control-shade'));
-  const head=el('header','core-control-head'),back=el('button','core-control-back ui-icon-button',uiIcon('chevron-left'));back.setAttribute('aria-label','返回舰桥');back.onclick=()=>move('layer6');head.appendChild(back);head.appendChild(el('span','','<small>ARK CORE // WITNESS PROTOCOL</small><b>核心控制室</b><em>六组件闭合后才能读取最终记录</em>'));head.appendChild(el('i','core-control-online','<u></u>CORE '+(coreProtocolReady()?'READY':'LOCKED')));screen.appendChild(head);
+  const resolved=!!state.meta.wardenDone;box.classList.add('core-control-page');const screen=el('section','core-control-screen'),bg=el('img','core-control-bg');bg.src=storySceneSrc('layer7');bg.alt='';bg.draggable=false;screen.appendChild(bg);screen.appendChild(el('div','core-control-shade'));
+  const head=el('header','core-control-head'),back=el('button','core-control-back ui-icon-button',uiIcon('chevron-left'));back.setAttribute('aria-label','返回舰桥');back.onclick=()=>move('layer6');head.appendChild(back);head.appendChild(el('span','','<small>ARK CORE // WITNESS PROTOCOL</small><b>核心控制室</b><em>'+(resolved?'终局已经记录，远航协议与轮回结算保持开放':'六组件闭合后才能读取最终记录')+'</em>'));head.appendChild(el('i','core-control-online','<u></u>CORE '+(resolved?'FREE':coreProtocolReady()?'READY':'LOCKED')));screen.appendChild(head);
+  if(resolved){
+    const lastId=state.flags.lastEnding||state.meta.endingsDone[state.meta.endingsDone.length-1],lastName=lastId&&ENDINGS[lastId]?endingDisplayName(lastId):'已完成';
+    const scroll=el('div','core-control-scroll'),summary=el('section','core-protocol-summary');summary.innerHTML='<span class="core-protocol-orbit"><i></i><i></i><b>'+state.meta.endingsDone.length+'<small>END</small></b></span><span><small>POST-ENDING FREE ROAM</small><b>终局后的世界仍在继续</b><p>本周目结局【'+lastName+'】已经写入档案；自由探索不会取消结局，也不会强制进入下一轮回。</p><em>后期篇章【零号星门】已解锁。返回营地，在科技台研究【船坞重构】，建造【星舰船坞】后继续远航任务。</em></span>';scroll.appendChild(summary);
+    const guide=el('section','core-postgame-guide');guide.innerHTML='<small>EXPEDITION DIRECTIVE // 远航入口</small><b>下一步：返回营地建设星舰船坞</b><p>任务页会持续显示【核心之外的星图】与后续远航任务。科技、建造、星舰总装、轨道航线和星外据点都属于当前存档，不需要先轮回。</p>';scroll.appendChild(guide);screen.appendChild(scroll);
+    const dock=el('footer','core-control-dock'),archive=el('button','primary','<span>'+uiIcon('core')+'<i><small>ENDING ARCHIVE</small><b>查看结局与轮回</b><em>可返回结局页结算回响，也可再次继续探索</em></i></span><strong>'+settleEcho().total+' 回响'+uiIcon('chevron-right')+'</strong>');archive.onclick=()=>{state.endingChosen=lastId||null;state.screen='ending';render();};dock.appendChild(archive);screen.appendChild(dock);box.appendChild(screen);return;
+  }
   const scroll=el('div','core-control-scroll'),summary=el('section','core-protocol-summary');summary.innerHTML='<span class="core-protocol-orbit"><i></i><i></i><b>'+coreInstalledCount()+'<small>/6</small></b></span><span><small>WITNESS CONSENSUS</small><b>众证协议</b><p>已取得 '+coreRecoveredCount()+' 件组件 · 已装入 '+coreInstalledCount()+' 件 · 见证校准 '+finaleCalibrationCount()+'/6</p><em>'+(coreProtocolReady()?'离线授权链已闭合，可以启动真相回放。':'组件必须先从人物任务取得，再在此逐件装入。')+'</em></span>';scroll.appendChild(summary);
   const grid=el('div','core-component-grid');CORE_COMPONENTS.forEach((component,index)=>{const owned=coreComponentOwned(component.id),installed=coreComponentInstalled(component.id),calibrated=questDone(component.calibration),card=el('article','core-component-card'+(installed?' installed':owned?' owned':' locked')+inlineChangeClass('core-component',component.id));card.innerHTML='<header><span>0'+(index+1)+'</span><i>'+(installed?'ONLINE':owned?'RECOVERED':'MISSING')+'</i></header><div class="core-component-main"><span>'+itemUiIcon(component.id)+'</span><div><small>'+component.role+'</small><b>'+ITEMS[component.id].name+'</b><em>'+component.pair+'</em></div></div><p>'+(calibrated?'✓ 双人见证已校准':questDone(component.quest)?'○ 核心组件可用 · 见证线未完成':'需完成【'+QUEST_BY_ID[component.quest].title+'】')+'</p>';const action=el('button',owned&&!installed?'primary':'',installed?'已装入':owned?'装入核心接口':'尚未取得');action.disabled=!owned||installed;action.onclick=()=>installCoreComponent(component.id);card.appendChild(action);grid.appendChild(card);});scroll.appendChild(grid);screen.appendChild(scroll);
   const dock=el('footer','core-control-dock'),launch=el('button',coreProtocolReady()?'primary':'','<span>'+uiIcon('core')+'<i><small>FINAL AUTHORIZATION</small><b>'+(state.flags.coreTruthSeen?'再次进入决策层':'启动众证协议')+'</b><em>'+(coreProtocolReady()?'读取历史真相并进入最终战':'还需装入 '+(6-coreInstalledCount())+' 件组件')+'</em></i></span><strong>'+finaleCompletedCount()+'/12 见证'+uiIcon('chevron-right')+'</strong>');launch.disabled=!coreProtocolReady();launch.onclick=beginCoreTruth;dock.appendChild(launch);screen.appendChild(dock);box.appendChild(screen);
@@ -3474,7 +3490,7 @@ function renderActPanel(box){
     return renderCampHome(box);
   }
   if(regionForLocation(loc)==='settlement')return renderSettlementLocation(box,loc);
-  if(loc==='layer7'&&!state.meta.wardenDone){box.classList.add('field-console');if(state.mapOpen){box.classList.add('map-mode');renderWorldMap(box);return;}return renderCoreControl(box);}
+  if(loc==='layer7'){box.classList.add('field-console');if(state.mapOpen){box.classList.add('map-mode');renderWorldMap(box);return;}return renderCoreControl(box);}
   box.classList.add('field-console');
   if(state.mapOpen){box.classList.add('map-mode');renderWorldMap(box);return;}
   renderFieldExpedition(box,loc);
@@ -3496,7 +3512,7 @@ function renderSkillLoadout(box){
   if(!passives.length&&!careerAbilities.length&&!learnedM.length)pg.appendChild(el('div','empty-note','获得职业或精通后，自动模块会在这里接入。'));
   passives.forEach(k=>{const s=SKILLS[k];pg.appendChild(el('div','passive-card','<span>AUTO</span><b>'+s.name+'</b><small>'+s.desc+'</small>'));});
   careerAbilities.forEach(k=>{const s=SKILLS[k];pg.appendChild(el('div','passive-card career-auto','<span>CAREER AUTO</span><b>'+s.name+'</b><small>'+s.desc+'</small>'));});
-  learnedM.forEach(([k,m])=>{const lv=masteryLv(k),bonus=m.perLv*lv;pg.appendChild(el('div','passive-card mastery-passive','<span>LV'+lv+'</span><b>'+m.name+'</b><small>'+m.desc.replace('{v}',bonus)+'</small>'));});
+  learnedM.forEach(([k,m])=>{const lv=masteryLv(k);pg.appendChild(el('div','passive-card mastery-passive','<span>LV'+lv+'</span><b>'+m.name+'</b><small>'+masteryEffectText(k,lv)+'</small>'));});
   box.appendChild(pg);
 }
 const SKILL_UI={
@@ -3530,10 +3546,10 @@ function renderSkillPanel(box){
     ['auto','职业自动',autoUnlocked],
     ['mastery','精通增益',masteryUnlocked]
   ].forEach(([id,label,online])=>{const tab=el('button',view===id?'active':'','<small>'+String(online).padStart(2,'0')+' 已掌握</small><b>'+label+'</b>');tab.onclick=()=>{state.skillView=id;state.skillSelected=null;render();};tabs.appendChild(tab);});top.appendChild(tabs);
-  const library=el('div','skill-library-grid');entries.forEach(ref=>{const unlocked=skillEntryUnlocked(ref),selected=state.skillSelected===ref,mastery=ref.startsWith('mastery:'),id=mastery?ref.slice(8):ref,s=mastery?MASTERIES[id]:SKILLS[id],equipped=!mastery&&equippedSlot(id)>=0,active=!mastery&&s.type==='active',leveled=!mastery&&(active||!!s.career),level=leveled?Math.max(1,skillLv(id)):0,progress=leveled?skillProgressText(id):'',label=mastery?('LV '+masteryLv(id)):(active?'ACTIVE · LV '+level:s.type==='career'?'FIELD · LV '+level:s.career?'PASSIVE · LV '+level:'PASSIVE'),meta=mastery?(unlocked?s.desc.replace('{v}',s.perLv*masteryLv(id)):'导师 · '+s.npc):(unlocked?(leveled?('熟练度 '+progress+' · '+(active?skillResourceLabel(s):'自动生效')):'已自动生效'):skillUnlockText(id,s));
+  const library=el('div','skill-library-grid');entries.forEach(ref=>{const unlocked=skillEntryUnlocked(ref),selected=state.skillSelected===ref,mastery=ref.startsWith('mastery:'),id=mastery?ref.slice(8):ref,s=mastery?MASTERIES[id]:SKILLS[id],equipped=!mastery&&equippedSlot(id)>=0,active=!mastery&&s.type==='active',leveled=!mastery&&(active||!!s.career),level=leveled?Math.max(1,skillLv(id)):0,progress=leveled?skillProgressText(id):'',label=mastery?('LV '+masteryLv(id)):(active?'ACTIVE · LV '+level:s.type==='career'?'FIELD · LV '+level:s.career?'PASSIVE · LV '+level:'PASSIVE'),meta=mastery?(unlocked?masteryEffectText(id,masteryLv(id)):'导师 · '+s.npc):(unlocked?(leveled?('熟练度 '+progress+' · '+(active?skillResourceLabel(s):'自动生效')):'已自动生效'):skillUnlockText(id,s));
     const card=el('button','skill-library-card'+(selected?' selected':'')+(unlocked?' unlocked':' locked')+(equipped?' equipped':''));card.innerHTML='<span class="skill-card-icon">'+uiIcon(skillEntryIcon(ref))+'</span><span><small>'+label+'</small><b>'+s.name+'</b><em>'+meta+'</em></span>'+(equipped?'<i>0'+(equippedSlot(id)+1)+'</i>':unlocked?'<i>ON</i>':'<i>'+uiIcon('lock')+'</i>');card.onclick=()=>{state.skillSelected=ref;render();};library.appendChild(card);
   });top.appendChild(library);
-  const selected=state.skillSelected;if(selected){const mastery=selected.startsWith('mastery:'),id=mastery?selected.slice(8):selected,s=mastery?MASTERIES[id]:SKILLS[id],unlocked=skillEntryUnlocked(selected),slot=!mastery?equippedSlot(id):-1,active=!mastery&&s.type==='active',leveled=!mastery&&(active||!!s.career),level=leveled?Math.max(1,skillLv(id)):0,progress=leveled?skillProgressText(id):'',kind=mastery?'精通增益':active?'战斗主动':s.type==='career'?'副职业自动':'职业被动',source=mastery?('导师 '+s.npc+' · 当前 Lv'+masteryLv(id)):skillUnlockText(id,s),desc=mastery?s.desc.replace('{v}',s.perLv*Math.max(1,masteryLv(id))):s.desc+(leveled?'<br><strong>当前 Lv'+level+'：'+skillLevelEffectText(id)+'</strong>':'');
+  const selected=state.skillSelected;if(selected){const mastery=selected.startsWith('mastery:'),id=mastery?selected.slice(8):selected,s=mastery?MASTERIES[id]:SKILLS[id],unlocked=skillEntryUnlocked(selected),slot=!mastery?equippedSlot(id):-1,active=!mastery&&s.type==='active',leveled=!mastery&&(active||!!s.career),level=leveled?Math.max(1,skillLv(id)):0,progress=leveled?skillProgressText(id):'',kind=mastery?'精通增益':active?'战斗主动':s.type==='career'?'副职业自动':'职业被动',source=mastery?('导师 '+s.npc+' · 当前 Lv'+masteryLv(id)):skillUnlockText(id,s),desc=mastery?masteryEffectText(id,Math.max(1,masteryLv(id))):s.desc+(leveled?'<br><strong>当前 Lv'+level+'：'+skillLevelEffectText(id)+'</strong>':'');
     const detail=el('section','skill-detail-panel '+(unlocked?'online':'locked'));detail.innerHTML='<div class="skill-detail-main"><span class="skill-detail-icon">'+uiIcon(skillEntryIcon(selected))+'<i></i></span><span><small>'+kind.toUpperCase()+' // '+(unlocked?'ONLINE':'LOCKED')+'</small><h2>'+s.name+'</h2><p>'+desc+'</p></span><em>'+(unlocked?'已接入':'未解锁')+'</em></div><div class="skill-detail-meta"><span><small>获取方式</small><b>'+source+'</b></span><span><small>'+(leveled?'技能进度':'运行方式')+'</small><b>'+(leveled?('Lv'+level+' · 熟练度 '+progress):(mastery||s.type!=='active'?'自动生效 · 不占技能槽':'装配后在战斗中主动释放'))+'</b></span></div>';
     if(!mastery&&s.type==='active'){const action=el('button',unlocked?'primary skill-detail-action':'skill-detail-action',unlocked?(slot>=0?'卸下技能栏 0'+(slot+1):'装配到技能栏 0'+((state.skillSlotSel||0)+1)):'尚未满足解锁条件');action.disabled=!unlocked;action.onclick=()=>slot>=0?unequipSkill(slot):equipSkill(id,state.skillSlotSel||0);detail.appendChild(action);}else detail.appendChild(el('div','skill-auto-status',uiIcon(unlocked?'check':'lock')+'<span><small>'+(unlocked?'SYSTEM LINKED':'ACCESS REQUIRED')+'</small><b>'+(unlocked?(s.type==='career'?'完成对应现场作业会增加熟练度':'职业行动会增加熟练度，能力自动生效'):source)+'</b></span>'));
     bottom.appendChild(detail);
@@ -4087,7 +4103,7 @@ function renderBuilding(box,id){
     const rate=Math.round(Math.max(.25,.35-Math.max(0,buildingLevel('warehouse')-1)*.05)*100);sec.innerHTML='<div class="storage-overview"><span class="storage-shield">'+uiIcon('armor')+'</span><span><small>EXPEDITION INSURANCE</small><b>力竭时仅损失本次远征新增材料的 '+rate+'%</b><em>出发前的储备、装备与关键道具不会丢失；无需手动存取。</em></span></div>';
     const bins=el('div','storage-bins');MATS.filter(k=>(state.inv[k]||0)>0).forEach(k=>bins.appendChild(el('div','storage-bin','<span>'+itemUiIcon(k)+'</span><small>'+ITEMS[k].name+'</small><b>'+(state.inv[k]||0)+'</b>')));if(!bins.children.length)bins.appendChild(el('div','facility-empty','仓储舱还是空的。探索后带回的材料会自动分类。'));sec.appendChild(bins);
   } else if(b.kind==='recycle'){
-    sec.innerHTML='<div class="recycle-visual"><span>'+uiIcon('refresh')+'</span><div><small>MATERIAL RECOVERY</small><b>拆解线待命</b><em>回收等级越高，废铁产量越高。</em></div></div>';const bonus=buildingLevel('recycler')-1,mult=1+jobBonus('recyclePct')/100,recycleEntries=RECYCLE.filter(r=>r.level<=buildingLevel('recycler')).map(r=>{const outputs=Object.fromEntries(Object.entries(r.out).map(([id,n])=>[id,Math.max(1,Math.round((n+(id==='scrap'?bonus:0))*mult))])),out=Object.keys(outputs)[0];return {id:r.id,out,name:r.name,desc:'每批回收 '+Object.entries(outputs).map(([id,n])=>ITEMS[id].name+'×'+n).join(' · '),cost:r.cost,outputs,ready:true,run:qty=>recycleMaterial(r.id,qty)};});renderRecipeWorkbench(sec,b.id,recycleEntries,{tone:'recycle',code:'MATERIAL RECOVERY',title:'选择拆解方案',confirm:'确认拆解',detailParent});
+    sec.innerHTML='<div class="recycle-visual"><span>'+uiIcon('refresh')+'</span><div><small>MATERIAL RECOVERY</small><b>拆解线待命</b><em>回收等级越高，废铁产量越高。</em></div></div>';const bonus=buildingLevel('recycler')-1,mult=1+effectiveEconomyBonus('recyclePct')/100,recycleEntries=RECYCLE.filter(r=>r.level<=buildingLevel('recycler')).map(r=>{const outputs=Object.fromEntries(Object.entries(r.out).map(([id,n])=>[id,Math.max(1,Math.round((n+(id==='scrap'?bonus:0))*mult))])),out=Object.keys(outputs)[0];return {id:r.id,out,name:r.name,desc:'每批回收 '+Object.entries(outputs).map(([id,n])=>ITEMS[id].name+'×'+n).join(' · '),cost:r.cost,outputs,ready:true,run:qty=>recycleMaterial(r.id,qty)};});renderRecipeWorkbench(sec,b.id,recycleEntries,{tone:'recycle',code:'MATERIAL RECOVERY',title:'选择拆解方案',confirm:'确认拆解',detailParent});
   } else if(b.kind==='mess'){
     const lv=buildingLevel('mess'),active=foodBuffText();
     sec.innerHTML='<div class="meal-console"><span>'+uiIcon('medical')+'</span><div><small>FIELD KITCHEN</small><b>食材净化与远征料理</b><em>'+(active?'当前料理增益：'+active:'料理制成后进入背包；同一时间只能维持一种料理增益')+'</em></div></div>';
@@ -4434,20 +4450,21 @@ function equip(slot,id){ if(!has(id)){log('没有这件物品。','warn');return
 function unequip(slot){ const cur=P().equip[slot]; if(!cur)return; P().equip[slot]=null; state.inv[cur]=(state.inv[cur]||0)+1; if(P().shield>shieldMax())P().shield=shieldMax(); log('已卸下:'+ITEMS[cur].name,'dim'); render(); }
 function craft(r,quantity){ const facility=facilityForStation(r&&r.st),count=batchQuantity(quantity);if(!facility||!facilityOnline(facility.id)){log('对应制造设施未建成或已受损。','warn');return false;}if(!recipeFacilityReady(r)){log(recipeMaterialText(r)+'。','warn');return false;}const totalCost=scaledCost(r.cost,count);for(const[k,v] of Object.entries(totalCost)){ if((state.inv[k]||0)<v){log('制作材料不足：'+costText(totalCost)+'。','warn');return false;} }
   const amount=(r.yield||1)*count;payCost(totalCost);state.inv[r.out]=(state.inv[r.out]||0)+amount;
-  const savedByItem={},chance=jobBonus('craftSavePct');if(chance>0)for(let batch=0;batch<count;batch++)if(Math.random()*100<chance)for(const[k,v]of Object.entries(r.cost)){const n=Math.max(1,Math.floor(v/2));state.inv[k]=(state.inv[k]||0)+n;savedByItem[k]=(savedByItem[k]||0)+n;}const saved=Object.entries(savedByItem).map(([k,n])=>ITEMS[k].name+'×'+n);gainCareerXp('life',5*count,'fabricator');
+  const savedByItem={},chance=effectiveEconomyBonus('craftSavePct');if(chance>0)for(let batch=0;batch<count;batch++)if(Math.random()*100<chance)for(const[k,v]of Object.entries(r.cost)){const n=Math.max(1,Math.floor(v/2));state.inv[k]=(state.inv[k]||0)+n;savedByItem[k]=(savedByItem[k]||0)+n;}const saved=Object.entries(savedByItem).map(([k,n])=>ITEMS[k].name+'×'+n);gainCareerXp('life',5*count,'fabricator');
   log('制作完成:'+ITEMS[r.out].name+'×'+amount+(saved.length?' · 精密制造返还 '+saved.join('、'):''),'good'); advanceTime(count); render();return true; }
 function smelt(s,quantity){ const count=batchQuantity(quantity);if(!facilityOnline('smelt')){log('熔炼炉未建成或已受损。','warn');return false;}if(!hasSmeltTech(s.id)){log('需先研究【'+TECHS[TECH_FOR_SMELT[s.id]].n+'】。','warn');return false;}if(buildingLevel('smelt')<(s.level||1)){log('需要熔炼炉 Lv'+(s.level||1)+'。','warn');return false;}
   const totalCost=scaledCost(s.cost,count);for(const[k,v] of Object.entries(totalCost)){ if((state.inv[k]||0)<v){log('熔炼材料不足：'+costText(totalCost)+'。','warn');return false;} }
   const out=smeltOutput(s)*count;payCost(totalCost);state.inv[s.out]=(state.inv[s.out]||0)+out;gainCareerXp('life',5*count,'fabricator');
   log('🔥 熔炼:'+Object.entries(totalCost).map(([k,v])=>ITEMS[k].name+'×'+v).join(' ')+' → '+ITEMS[s.out].name+'×'+out,'good'); advanceTime(count); render();return true; }
 function train(){ if(state.inv.scrap<10){log('训练材料不足：'+costText({scrap:10})+'。','warn');return;} const xp=40+buildingLevel('range')*40; state.inv.scrap-=10; gainXp(xp); log('完成训练，经验 +'+xp+'。','good'); advanceTime(2); render(); }
+function recoveryAmount(flat,pct,cap){return Math.max(Number(flat)||0,Math.round(cap*(Number(pct)||0)/100));}
 function useItem(id){ if(!has(id)){log('没有这个物品。','warn');return;} const it=ITEMS[id];
   if(it.type==='book'){ state.inv[id]--; gainProf(it.skill,20); log('研读'+it.name+',【'+SKILLS[it.skill].name+'】熟练度+20。','good'); render(); return; }
   if(it.type!=='use'){log('不能直接使用。','warn');return;}
   if(it.food&&state.combat){log('战斗中无法进食，先脱离接触。','warn');return;}
   state.inv[id]--;
-  if(it.hp){P().hp=Math.min(maxHp(),P().hp+it.hp);log('使用'+it.name+',生命+'+it.hp+'。','good');}
-  if(it.stamina){P().stamina=Math.min(Math.round(maxStamina()),P().stamina+it.stamina);log('使用'+it.name+',体力+'+it.stamina+'。','good');}
+  if(it.hp){const n=recoveryAmount(it.hp,it.hpPct,maxHp());P().hp=Math.min(maxHp(),P().hp+n);log('使用'+it.name+',生命+'+n+'。','good');}
+  if(it.stamina){const n=recoveryAmount(it.stamina,it.staminaPct,maxStamina());P().stamina=Math.min(Math.round(maxStamina()),P().stamina+n);log('使用'+it.name+',体力+'+n+'。','good');}
   if(it.buff){state.foodBuff={id:it.buff.id,day:currentDay(),charges:it.buff.charges};log('料理增益【'+it.buff.name+'】生效，剩余 '+it.buff.charges+' 次；新的料理增益会覆盖旧效果。','good');}
   if(it.cure==='infection'){P().infected=false;log('感染清除。','good');}
   if(it.emp&&state.combat&&state.combat.mech){state.combat.empTurns=3;log('电磁干扰生效,目标瘫痪3回合。','good');}
@@ -4525,9 +4542,9 @@ function gatherArea(id,yieldMult,careerId){
   const site=resourceSiteOf(id);if(!site||!resourceSiteDiscovered(id)){log('这里还没有发现可稳定采集的资源点，先继续探索。','warn');return false;}
   if(!gatherAvailable(id)){log('【'+site.label+'】当前储量已耗尽，约 '+resourceRecoveryRemaining(id)+' 小时后恢复一次采集量。','dim');return false;}
   const loc=LOCATIONS[id],g=[],work=resourceWorkStatus(id);if(!work.ok){log(work.text+'。','warn');return false;}yieldMult=yieldMult||work.yieldMult||1;
-  const miningBonus=work.mining?masteryBonus('minePct'):0,foragerMeal=foodBuffActive('foragerBox'),mealYield=foragerMeal?1.25:1,cm=M().collect*(1+(techBonus('collect')+jobBonus('gatherPct')+miningBonus)/100)*yieldMult*mealYield;
+  const gatheringBonus=Math.min(250,techBonus('collect')+effectiveEconomyBonus('gatherPct')+(work.mining?effectiveEconomyBonus('minePct'):0)),foragerMeal=foodBuffActive('foragerBox'),mealYield=foragerMeal?1.25:1,cm=M().collect*(1+gatheringBonus/100)*yieldMult*mealYield;
   site.yield.forEach((m,i)=>{const ch=(loc.loot&&loc.loot[m])||.5;if(i===0||Math.random()<Math.min(.95,ch+.25)){
-    const bio=['biocore','ration','blackwoodBerry','glowMushroom'].includes(m)?1+jobBonus('bioGatherPct')/100:1,n=Math.max(2,Math.round((2+Math.floor(Math.random()*3))*cm*bio));gainMat(m,n);g.push(ITEMS[m].name+'×'+n);
+    const bio=['biocore','ration','blackwoodBerry','glowMushroom'].includes(m)?1+effectiveEconomyBonus('bioGatherPct')/100:1,n=Math.max(2,Math.round((2+Math.floor(Math.random()*3))*cm*bio));gainMat(m,n);g.push(ITEMS[m].name+'×'+n);
   }});
   gainCareerXp('life',4,careerId||'salvager');
   recordGather(id);
@@ -4819,7 +4836,7 @@ function cookFood(id,skipRender,quantity){
 /* 兼容旧存档与旧测试入口：现在会先制作成品，再立即食用，不再受每日配给次数限制。 */
 function eatMeal(){if(cookFood('nutriStew',true))useItem('nutriStew');}
 function eatFishMeal(){if(cookFood('riverBroth',true))useItem('riverBroth');}
-function harvestGarden(){ if(facilityUsedToday('garden')){log('菌圃今天已经收获过了。','dim');return;} const lv=buildingLevel('garden'),mult=1+jobBonus('gardenPct')/100,ration=Math.max(1,Math.round((1+lv)*mult)),bio=lv>=2?Math.max(1,Math.round(mult)):0,crystal=lv>=3?1:0;state.dailyFacility.garden=currentDay();gainMat('ration',ration);if(bio)gainMat('biocore',bio);if(crystal)gainMat('crystal',crystal);gainCareerXp('life',6,'biologist');advanceTime(1);log('菌圃收获：营养膏×'+ration+(bio?'、生物样本×'+bio:'')+(crystal?'、晶体×1':'')+'。','good');render(); }
+function harvestGarden(){ if(facilityUsedToday('garden')){log('菌圃今天已经收获过了。','dim');return;} const lv=buildingLevel('garden'),mult=1+effectiveEconomyBonus('gardenPct')/100,ration=Math.max(1,Math.round((1+lv)*mult)),bio=lv>=2?Math.max(1,Math.round(mult)):0,crystal=lv>=3?1:0;state.dailyFacility.garden=currentDay();gainMat('ration',ration);if(bio)gainMat('biocore',bio);if(crystal)gainMat('crystal',crystal);gainCareerXp('life',6,'biologist');advanceTime(1);log('菌圃收获：营养膏×'+ration+(bio?'、生物样本×'+bio:'')+(crystal?'、晶体×1':'')+'。','good');render(); }
 function fieldRepairStatus(id){
   const b=CAMP_BUILDINGS.find(x=>x.id===id),cost=careerSkillCost('fieldRepair');
   if(!skillUnlocked('fieldRepair'))return {ok:false,text:'需要入门学徒或制造技师职业'};
@@ -4838,7 +4855,7 @@ function sporeBoostStatus(){
   if(P().stamina<cost)return {ok:false,text:'体力不足 · 需要 '+cost,used};
   return {ok:true,text:'额外收获一次 · 体力 -'+cost,cost,used:false};
 }
-function performSporeBoost(){const status=sporeBoostStatus();if(!status.ok){log(status.text+'。','warn');render();return false;}const lv=buildingLevel('garden'),skillLvNow=Math.max(1,skillLv('sporeBoost')),skillYield=careerSkillYieldMult('sporeBoost'),mult=(1+jobBonus('gardenPct')/100)*skillYield,ration=Math.max(1,Math.round((1+lv)*mult)),bio=lv>=2?Math.max(1,Math.round(mult)):0,crystal=lv>=3?Math.max(1,Math.round(skillYield)):0;P().stamina-=status.cost;state.dailyFacility.sporeBoost=currentDay();gainMat('ration',ration);if(bio)gainMat('biocore',bio);if(crystal)gainMat('crystal',crystal);gainCareerXp('life',6,'biologist');gainProf('sporeBoost',1);advanceTime(1);log('副职业能力【催生孢子】Lv'+skillLvNow+' 完成（产量 ×'+skillYield+'）：额外获得营养膏×'+ration+(bio?'、生物样本×'+bio:'')+(crystal?'、晶体×'+crystal:'')+'。','good');render();return true;}
+function performSporeBoost(){const status=sporeBoostStatus();if(!status.ok){log(status.text+'。','warn');render();return false;}const lv=buildingLevel('garden'),skillLvNow=Math.max(1,skillLv('sporeBoost')),skillYield=careerSkillYieldMult('sporeBoost'),mult=(1+effectiveEconomyBonus('gardenPct')/100)*skillYield,ration=Math.max(1,Math.round((1+lv)*mult)),bio=lv>=2?Math.max(1,Math.round(mult)):0,crystal=lv>=3?Math.max(1,Math.round(skillYield)):0;P().stamina-=status.cost;state.dailyFacility.sporeBoost=currentDay();gainMat('ration',ration);if(bio)gainMat('biocore',bio);if(crystal)gainMat('crystal',crystal);gainCareerXp('life',6,'biologist');gainProf('sporeBoost',1);advanceTime(1);log('副职业能力【催生孢子】Lv'+skillLvNow+' 完成（产量 ×'+skillYield+'）：额外获得营养膏×'+ration+(bio?'、生物样本×'+bio:'')+(crystal?'、晶体×'+crystal:'')+'。','good');render();return true;}
 function dispatchDrone(id){
   const loc=LOCATIONS[id],site=loc&&loc.resourceSite,region=regionForLocation(id);if(!facilityOnline('droneBay')||!site||!state.visited[id]){log('无人机坞未在线，或该资源点尚未完成现场登记。','warn');return;}
   if(['orbit','ashMoon','verdant','silent'].includes(region)&&!outpostReady(region)){log('星外资源点需要当地运行中的行星前哨才能远程回收。','warn');return;}
@@ -4848,7 +4865,7 @@ function dispatchDrone(id){
   picked.forEach(k=>gainMat(k,qty));state.dailyFacility.droneBay=currentDay();advanceTime(1);gainCareerXp('life',4,'salvager');
   log('无人机从【'+loc.name+'】返航：'+picked.map(k=>ITEMS[k].name+'×'+qty).join('、')+'。任务资料与一次性物品仍需亲自探索。','good');render();
 }
-function recycleMaterial(id,quantity){ const r=RECYCLE.find(x=>x.id===id),count=batchQuantity(quantity);if(!r||buildingLevel('recycler')<r.level)return false;const totalCost=scaledCost(r.cost,count);if(!canAfford(totalCost)){log('拆解材料不足：'+costText(totalCost)+'。','warn');return false;}payCost(totalCost);const bonus=buildingLevel('recycler')-1,mult=1+jobBonus('recyclePct')/100,out=[];for(const[k,v]of Object.entries(r.out)){const n=Math.max(1,Math.round((v+(k==='scrap'?bonus:0))*mult))*count;gainMat(k,n);out.push(ITEMS[k].name+'×'+n);}gainCareerXp('life',5*count,'salvager');advanceTime(count);log('回收完成：'+out.join('、')+'。','good');render();return true; }
+function recycleMaterial(id,quantity){ const r=RECYCLE.find(x=>x.id===id),count=batchQuantity(quantity);if(!r||buildingLevel('recycler')<r.level)return false;const totalCost=scaledCost(r.cost,count);if(!canAfford(totalCost)){log('拆解材料不足：'+costText(totalCost)+'。','warn');return false;}payCost(totalCost);const bonus=buildingLevel('recycler')-1,mult=1+effectiveEconomyBonus('recyclePct')/100,out=[];for(const[k,v]of Object.entries(r.out)){const n=Math.max(1,Math.round((v+(k==='scrap'?bonus:0))*mult))*count;gainMat(k,n);out.push(ITEMS[k].name+'×'+n);}gainCareerXp('life',5*count,'salvager');advanceTime(count);log('回收完成：'+out.join('、')+'。','good');render();return true; }
 function deepestProgress(){ const depth={outer:1,blackwood:1,ridge:1,coalRift:2,oldMine:2,layer2:2,layer3:3,layer4:4,nursery:4,fungal:4,layer5:5,abyss:5,layer6:6,signal:6,layer7:7}; return Math.max(1,...Object.keys(state.visited).filter(k=>state.visited[k]).map(k=>depth[k]||0)); }
 function raidStrength(){ const base=7+deepestProgress()*5+(state.meta.playthrough-1)*8; return Math.max(6,Math.round(base*(state.flags.nestSealed ? .8 : 1))); }
 function damageRandomFacility(){ const ids=[]; Object.keys(state.meta.built).filter(id=>id!=='quarters'&&state.meta.built[id]&&!state.meta.damaged[id]).forEach(id=>{for(let n=0;n<Math.max(1,4-buildingLevel(id));n++)ids.push(id);}); if(!ids.length)return null; const id=ids[Math.floor(Math.random()*ids.length)]; state.meta.damaged[id]=true; return CAMP_BUILDINGS.find(b=>b.id===id); }
@@ -4938,7 +4955,7 @@ function enemyTurn(){ const c=state.combat; if(!c||c.hp<=0)return;
   if(c.infect&&!P().infected&&Math.random()<0.4){if(environmentProtected('contamination'))log('生物隔离膜阻断了感染源。','good');else{P().infected=true;log('你被感染了!每动作掉血,需血清。','danger');}}
   if(P().hp<=0&&geneRule('deathGuard')&&!c.deathGuardUsed){c.deathGuardUsed=true;P().hp=1;log('基因规则【嵌合态】拒绝了本次致死伤害。','good');}
   if(P().hp<=0){die();return;} regenShield(); render(); }
-function regenShield(){ const mx=shieldMax(); if(mx>0 && P().shield<mx) P().shield=Math.min(mx, P().shield+Math.ceil(mx*0.15));const regen=eqSum('regenPct');if(regen>0&&P().hp<maxHp())P().hp=Math.min(maxHp(),P().hp+Math.max(1,Math.round(maxHp()*regen/100))); }
+function regenShield(){ const mx=shieldMax(); if(mx>0 && P().shield<mx) P().shield=Math.min(mx, P().shield+Math.ceil(mx*0.08));const regen=eqSum('regenPct');if(regen>0&&P().hp<maxHp())P().hp=Math.min(maxHp(),P().hp+Math.max(1,Math.round(maxHp()*regen/100))); }
 function winCombat(){ const c=state.combat;settleCombatTime(c);state.kills++; state.runStats.kills++; state.runStats.wKill+=(c.threat||10); gainXp((c.threat||10)*2);gainCareerXp('main',Math.max(3,Math.round((c.threat||10)/3)));const heal=geneRule('postCombatHealPct')?Math.max(1,Math.round(maxHp()*geneRule('postCombatHealPct')/100)):0;if(heal)P().hp=Math.min(maxHp(),P().hp+heal); log('击败【'+c.name+'】!'+(heal?' 再生恢复 '+heal+' 生命。':''),'good');
   if(c.beacon){ winBeacon(c.beacon); state.combat=null; divider(); render(); return; }
   const g=[],cm=M().collect; for(const[m,[lo,hi]] of Object.entries(c.drops)){ const n=Math.max(0,Math.round((lo+Math.floor(Math.random()*(hi-lo+1)))*cm)); if(n>0){ gainMat(m,n); g.push(ITEMS[m].name+'×'+n);} }
@@ -4975,11 +4992,11 @@ function doReincarnate(){ const s=settleEcho(); const meta=state.meta,prefs=audi
 /* ================= 守望者/结局 ================= */
 function triggerWarden(){return beginCoreTruth();}
 function completeFailureEnding(){
-  const id='silence',e=ENDINGS[id];divider();log('【结局·'+e.name+'】','sys');log(e.text,'story');log(e.after,'dim');if(!state.meta.endingsDone.includes(id))state.meta.endingsDone.push(id);state.meta.wardenDone=true;state.meta.expansionUnlocked=true;state.meta.originEnding=state.meta.originEnding||id;setMetaFlag('postCoreStarMap');state.endingChosen=id;state.screen='ending';state.tab='act';queueStoryScene({system:true,location:'layer7',kind:'failure',speaker:'守望者',unit:'ARK 07 // CONTINUITY RESTORED',eyebrow:'WITNESS PROTOCOL FAILED',title:'静默代行',lines:e.cinematic,action:'回响中断'});syncQuestProgress(true);render();
+  const id='silence',e=ENDINGS[id];divider();log('【结局·'+e.name+'】','sys');log(e.text,'story');log(e.after,'dim');if(!state.meta.endingsDone.includes(id))state.meta.endingsDone.push(id);state.flags.lastEnding=id;state.meta.wardenDone=true;state.meta.expansionUnlocked=true;state.meta.originEnding=state.meta.originEnding||id;setMetaFlag('postCoreStarMap');state.endingChosen=id;state.screen='ending';state.tab='act';queueStoryScene({system:true,location:'layer7',kind:'failure',speaker:'守望者',unit:'ARK 07 // CONTINUITY RESTORED',eyebrow:'WITNESS PROTOCOL FAILED',title:'静默代行',lines:e.cinematic,action:'回响中断'});syncQuestProgress(true);render();
 }
 function chooseEnding(id){const base=ENDINGS[id],available=base&&endingAvailability(id);if(!base||base.selectable===false||!available.ok){log('该结局尚未解锁：'+(available&&available.missing.join(' · ')||'不可选择')+'。','warn');render();return false;}state.flags.endingWitnessCount=finaleCompletedCount();const e=endingCopy(id);divider();log('【结局·'+endingDisplayName(id)+'】','sys');log(e.text,'story');if(e.after)log(e.after,'dim');
   const first=!state.meta.endingItems.includes(e.item);if(first){state.meta.endingItems.push(e.item);if(ITEMS[e.item].type==='equip')state.inv[e.item]=(state.inv[e.item]||0)+1;}if(!state.meta.endingsDone.includes(id))state.meta.endingsDone.push(id);
-  state.meta.wardenDone=true;state.meta.expansionUnlocked=true;state.meta.originEnding=state.meta.originEnding||id;setMetaFlag('postCoreStarMap');state.endingChosen=id;state.screen='ending';state.tab='act';
+  state.flags.lastEnding=id;state.meta.wardenDone=true;state.meta.expansionUnlocked=true;state.meta.originEnding=state.meta.originEnding||id;setMetaFlag('postCoreStarMap');state.endingChosen=id;state.screen='ending';state.tab='act';
   log('获得专属道具:★'+ITEMS[e.item].name+(ITEMS[e.item].type==='equip'?'(去背包装备)':''),'good');log('✦ 已解锁扩展篇【零号星门】：核心舱之后可以重构船坞、建造远征舰并前往其他世界。','sys');divider();queueStoryScene({system:true,location:'layer7',kind:'resolution',speaker:'众证协议',unit:'ENDING ARCHIVE // HUMAN RECORD',eyebrow:'ENDING RESOLUTION // '+id.toUpperCase(),title:'结局 · '+endingDisplayName(id),lines:e.cinematic,action:'记录这一结局'});syncQuestProgress(true);updateCheckpoint();render();return true; }
 function checkStamina(){ if(P().location==='camp')return; const need=staminaToCamp(P().location); if(P().stamina<need) log('返程体力不足：返营预计透支 '+movementHealthCost(need)+' 生命；只有生命归零才会倒下并遗失远征物资。','warn'); else if(P().stamina<=need+4) log('体力接近返程下限（返营至少需要 '+need+'）。','warn'); }
 

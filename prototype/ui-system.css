@@ -1869,6 +1869,126 @@ textarea:focus-visible,
   .g-label { display:none; }
 }
 
+/* ---------- Mobile interaction contract ----------
+   Visual density may stay compact, but every frequent action keeps a thumb-sized
+   target. This is the single override layer for touch behavior across pages. */
+button,
+[role="button"],
+input,
+select,
+textarea {
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+button,
+[role="button"] { user-select:none; -webkit-user-select:none; }
+.ui-workspace__scroll,
+.recipe-station-top,
+.station-detail-body,
+.npc-content-scroll,
+.battle-tool-rail,
+#panel { -webkit-overflow-scrolling:touch; }
+
+@media (hover:none) and (pointer:coarse), (max-width:600px) {
+  /* Every regular action is physically thumb-sized, including compact legacy pages. */
+  #panel button:not(.ui-icon-button),
+  #tabbar button,
+  .site-sheet-backdrop button:not(.ui-icon-button),
+  .save-transfer-modal button,
+  .story-overlay button { min-height:44px; }
+  #panel input:not([type="range"]),
+  #panel select,
+  .save-transfer-modal input { min-height:44px; }
+  #panel input[type="range"] { min-height:44px; }
+
+  /* Icon artwork remains compact, while its box is a non-overlapping 44px target. */
+  .ui-icon-button,
+  #map-fab,
+  #panel .map-tool,
+  #panel .tzoom button.ui-icon-button,
+  #panel .facility-back.ui-icon-button,
+  #panel .tx-x,
+  #panel .tdet-x,
+  .site-sheet-backdrop .site-sheet-close {
+    width:44px!important;
+    min-width:44px!important;
+    height:44px!important;
+    min-height:44px!important;
+  }
+  .ui-icon-button::after,
+  #panel .map-tool::after,
+  #panel .map-close::after,
+  #map-fab::after,
+  #panel .tx-x::after,
+  #panel .tdet-x::after,
+  .site-sheet-backdrop .site-sheet-close::after { inset:0; width:auto; height:auto; transform:none; }
+  #app.map-fullpage #panel .map-close { min-height:44px!important; }
+
+  /* Canvas zoom must not shrink map-node hit areas below 44px on screen. */
+  #panel .mapnode::before {
+    content:"";
+    position:absolute;
+    z-index:3;
+    left:50%;
+    top:50%;
+    width:calc(44px / var(--map-scale,1));
+    height:calc(44px / var(--map-scale,1));
+    transform:translate(-50%,-50%);
+  }
+  #metabar .emblem::after {
+    content:"";
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:44px;
+    height:44px;
+    transform:translate(-50%,-50%);
+  }
+
+  /* Repeated controls retain the same height even inside dense split panes. */
+  #panel .station-detail-workbench .station-step,
+  #panel .station-detail-workbench .station-quantity,
+  .station-detail-workbench .station-fixed-quantity {
+    height:44px!important;
+    min-height:44px!important;
+    line-height:44px!important;
+  }
+  #panel .battle-primary-controls .battle-action { min-height:52px; }
+
+  /* The compact settings dashboard used stronger legacy selectors; touch wins. */
+  #panel[data-view="settings"].settings-home { overflow-y:auto!important; overscroll-behavior:contain; }
+  #panel.settings-home .settings-dashboard { flex:none; }
+  #panel.settings-home .settings-media {
+    overflow:visible;
+    grid-template-rows:repeat(3,minmax(44px,auto));
+  }
+  #panel.settings-home .settings-control { min-height:44px!important; }
+  #panel.settings-home .update-check,
+  #panel.settings-home .settings-switch,
+  #panel.settings-home .settings-storage-actions .cloud-action,
+  #panel.settings-home .settings-community,
+  #panel.settings-home .settings-slogan,
+  #panel.settings-home .settings-reset { min-height:44px!important; }
+  #panel.settings-home .settings-volume input[type="range"] { min-height:44px!important; height:44px!important; }
+
+  /* Scene CSS loads last; these selectors keep field controls on the same contract. */
+  body[data-ui="abyss-frame"] #panel .field-head-tool,
+  body[data-ui="abyss-frame"] #panel .field-map-marker,
+  body[data-ui="abyss-frame"] #panel .field-map-drawer-close {
+    width:44px!important;
+    min-width:44px!important;
+    height:44px!important;
+    min-height:44px!important;
+  }
+
+  /* Stop a flick in one pane from pulling its parent page with it. */
+  .ui-workspace__scroll,
+  .recipe-station-top,
+  .station-detail-body,
+  .npc-content-scroll,
+  .battle-tool-rail { overscroll-behavior:contain; }
+}
+
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after {
     scroll-behavior:auto!important;
