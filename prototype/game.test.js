@@ -48,9 +48,9 @@ const sandbox = {
 };
 vm.createContext(sandbox);
 let source=fs.readFileSync(__dirname+'/game.js','utf8').replace(/\ninitLaunchGate\(\);\s*$/,'');
-source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,totalAtk,totalDef,statPen,damageReductionRate,locExtraCost,areaActionCost,fieldMealActive,foodBuffActive,payAreaAction,movementHealthCost,payMovementCost,materialSnapshot,beginExpedition,finishExpedition,exhaustionDeath,startCombat,enemyCombatProfile,recordCombatTurn,settleCombatTime,winCombat,playerAttack,enemyTurn,orbitalStrike,attackResource,attackResourceText,approach,catchBreath,useSkill,equipSkill,unequipSkill,skillUnlocked,passiveBonus,renderFieldGatherSkills,activeFieldGatherSkill,fieldGatherSkillApplicable,fieldGatherSkillStatus,performFieldGatherSkill,quickScavengeApplicable,quickScavengeStatus,performQuickScavenge,fieldRepairStatus,performFieldRepair,sporeBoostStatus,performSporeBoost,updateCheckpoint,restoreCheckpoint,research,researchStationReady,unlockGene,unlockGeneNode,geneTier,geneBonus,geneRule,chooseJob,chooseNoviceJob,noviceJobStatus,jobRequirementStatus,jobBonus,gainCareerXp,careerRecord,careerRecords,currentCareer,normalizeLifeCareerRecords,doReincarnate,chooseEnding,gatherAvailable,gatherArea,gatherLimit,resourceSiteOf,resourceSiteDiscovered,resourceRecoveryRemaining,resourceWorkStatus,locationActionStatus,exploreAttempts,performLocationAction,locationActionRemaining,currentDay,rest,fmtTime,activateAvailableQuests,questSearchCount,startBeacon,flee,settleEcho,feedbackSpec,musicSceneId,render,normalizePanelNavigationState,panelView,renderRegionMap,renderLocalMap,renderWorldMap,renderCharPanel,renderSkillPanel,renderBagPanel,renderNpcPanel,renderCareerMentorAction,talkAreaNpc,careerSummary,renderBuilding,renderTechPanel,renderSettlementShop,renderSpaceRoutes,explore,move,travelTo,staminaToCamp,travelRoute,buyEchoUpgrade,repairFacility,resolveRaid,hasBuildingTech,buildFacility,buildingLevel,upgradeFacility,buildDefense,upgradeDefense,defenseBuilt,cookFood,eatMeal,eatFishMeal,useItem,harvestGarden,dispatchDrone,recycleMaterial,damageRandomFacility,mapEdgePath,mapNodeState,tutorialActive,finishWakeAnimation,grantTutorialBracelet,grantTutorialBuilder,grantTutorialMap,completeTutorial,grantTutorialCollector,normalizeEquipment,normalizeMeta,mergePersistentSpaceMeta,metaFlag,setMetaFlag,grantTechRecord,syncQuestProgress,shipReady,assembleStarship,spaceFlightStatus,launchSpaceRoute,emergencySpaceReturn,outpostBuildStatus,buildOutpostPart,outpostReady,locationRevealed,repairLegacyDiscoveryFog,locationGate,entryNeedsConfirm,routeKey,routeKnown,discoverRoute,repairKnownRoutes,routeObstacle,routeNeedsConfirm,crossRouteObstacle,operationStatus,performFieldOperation,regionForLocation,regionUnlocked,regionDiscovery,verticalMapLayout,treeLayout,treePortOffset,treeEdgeRoute,techHeightFitZoom,techReady,techFacilitiesReady,discoverTechRecord,migrateTechTree,setCampName,settlementTrade,settlementTradeQuote,settlementShopProgress,settlementShopCatalog,settlementShopUnlocked,settlementExplorationCount,settlementBuyPrice,settlementSellTerms,settlementSellReward,settlementRecover,acceptCommission,turnInCommission,settlementDiscount,environmentProtected,SLOTS,EQUIP_ICON,EQUIPMENT_GRADES,QUESTS,TECHS,TECH_RECORDS,BRANCHES,MATS,MATERIAL_SOURCES,LOCATIONS,MAP_LINKS,GUIDED_MAP_ROUTES,MAP_CANVAS,WORLD_POS,WORLD_MAP_CANVAS,WORLD_REGION_POS,WORLD_REGIONS,WORLD_REGION_LINKS,LOCAL_MAPS,DISCOVERY_MILESTONES,ENTRY_REQUIREMENTS,ROUTE_OBSTACLES,FIELD_OPERATIONS,LOCATION_ACTIONS,SETTLEMENT_SHOP,SETTLEMENT_SHOP_TIERS,SETTLEMENT_SHOP_CATEGORIES,SETTLEMENT_COMMISSIONS,npcLocation,npcsAt,ITEMS,ENEMIES,RECIPES,COOKING_RECIPES,CAMP_BUILDINGS,OUTPOST_BUILDINGS:(typeof OUTPOST_BUILDINGS==='undefined'?[]:OUTPOST_BUILDINGS),SPACE_ROUTES:(typeof SPACE_ROUTES==='undefined'?[]:SPACE_ROUTES),SMELT,RECYCLE,BEACON,DEF_TYPES,SKILLS,GENE_NODES,GENE_TREE,JOBS,NOVICE_JOBS};`;
-source += `\n;Object.assign(this.api,{costText,recipeMaterialText,renderConstruction,renderSiteSheet,craft,smelt,batchQuantity,scaledCost,craftStationPresentation,skillLv,skillProgressText,careerSkillYieldMult,careerSkillCost,skillLevelEffectText,effectiveEconomyBonus,masteryAtEffectiveCap,masteryEffectText,upgradeMastery,statHit,shieldMax,regenShield,recoveryAmount,normalizeCloudCode,validGameSave,createLocalBackup,parseLocalBackup,cloudSaveSummary,fieldActionPresentation,fieldDirective,flavor,taskQuestTarget,taskReadyNow,taskPriorityQuest,taskProgressText,taskRewardText,taskNextStep,renderTaskPanel,nativeShellVersion,legacyNativeUpgradeRequired});`;
-source += `\n;Object.assign(this.api,{EXPLORATION_PACING,NPC_FIELD_DISCOVERIES,NPC_FIELD_RELOCATIONS,explorationPacingRange,scheduledDiscoveryNeed,milestoneNeed,neighborRouteNeed,areaEventNeed,npcDiscoveryNeed,resourceDiscoveryNeed,applyResourceDiscovery,applyDiscoveryMilestones,applyKnownNeighborRoutes,applyNpcDiscoveries,fieldEncounterChance,rollFieldEncounter,recordFieldSafeAction});`;
+source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,totalAtk,totalDef,statPen,damageReductionRate,locExtraCost,areaActionCost,fieldMealActive,foodBuffActive,payAreaAction,movementHealthCost,payMovementCost,materialSnapshot,beginExpedition,finishExpedition,exhaustionDeath,startCombat,enemyCombatProfile,recordCombatTurn,settleCombatTime,winCombat,playerAttack,enemyTurn,orbitalStrike,attackResource,attackResourceText,approach,catchBreath,useSkill,equipSkill,unequipSkill,skillUnlocked,passiveBonus,renderFieldGatherSkills,activeFieldGatherSkill,fieldGatherSkillApplicable,fieldGatherSkillStatus,performFieldGatherSkill,quickScavengeApplicable,quickScavengeStatus,performQuickScavenge,fieldRepairStatus,performFieldRepair,sporeBoostStatus,performSporeBoost,updateCheckpoint,restoreCheckpoint,research,researchStationReady,unlockGene,unlockGeneNode,geneTier,geneBonus,geneRule,chooseJob,chooseNoviceJob,noviceJobStatus,jobRequirementStatus,jobBonus,gainCareerXp,careerRecord,careerRecords,currentCareer,normalizeLifeCareerRecords,doReincarnate,chooseEnding,gatherAvailable,gatherArea,gatherLimit,resourceSiteOf,resourceSiteDiscovered,resourceRecoveryRemaining,resourceWorkStatus,locationActionStatus,exploreAttempts,performLocationAction,locationActionRemaining,currentDay,rest,fmtTime,activateAvailableQuests,questSearchCount,startBeacon,flee,settleEcho,feedbackSpec,musicSceneId,render,normalizePanelNavigationState,panelView,renderRegionMap,renderLocalMap,renderWorldMap,renderCharPanel,renderSkillPanel,renderBagPanel,renderNpcPanel,renderCareerMentorAction,talkAreaNpc,careerSummary,renderBuilding,renderTechPanel,renderSettlementShop,renderSpaceRoutes,explore,move,travelTo,staminaToCamp,travelRoute,buyEchoUpgrade,repairFacility,resolveRaid,hasBuildingTech,buildFacility,buildingLevel,upgradeFacility,buildDefense,upgradeDefense,defenseBuilt,cookFood,eatMeal,eatFishMeal,useItem,harvestGarden,dispatchDrone,recycleMaterial,damageRandomFacility,mapEdgePath,mapNodeState,tutorialActive,finishWakeAnimation,grantTutorialBracelet,grantTutorialBuilder,grantTutorialMap,completeTutorial,grantTutorialCollector,normalizeEquipment,normalizeMeta,mergePersistentSpaceMeta,metaFlag,setMetaFlag,grantTechRecord,syncQuestProgress,shipReady,assembleStarship,spaceFlightStatus,launchSpaceRoute,emergencySpaceReturn,outpostBuildStatus,buildOutpostPart,outpostReady,locationRevealed,repairLegacyDiscoveryFog,locationGate,entryNeedsConfirm,routeKey,routeKnown,discoverRoute,repairKnownRoutes,routeObstacle,routeNeedsConfirm,crossRouteObstacle,operationStatus,performFieldOperation,regionForLocation,regionUnlocked,regionDiscovery,verticalMapLayout,treeLayout,treePortOffset,treeEdgeRoute,techHeightFitZoom,techReady,techFacilitiesReady,discoverTechRecord,migrateTechTree,setCampName,settlementTrade,settlementTradeQuote,settlementShopProgress,settlementShopCatalog,settlementShopUnlocked,settlementExplorationCount,settlementBuyPrice,settlementSellTerms,settlementSellReward,settlementRecover,acceptCommission,turnInCommission,settlementDiscount,environmentProtected,SLOTS,EQUIP_ICON,EQUIPMENT_GRADES,QUESTS,TECHS,TECH_RECORDS,BRANCHES,MATS,MATERIAL_SOURCES,LOCATIONS,MAP_LINKS,GUIDED_MAP_ROUTES,MAP_CANVAS,WORLD_POS,WORLD_MAP_CANVAS,WORLD_REGION_POS,WORLD_REGIONS,WORLD_REGION_LINKS,LOCAL_MAPS,DISCOVERY_MILESTONES,ENTRY_REQUIREMENTS,ROUTE_OBSTACLES,FIELD_OPERATIONS,LOCATION_ACTIONS,SETTLEMENT_SHOP,SETTLEMENT_SHOP_TIERS,SETTLEMENT_SHOP_CATEGORIES,SETTLEMENT_COMMISSIONS,npcLocation,npcsAt,ITEMS,ENEMIES,COMBAT_ERAS,ENEMY_ERA,RECIPES,COOKING_RECIPES,CAMP_BUILDINGS,OUTPOST_BUILDINGS:(typeof OUTPOST_BUILDINGS==='undefined'?[]:OUTPOST_BUILDINGS),SPACE_ROUTES:(typeof SPACE_ROUTES==='undefined'?[]:SPACE_ROUTES),SMELT,RECYCLE,BEACON,DEF_TYPES,SKILLS,GENE_NODES,GENE_TREE,JOBS,NOVICE_JOBS};`;
+source += `\n;Object.assign(this.api,{costText,recipeMaterialText,renderConstruction,renderSiteSheet,craft,smelt,batchQuantity,scaledCost,craftStationPresentation,skillLv,skillProgressText,careerSkillYieldMult,careerSkillCost,skillLevelEffectText,effectiveEconomyBonus,masteryAtEffectiveCap,masteryEffectText,upgradeMastery,useMasteryManual,beaconFloorSpec,winBeacon,equipmentRecycleYield,recycleEquipment,statHit,shieldMax,regenShield,recoveryAmount,normalizeCloudCode,validGameSave,createLocalBackup,parseLocalBackup,cloudSaveSummary,fieldActionPresentation,fieldDirective,flavor,taskQuestTarget,taskReadyNow,taskPriorityQuest,taskProgressText,taskRewardText,taskNextStep,renderTaskPanel,nativeShellVersion,legacyNativeUpgradeRequired});`;
+source += `\n;Object.assign(this.api,{AREA_EVENTS,EXPLORATION_PACING,NPC_FIELD_DISCOVERIES,NPC_FIELD_RELOCATIONS,explorationPacingRange,scheduledDiscoveryNeed,milestoneNeed,neighborRouteNeed,areaEventNeed,npcDiscoveryNeed,resourceDiscoveryNeed,applyResourceDiscovery,applyDiscoveryMilestones,applyKnownNeighborRoutes,applyNpcDiscoveries,fieldEncounterChance,rollFieldEncounter,recordFieldSafeAction});`;
 source += `\n;Object.assign(this.api,{NPC_NAMES,NPC_PROFILE,STORY_SCENE_ASSETS,STORY_SCENE_LOCATIONS,NPC_FIRST_CONTACT,storySceneKey,storySceneSrc,storyNpcFromGiver,storyLocationForQuest,queueStoryScene,queueNpcFirstContact,queueQuestStoryScene,flushStoryScenes,resetStoryScenes});`;
 source += `\n;Object.assign(this.api,{ENDINGS,CORE_COMPONENTS,FINALE_QUEST_IDS,FINALE_PRIMARY_IDS,FINALE_CALIBRATION_IDS,questState,questDone,finishQuest,finaleQuestContact,finaleQuestNeed,finaleTaskStatus,finaleCompletedCount,finaleCalibrationCount,coreRecoveredCount,coreInstalledCount,coreProtocolReady,progressNpcFinaleQuest,installCoreComponent,finalBossOverrides,startFinalCoreBattle,beginCoreTruth,renderCoreControl,renderEndingPanel,endingAvailability,endingDisplayName,completeFailureEnding,triggerWarden,die});`;
 source += `\n;Object.assign(this.api,{submitQuest,chooseTruthLine,extractSealedArchive,resolveTang,freeAyong,AREA_EVENTS,questProgress});`;
@@ -167,8 +167,16 @@ pendingTests.push((async()=>{
   const s=reset();s.meta.techs.auto_5=1;s.meta.built.watch=true;s.meta.buildLevels.watch=1;Object.assign(s.inv,{wood:99,stone:99,scrap:99,ingot:99});
   a.buildDefense('wall');const afterFirst={wood:s.inv.wood,stone:s.inv.stone,scrap:s.inv.scrap,time:s.time};a.buildDefense('wall');
   assert.equal(s.defenses.filter(d=>d.key==='wall').length,1,'同一种防御工事只能建造一次');assert.deepEqual({wood:s.inv.wood,stone:s.inv.stone,scrap:s.inv.scrap,time:s.time},afterFirst,'重复建造请求不得再次扣材料或消耗时间');
-  const watch=new FakeElement(),nodes=[];a.renderBuilding(watch,'watch');(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(watch);const rows=nodes.filter(n=>n.className==='operation-row'),wallRows=rows.filter(n=>n.children[0].innerHTML.includes('简易围墙'));
-  assert.equal(wallRows.length,1,'已建工事在哨戒塔中只能保留一条操作记录');assert.equal(wallRows[0].children[1].innerHTML,'升级','建成后只能显示升级操作');assert.ok(rows.some(n=>n.children[0].innerHTML.includes('建造 绊索地雷')),'其他尚未建造的工事仍应允许建造');
+  const watch=new FakeElement(),nodes=[];a.renderBuilding(watch,'watch');(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(watch);const products=nodes.filter(n=>hasClass(n,'defense-product'));
+  assert.ok(nodes.some(n=>hasClass(n,'recipe-station-screen')),'哨戒塔必须改为上方选图标、下方升级的统一分屏工作台');assert.equal(nodes.some(n=>n.className==='operation-row'),false,'哨戒塔不得再使用旧的纵向操作行');
+  assert.equal(products.filter(n=>n.innerHTML.includes('简易围墙')).length,1,'已建工事在图标选择区只能出现一次');assert.ok(products.some(n=>/绊索地雷/.test(n.innerHTML)&&/待建造/.test(n.innerHTML)),'已解锁但未建的工事必须作为独立图标可选');
+  const profile=nodes.find(n=>hasClass(n,'defense-stat-profile')),confirm=nodes.find(n=>hasClass(n,'station-confirm'));assert.match(profile.innerHTML,/下一级属性[\s\S]*防御 16/,'选中已建工事后下方必须预览下一级属性');assert.equal(confirm.innerHTML,'升级至 Lv 2');
+}
+
+{
+  assert.match(source,/function renderPreservingScroll\(\)[\s\S]{0,500}\.npc-content-scroll[\s\S]{0,500}\.station-detail-body[\s\S]{0,500}scrollTop=position\.top/,'统一刷新必须记住精通页和设施分屏的独立滚动位置');
+  assert.match(source,/function renderMasteryCard\(card,k\)[\s\S]{0,1000}upgradeMastery\(k,\(\)=>renderMasteryCard\(card,k\)\)/,'精通升级只能就地更新当前卡片，不得刷新页面');assert.match(source,/const refresh=\(\)=>\{parent\.innerHTML='';detailParent\.innerHTML='';renderDefenseWorkbench\(parent,detailParent\);\}[\s\S]{0,450}upgradeDefense\([^;]+,refresh\)/,'防御升级只能更新哨戒塔工作区，不得重建整页');
+  assert.match(source,/function upgradeFacility\(id\)[\s\S]{0,700}renderPreservingScroll\(\)/,'设施升级关闭弹层后也必须回到原有滚动位置');
 }
 
 {
@@ -189,6 +197,13 @@ pendingTests.push((async()=>{
 {
   const s=reset();s.meta.built.recycler=true;s.meta.buildLevels.recycler=1;Object.assign(s.inv,{wood:30,stone:30});
   assert.equal(a.recycleMaterial('rubble',10),true);assert.equal(s.inv.wood,0);assert.equal(s.inv.stone,0);assert.equal(s.inv.scrap,20,'回收中心也必须兑现操作台批量数量');assert.equal(s.time,10);
+}
+{
+  const s=reset();s.meta.built.recycler=true;s.meta.buildLevels.recycler=2;s.player.equip.weapon='knife';s.inv.knife=3;
+  const yieldMap=a.equipmentRecycleYield('knife');assert.ok(yieldMap.ingot>0,'锻造级装备必须返还对应世代材料');
+  assert.equal(a.recycleEquipment('knife',2),true);assert.equal(s.inv.knife,1,'装备拆解必须支持批量且只扣背包中的闲置数量');assert.equal(s.player.equip.weapon,'knife','正在穿戴的装备不得被回收中心拆除');assert.equal(s.inv.ingot,yieldMap.ingot*2);
+  assert.equal(a.recycleEquipment('knife',2),false,'闲置装备不足时不得拆到正在穿戴的装备');
+  s.inv.plasmaRifle=1;const fieldYield=a.equipmentRecycleYield('plasmaRifle');assert.ok(fieldYield.titanium&&fieldYield.superconductor,'高阶装备必须返还高阶材料而不是只有废铁');
 }
 
 {
@@ -268,7 +283,7 @@ pendingTests.push((async()=>{
   assert.match(source,/pressedPointers=new Map\(\)[\s\S]*pressedPointers\.get\(e\.pointerId\)/,'滑出按钮后也必须按 pointerId 清理原始按压态');
   assert.match(source,/function flushFeedbackBatch\(batch\)[\s\S]*state&&state\.combat[\s\S]*dismissActionFeedback\(true\)/,'战斗中必须使用战斗反馈区并彻底清除旧提示');
   assert.match(source,/function upgradeFacility\(id\)[\s\S]{0,700}state\.siteSheet=null[\s\S]{0,200}toast:false/,'设施升级后必须关闭弹层、回到原设施并禁止冗余浮层通知');
-  assert.match(source,/function upgradeMastery\(k\)[\s\S]{0,500}markInlineChange\('mastery',k\)[\s\S]{0,150}toast:false/,'精通升级必须用原卡片高亮反馈，不能弹出遮挡按钮的通知');
+  assert.match(source,/function upgradeMastery\(k,refresh\)[\s\S]{0,500}markInlineChange\('mastery',k\)[\s\S]{0,150}toast:false/,'精通升级必须用原卡片高亮反馈，不能弹出遮挡按钮的通知');
   assert.match(uiCss,/button\.is-touching[\s\S]*scale\(\.97\)/,'按钮按下态必须比原有轻微缩放更明显');
   assert.match(uiCss,/\.action-feedback\.is-visible\s*\{[^}]*opacity:1/,'文字反馈必须提供明确的出现状态');
   assert.match(uiCss,/\.action-feedback\[hidden\]\s*\{[^}]*display:none!important/,'无内容时反馈容器不得露出空框');
@@ -288,10 +303,10 @@ pendingTests.push((async()=>{
   assert.match(adaptiveIcon,/ic_launcher_art_v2/,'自适应图标必须使用幸存者与坠毁方舟主视觉');
   assert.ok(fs.existsSync(path.join(__dirname,'..','android','app','src','main','res','drawable-nodpi','ic_launcher_art_v2.png')),'应用图标主视觉文件必须存在');
   const androidBuild=fs.readFileSync(path.join(__dirname,'..','android','app','build.gradle'),'utf8');
-  assert.match(androidBuild,/versionCode 15/,'当前发布 APK 必须提升安装版本');
-  assert.match(androidBuild,/versionName "0\.7\.5"/,'当前发布 APK 必须展示新的应用版本');
+  assert.match(androidBuild,/versionCode 16/,'当前发布 APK 必须提升安装版本');
+  assert.match(androidBuild,/versionName "0\.7\.7"/,'当前发布 APK 必须展示新的应用版本');
   assert.match(androidBuild,/SHELL_VERSION", "11"/,'GitHub 更新能力必须提升外壳协议版本');
-  assert.match(androidBuild,/BUNDLED_BUILD", "1788441440L"/,'最新 APK 必须内置本次完整资源版本');
+  assert.match(androidBuild,/BUNDLED_BUILD", "1788519667L"/,'最新 APK 必须内置本次完整资源版本');
   assert.match(androidBuild,/UPDATE_BASE_URL[^\n]*https:\/\/github\.com\/exkalib\/Abyssal-Echoes\/releases\/latest\/download\//,'APK 更新资源必须固定走 GitHub Release');
   assert.match(androidBuild,/CLOUD_SAVE_URL[^\n]*https:\/\/abyssal-echoes-ark\.netlify\.app\/api\/cloud-save/,'APK 云存档必须固定走 Netlify 手动迁移接口');
   assert.match(androidBuild,/CLOUD_SAVE_URL/,'安卓外壳必须提供独立云存档接口地址');
@@ -333,7 +348,7 @@ pendingTests.push((async()=>{
   assert.match(source,/mchip',itemUiIcon\(id\)/,'材料分类必须继续使用统一物品实物图');
   assert.match(source,/iicon">'\+itemUiIcon\(id\)/,'装备和特殊道具分类必须继续使用统一物品实物图');
   const itemIds=vm.runInContext('Object.keys(ITEMS)',sandbox);
-  assert.equal(itemIds.length,130,'当前130个物品必须全部进入科幻实物图系统');
+  assert.equal(itemIds.length,135,'当前135个物品必须全部进入科幻实物图系统');
   const aliases=vm.runInContext('ITEM_ART_ALIAS',sandbox);itemIds.forEach(id=>{const asset=path.join(__dirname,'assets','item-art-v1',(aliases[id]||id)+'.webp');assert.ok(fs.existsSync(asset),id+' 缺少科幻实物图');assert.ok(fs.statSync(asset).size>1000,id+' 的科幻实物图文件异常');});
   assert.match(source,/function itemUiIcon\(id\)\{const art=ITEM_ART_ALIAS\[id\]\|\|id;return '<img class="item-art" data-item="'\+id\+'" src="assets\/item-art-v1\/'\+art\+'\.webp\?v=2"/,'物品图必须统一从独立 WebP 实物资源加载，并允许终章组件复用六种不同的既有设备图');
   assert.match(css,/\.item-detail-emblem \.item-art\{[^}]*width:58px[^}]*object-fit:contain/,'详情页必须以完整比例展示实物图');
@@ -342,8 +357,8 @@ pendingTests.push((async()=>{
   buildingIds.forEach(id=>{const asset=path.join(__dirname,'assets','building-art-v1',id+(id==='research'?'.png':'.webp'));assert.ok(fs.existsSync(asset),id+' 缺少科幻建筑图');assert.ok(fs.statSync(asset).size>1000,id+' 的科幻建筑图文件异常');});
   assert.match(source,/const BUILDING_ART_EXT=\{research:'png'\}[\s\S]{0,180}function buildingUiIcon\(id\)/,'建筑图必须统一从版本化实物资源加载，并允许科技台使用透明 PNG');
   const enemyIds=vm.runInContext('Object.keys(ENEMIES)',sandbox);
-  assert.equal(enemyIds.length,22,'当前22个正式敌人必须全部进入独立立绘系统');
-  enemyIds.forEach(id=>{const asset=path.join(__dirname,'assets','enemy-portraits-v1',id+'.png');assert.ok(fs.existsSync(asset),id+' 缺少全身怪物立绘');assert.ok(fs.statSync(asset).size>100000,id+' 的怪物立绘文件异常');});
+  assert.equal(enemyIds.length,25,'当前25个正式敌人必须全部进入战斗立绘系统');
+  enemyIds.forEach(id=>{const portraitId=vm.runInContext(`enemyPortraitId('${id}')`,sandbox),asset=path.join(__dirname,'assets','enemy-portraits-v1',portraitId+'.png');assert.ok(fs.existsSync(asset),id+' 缺少全身怪物立绘');assert.ok(fs.statSync(asset).size>100000,id+' 的怪物立绘文件异常');});
   assert.match(source,/function enemyPortraitSrc\(id\)\{return ENEMY_PORTRAIT_ROOT\+enemyPortraitId\(id\)\+'\.png\?v=1';\}/,'怪物立绘必须统一从版本化资源目录加载');
   assert.equal(vm.runInContext('ENEMIES.cleaner.mech',sandbox),true,'清洁机器人立绘与战斗类型必须一致标记为机械单位');
   assert.match(css,/\.camp-layout\s*\{[^}]*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/,'营地设施必须使用每行四个的手机宫格');
@@ -531,10 +546,18 @@ pendingTests.push((async()=>{
   assert.equal(legacy.equip.feet,'boots','旧存档腿部靴子必须迁移到足部');
   assert.equal(legacy.equip.implant,'lsChip','旧存档饰品必须按物品类型迁移到植入体');
   assert.equal(Object.hasOwn(legacy.equip,'acc'),false,'旧饰品槽不得继续隐藏计算属性');
+  const handIds=Object.entries(a.ITEMS).filter(([,it])=>it.slot==='hands').map(([id])=>id);
+  assert.deepEqual(handIds,['workGloves','servoGauntlet','nanoWeaveGloves','phaseGrip'],'手部槽必须拥有贯穿锻造、合金、场能和量子阶段的装备链');
+  ['workGloves','servoGauntlet','nanoWeaveGloves'].forEach(id=>assert.ok(Object.values(a.TECHS).some(t=>(t.un||[]).includes(id)),id+' 必须在聚变阶段前后有明确科技来源'));
 }
 
 {
-  const s=reset(); assert.equal(a.totalAtk(),12,'初始攻击应让前期敌人至少需要两次攻击');
+  const s=reset();s.player.equip.weapon='crowbar';s.player.equip.implant='lsChip';s.player.hp=50;a.startCombat('rat');s.combat.distNow=1;s.combat.hp=1;sandbox.Math.random=()=>0;
+  a.playerAttack();assert.equal(s.combat,null,'测试攻击必须以击杀结束战斗');assert.ok(s.player.hp>50,'嗜血芯片必须在击杀一击造成伤害后正常恢复生命');
+}
+
+{
+  const s=reset(); assert.equal(a.totalAtk(),13,'撬棍的入门战力增幅应生效，同时让前期敌人至少需要两次攻击');
   s.inv.scrap=20;a.beginExpedition();s.player.location='outer';s.inv.scrap=30;s.player.stamina=0;assert.equal(a.exhaustionDeath(),false,'只耗尽体力不得触发死亡结算');
   assert.equal(s.player.location,'outer');assert.equal(s.inv.scrap,30);s.player.hp=0;a.exhaustionDeath();
   assert.equal(s.player.location,'camp');assert.equal(s.player.stamina,0,'生命耗尽后应以零体力回到营地');assert.equal(s.inv.scrap,26,'死亡只损失本次新增材料的35%');
@@ -650,7 +673,7 @@ pendingTests.push((async()=>{
   assert.equal(a.RECIPES.ammo.yield,10,'制式弹药配方必须成批生产');assert.equal(a.RECIPES.weaponCell.yield,12,'一批高阶武器能量匣必须至少覆盖一场标准远航战斗');
   assert.deepEqual([a.SETTLEMENT_SHOP.weaponCell.buy.amount,a.SETTLEMENT_SHOP.weaponCell.sell.amount],[12,30],'聚居地高阶军需的能量匣批量必须与制造产量一致且不能倒卖套利');
   assert.equal(a.recoveryAmount(30,20,100),30);assert.equal(a.recoveryAmount(30,20,1000),200,'恢复品应保留前期固定值，并在高属性阶段按上限比例成长');
-  assert.deepEqual([a.ENEMIES.guardian.hp,a.ENEMIES.guardian.atk,a.ENEMIES.guardian.def,a.ENEMIES.guardian.threat],[420,52,20,140],'首个守望者首领必须在动力甲阶段仍能形成有效生存压力');
+  assert.deepEqual([a.ENEMIES.guardian.hp,a.ENEMIES.guardian.atk,a.ENEMIES.guardian.def,a.ENEMIES.guardian.threat],[1800,68,50,220],'钢与合金节点的首个守望者首领必须拥有固定预算');
 }
 {
   const s=reset();s.player.stamina=10;a.startCombat('rat');s.combat.distNow=1;sandbox.Math.random=()=>0;
@@ -759,6 +782,7 @@ pendingTests.push((async()=>{
     }
   });
   assert.equal(visited.size,a.QUESTS.length,'全部任务都必须能沿无环依赖图完成拓扑遍历');
+  a.QUESTS.filter(q=>q.type==='search').forEach(q=>{const events=a.AREA_EVENTS[q.target]||[];assert.ok(events.length>=q.count,`调查任务 ${q.id} 的固定线索少于要求数量`);assert.equal(events.slice(q.count-1).some(event=>event.flag===q.targetFlag),true,`调查任务 ${q.id} 的最终线索不能产出完成旗标 ${q.targetFlag}`);});
 }
 {
   const s=reset();s.tutorial={version:1,step:'done',complete:true};
@@ -772,7 +796,7 @@ pendingTests.push((async()=>{
   Object.assign(s.inv,{scrap:4,ecomp:2});a.submitQuest('drain');assert.equal(a.questState('drain'),'done');assert.equal(a.questState('seal'),'active');
   s.player.location='layer3';s.inv.steel=6;a.submitQuest('seal');assert.equal(a.questState('seal'),'done');assert.equal(a.questState('sample'),'active');
   s.player.location='layer4';s.inv.biocore=5;a.submitQuest('sample');assert.equal(a.questState('sample'),'done');assert.equal(a.questState('patrol'),'active');
-  s.player.location='layer5';s.exploreCount.layer5=(s.questStart.patrol||0)+3;s.flags.patrolRecordsComplete=true;a.syncQuestProgress(false);assert.equal(a.questState('patrol'),'done');assert.equal(a.questState('bridge'),'active');
+  s.player.location='layer5';s.areaSearch.layer5=3;s.flags.patrolRecordsComplete=true;a.syncQuestProgress(false);assert.equal(a.questState('patrol'),'done');assert.equal(a.questState('bridge'),'active');
   s.player.location='layer6';Object.assign(s.flags,{commandDecoded:true,evidenceFault:true});a.chooseTruthLine('故障线');assert.equal(a.questState('bridge'),'done');assert.equal(a.questState('core'),'active');assert.equal(a.FINALE_PRIMARY_IDS.filter(id=>a.questState(id)==='active').length,6,'舰桥提交证据后必须完整接上六条众证组件任务');
   a.resetStoryScenes();
 }
@@ -793,13 +817,13 @@ pendingTests.push((async()=>{
 }
 {
   const s=reset();s.areaSearch.layer3=3;s.exploreCount.layer3=9;s.quests.seal='done';a.activateAvailableQuests(false);
-  assert.equal(s.questStart.faultAudit,9);assert.equal(a.questSearchCount({id:'faultAudit',target:'layer3'}),0,'新调查任务不得追溯旧调查次数');
-  s.exploreCount.layer3=12;a.syncQuestProgress(false);assert.equal(s.quests.faultAudit,'active','步数足够但最终线索尚未确认时不能提前完成');
-  s.flags.faultChainReady=true;a.syncQuestProgress(false);assert.equal(s.quests.faultAudit,'done','固定剧情事件读完后，继续深入勘察并确认关键线索后必须完成调查任务');
+  assert.equal(a.questSearchCount({id:'faultAudit',target:'layer3'}),3,'接任务前已经确认的现场证据必须计入调查进度');
+  a.syncQuestProgress(false);assert.equal(s.quests.faultAudit,'active','线索数量足够但最终证据旗标缺失时不能提前完成');
+  s.flags.faultChainReady=true;a.syncQuestProgress(false);assert.equal(s.quests.faultAudit,'done','固定剧情事件与关键证据齐全后必须完成调查任务');
 }
 {
   const s=reset();s.quests.spore='done';a.activateAvailableQuests(false);assert.equal(s.quests.relay,'active');
-  s.exploreCount.abyss=(s.questStart.relay||0)+3;a.syncQuestProgress(false);assert.equal(s.quests.relay,'active','回声深井不能只点够三次就跳过中继器剧情');assert.match(a.questProgress(a.QUESTS.find(q=>q.id==='relay')),/关键线索未确认/);
+  s.areaSearch.abyss=3;a.syncQuestProgress(false);assert.equal(s.quests.relay,'active','回声深井不能只有线索计数而跳过中继器剧情');assert.match(a.questProgress(a.QUESTS.find(q=>q.id==='relay')),/3\/3 条线索/);
   s.flags.relayFixed=true;a.syncQuestProgress(false);assert.equal(s.quests.relay,'done');assert.equal(s.quests.ruinDoor,'active','修复中继器后必须正常接上遗迹门任务');
 }
 {
@@ -807,12 +831,36 @@ pendingTests.push((async()=>{
   assert.equal(s.inv.signalCell,0,'信标战必须消耗信标电池');
 }
 {
+  const floor1=a.beaconFloorSpec(1),floor11=a.beaconFloorSpec(11),floor100=a.beaconFloorSpec(100);
+  assert.equal(floor1.manuals,1,'信标首层必须保底一册精通训练手册');
+  assert.equal(floor11.manuals,2,'每十层必须再增加一册保底精通训练手册');
+  assert.ok(floor100.mult>floor11.mult&&floor100.threat>floor11.threat,'无尽信标敌情与威胁必须随层数持续增长');
+  assert.ok(floor100.cells<=10,'无尽层数的电池消耗必须封顶，避免高层变成无法进入的假无尽');
+  assert.ok(Object.keys(floor100.drops).length>Object.keys(floor1.drops).length,'高层必须解锁更多材料种类');
+  assert.equal(a.beaconFloorSpec(5).equipmentGuaranteed,true,'每五层必须保底掉落装备');
+}
+{
+  const s=reset();s.inv.signalCell=10;s.player.stamina=100;a.startBeacon(2);
+  assert.equal(s.combat,null,'未通关前不得越层挑战');assert.equal(s.inv.signalCell,10,'越层失败不得扣除资源');
+  const before=s.masteries.attackMastery;s.inv.masteryManual=6;a.useMasteryManual('attackMastery');
+  assert.equal(s.masteries.attackMastery,before+1,'默认使用一本精通训练手册时必须提升一级');assert.equal(s.inv.masteryManual,5);
+  assert.equal(a.useMasteryManual('attackMastery',4),true);assert.equal(s.masteries.attackMastery,before+5,'批量使用几本手册就必须提升几级');assert.equal(s.inv.masteryManual,1);
+  assert.equal(a.useMasteryManual('attackMastery',2),false,'使用数量超过持有量时必须拒绝操作');assert.equal(s.masteries.attackMastery,before+5);assert.equal(s.inv.masteryManual,1);
+}
+{
+  const s=reset();sandbox.Math.random=()=>.99;const reward=a.winBeacon(a.beaconFloorSpec(1));
+  assert.equal(reward.manuals,1);assert.equal(s.inv.masteryManual,1);assert.equal(s.beaconMaxFloor,2,'通关当前最高层必须解锁下一层');
+  assert.equal(s.siteSheet.kind,'beaconReward','信标奖励必须进入常驻结算面板');
+  const repeat=a.winBeacon(a.beaconFloorSpec(1));assert.equal(s.beaconMaxFloor,2,'重复挑战旧层不得跳层解锁');assert.equal(repeat.unlocked,false);
+  sandbox.Math.random=()=>.99;const bossReward=a.winBeacon(a.beaconFloorSpec(5));assert.ok(bossReward.equipment,'每五层装备保底不得受随机数影响');
+}
+{
   const s=reset(); s.skills.heavy.prof=10; a.equipSkill('heavy',0); s.player.stamina=10; a.startCombat('rat'); s.combat.distNow=1; sandbox.Math.random=()=>0;
-  a.useSkill('heavy'); assert.ok(s.combat===null||s.combat.hp<16,'技能必须能实际造成伤害');
+  const hp=s.combat.hp;a.useSkill('heavy'); assert.ok(s.combat===null||s.combat.hp<hp,'技能必须能实际造成伤害');
 }
 {
   const s=reset(); s.skills.heavy.prof=10; s.player.stamina=10; a.startCombat('rat'); s.combat.distNow=1;
-  a.useSkill('heavy'); assert.equal(s.combat.hp,16,'未装配的主动技能不得在战斗中使用');
+  const hp=s.combat.hp;a.useSkill('heavy'); assert.equal(s.combat.hp,hp,'未装配的主动技能不得在战斗中使用');
   a.equipSkill('heavy',1); assert.equal(s.skillSlots[1],'heavy','主动技能应进入指定技能槽');
 }
 {
@@ -850,11 +898,11 @@ pendingTests.push((async()=>{
 }
 {
   const s=reset();Object.assign(s.masteries,{craftMastery:20,gatherMastery:40,mineMastery:40,recycleMastery:40,gardenMastery:40});
-  assert.equal(a.effectiveEconomyBonus('craftSavePct'),60,'制造返还必须封顶，不能通过无限精通变成零成本生产');
-  assert.equal(a.effectiveEconomyBonus('gatherPct'),200);assert.equal(a.effectiveEconomyBonus('minePct'),150);assert.equal(a.effectiveEconomyBonus('recyclePct'),200);assert.equal(a.effectiveEconomyBonus('gardenPct'),150,'无限精通应保留成长，但实际生产倍率必须有边界');
+  assert.equal(a.effectiveEconomyBonus('craftSavePct'),200);assert.equal(a.effectiveEconomyBonus('gatherPct'),400);assert.equal(a.effectiveEconomyBonus('minePct'),400);assert.equal(a.effectiveEconomyBonus('recyclePct'),400);assert.equal(a.effectiveEconomyBonus('gardenPct'),400,'生产精通必须按等级持续成长而不设置有效上限');
   s.player.equip.head='quantumVisor';assert.equal(a.statHit(),100,'命中显示与判定不得超过100%');
   s.player.equip.offhand='phaseShield';s.player.shield=0;const cap=a.shieldMax();a.regenShield();assert.equal(s.player.shield,Math.ceil(cap*.08),'每回合护盾恢复应为8%，避免后期装备永久抵消普通敌人伤害');
-  const oldLevel=s.masteries.craftMastery,oldCrystal=s.inv.crystal=999;a.upgradeMastery('craftMastery');assert.equal(s.masteries.craftMastery,oldLevel);assert.equal(s.inv.crystal,oldCrystal,'已达有效上限的生产精通不得继续消耗玩家材料');assert.match(a.masteryEffectText('craftMastery',oldLevel),/有效总上限 60%/);
+  const oldLevel=s.masteries.craftMastery;s.inv.ration=999;a.upgradeMastery('craftMastery');assert.equal(s.masteries.craftMastery,oldLevel+1,'生产精通达到旧上限后仍必须可以升级');assert.equal(a.masteryAtEffectiveCap('craftMastery'),false);assert.doesNotMatch(a.masteryEffectText('craftMastery',oldLevel),/上限/);
+  s.masteries.attackMastery=10000;s.inv.crystal=2000;const before=s.inv.crystal;a.upgradeMastery('attackMastery');assert.equal(s.masteries.attackMastery,10001,'精通超过 Lv9999 后仍必须继续升级');assert.ok(s.inv.crystal<before,'超高等级精通必须继续消耗递增材料，不能出现免费升级');
 }
 {
   const s=reset();Object.assign(s.runStats,{wKill:400,dmg:1500000,mat:2500});const reward=a.settleEcho();
@@ -867,12 +915,15 @@ pendingTests.push((async()=>{
   Object.entries(a.COOKING_RECIPES).forEach(([id,r])=>{positiveCost(r.cost,`料理 ${id}`);assert.ok(a.ITEMS[r.out]&&a.ITEMS[r.out].food,`料理 ${id} 必须产出食物`);});
   Object.entries(a.ITEMS).filter(([,item])=>item.type==='use'&&(item.hp||item.stamina)).forEach(([id,item])=>{if(item.hp)assert.ok(item.hpPct>0,`恢复品 ${id} 必须随生命上限成长`);if(item.stamina)assert.ok(item.staminaPct>0,`恢复品 ${id} 必须随体力上限成长`);});
   Object.entries(a.ENEMIES).forEach(([id,e])=>{assert.ok(e.hp>0&&e.atk>0&&e.def>=0&&e.threat>0,`敌人 ${id} 的战斗预算必须有效`);Object.entries(e.drops||{}).forEach(([item,range])=>{assert.ok(a.ITEMS[item]);assert.ok(Number.isInteger(range[0])&&Number.isInteger(range[1])&&range[0]>=0&&range[1]>=range[0],`敌人 ${id} 的掉落区间无效`);});});
+  Object.entries(a.ENEMIES).forEach(([id,e])=>assert.ok(a.COMBAT_ERAS[e.era],`敌人 ${id} 必须归属固定装备时代`));
+  const eraAverages=Object.keys(a.COMBAT_ERAS).map(Number).map(era=>{const rows=Object.values(a.ENEMIES).filter(e=>e.era===era&&!e.boss);return {era,hp:rows.reduce((n,e)=>n+e.hp,0)/rows.length,atk:rows.reduce((n,e)=>n+e.atk,0)/rows.length,def:rows.reduce((n,e)=>n+e.def,0)/rows.length};});
+  for(let i=1;i<eraAverages.length;i++){const prev=eraAverages[i-1],next=eraAverages[i];assert.ok(next.hp>prev.hp&&next.atk>prev.atk&&next.def>prev.def,`装备时代 ${next.era} 的固定普通怪预算必须全面高于时代 ${prev.era}`);}
   [['lunarCrawler','xenoStalker','livingBulwark','phaseSentinel'],['relayCorsair','massDriverAI','planetaryCrown','gateCustodian']].forEach(chain=>{for(let i=1;i<chain.length;i++){const prev=a.ENEMIES[chain[i-1]],next=a.ENEMIES[chain[i]];assert.ok(next.hp>prev.hp&&next.threat>prev.threat,`${chain[i]} 必须比前一阶段 ${chain[i-1]} 提供更高生命与威胁`);}});
   [['crowbar','knife','blade','eblade','plasmaRifle','gravLance','swarmRifle','vacuumCarbine'],['vest','power','nanoSuit','starShell','exoShell']].forEach(chain=>{for(let i=1;i<chain.length;i++){const stat=a.ITEMS[chain[i]].slot==='weapon'?'atk':'def';assert.ok(a.ITEMS[chain[i]][stat]>a.ITEMS[chain[i-1]][stat],`${chain[i]} 的基础${stat}必须高于前一装备世代`);}});
   Object.entries(a.TECHS).forEach(([id,t])=>{positiveCost(t.cost,`科技 ${id}`);assert.ok((t.req||[]).every(req=>a.TECHS[req]),`科技 ${id} 存在无效前置`);assert.ok(!t.hours||(Number.isInteger(t.hours)&&t.hours>0),`科技 ${id} 研究时间无效`);});
   a.CAMP_BUILDINGS.forEach(b=>{positiveCost(b.cost,`建筑 ${b.id}`);(b.upgrades||[]).forEach((up,index)=>positiveCost(up.cost,`建筑 ${b.id} 升级 ${index+1}`));});
   a.SPACE_ROUTES.forEach(route=>{positiveCost(route.cost,`航线 ${route.id}`);assert.ok(Number.isInteger(route.hours)&&route.hours>0,`航线 ${route.id} 耗时必须是正整数`);});
-  a.BEACON.forEach((row,index)=>{assert.ok(row.mult>0&&row.threat>0&&row.cost>0&&row.cells>0&&row.bookChance>0&&row.bookChance<1,`信标难度 ${row.name} 的数值无效`);if(index){const prev=a.BEACON[index-1];assert.ok(row.mult>prev.mult&&row.threat>prev.threat&&row.bookChance>prev.bookChance,`信标难度 ${row.name} 必须同步提高敌情、威胁与技能书概率`);}});
+  a.BEACON.forEach((row,index)=>{assert.ok(row.mult>0&&row.threat>0&&row.cost>0&&row.cells>0&&row.manuals>0&&row.equipmentChance>0,`信标层 ${row.name} 的数值无效`);if(index){const prev=a.BEACON[index-1];assert.ok(row.mult>prev.mult&&row.threat>prev.threat&&row.equipmentChance>prev.equipmentChance,`信标层 ${row.name} 必须同步提高敌情、威胁与装备概率`);}});
   Object.entries(a.DEF_TYPES).forEach(([id,row])=>{positiveCost(row.build,`防御工事 ${id}`);positiveCost(row.up,`防御工事 ${id} 升级`);assert.ok((row.baseAtk||0)+(row.baseDef||0)+(row.baseShield||0)>0,`防御工事 ${id} 必须提供有效战力`);});
   Object.entries(a.SETTLEMENT_SHOP).forEach(([id,row])=>{assert.ok(a.ITEMS[id],`商店引用了不存在的物品 ${id}`);assert.ok(row.buy.crystal>0&&row.buy.amount>0,`商店商品 ${id} 的买入值无效`);if(row.sell){const quote=a.settlementSellTerms(row,1);assert.ok(quote.crystal*row.buy.amount<=row.buy.crystal*quote.amount,`商店商品 ${id} 存在无声望倒卖套利`);}});
 }
@@ -880,8 +931,12 @@ pendingTests.push((async()=>{
   const combatBand=(level,weapon,armor,enemyId)=>{const s=reset();s.player.level=level;s.player.equip.weapon=weapon;s.player.equip.body=armor||null;const enemy=a.ENEMIES[enemyId],damage=Math.max(1,a.totalAtk()-enemy.def),hits=Math.ceil(enemy.hp/damage),taken=Math.max(1,enemy.atk-a.totalDef());return {hits,taken};};
   assert.ok(combatBand(1,'crowbar',null,'rat').hits>=2&&combatBand(1,'crowbar',null,'rat').hits<=3,'开局敌人应在2-3次普通攻击内解决');
   assert.ok(combatBand(3,'knife','vest','beast').hits>=2&&combatBand(3,'knife','vest','beast').hits<=4,'地表中段敌人应维持2-4回合交战');
-  assert.ok(combatBand(10,'rifle','vest','warbot').hits>=2&&combatBand(10,'rifle','vest','warbot').hits<=4,'军事区普通敌人不能突然变成血墙');
-  const boss=combatBand(10,'eblade','power','guardian');assert.ok(boss.hits>=10&&boss.hits<=14,'首个守望者首领应形成10-14回合战斗');assert.ok(boss.taken>=15,'动力甲阶段首领每次命中仍必须造成有效净伤害');
+  assert.ok(combatBand(10,'rifle','vest','warbot').hits>=3&&combatBand(10,'rifle','vest','warbot').hits<=5,'钢装节点的军事区普通怪应维持3-5回合交战');
+  const boss=combatBand(10,'eblade','power','guardian');assert.ok(boss.hits>=14&&boss.hits<=20,'钢装节点首领必须保留足够回合完整展示机制');assert.ok(boss.taken>=15,'动力甲阶段首领每次命中仍必须造成有效净伤害');
+}
+{
+  ['surface','ark','depth','orbit','ashMoon','verdant','silent'].forEach(region=>{const sites=a.WORLD_REGIONS[region].locations.map(id=>[id,a.LOCATIONS[id]]).filter(([,loc])=>loc.boss);assert.ok(sites.length>0,region+' 探索区域必须拥有至少一个固定首领地点');sites.forEach(([,loc])=>{assert.ok(a.ENEMIES[loc.boss]&&a.ENEMIES[loc.boss].boss,loc.boss+' 必须是真正的首领单位');assert.equal(a.ENEMIES[loc.boss].bossFlag,loc.bossFlag,'地点与首领必须共用唯一击败状态');});});
+  const s=reset();s.player.location='coalRift';s.exploreCount.coalRift=4;const marker=a.fieldMapMarkers('coalRift').find(row=>row.kind==='boss');assert.ok(marker&&marker.target==='riftMatriarch','地表首领必须在达到调查深度后作为独立地图节点出现');
 }
 {
   const s=reset(); s.player.level=18;s.kills=20;s.inv.biocore=20;s.inv.crystal=10;a.unlockGeneNode('g1_core');a.unlockGeneNode('g2_muscle');
@@ -1336,7 +1391,7 @@ pendingTests.push((async()=>{
   const categoryTabs=nodes.find(n=>hasClass(n,'shop-category-tabs'));assert.equal(categoryTabs.children.length,4,'商店必须提供全部、物资、装备和特殊四个分类');assert.ok(nodes.some(n=>hasClass(n,'shop-route-status')),'商店必须展示由探索推进的商路等级与下一档解锁条件');
   assert.deepEqual(nodes.filter(n=>n.className==='station-step').map(n=>n.innerHTML),['-10','-1','+1','+10']);assert.equal(nodes.find(n=>n.className==='station-quantity').value,1,'商店交易数量必须默认为1批');
   assert.match(nodes.find(n=>n.className==='shop-rate-copy').textContent,/本次共支付 晶体×1，获得 布料×3/,'下半屏必须用完整语句说明支付与获得内容');assert.equal(nodes.find(n=>String(n.className).includes('station-confirm')).textContent,'确认购买 · 1 批');
-  goods.children.find(n=>/data-item="knife"/.test(n.innerHTML)).click();const gearBox=new FakeElement(),gearNodes=[];a.renderSettlementShop(gearBox,true);(function walk(node){gearNodes.push(node);(node.children||[]).forEach(walk);})(gearBox);const gearProfile=gearNodes.find(n=>hasClass(n,'shop-equipment-profile'));assert.ok(gearProfile,'选中装备商品后必须出现装备属性区');assert.match(gearProfile.innerHTML,/锻造级[\s\S]*攻\+7[\s\S]*战力增幅\+10%/,'商店装备详情必须展示品级与完整战斗属性');
+  goods.children.find(n=>/data-item="knife"/.test(n.innerHTML)).click();const gearBox=new FakeElement(),gearNodes=[];a.renderSettlementShop(gearBox,true);(function walk(node){gearNodes.push(node);(node.children||[]).forEach(walk);})(gearBox);const gearProfile=gearNodes.find(n=>hasClass(n,'shop-equipment-profile'));assert.ok(gearProfile,'选中装备商品后必须出现装备属性区');assert.match(gearProfile.innerHTML,/锻造级[\s\S]*攻\+20[\s\S]*暴击\+5%/,'商店装备详情必须展示品级与完整战斗属性');
   assert.equal(a.settlementTrade('cloth','buy',2),true);assert.equal(s.inv.crystal,3);assert.equal(s.inv.cloth,6,'批量购买必须按所选交易批次同步结算');assert.equal(a.settlementTrade('cloth','sell',1),true);assert.equal(s.inv.crystal,4);assert.equal(s.inv.cloth,1,'批量出售必须使用明确的每批物品数量结算');
 }
 {
@@ -1431,12 +1486,12 @@ pendingTests.push((async()=>{
 {
   const s=reset();s.player.level=75;a.GENE_NODES.forEach(g=>s.meta.geneNodes[g.id]=true);s.player.equip.weapon='crowbar';const salvage=a.totalAtk();s.player.equip.weapon='vacuumCarbine';const stellar=a.totalAtk();
   Object.entries(a.ITEMS).filter(([,it])=>it.type==='equip').forEach(([id,it])=>assert.ok(a.EQUIPMENT_GRADES[it.grade],`${id} 必须归入明确的材料装备代际`));
-  assert.ok(stellar>salvage*1.8,'星际级武器必须以百分比增幅参与基因后的战斗力，不能退化为固定小数值');assert.equal(a.ITEMS.vacuumCarbine.grade,'stellar');assert.equal(a.EQUIPMENT_GRADES.stellar.material,'星舰铱合金 / 活体复材');
+  const characterAtk=vm.runInContext('baseAtk()',sandbox),expectedDelta=Math.round(characterAtk*(1+a.ITEMS.vacuumCarbine.powerPct/100)+a.ITEMS.vacuumCarbine.atk)-Math.round(characterAtk*(1+a.ITEMS.crowbar.powerPct/100)+a.ITEMS.crowbar.atk);assert.equal(stellar-salvage,expectedDelta,'战力增幅必须放大人物攻击，武器自身攻击只能作为独立固定值相加');assert.ok(a.ITEMS.vacuumCarbine.atk>=800&&a.ITEMS.vacuumCarbine.powerPct>=140,'星际武器的独立攻击与人物战力增幅必须足以匹配后期成长');assert.equal(a.ITEMS.vacuumCarbine.grade,'stellar');assert.equal(a.EQUIPMENT_GRADES.stellar.material,'星舰铱合金 / 活体复材');
   s.player.equip.body='vest';const light=a.totalDef();s.player.equip.body='exoShell';assert.ok(a.totalDef()>light*1.7,'高阶护甲必须按材料代际放大基因后的基础防御');
 }
 {
-  let s=reset();a.startCombat('rat');assert.equal(s.combat.maxHp,a.ENEMIES.rat.hp,'前期敌人不得读取后期基因适配');
-  s=reset();s.player.level=75;a.GENE_NODES.forEach(g=>s.meta.geneNodes[g.id]=true);a.startCombat('gateCustodian');assert.equal(s.combat.adaptiveThreat,true);assert.ok(s.combat.maxHp>a.ENEMIES.gateCustodian.hp,'远航终局敌人必须能承接当前基因阶段的输出');assert.ok(s.combat.atk>a.ENEMIES.gateCustodian.atk,'远航终局敌人的威胁必须参考当前职业与基因生存能力');
+  let s=reset();a.startCombat('rat');assert.deepEqual([s.combat.maxHp,s.combat.atk,s.combat.def],[a.ENEMIES.rat.hp,a.ENEMIES.rat.atk,a.ENEMIES.rat.def],'前期敌人必须使用固定数值');
+  s=reset();s.player.level=75;a.GENE_NODES.forEach(g=>s.meta.geneNodes[g.id]=true);s.player.equip.weapon='vacuumCarbine';a.startCombat('gateCustodian');assert.equal(Object.hasOwn(s.combat,'adaptiveThreat'),false);assert.deepEqual([s.combat.maxHp,s.combat.atk,s.combat.def],[a.ENEMIES.gateCustodian.hp,a.ENEMIES.gateCustodian.atk,a.ENEMIES.gateCustodian.def],'远航终局敌人也必须保持固定数值，不能读取玩家基因或装备');
 }
 {
   const s=reset();s.tutorial={version:1,step:'done',complete:true};Object.assign(s.flags,{mapUnlocked:true,exploreUnlocked:true});s.discovered.setGate=true;s.player.location='outer';sandbox.Math.random=()=>0;
@@ -1473,7 +1528,7 @@ pendingTests.push((async()=>{
   s.flags.depthLampBuilt=true;assert.equal(a.npcLocation('阿拓'),'underworks');assert.equal(a.fieldMapMarkers('oldMine').some(marker=>marker.id==='npc:阿拓'),false,'NPC 宣布迁移后，旧区域必须立刻移除头像和历史坐标');assert.equal(Array.from(a.npcsAt('oldMine')).includes('阿拓'),false);
   s.quests.deepLamp='done';a.activateAvailableQuests(false);assert.equal(s.quests.findAtuoUnderworks,'active','NPC 动身后必须出现前往新区域重新寻找他的任务');s.player.location='underworks';s.exploreCount.underworks=12;sandbox.Math.random=()=>0;a.fieldNpcMapped('阿拓','underworks');const need=a.npcDiscoveryNeed('阿拓','underworks');assert.ok(need>=3&&need<=6);assert.equal(a.fieldMapMarkers('underworks').some(marker=>marker.id==='npc:阿拓'),false,'抵达新区域不能因为以前认识 NPC 就自动显示头像');
   a.applyNpcDiscoveries('underworks',12+need-1);assert.equal(s.flags['fieldNpcFound_阿拓_underworks'],undefined,'新区域必须从 NPC 抵达时重新累计随机探索进度');a.applyNpcDiscoveries('underworks',12+need);assert.equal(s.flags['fieldNpcFound_阿拓_underworks'],true);assert.equal(s.flags['storyScene_field-npc-阿拓-underworks'],true,'重新发现 NPC 时必须自动接续该区域剧情');
-  a.syncQuestProgress(false);assert.equal(s.quests.findAtuoUnderworks,'done');assert.equal(s.quests.underworksCache,'active');assert.equal(s.questStart.underworksCache,12,'汇合后的维修任务必须从续接剧情结束时重新计算，不能吃掉之前的探索次数');s.exploreCount.underworks=14;a.syncQuestProgress(false);assert.equal(s.quests.underworksCache,'active','维修步数够但运输轨线索未确认时不能提前完成');s.flags.underworksCacheMapped=true;a.syncQuestProgress(false);assert.equal(s.quests.underworksCache,'done');
+  a.syncQuestProgress(false);assert.equal(s.quests.findAtuoUnderworks,'done');assert.equal(s.quests.underworksCache,'active');s.areaSearch.underworks=2;a.syncQuestProgress(false);assert.equal(s.quests.underworksCache,'active','维修线索齐全但运输轨旗标未确认时不能提前完成');s.flags.underworksCacheMapped=true;a.syncQuestProgress(false);assert.equal(s.quests.underworksCache,'done');
   const npcMarker=a.fieldMapMarkers('underworks').find(marker=>marker.id==='npc:阿拓');assert.ok(npcMarker&&npcMarker.kind==='npc');const npcMap=new FakeElement(),npcNodes=[];a.renderFieldExpedition(npcMap,'underworks');(function walk(node){npcNodes.push(node);(node.children||[]).forEach(walk);})(npcMap);const npcButton=npcNodes.find(node=>String(node.className).includes('marker-npc'));assert.ok(npcButton&&/npc-portraits-v1\/a-tuo\.png/.test(npcButton.innerHTML),'重新发现后，新区域地图必须显示对应 NPC 头像');a.resetStoryScenes();
 }
 

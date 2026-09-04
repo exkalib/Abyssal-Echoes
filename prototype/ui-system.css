@@ -1258,6 +1258,14 @@ textarea:focus-visible,
   box-shadow:inset 2px 0 var(--ui-energy),inset 0 1px var(--ui-specular)!important;
 }
 
+/* Defense facilities use the same picker/detail grammar as every production
+   station; the hostile red tone distinguishes perimeter hardware, not layout. */
+.defense-workbench { --ui-tone:var(--ui-danger); --station-tone:var(--ui-danger); }
+.defense-product-art .ui-icon,
+.defense-result .ui-icon { width:62%; height:62%; color:var(--ui-danger); filter:drop-shadow(0 0 7px color-mix(in srgb,var(--ui-danger) 38%,transparent)); }
+.defense-product.selected { border-color:var(--ui-danger)!important; box-shadow:inset 2px 0 var(--ui-danger),inset 0 1px var(--ui-specular)!important; }
+.defense-stat-profile .ui-stat-chip .ui-icon { width:13px; height:13px; vertical-align:-2px; color:var(--ui-danger); }
+
 .cf-icon,
 .bc-icon,
 .station-product-art,
