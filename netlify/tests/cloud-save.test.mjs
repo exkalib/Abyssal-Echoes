@@ -104,6 +104,14 @@ function fixture() {
   return service;
 }
 
+test("new equipment identifiers survive manual cloud storage without migration loss", async () => {
+  const service = fixture(), save = sampleSave();
+  save.inv.module_general_5 = 2;save.inv.feet_specialist_5 = 1;
+  save.player.equip = { module: "module_specialist_5", feet: "feet_general_4" };
+  const created = await service.create(save), restored = (await service.load(created.code)).save;
+  assert.deepEqual(restored, save);
+});
+
 test("creates, loads, updates, and rejects stale revisions", async () => {
   const service = fixture();
   const created = await service.create(sampleSave());
@@ -216,7 +224,12 @@ test("blob writes enforce a 30 second cooldown without extra storage records", a
   assert.equal(blobs.entries.size, 1);
 });
 
-test("cloud endpoint allows only the 59 web origin and keeps the platform limiter", async () => {
+test("cloud endpoint keeps local previews restricted and retains the platform limiter", async () => {
+  for(const origin of ['null','http://localhost:4173','http://127.0.0.1:4173','http://[::1]:4173']){
+    const response=await cloudSaveHandler(new Request('https://example.test/api/cloud-save',{method:'OPTIONS',headers:{Origin:origin}}));
+    assert.equal(response.status,403);
+    assert.equal(response.headers.get('access-control-allow-origin'),null);
+  }
   const allowed = await cloudSaveHandler(new Request("https://example.test/api/cloud-save", {
     method: "OPTIONS",
     headers: { Origin: "http://59.110.144.30:9091" },

@@ -6,7 +6,7 @@ def generatedWebAssets = layout.buildDirectory.dir("generated/webAssets")
 
 tasks.register("syncBundledWeb", Sync) {
     from("../../prototype") {
-        include "index.html", "style.css", "ui-system.css", "story-scenes.css", "game.js", "assets/**"
+        include "index.html", "style.css", "ui-system.css", "story-scenes.css", "wardrobe.js", "game.js", "assets/**"
     }
     into(generatedWebAssets.map { it.dir("web") })
 }
@@ -19,11 +19,11 @@ android {
         applicationId "com.exkalib.abyssalecho"
         minSdk 26
         targetSdk 36
-        versionCode 16
-        versionName "0.7.7"
+        versionCode 17
+        versionName "0.7.11"
 
         buildConfigField "int", "SHELL_VERSION", "11"
-        buildConfigField "long", "BUNDLED_BUILD", "1788519667L"
+        buildConfigField "long", "BUNDLED_BUILD", "1788600239L"
         buildConfigField "String", "UPDATE_BASE_URL", '"https://github.com/exkalib/Abyssal-Echoes/releases/latest/download/"'
         buildConfigField "String", "CLOUD_SAVE_URL", '"https://abyssal-echoes-ark.netlify.app/api/cloud-save"'
         buildConfigField "String", "UPDATE_PUBLIC_KEY", '"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEV38qnk5xngW+U/kAezd6ubgNUn+y1eMAwlAgHTtsFQO/ffqaXYdxwa7c2Af7sDoiXicjyPH5E7SJtB/E9R0usA=="'

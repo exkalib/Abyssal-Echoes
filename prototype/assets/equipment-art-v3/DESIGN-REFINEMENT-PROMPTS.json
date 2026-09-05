@@ -1,0 +1,70 @@
+[
+  {
+    "id": "body_general_1",
+    "prompt": "Generate on a genuinely transparent background. Premium realistic painted dark science-fiction RPG equipment, upright straight frontal orthographic worn view. A LIGHT survival vest of charcoal woven canvas and brown leather, five small iron reinforcement plates sewn onto chest and sides, practical square supply pockets, thin shoulder straps and a plain utility waist belt. No large pauldrons, no solid power-armor chest, no reactor. Only the described torso garment from open collar to waist, centered with 10% clear transparent margin. Soft neutral frontal light, restrained edge reflections, detailed believable materials. No person, skin, mannequin, full outfit, other equipment, checkerboard, painted background, shadow, words, labels, UI framing, logo or excessive bloom. The silhouette must visibly communicate its lightweight generalist or precision specialist function.",
+    "references": []
+  },
+  {
+    "id": "body_general_2",
+    "prompt": "Generate on a genuinely transparent background. Premium realistic painted dark science-fiction RPG equipment, upright straight frontal orthographic worn view. A NAVAL RECON vest: fitted graphite fabric jacket core, two slim off-white chest panels arranged asymmetrically, one ochre shoulder cap, compact radio pocket on the opposite side, layered soft abdominal utility straps. Keep it light and distinctly different from a heavy exoskeleton. Only the described torso garment from open collar to waist, centered with 10% clear transparent margin. Soft neutral frontal light, restrained edge reflections, detailed believable materials. No person, skin, mannequin, full outfit, other equipment, checkerboard, painted background, shadow, words, labels, UI framing, logo or excessive bloom. The silhouette must visibly communicate its lightweight generalist or precision specialist function.",
+    "references": []
+  },
+  {
+    "id": "body_general_3",
+    "prompt": "Generate on a genuinely transparent background. Premium realistic painted dark science-fiction RPG equipment, upright straight frontal orthographic worn view. A FIELD EXPEDITION cuirass: slim black flexible carbon torso, three flowing titanium U-shaped load ribs around the sides, four small cyan field pucks near collar and waist, exposed dark fabric across the center chest. Tiny close-fitting shoulder caps; no thick central polygonal plate. Only the described torso garment from open collar to waist, centered with 10% clear transparent margin. Soft neutral frontal light, restrained edge reflections, detailed believable materials. No person, skin, mannequin, full outfit, other equipment, checkerboard, painted background, shadow, words, labels, UI framing, logo or excessive bloom. The silhouette must visibly communicate its lightweight generalist or precision specialist function.",
+    "references": []
+  },
+  {
+    "id": "body_general_4",
+    "prompt": "Generate on a genuinely transparent background. Premium realistic painted dark science-fiction RPG equipment, upright straight frontal orthographic worn view. A QUANTUM exploration cuirass: an elegant narrow ivory diamond-scale chest mosaic split by a recessed dark vertical spine, small violet telemetry squares embedded at intersections, thin articulated abdomen scales, subtle overlapping ivory shoulder tabs, fine black flexible sidewalls. Only the described torso garment from open collar to waist, centered with 10% clear transparent margin. Soft neutral frontal light, restrained edge reflections, detailed believable materials. No person, skin, mannequin, full outfit, other equipment, checkerboard, painted background, shadow, words, labels, UI framing, logo or excessive bloom. The silhouette must visibly communicate its lightweight generalist or precision specialist function.",
+    "references": []
+  },
+  {
+    "id": "body_general_5",
+    "prompt": "Generate on a genuinely transparent background. Premium realistic painted dark science-fiction RPG equipment, upright straight frontal orthographic worn view. An INTERSTELLAR survey cuirass: smooth pearlescent biomimetic overlapping crescent chest plates around a small cyan triangular sensor, black flexible lower torso with flowing silver support tendons, small warm gold joins and clean thin shell shoulder collars. Refined light protective form, no yellow industrial hazard plates or massive power-armor silhouette. Only the described torso garment from open collar to waist, centered with 10% clear transparent margin. Soft neutral frontal light, restrained edge reflections, detailed believable materials. No person, skin, mannequin, full outfit, other equipment, checkerboard, painted background, shadow, words, labels, UI framing, logo or excessive bloom. The silhouette must visibly communicate its lightweight generalist or precision specialist function.",
+    "references": []
+  },
+  {
+    "id": "head_specialist_4",
+    "prompt": "Generate on a genuinely transparent background. Premium realistic painted dark science-fiction RPG equipment, upright straight frontal orthographic worn view. A wearable QUANTUM SNIPER targeting headset: one narrow swept ivory brow band, a single detailed violet optical monocle over the wearer's right eye, a projecting telescopic calibration sensor at left temple, slim black cheek contact. Open top, no helmet crown or circular face frame. Precision long-range optics dominate. Only the described wearable equipment, centered with 10% clear transparent margin. Soft neutral frontal light, restrained edge reflections, detailed believable materials. No person, skin, mannequin, full outfit, other equipment, checkerboard, painted background, shadow, words, labels, UI framing, logo or excessive bloom. The silhouette must visibly communicate its lightweight generalist or precision specialist function.",
+    "references": []
+  },
+  {
+    "id": "head_specialist_5",
+    "prompt": "Generate on a genuinely transparent background. Premium realistic painted dark science-fiction RPG equipment, upright straight frontal orthographic worn view. An INTERSTELLAR MARKSMAN targeting crown: three compact linked telescopic sensor barrels above the brow, a thin asymmetrical gold/silver temple rail with one suspended cyan prismatic targeting lens over the right eye, dark titanium ear contacts. No ring around the face, no heavy helmet crown; asymmetrical specialist optical instrument. Only the described wearable equipment, centered with 10% clear transparent margin. Soft neutral frontal light, restrained edge reflections, detailed believable materials. No person, skin, mannequin, full outfit, other equipment, checkerboard, painted background, shadow, words, labels, UI framing, logo or excessive bloom. The silhouette must visibly communicate its lightweight generalist or precision specialist function.",
+    "references": []
+  },
+  {
+    "id": "hands_specialist_5",
+    "prompt": "Generate on a genuinely transparent background. Premium realistic painted dark science-fiction RPG equipment, upright straight frontal orthographic worn view. A PAIR of long INTERSTELLAR BREACHING GAUNTLETS: armored five-finger gloves integrated with thick forearm bracers extending toward the elbow. Distinct raised piston knuckles, heavy ivory rib plates, compact gold linear actuators and cyan impact nodes. Symmetrical front view, backs of hands visible, fingers down and thumbs inward, clear empty vertical midline gap; no arms or skin. Only the described wearable equipment, centered with 10% clear transparent margin. Soft neutral frontal light, restrained edge reflections, detailed believable materials. No person, skin, mannequin, full outfit, other equipment, checkerboard, painted background, shadow, words, labels, UI framing, logo or excessive bloom. The silhouette must visibly communicate its lightweight generalist or precision specialist function.",
+    "references": []
+  },
+  {
+    "id": "blade_general_2",
+    "prompt": "Generate on a genuinely transparent background. Rebuild the exact sci-fi saber design from the reference into ONE SINGLE CONNECTED wearable weapon assembly: the blade is latched DIRECTLY INSIDE an open skeletal sheath with its exposed cutting edge visible. Its mounting clip TOUCHES the sheath. One hilt, one blade, one attached sheath only. No detached scabbard, no second object standing beside the sword, no exploded view or display arrangement. Perfectly upright vertical front-facing left-hip carry view, full grip at top and point down. Preserve distinct reference materials and colors. Realistic painted sci-fi equipment with neutral light, portrait canvas, clear 10% empty margin. No person, hands, belt, floor, background, checkerboard, cast shadow, labels or text.",
+    "references": [
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/equipment-art-v3/blade_general_2.webp"
+    ]
+  },
+  {
+    "id": "blade_general_3",
+    "prompt": "Generate on a genuinely transparent background. Rebuild the exact sci-fi saber design from the reference into ONE SINGLE CONNECTED wearable weapon assembly: the blade is latched DIRECTLY INSIDE an open skeletal sheath with its exposed cutting edge visible. Its mounting clip TOUCHES the sheath. One hilt, one blade, one attached sheath only. No detached scabbard, no second object standing beside the sword, no exploded view or display arrangement. Perfectly upright vertical front-facing left-hip carry view, full grip at top and point down. Preserve distinct reference materials and colors. Realistic painted sci-fi equipment with neutral light, portrait canvas, clear 10% empty margin. No person, hands, belt, floor, background, checkerboard, cast shadow, labels or text.",
+    "references": [
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/equipment-art-v3/blade_general_3.webp"
+    ]
+  },
+  {
+    "id": "blade_general_4",
+    "prompt": "Generate on a genuinely transparent background. Rebuild the exact sci-fi saber design from the reference into ONE SINGLE CONNECTED wearable weapon assembly: the blade is latched DIRECTLY INSIDE an open skeletal sheath with its exposed cutting edge visible. Its mounting clip TOUCHES the sheath. One hilt, one blade, one attached sheath only. No detached scabbard, no second object standing beside the sword, no exploded view or display arrangement. Perfectly upright vertical front-facing left-hip carry view, full grip at top and point down. Preserve distinct reference materials and colors. Realistic painted sci-fi equipment with neutral light, portrait canvas, clear 10% empty margin. No person, hands, belt, floor, background, checkerboard, cast shadow, labels or text.",
+    "references": [
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/equipment-art-v3/blade_general_4.webp"
+    ]
+  },
+  {
+    "id": "blade_general_5",
+    "prompt": "Generate on a genuinely transparent background. Rebuild the exact sci-fi saber design from the reference into ONE SINGLE CONNECTED wearable weapon assembly: the blade is latched DIRECTLY INSIDE an open skeletal sheath with its exposed cutting edge visible. Its mounting clip TOUCHES the sheath. One hilt, one blade, one attached sheath only. No detached scabbard, no second object standing beside the sword, no exploded view or display arrangement. Perfectly upright vertical front-facing left-hip carry view, full grip at top and point down. Preserve distinct reference materials and colors. Realistic painted sci-fi equipment with neutral light, portrait canvas, clear 10% empty margin. No person, hands, belt, floor, background, checkerboard, cast shadow, labels or text.",
+    "references": [
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/equipment-art-v3/blade_general_5.webp"
+    ]
+  }
+]

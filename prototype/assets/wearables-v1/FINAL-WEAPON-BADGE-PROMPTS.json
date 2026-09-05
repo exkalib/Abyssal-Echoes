@@ -1,0 +1,71 @@
+[
+  {
+    "id": "pistol",
+    "prompt": "Generate on a genuinely transparent background. Use case: stylized-concept. A physical wearable weapon layer for the reference front-facing standing RPG person. Reference 1 establishes the EXACT distinct weapon design, materials, energy colors and attachments; preserve those. Reference 2 establishes pose and realistic scale ONLY; NEVER render a human. Show one complete compact rail pistol in an open left-hip holster, muzzle straight down, grip projecting slightly toward viewer left, visible mounting clip on viewer right. Preserve its rectangular silver metal shell and orange firing chambers. Portrait canvas with 8 percent fully transparent margin on all edges. Realistic painted metal, controlled frontal lighting, strong material texture matching reference. No hands, arms, people, scenery, solid background, checkerboard pixels, UI frame, text, labels, logos, floating ammunition, bloom outside object or cast shadow. True alpha outside weapon and sling.",
+    "references": [
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/item-art-v1/pistol.webp",
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/base-male.webp"
+    ]
+  },
+  {
+    "id": "rifle",
+    "prompt": "Generate on a genuinely transparent background. Use case: stylized-concept. A physical wearable weapon layer for the reference front-facing standing RPG person. Reference 1 establishes the EXACT distinct weapon design, materials, energy colors and attachments; preserve those. Reference 2 establishes pose and realistic scale ONLY; NEVER render a human. Show one complete science-fiction rifle hanging almost vertically muzzle down in a compact sling, viewed from a front-facing wearer's front. Full side profile of the firearm remains readable; straight upright orientation, no dramatic diagonal rotation. Sling attaches closely to upper stock and receiver, not a huge empty loop.  Portrait canvas with 8 percent fully transparent margin on all edges. Realistic painted metal, controlled frontal lighting, strong material texture matching reference. No hands, arms, people, scenery, solid background, checkerboard pixels, UI frame, text, labels, logos, floating ammunition, bloom outside object or cast shadow. True alpha outside weapon and sling.",
+    "references": [
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/item-art-v1/rifle.webp",
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/base-male.webp"
+    ]
+  },
+  {
+    "id": "plasmaRifle",
+    "prompt": "Generate on a genuinely transparent background. Use case: stylized-concept. A physical wearable weapon layer for the reference front-facing standing RPG person. Reference 1 establishes the EXACT distinct weapon design, materials, energy colors and attachments; preserve those. Reference 2 establishes pose and realistic scale ONLY; NEVER render a human. Show one complete science-fiction rifle hanging almost vertically muzzle down in a compact sling, viewed from a front-facing wearer's front. Full side profile of the firearm remains readable; straight upright orientation, no dramatic diagonal rotation. Sling attaches closely to upper stock and receiver, not a huge empty loop.  Portrait canvas with 8 percent fully transparent margin on all edges. Realistic painted metal, controlled frontal lighting, strong material texture matching reference. No hands, arms, people, scenery, solid background, checkerboard pixels, UI frame, text, labels, logos, floating ammunition, bloom outside object or cast shadow. True alpha outside weapon and sling.",
+    "references": [
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/item-art-v1/plasmaRifle.webp",
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/base-male.webp"
+    ]
+  },
+  {
+    "id": "gravLance",
+    "prompt": "Generate on a genuinely transparent background. Use case: stylized-concept. A physical wearable weapon layer for the reference front-facing standing RPG person. Reference 1 establishes the EXACT distinct weapon design, materials, energy colors and attachments; preserve those. Reference 2 establishes pose and realistic scale ONLY; NEVER render a human. Show one complete long inertial energy lance hanging almost vertically muzzle down in a compact sling, viewed from a front-facing wearer's front. Full side profile of the firearm remains readable; straight upright orientation, no dramatic diagonal rotation. Sling attaches closely to upper stock and receiver, not a huge empty loop. Preserve the long dark shaft, circular gravity focusing ring and blue pointed emitter. Portrait canvas with 8 percent fully transparent margin on all edges. Realistic painted metal, controlled frontal lighting, strong material texture matching reference. No hands, arms, people, scenery, solid background, checkerboard pixels, UI frame, text, labels, logos, floating ammunition, bloom outside object or cast shadow. True alpha outside weapon and sling.",
+    "references": [
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/item-art-v1/gravLance.webp",
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/base-male.webp"
+    ]
+  },
+  {
+    "id": "swarmRifle",
+    "prompt": "Generate on a genuinely transparent background. Use case: stylized-concept. A physical wearable weapon layer for the reference front-facing standing RPG person. Reference 1 establishes the EXACT distinct weapon design, materials, energy colors and attachments; preserve those. Reference 2 establishes pose and realistic scale ONLY; NEVER render a human. Show one complete science-fiction rifle hanging almost vertically muzzle down in a compact sling, viewed from a front-facing wearer's front. Full side profile of the firearm remains readable; straight upright orientation, no dramatic diagonal rotation. Sling attaches closely to upper stock and receiver, not a huge empty loop.  Portrait canvas with 8 percent fully transparent margin on all edges. Realistic painted metal, controlled frontal lighting, strong material texture matching reference. No hands, arms, people, scenery, solid background, checkerboard pixels, UI frame, text, labels, logos, floating ammunition, bloom outside object or cast shadow. True alpha outside weapon and sling.",
+    "references": [
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/item-art-v1/swarmRifle.webp",
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/base-male.webp"
+    ]
+  },
+  {
+    "id": "vacuumCarbine",
+    "prompt": "Generate on a genuinely transparent background. Use case: stylized-concept. A physical wearable weapon layer for the reference front-facing standing RPG person. Reference 1 establishes the EXACT distinct weapon design, materials, energy colors and attachments; preserve those. Reference 2 establishes pose and realistic scale ONLY; NEVER render a human. Show one complete science-fiction rifle hanging almost vertically muzzle down in a compact sling, viewed from a front-facing wearer's front. Full side profile of the firearm remains readable; straight upright orientation, no dramatic diagonal rotation. Sling attaches closely to upper stock and receiver, not a huge empty loop.  Portrait canvas with 8 percent fully transparent margin on all edges. Realistic painted metal, controlled frontal lighting, strong material texture matching reference. No hands, arms, people, scenery, solid background, checkerboard pixels, UI frame, text, labels, logos, floating ammunition, bloom outside object or cast shadow. True alpha outside weapon and sling.",
+    "references": [
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/item-art-v1/vacuumCarbine.webp",
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/base-male.webp"
+    ]
+  },
+  {
+    "id": "life-salvager",
+    "prompt": "Generate on a genuinely transparent background. Use case: stylized-concept. One tiny physically manufactured science-fiction vocational insignia that clips onto a character's utility belt. Subject: a small triangular worn steel salvage badge: a real three-pronged mechanical gripper holding a tiny copper salvage shard, dark bolted backing with amber sensor. Straight frontal view, compact realistic wearable object, high-detail metal and enamel, restrained teal/amber highlights, readable silhouette. A professional badge not a UI icon or decorative flat logo. Square composition with 10% clear empty margin. Attached reference establishes realistic equipment materials and lighting only; do not copy its armor shape. No human, outfit, belt, extra symbols, text, labels, checkerboard, backdrop, ground or shadow. Actual transparent alpha outside the object.",
+    "references": [
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/power.webp"
+    ]
+  },
+  {
+    "id": "life-fabricator",
+    "prompt": "Generate on a genuinely transparent background. Use case: stylized-concept. One tiny physically manufactured science-fiction vocational insignia that clips onto a character's utility belt. Subject: a small hexagonal fabrication badge: two short precision manipulator tongs meeting a miniature white-hot build nozzle, dark steel and ochre enamel backing. Straight frontal view, compact realistic wearable object, high-detail metal and enamel, restrained teal/amber highlights, readable silhouette. A professional badge not a UI icon or decorative flat logo. Square composition with 10% clear empty margin. Attached reference establishes realistic equipment materials and lighting only; do not copy its armor shape. No human, outfit, belt, extra symbols, text, labels, checkerboard, backdrop, ground or shadow. Actual transparent alpha outside the object.",
+    "references": [
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/power.webp"
+    ]
+  },
+  {
+    "id": "life-biologist",
+    "prompt": "Generate on a genuinely transparent background. Use case: stylized-concept. One tiny physically manufactured science-fiction vocational insignia that clips onto a character's utility belt. Subject: a small rounded capsule-shaped cultivation badge: a green bioluminescent seed suspended inside a sealed transparent vial with tiny leaf-shaped microfluidic channels and dark titanium mounting tabs. Straight frontal view, compact realistic wearable object, high-detail metal and enamel, restrained teal/amber highlights, readable silhouette. A professional badge not a UI icon or decorative flat logo. Square composition with 10% clear empty margin. Attached reference establishes realistic equipment materials and lighting only; do not copy its armor shape. No human, outfit, belt, extra symbols, text, labels, checkerboard, backdrop, ground or shadow. Actual transparent alpha outside the object.",
+    "references": [
+      "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/power.webp"
+    ]
+  }
+]

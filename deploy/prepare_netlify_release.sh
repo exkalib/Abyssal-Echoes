@@ -23,14 +23,15 @@ payload_dir="$work_dir/payload"
 mkdir -p "$payload_dir/assets" "$output_dir"
 
 cp "$root_dir/prototype/index.html" "$root_dir/prototype/style.css" \
-  "$root_dir/prototype/ui-system.css" "$root_dir/prototype/game.js" "$payload_dir/"
+  "$root_dir/prototype/ui-system.css" "$root_dir/prototype/story-scenes.css" \
+  "$root_dir/prototype/wardrobe.js" "$root_dir/prototype/game.js" "$payload_dir/"
 cp -R "$root_dir/prototype/assets/." "$payload_dir/assets/"
 find "$payload_dir/assets" -type f \( \
   -name '*-contact.png' -o -name '*-contact-final.png' -o -name '*-contact.jpg' \
 \) -delete
 
 bundle="bundle.zip"
-(cd "$payload_dir" && zip -q -9 -r "$work_dir/$bundle" index.html style.css ui-system.css game.js assets)
+(cd "$payload_dir" && zip -q -9 -r "$work_dir/$bundle" index.html style.css ui-system.css story-scenes.css wardrobe.js game.js assets)
 sha256="$(shasum -a 256 "$work_dir/$bundle" | awk '{print $1}')"
 size="$(wc -c < "$work_dir/$bundle" | tr -d ' ')"
 apk_url="${ABYSS_APK_URL:-https://github.com/exkalib/Abyssal-Echoes/releases/latest/download/Abyssal-Echoes.apk}"

@@ -1,0 +1,206 @@
+{
+  "tool": "built-in imagegen",
+  "policy": "Direct alpha only. No local background removal. Runtime part visibility and alignment do not alter source images. RGB checkerboard uniform-bulwark originals were rejected; use their retry sources.",
+  "records": [
+    {
+      "id": "power",
+      "prompt": "Generate on a genuinely transparent background. Wearable armor layer for a front-facing standing RPG character: the reference industrial power armor redesigned as a rigid front torso cuirass with compact shoulder pauldrons, high open collar, articulated abdomen and waist belt. Worn orthographic frontal view, perfectly upright and symmetrical. Dark gunmetal plates, ochre yellow industrial trim, cyan power nodes, worn steel and hydraulic ribs. End cleanly at waist and shoulder sockets. Torso armor ONLY, no arms, legs, hands, head, skin, mannequin or scenery. Fit a human torso, not a broad decorative emblem. Realistic painted sci-fi equipment, neutral frontal light, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-751237dd-df85-409b-bc0e-1d4c80388899.png"
+    },
+    {
+      "id": "warden",
+      "prompt": "Generate on a genuinely transparent background. Wearable torso armor layer, perfectly straight frontal worn view: the reference guardian core armor with white ceramic plates, dark blue steel ribs, a bright cyan circular reactor embedded centrally in the chest, compact shoulder pauldrons and articulated abdomen ending at waist belt. Solid real armor built to fit a standing human torso, not a floating orb. Balanced symmetrical proportions. No head, arms, hands, legs, skin or mannequin, no ground or scenery. Realistic painted sci-fi RPG equipment, neutral frontal lighting, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-fa334699-e548-4448-bf80-573ddef273bc.png"
+    },
+    {
+      "id": "nanoSuit",
+      "prompt": "Generate on a genuinely transparent background. Wearable torso armor layer from the reference nano regeneration suit: straight frontal worn view of a fitted white and dark gray segmented cuirass, rusty orange shoulder caps, subtle cyan repair-cell lights, flexible gray side ribs and segmented waist armor. Compact human torso proportions, upright and symmetrical. Ends at shoulder sockets and waist, no arms, legs, hands, head, skin or mannequin. Only armor, no floor, shadow or backdrop. Detailed realistic sci-fi painted RPG equipment. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-701f2658-54e4-4a4b-8c0f-d8997398d408.png"
+    },
+    {
+      "id": "starShell",
+      "prompt": "Generate on a genuinely transparent background. Front-facing wearable torso armor for a standing RPG astronaut, based on reference interstellar expedition suit. White ceramic plates over black flexible ribbing, warm gold collar ring, compact shoulder pauldrons, cyan status lights and sealed waist. Collar open without helmet, articulated chest and abdomen only. Orthographic straight frontal worn perspective and neutral light. Armor ends at shoulder sockets and hips. No arms, legs, hands, head, skin, mannequin or scenery. Distinct realistic sci-fi painted armor, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-6243246a-5911-42b2-852d-5e359a35f696.png"
+    },
+    {
+      "id": "exoShell",
+      "prompt": "Generate on a genuinely transparent background. Wearable torso layer of the reference adaptive landing exoshell. Straight frontal orthographic worn view, symmetrical dark titanium frame with white ceramic cuirass, orange adaptive side fins running from shoulder to waist, small cyan biocircuit nodes. Slim articulated abdomen, compact shoulder joints and waist belt. Ends at shoulder sockets and hips. No arms, legs, hands, head, skin, mannequin, floor or scenery. Detailed realistic sci-fi RPG armor, neutral frontal lighting, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5db9edd6-655e-44ec-ad5c-87010ec9b4b9.png"
+    },
+    {
+      "id": "quantumVisor",
+      "prompt": "Generate on a genuinely transparent background. Transparent wearable eye visor layer for a sci-fi RPG character. The reference quantum prediction visor seen perfectly straight from the front AS WORN over the eyes. Low compact wraparound dark glass visor, visible blue orbital prediction reticles inside the glass, narrow white titanium upper rim and orange temple fasteners. No tall upper head strap. Only eye-level goggles with small side temples, no head, face, person, scenery or shadow. Realistic painted futuristic equipment, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-2d8c3f78-464a-4c16-83c5-a32626c327fa.png"
+    },
+    {
+      "id": "servoGauntlet",
+      "prompt": "Generate on a genuinely transparent background. A mirrored left and right pair of wearable mechanical gauntlets from the reference, shown as worn on relaxed hands hanging straight DOWN beside a standing character thighs. Fingers point down, thumbs towards the center gap, back of each hand faces camera. Gunmetal plated fingers and knuckles, long forearm armor with brass hydraulic pistons and cyan wrist indicator. Front orthographic view, symmetrical hanging pose, not diagonal inventory perspective. Only two gauntlets, no skin, body or mannequin, no floor or shadow. Realistic sci-fi painted equipment. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-e3b77765-3091-4156-ba1c-fb974e493fca.png"
+    },
+    {
+      "id": "nanoWeaveGloves",
+      "prompt": "Generate on a genuinely transparent background. A mirrored left and right pair of wearable nanoweave gloves from the reference, as worn on relaxed hands hanging straight DOWN at the sides of a standing character, fingers downward and thumbs towards center. Back of each hand faces camera; five slightly curled fingers, no fist or spread hand. Tight matte black woven armor, subtle emerald circuit veins across knuckles, pale titanium fingertips, long black cuff. Straight frontal orthographic view. Only gloves, no skin, arms, body or scenery. Realistic sci-fi painted equipment, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5b96663b-fe28-4322-b1cc-599ed9006956.png"
+    },
+    {
+      "id": "phaseGrip",
+      "prompt": "Generate on a genuinely transparent background. A left and right matched pair of wearable phase containment wrist bracers from the reference. Front-facing worn perspective on vertical forearms pointing downward, two short cylindrical cuff assemblies side by side. Dark angular titanium arc frames, violet crystal emitters, thin purple inner field ring. Compact hard wrist cuffs only, NOT gloves, no hands or skin. Top and bottom openings are hollow and truly transparent. Front view should show the curved outward shell, not two face-on donuts. Detailed realistic sci-fi equipment. No body, mannequin, scenery or shadow. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5602546e-60fb-458d-aa1a-1d9d2053c955.png"
+    },
+    {
+      "id": "eshieldUnit",
+      "prompt": "Generate on a genuinely transparent background. Wearable sci-fi arm shield, upright front-facing worn perspective. Turn the reference ship force-field generator into a compact circular forearm shield: dark titanium ring rim, copper clamps, a luminous cyan hexagonal energy shield stretched WITHIN the ring, small mechanical arm attachment hidden behind it. This is a physical shield worn on a lowered left forearm, not a desktop generator. Shield face aimed towards camera, neutral idle posture. Only shield, no arm, hand, body, floor or scenery. Realistic painted sci-fi equipment, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-293e3139-cbec-4c3d-85d0-561de97a6eb4.png"
+    },
+    {
+      "id": "phaseShield",
+      "prompt": "Generate on a genuinely transparent background. Wearable phase deflection shield for a front-facing RPG character, upright portrait orientation, front worn view. A slim angular kite-shaped titanium shield skeleton, cyan-blue hexagonal energy field bounded inside its metal rails, small central phase emitter derived from reference, thin violet edge calibration seams. A real arm-mounted shield, NOT a floating dome or tripod generator. Shield alone, no arm, hand, person, floor or scenery. Detailed realistic sci-fi equipment. Preserve actual transparent background outside the shield.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-a3387419-b8a6-436c-96ca-b5343e0ca33e.png"
+    },
+    {
+      "id": "citadelShield",
+      "prompt": "Generate on a genuinely transparent background. Wearable layer of the reference citadel heavy shield. Tall upright angular tower shield in front-facing worn view, slightly turned inward as mounted on a lowered left forearm. Black starship alloy center plates, bone-white armored perimeter, gold joints, cyan power conduits and circular central reactor. A substantial shoulder-to-knee defensive shield, not an emblem. Only shield, no arm, hand, body, ground, scenery or shadow. Detailed realistic painted sci-fi RPG equipment, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-589e312c-55b0-46e5-a204-6b2bef7dd875.png"
+    },
+    {
+      "id": "phaseGreaves",
+      "prompt": "Generate on a genuinely transparent background. A mirrored left and right pair of wearable phase leg guards based on the reference. Straight frontal worn perspective on standing legs separated shoulder-width apart, thighs vertical with a slight outward stance. Slim black articulated thigh plates, violet circular phase anchors at outer hips, purple kneecap shells, dark tapered shin armor with subtle violet seams. Only paired leg armor from upper thighs to ankles, no boots, feet, skin, body or mannequin. No floor or scenery. Realistic sci-fi painted RPG equipment, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-8df65e34-2822-4cb4-82a3-be575ac30f00.png"
+    },
+    {
+      "id": "miningHarness",
+      "prompt": "Generate on a genuinely transparent background. Paired lower-body mining exoskeleton wearable layer for an upright standing character. Translate the reference yellow industrial exoskeleton into TWO LEG SUPPORTS: ochre steel outer thigh rails with hydraulic actuators, metal kneecap hinges and parallel shin struts, black straps wrapping around each thigh and calf. Straight frontal worn view, left and right legs separated shoulder-width, slight outward stance. Upper thigh to ankle only. No torso, arms, hands, feet, boots, human skin or mannequin. Hardworking scratched industrial sci-fi painted equipment. No floor or scenery. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-89ac8bf7-584f-40fc-8382-cb590db487ac.png"
+    },
+    {
+      "id": "capacitorPack",
+      "prompt": "Generate on a genuinely transparent background. Wearable sci-fi capacitor backpack REAR LAYER for a front-facing standing character. Show the harness-facing INNER face of a broad symmetrical backpack, which will sit BEHIND the character torso. Two tall cyan capacitor canisters at far left and right of a flat black central backplate, copper top clamps, black corrugated hoses arching slightly above shoulders, no loose straps. Canisters visibly protrude beyond both sides of the central backplate. Keep upright, flat frontal projection, no diagonal product perspective. Only backpack, no body, person, floor, scene or shadow. Realistic painted worn sci-fi equipment based on reference. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-e3a4c7a8-1c40-48bd-84da-a27346d33a3c.png"
+    },
+    {
+      "id": "gravRig",
+      "prompt": "Generate on a genuinely transparent background. Wearable gravity work backpack REAR LAYER for a front-facing standing RPG character. Show the inner harness-facing side of the reference work rig, to sit BEHIND a character torso. Black central spine mounting plate, two substantial white and orange side pods, cyan circular gravity coils at outer left and right near waist, raised cyan power cells near shoulders. Symmetrical broad silhouette, side pods extend beyond the narrow central plate. Upright straight frontal projection, no dangling straps. No person, skin, floor, scene or shadow. Detailed realistic sci-fi painted equipment, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-e1a0c292-24bc-4142-991c-7336e7917cb1.png"
+    },
+    {
+      "id": "uniform-bulwark-male",
+      "prompt": "Generate on a genuinely transparent background. Edit this exact male character: change ONLY his shirt and trousers into a navy-blue padded shipboard guard uniform: reinforced quilted chest fabric, brass collar tabs, a small shield-shaped chest patch, utility belt and matching dark navy trousers. This is a practical cloth uniform under equipped armor, not a metal armor set. Keep the exact same face, hair, body proportions, standing pose, hand positions, bare hands and plain shoes. Keep exact original framing and character placement on a 2:3 portrait canvas. Arms remain relaxed down at the same angle with the same wrist locations. No weapons or held props, no scenery, no floor or cast shadow. Realistic painted sci-fi RPG character, neutral frontal light. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-a675add8-75e6-4dfa-a8cf-d84739cfa80e.png"
+    },
+    {
+      "id": "uniform-vanguard-male",
+      "prompt": "Generate on a genuinely transparent background. Edit this exact male character: change ONLY his shirt and trousers into a olive-gray pulse ranger field uniform: fitted short tactical jacket, amber-orange seam accents, a small crosshair chest patch, flat radio pocket, utility belt and matching charcoal olive trousers. This is a practical cloth uniform under equipped armor, not a metal armor set. Keep the exact same face, hair, body proportions, standing pose, hand positions, bare hands and plain shoes. Keep exact original framing and character placement on a 2:3 portrait canvas. Arms remain relaxed down at the same angle with the same wrist locations. No weapons or held props, no scenery, no floor or cast shadow. Realistic painted sci-fi RPG character, neutral frontal light. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-b77aa8e5-e346-404f-a170-f09715448720.png"
+    },
+    {
+      "id": "uniform-infiltrator-male",
+      "prompt": "Generate on a genuinely transparent background. Edit this exact male character: change ONLY his shirt and trousers into a charcoal and muted deep-plum rift hunter stealth uniform: close-fitting matte fabric jacket, subtle violet seam piping, a small split-diamond chest patch, low profile belt and slim tactical trousers. No cape, no hood, no floating effects. This is cloth worn under equipped armor. Keep the exact same face, hair, body proportions, standing pose, hand positions, bare hands and plain shoes. Keep exact original framing and character placement on a 2:3 portrait canvas. Arms remain relaxed down at the same angle with the same wrist locations. No weapons or held props, no scenery, no floor or cast shadow. Realistic painted sci-fi RPG character, neutral frontal light. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-8fa7102f-c3e9-4038-9ba2-d9ffb9c7aa81.png"
+    },
+    {
+      "id": "uniform-bulwark-female",
+      "prompt": "Generate on a genuinely transparent background. Edit this exact female character: change ONLY his shirt and trousers into a navy-blue padded shipboard guard uniform: reinforced quilted chest fabric, brass collar tabs, a small shield-shaped chest patch, utility belt and matching dark navy trousers. This is a practical cloth uniform under equipped armor, not a metal armor set. Keep the exact same face, hair, body proportions, standing pose, hand positions, bare hands and plain shoes. Keep exact original framing and character placement on a 2:3 portrait canvas. Arms remain relaxed down at the same angle with the same wrist locations. No weapons or held props, no scenery, no floor or cast shadow. Realistic painted sci-fi RPG character, neutral frontal light. Actual transparent background. Input 1 is the female edit target: preserve her identity, proportions and pose. Input 2 is only a uniform design reference; use the same uniform design fitted to her, never copy the male body.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5461fa4f-8b47-40ff-8583-c4897cc09be4.png"
+    },
+    {
+      "id": "uniform-vanguard-female",
+      "prompt": "Generate on a genuinely transparent background. Edit this exact female character: change ONLY his shirt and trousers into a olive-gray pulse ranger field uniform: fitted short tactical jacket, amber-orange seam accents, a small crosshair chest patch, flat radio pocket, utility belt and matching charcoal olive trousers. This is a practical cloth uniform under equipped armor, not a metal armor set. Keep the exact same face, hair, body proportions, standing pose, hand positions, bare hands and plain shoes. Keep exact original framing and character placement on a 2:3 portrait canvas. Arms remain relaxed down at the same angle with the same wrist locations. No weapons or held props, no scenery, no floor or cast shadow. Realistic painted sci-fi RPG character, neutral frontal light. Actual transparent background. Input 1 is the female edit target: preserve her identity, proportions and pose. Input 2 is only a uniform design reference; use the same uniform design fitted to her, never copy the male body.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-37ae884d-f613-49d5-8429-7526e613dc10.png"
+    },
+    {
+      "id": "uniform-infiltrator-female",
+      "prompt": "Generate on a genuinely transparent background. Edit this exact female character: change ONLY his shirt and trousers into a charcoal and muted deep-plum rift hunter stealth uniform: close-fitting matte fabric jacket, subtle violet seam piping, a small split-diamond chest patch, low profile belt and slim tactical trousers. No cape, no hood, no floating effects. This is cloth worn under equipped armor. Keep the exact same face, hair, body proportions, standing pose, hand positions, bare hands and plain shoes. Keep exact original framing and character placement on a 2:3 portrait canvas. Arms remain relaxed down at the same angle with the same wrist locations. No weapons or held props, no scenery, no floor or cast shadow. Realistic painted sci-fi RPG character, neutral frontal light. Actual transparent background. Input 1 is the female edit target: preserve her identity, proportions and pose. Input 2 is only a uniform design reference; use the same uniform design fitted to her, never copy the male body.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-b279adb9-b75a-465d-85ad-c5898d91f2b9.png"
+    },
+    {
+      "id": "crowbar",
+      "prompt": "Generate on a genuinely transparent background. Wearable equipment layer for a front-facing standing RPG character: a battered red steel crowbar hanging vertically hook-up and fork-down in two dark magnetic tool clamps, with a short belt mounting tab. Keep its red shaft, rope grip and recognisable curved hook visible. Upright straight-on worn side-carry view, not diagonal inventory perspective. Weapon is stowed along the thigh, not held in a hand. Only weapon and its compact mounting hardware, no body, hand, leg, human, floor, shadow or scenery. Detailed realistic worn sci-fi painted equipment, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-822e8355-cca4-4983-ad2a-7d76d3fa09cb.png"
+    },
+    {
+      "id": "knife",
+      "prompt": "Generate on a genuinely transparent background. Wearable equipment layer for a front-facing standing RPG character: the reference black-handled steel survival knife in a slim open-sided black thigh scabbard, grip upward and point downward. Expose the broad flat steel blade face between two retention brackets, guard locked safely into the bracket. Include a small flat belt mounting tab. Upright straight-on worn side-carry view, not diagonal inventory perspective. Weapon is stowed along the thigh, not held in a hand. Only weapon and its compact mounting hardware, no body, hand, leg, human, floor, shadow or scenery. Detailed realistic worn sci-fi painted equipment, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-c543065a-ce0d-45fb-8147-5e66e256b8cc.png"
+    },
+    {
+      "id": "blade",
+      "prompt": "Generate on a genuinely transparent background. Wearable equipment layer for a front-facing standing RPG character: the reference silver alloy blade in a long angular magnetic scabbard, dark grip at TOP, pointed silver blade downward. Cyan central groove, small gold guard, narrow black retention clips along the blade sides and short flat belt mounting tab. Distinct long sword silhouette. Upright straight-on worn side-carry view, not diagonal inventory perspective. Weapon is stowed along the thigh, not held in a hand. Only weapon and its compact mounting hardware, no body, hand, leg, human, floor, shadow or scenery. Detailed realistic worn sci-fi painted equipment, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-eb7d9408-67df-4071-a57b-11400d506887.png"
+    },
+    {
+      "id": "eblade",
+      "prompt": "Generate on a genuinely transparent background. Wearable equipment layer for a front-facing standing RPG character: the reference cyan energy combat blade in an idle magnetic belt cradle, dark cylindrical grip at TOP, cyan blade pointing DOWN. Bright blue round hilt generator, two black retaining rails along the blade edges, short flat belt mounting tab. Keep the luminous blade clearly visible but no aura outside its edges. Upright straight-on worn side-carry view, not diagonal inventory perspective. Weapon is stowed along the thigh, not held in a hand. Only weapon and its compact mounting hardware, no body, hand, leg, human, floor, shadow or scenery. Detailed realistic worn sci-fi painted equipment, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-37ec96cf-5331-4c1e-b4f3-5bc39b9e2eb3.png"
+    },
+    {
+      "id": "sever",
+      "prompt": "Generate on a genuinely transparent background. Wearable equipment layer for a front-facing standing RPG character: the reference heavy red chainblade in an idle thigh-mounted magnetic bracket. Ribbed grip at TOP, broad red toothed blade pointing DOWN, blue circular motor in the hilt, dark edge rail retaining the stationary chain teeth and short belt attachment tab. Distinct heavy industrial silhouette. Upright straight-on worn side-carry view, not diagonal inventory perspective. Weapon is stowed along the thigh, not held in a hand. Only weapon and its compact mounting hardware, no body, hand, leg, human, floor, shadow or scenery. Detailed realistic worn sci-fi painted equipment, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-0f866266-69b2-4479-a1cd-932b3cb25838.png"
+    },
+    {
+      "id": "plasmaSaber",
+      "prompt": "Generate on a genuinely transparent background. Wearable equipment layer for a front-facing standing RPG character: the reference orange plasma saber in an idle magnetic belt cradle. Black grip at TOP, slightly curved broad orange heated blade pointing DOWN, dark steel blade spine, orange hilt power collar, compact black blade retention brackets with a short belt attachment tab. Keep bright orange blade visible without flames or large aura. Upright straight-on worn side-carry view, not diagonal inventory perspective. Weapon is stowed along the thigh, not held in a hand. Only weapon and its compact mounting hardware, no body, hand, leg, human, floor, shadow or scenery. Detailed realistic worn sci-fi painted equipment, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-53ea55a4-81d1-477e-9ff1-6d1288f4e5c9.png"
+    },
+    {
+      "id": "phaseBlade",
+      "prompt": "Generate on a genuinely transparent background. Wearable equipment layer for a front-facing standing RPG character: the reference short violet phase blade in a compact magnetic thigh cradle. Black wrapped grip at TOP, crescent violet energy blade pointing DOWN, angular black blade spine, purple circular hilt emitter, narrow dark retaining rail and short belt attachment tab. Compact curved dagger silhouette. Upright straight-on worn side-carry view, not diagonal inventory perspective. Weapon is stowed along the thigh, not held in a hand. Only weapon and its compact mounting hardware, no body, hand, leg, human, floor, shadow or scenery. Detailed realistic worn sci-fi painted equipment, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-31666700-8339-478e-b9c7-6f2730a9cb22.png"
+    },
+    {
+      "id": "voidBlade",
+      "prompt": "Generate on a genuinely transparent background. Wearable equipment layer for a front-facing standing RPG character: the reference long vacuum warp blade in an idle magnetic belt cradle. Dark cylindrical grip at TOP, long curved black alloy blade pointing DOWN with a bright cyan cutting rim and thin blue void channels, circular blue hilt guard, compact black blade retention bracket and short belt attachment tab. Distinct long curved saber silhouette. Upright straight-on worn side-carry view, not diagonal inventory perspective. Weapon is stowed along the thigh, not held in a hand. Only weapon and its compact mounting hardware, no body, hand, leg, human, floor, shadow or scenery. Detailed realistic worn sci-fi painted equipment, actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-6a034757-bf04-4d58-bf39-4a61056bc579.png"
+    },
+    {
+      "id": "lsChip",
+      "prompt": "Generate on a genuinely transparent background. Wearable sci-fi equipment interface layer: a small blood-red faceted implant crystal seated in a black titanium clavicle interface plate, fine red bio-conductive filaments enclosed within the plate, compact horizontal profile. Straight frontal orthographic worn view, mounted flush to clothing or armor, no dangling cables or large floating effects. This is a small integrated wearable port, not a hand-held inventory object. Detailed realistic painted sci-fi metal and light. Only the interface, no person, body, floor, shadow or scenery. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-fc6de258-6075-4353-b0f1-abc6d8411463.png"
+    },
+    {
+      "id": "neuralFilter",
+      "prompt": "Generate on a genuinely transparent background. Wearable sci-fi equipment interface layer: a small white titanium and dark blue neural filter interface, a blue circular signal node flanked by two curved low-profile arcs, compact horizontal collar-mounted profile. Straight frontal orthographic worn view, mounted flush to clothing or armor, no dangling cables or large floating effects. This is a small integrated wearable port, not a hand-held inventory object. Detailed realistic painted sci-fi metal and light. Only the interface, no person, body, floor, shadow or scenery. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-871ebdf5-513c-48ce-9609-0fb58c088c33.png"
+    },
+    {
+      "id": "neuralMesh",
+      "prompt": "Generate on a genuinely transparent background. Wearable sci-fi equipment interface layer: a small branching silver biocircuit interface plate with violet and cyan neural fibers visibly woven inside its dark translucent shell, a compact branching trident silhouette, collar-mounted. Straight frontal orthographic worn view, mounted flush to clothing or armor, no dangling cables or large floating effects. This is a small integrated wearable port, not a hand-held inventory object. Detailed realistic painted sci-fi metal and light. Only the interface, no person, body, floor, shadow or scenery. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-083a3063-0864-4768-b46c-f0bc1a5a6f3c.png"
+    },
+    {
+      "id": "critCore",
+      "prompt": "Generate on a genuinely transparent background. Wearable sci-fi equipment interface layer: a compact circular target acquisition module with white titanium housing and a red targeting lens containing concentric reticle rings, flat belt-mounted socket. Straight frontal orthographic worn view, mounted flush to clothing or armor, no dangling cables or large floating effects. This is a small integrated wearable port, not a hand-held inventory object. Detailed realistic painted sci-fi metal and light. Only the interface, no person, body, floor, shadow or scenery. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-76a3b6df-8161-4047-959e-9ca99ee782ce.png"
+    },
+    {
+      "id": "dodgeMod",
+      "prompt": "Generate on a genuinely transparent background. Wearable sci-fi equipment interface layer: a compact horizontal phase-stabilizer cylinder in a dark titanium belt socket, glowing blue plasma visible through three small segmented windows, silver locking end rings. Straight frontal orthographic worn view, mounted flush to a belt or armor, no dangling cables or large floating effects. This is a small integrated wearable port, not a hand-held inventory object. Detailed realistic painted sci-fi metal and light. Only the interface, no person, body, floor, shadow or scenery. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-f8d9a047-2846-4c4f-ba0f-364bf2181291.png"
+    },
+    {
+      "id": "penMod",
+      "prompt": "Generate on a genuinely transparent background. Wearable sci-fi equipment interface layer: a compact gunmetal rectangular belt socket with a copper pointed penetrator core enclosed behind protective side rails, amber firing-circuit indicator and small white steel clamp. Straight frontal orthographic worn view, mounted flush to a belt or armor, no dangling cables or large floating effects. This is a small integrated wearable port, not a hand-held inventory object. Detailed realistic painted sci-fi metal and light. Only the interface, no person, body, floor, shadow or scenery. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5293d3bd-9b5c-43df-883f-82889c36ac82.png"
+    },
+    {
+      "id": "echoMemory",
+      "prompt": "Generate on a genuinely transparent background. Wearable sci-fi equipment interface layer: a compact horizontal memory vial in an orange titanium belt socket, violet glass with a tiny warm-gold orbital memory core inside, symmetric gray protective end caps. Straight frontal orthographic worn view, mounted flush to a belt or armor, no dangling cables or large floating effects. This is a small integrated wearable port, not a hand-held inventory object. Detailed realistic painted sci-fi metal and light. Only the interface, no person, body, floor, shadow or scenery. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-641c5bd7-faae-4c9f-9b14-6e7c9f42a164.png"
+    },
+    {
+      "id": "timeLagModule",
+      "prompt": "Generate on a genuinely transparent background. Wearable sci-fi equipment interface layer: a compact circular time-lag belt module with dark titanium rim, offset orbiting metal segments close to its purple luminous core, thin violet concentric timing rings contained within the housing. Straight frontal orthographic worn view, mounted flush to a belt or armor, no dangling cables or large floating effects. This is a small integrated wearable port, not a hand-held inventory object. Detailed realistic painted sci-fi metal and light. Only the interface, no person, body, floor, shadow or scenery. Actual transparent background.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-b030d115-b89f-4ece-89b6-c378fbd556f5.png"
+    },
+    {
+      "id": "uniform-bulwark-male-retry",
+      "prompt": "Generate on a genuinely transparent background. A full-body cutout of this exact man wearing this navy-blue quilted ship guard cloth uniform with brass collar tabs and shield chest patch. Preserve this precise standing pose, hand locations, face, proportions and 2:3 framing. Neutral frontal lighting. Output actual transparent PNG: only the character, no checkerboard pattern, no floor, no scenery or background pixels.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-7d704b62-fd9f-41c1-ac7c-70bd5bbc19c8.png"
+    },
+    {
+      "id": "uniform-bulwark-female-retry",
+      "prompt": "Generate on a genuinely transparent background. A full-body cutout of this exact woman wearing this navy-blue quilted ship guard cloth uniform with brass collar tabs and shield chest patch. Preserve this precise standing pose, hand locations, face, proportions and 2:3 framing. Neutral frontal lighting. Output actual transparent PNG: only the character, no checkerboard pattern, no floor, no scenery or background pixels.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-97df14e7-8409-4960-8bbd-50d3e13bd813.png"
+    }
+  ]
+}

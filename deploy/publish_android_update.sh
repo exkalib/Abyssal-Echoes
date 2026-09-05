@@ -24,15 +24,18 @@ work_dir="$(mktemp -d)"
 trap 'rm -rf "$work_dir"' EXIT
 payload_dir="$work_dir/payload"
 mkdir -p "$payload_dir"
-cp "$root_dir/prototype/index.html" "$root_dir/prototype/style.css" "$root_dir/prototype/ui-system.css" "$root_dir/prototype/story-scenes.css" "$root_dir/prototype/game.js" "$payload_dir/"
-bundle_files=(index.html style.css ui-system.css story-scenes.css game.js)
+cp "$root_dir/prototype/index.html" "$root_dir/prototype/style.css" "$root_dir/prototype/ui-system.css" "$root_dir/prototype/story-scenes.css" "$root_dir/prototype/wardrobe.js" "$root_dir/prototype/game.js" "$payload_dir/"
+bundle_files=(index.html style.css ui-system.css story-scenes.css wardrobe.js game.js)
 if [[ "$bundle_mode" == "full" ]]; then
   cp -R "$root_dir/prototype/assets" "$payload_dir/assets"
   bundle_files+=(assets)
 else
-  # 精简热更新也要携带本版本新增的科技台图；旧 APK 的内置资源中没有它。
+  # 精简热更新仍须携带旧 APK 不具备的新增资源目录。
   mkdir -p "$payload_dir/assets/building-art-v1"
   cp "$root_dir/prototype/assets/building-art-v1/research.png" "$payload_dir/assets/building-art-v1/"
+  for art_dir in garden-crops-v1 item-art-v2 equipment-art-v3 wearables-v1; do
+    cp -R "$root_dir/prototype/assets/$art_dir" "$payload_dir/assets/$art_dir"
+  done
   bundle_files+=(assets)
 fi
 
@@ -74,11 +77,14 @@ if [[ "$bundle_mode" == "full" ]]; then
 else
   ssh "$remote_host" "mkdir -p '$web_dir/assets/building-art-v1'"
   scp "$root_dir/prototype/assets/building-art-v1/research.png" "$remote_host:$web_dir/assets/building-art-v1/research.png"
+  for art_dir in garden-crops-v1 item-art-v2 equipment-art-v3 wearables-v1; do
+    scp -r "$root_dir/prototype/assets/$art_dir" "$remote_host:$web_dir/assets/"
+  done
 fi
-for file in style.css ui-system.css story-scenes.css game.js index.html; do
+for file in style.css ui-system.css story-scenes.css wardrobe.js game.js index.html; do
   scp "$root_dir/prototype/$file" "$remote_host:$web_dir/$file.new"
 done
-ssh "$remote_host" "chmod 644 '$web_dir/style.css.new' '$web_dir/ui-system.css.new' '$web_dir/story-scenes.css.new' '$web_dir/game.js.new' '$web_dir/index.html.new' && mv '$web_dir/style.css.new' '$web_dir/style.css' && mv '$web_dir/ui-system.css.new' '$web_dir/ui-system.css' && mv '$web_dir/story-scenes.css.new' '$web_dir/story-scenes.css' && mv '$web_dir/game.js.new' '$web_dir/game.js' && mv '$web_dir/index.html.new' '$web_dir/index.html'"
+ssh "$remote_host" "chmod 644 '$web_dir/style.css.new' '$web_dir/ui-system.css.new' '$web_dir/story-scenes.css.new' '$web_dir/wardrobe.js.new' '$web_dir/game.js.new' '$web_dir/index.html.new' && mv '$web_dir/style.css.new' '$web_dir/style.css' && mv '$web_dir/ui-system.css.new' '$web_dir/ui-system.css' && mv '$web_dir/story-scenes.css.new' '$web_dir/story-scenes.css' && mv '$web_dir/wardrobe.js.new' '$web_dir/wardrobe.js' && mv '$web_dir/game.js.new' '$web_dir/game.js' && mv '$web_dir/index.html.new' '$web_dir/index.html'"
 
 echo "已发布资源版本 ${version}（build ${build}）"
 echo "清单：http://59.110.144.30:9091/app-update/manifest.json"

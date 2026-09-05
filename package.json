@@ -2,7 +2,7 @@
   "name": "abyssal-echoes",
   "private": true,
   "scripts": {
-    "test": "node prototype/game.test.js && node prototype/ui-system.test.js && node --test netlify/tests/*.test.mjs && python3 deploy/test_cloud_save.py"
+    "test": "node prototype/game.test.js && node prototype/equipment-progression.test.cjs && node prototype/equipment-variety.test.cjs && node prototype/career-combat.test.cjs && node prototype/combat-balance.test.cjs && node prototype/equipment-variety-combat.test.cjs && node prototype/wardrobe.test.cjs && node prototype/ui-system.test.js && node --test netlify/tests/*.test.mjs && python3 deploy/test_cloud_save.py"
   },
   "engines": {
     "node": ">=22.12"

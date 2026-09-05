@@ -1,0 +1,54 @@
+{
+  "tool": "built-in imagegen",
+  "policy": "Original generated alpha preserved; aspect-preserving resize/WebP conversion only. Each item is a distinct generated design.",
+  "records": [
+    {
+      "id": "starterAssaultModule",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5ff3320b-c101-4645-99c6-a9b763bacec0.png"
+    },
+    {
+      "id": "starterSurveyModule",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-313940f4-1c9f-4b52-adbb-dd06776a6213.png"
+    },
+    {
+      "id": "module_specialist_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-82af7cb4-dd20-43b9-bf23-9df747c435c4.png"
+    },
+    {
+      "id": "module_specialist_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-8c1c373c-18c5-4e02-af4c-1bc37fb6e3f5.png"
+    },
+    {
+      "id": "module_specialist_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-712f1265-b7c7-43bb-a2a3-f1af999c1c49.png"
+    },
+    {
+      "id": "module_specialist_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-f076acb7-2f46-49a5-a5c8-a218b148cf22.png"
+    },
+    {
+      "id": "module_specialist_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-dc8118f2-5d3c-45b1-9d77-6e4e52fb9d47.png"
+    },
+    {
+      "id": "module_general_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-741242ee-df0b-41c0-b54e-8e88bd735da3.png"
+    },
+    {
+      "id": "module_general_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-492651ed-7d53-4b07-9eb7-c4077c9afcbf.png"
+    },
+    {
+      "id": "module_general_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-4f632544-fb7e-4a23-aed8-bd7d9909b90e.png"
+    },
+    {
+      "id": "module_general_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5156417d-a0af-41a3-8882-154b5bf79af7.png"
+    },
+    {
+      "id": "module_general_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-ba5e2b37-7887-41fa-a99a-1409ddc15049.png"
+    }
+  ]
+}

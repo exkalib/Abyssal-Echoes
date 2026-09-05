@@ -1,0 +1,338 @@
+{
+  "tool": "built-in imagegen",
+  "policy": "Direct generated alpha only. No local background removal. Each item has its own physical design.",
+  "records": [
+    {
+      "id": "starterAssaultModule",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5ff3320b-c101-4645-99c6-a9b763bacec0.png"
+    },
+    {
+      "id": "starterSurveyModule",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-313940f4-1c9f-4b52-adbb-dd06776a6213.png"
+    },
+    {
+      "id": "module_specialist_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-82af7cb4-dd20-43b9-bf23-9df747c435c4.png"
+    },
+    {
+      "id": "module_specialist_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-8c1c373c-18c5-4e02-af4c-1bc37fb6e3f5.png"
+    },
+    {
+      "id": "module_specialist_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-712f1265-b7c7-43bb-a2a3-f1af999c1c49.png"
+    },
+    {
+      "id": "module_specialist_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-f076acb7-2f46-49a5-a5c8-a218b148cf22.png"
+    },
+    {
+      "id": "module_specialist_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-dc8118f2-5d3c-45b1-9d77-6e4e52fb9d47.png"
+    },
+    {
+      "id": "module_general_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-741242ee-df0b-41c0-b54e-8e88bd735da3.png"
+    },
+    {
+      "id": "module_general_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-492651ed-7d53-4b07-9eb7-c4077c9afcbf.png"
+    },
+    {
+      "id": "module_general_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-4f632544-fb7e-4a23-aed8-bd7d9909b90e.png"
+    },
+    {
+      "id": "module_general_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5156417d-a0af-41a3-8882-154b5bf79af7.png"
+    },
+    {
+      "id": "module_general_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-ba5e2b37-7887-41fa-a99a-1409ddc15049.png"
+    },
+    {
+      "id": "blade_general_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-c3fbcd2c-0245-4005-9b4c-e964ae58d1bb.png"
+    },
+    {
+      "id": "blade_general_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-3a6de29f-2aa3-4edf-940b-e576779fed04.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5ca29a42-97c5-4d53-810b-5b3064972615.png"
+    },
+    {
+      "id": "blade_general_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-01df39ea-316d-4c7c-9f8f-bc7cdf70494c.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-e3324068-ad5e-4165-a559-e19148c8402a.png"
+    },
+    {
+      "id": "blade_general_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-db509810-6418-4011-83cf-08a29ab423c7.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-64671a64-c989-44fc-b870-5a161884498c.png"
+    },
+    {
+      "id": "blade_general_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-3f267c41-195a-4b92-adbc-d8d5afb15d66.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-6ce1a655-83ed-4045-87fc-82ea25b73743.png"
+    },
+    {
+      "id": "firearm_general_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-88e10796-8041-4c02-97c8-240268cb7044.png"
+    },
+    {
+      "id": "firearm_general_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-6d706bdb-abc2-4b74-bcff-08e1893b17be.png"
+    },
+    {
+      "id": "firearm_general_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-ab14ed87-bfa5-4ca9-ab7c-9d97841ebde4.png"
+    },
+    {
+      "id": "firearm_general_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-045b4cf9-15fd-45aa-8ee2-8c8b60bd6161.png"
+    },
+    {
+      "id": "firearm_general_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-309e24d2-3a98-43c7-b90c-e6008bf60718.png"
+    },
+    {
+      "id": "shield_specialist_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5d12d962-71bb-41e0-9c4e-510533927885.png"
+    },
+    {
+      "id": "shield_general_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-487b407b-6448-4ad3-866b-14145683aee8.png"
+    },
+    {
+      "id": "shield_general_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-bd99c27f-9cd8-45ca-bc26-cadd52ad6461.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-8945d3f9-2715-4c4a-9429-291d6b856e30.png"
+    },
+    {
+      "id": "shield_general_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-361507e0-4260-474d-9945-f2debb16114f.png"
+    },
+    {
+      "id": "shield_general_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-b94aa21f-c09c-4928-9afa-153f1cbb9e20.png"
+    },
+    {
+      "id": "shield_general_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-f66bec91-656f-42ec-9d51-4058a59ce9e5.png"
+    },
+    {
+      "id": "head_specialist_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-1219be22-7480-4eb0-8c68-12f87ea04ffb.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-4c68e4fc-0be7-4e17-8bfa-c1c80609d222.png"
+    },
+    {
+      "id": "head_specialist_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-c6471201-97a1-4e6b-8026-fd88c418783b.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-18e62e83-5aaa-45c3-9118-916996c393e1.png"
+    },
+    {
+      "id": "head_general_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-0949296c-e2da-4f3b-8dbf-b66821e33fbd.png"
+    },
+    {
+      "id": "head_general_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-70e9df95-8bef-41f8-9a23-4ae658543446.png"
+    },
+    {
+      "id": "head_general_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-7bb2b07c-ad14-4f78-a8bc-6dc0c2efb9f5.png"
+    },
+    {
+      "id": "head_general_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-d8791b43-d224-4bbc-bb18-e23dfd3f5e35.png"
+    },
+    {
+      "id": "head_general_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-543b4acf-dc1d-45be-aaaa-0a2357a73752.png"
+    },
+    {
+      "id": "body_general_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-fb8aff42-9148-4d09-bb1f-3a2ee0c185d6.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-6e016f75-9fc1-4e58-b0ce-91e01fb0c401.png"
+    },
+    {
+      "id": "body_general_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-ac8bc59f-b286-4b81-8416-10213b2b62aa.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-4d6bd744-54a0-46d6-8515-749605d6d240.png"
+    },
+    {
+      "id": "body_general_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-06015bd2-b36c-4050-9dda-3d00719cc428.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-c8dc8c97-3d33-409e-a6fe-e635cda8d921.png"
+    },
+    {
+      "id": "body_general_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-09ac712d-42b3-4468-b7bb-767c52eeee89.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5484c5a8-27f3-4d3e-a9aa-e71d604b8b4e.png"
+    },
+    {
+      "id": "body_general_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-446fb975-6832-4aa2-8b16-cf7776576cd7.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-99d975e3-450a-4ec6-8c60-c572f31613d4.png"
+    },
+    {
+      "id": "hands_specialist_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-32887245-1b06-4620-adc1-c6d0d5683059.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-22cfec6e-06d3-4668-9078-074a2d567aa8.png"
+    },
+    {
+      "id": "hands_general_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-03710168-0f2e-4fbd-b032-88b88584ae29.png"
+    },
+    {
+      "id": "hands_general_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-ffa224bb-d957-44cf-8451-43045a2e83f4.png"
+    },
+    {
+      "id": "hands_general_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-01214f40-db23-47c8-836a-4f508d7ece3c.png"
+    },
+    {
+      "id": "hands_general_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-6584ed54-591c-4da8-834a-4e9ab0114815.png"
+    },
+    {
+      "id": "hands_general_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-7dda0d50-6986-41a2-99ed-88dc4677e486.png"
+    },
+    {
+      "id": "legs_specialist_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-2db1b9d1-9614-4c99-94aa-0c1407cd4857.png"
+    },
+    {
+      "id": "legs_specialist_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-e19dede8-7943-40ad-8b3d-7fea088d6ecb.png"
+    },
+    {
+      "id": "legs_specialist_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-95a66a48-45d5-4b06-9b68-42bc1c2e162a.png"
+    },
+    {
+      "id": "legs_general_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-b575228c-4323-43f7-a2fb-5fe43d56150d.png"
+    },
+    {
+      "id": "legs_general_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-94f5c133-60c7-42ea-a099-52d854e41d0d.png"
+    },
+    {
+      "id": "legs_general_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-68868f3f-b02f-4358-b56c-20e3097a7994.png"
+    },
+    {
+      "id": "legs_general_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-915b5dd2-269a-4e91-b86c-c8bb4c546e2d.png"
+    },
+    {
+      "id": "legs_general_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-98d0b75a-9bcf-4696-80aa-ffdf92e8ebb1.png"
+    },
+    {
+      "id": "feet_specialist_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-71c75b00-7042-4400-a6b6-dede46bca5ce.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5075c531-1c95-40da-ba12-1aa316c8c1b2.png"
+    },
+    {
+      "id": "feet_specialist_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-7561f12e-af9d-4982-a3f8-d5c2816f24d5.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-78299a4d-eeba-4cb7-95b4-d7942295f241.png"
+    },
+    {
+      "id": "feet_general_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-107a957f-2d56-4557-8f9f-e41fdd17f312.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-788f968c-5181-4226-8d84-d9701b8195e1.png"
+    },
+    {
+      "id": "feet_general_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-f03347c7-cdaf-4d83-80dc-fe5995c9fb4e.png"
+    },
+    {
+      "id": "feet_general_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-edd3fa4f-7720-40ea-aa18-10653e5e04ab.png"
+    },
+    {
+      "id": "feet_general_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-ccaecc8e-bd40-4416-b7ae-939730b9ac86.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-9fc8ff99-b4f3-4fa8-b6f6-b5d057dc5711.png"
+    },
+    {
+      "id": "feet_general_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-adce8d0c-40e3-49a8-845f-66e47852ecd5.png"
+    },
+    {
+      "id": "back_specialist_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-a2ce98aa-c8ce-4fcf-a996-ca471c017492.png"
+    },
+    {
+      "id": "back_specialist_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-107a00c3-1029-4b4d-8e78-a3366eaf533a.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-45400f8f-0c3b-4693-8273-468200026948.png"
+    },
+    {
+      "id": "back_specialist_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-3c8d5144-db29-4a05-a4cd-3f556712c348.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-d6ea1ae4-a63c-44e7-99e7-bbdd0002c8c9.png"
+    },
+    {
+      "id": "back_general_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-f245d5b7-cd46-4ae2-8aa3-eb0166419291.png"
+    },
+    {
+      "id": "back_general_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-1d42c6b8-639e-4c66-9a73-b77a2d50111d.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-0b8b4b04-a136-43c1-b6dd-505aeb689326.png"
+    },
+    {
+      "id": "back_general_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-364cc68d-deff-4be0-a0d9-c03e44d90bb1.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-7cbeeb67-d797-47fb-9856-42c6b269b972.png"
+    },
+    {
+      "id": "back_general_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-9716f253-3123-425f-b018-2befba902aa3.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-c9266637-5b86-4240-a893-0ff01edca76f.png"
+    },
+    {
+      "id": "back_general_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-bafb79a1-09a0-49db-a865-728dd285505c.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-a14957f3-9901-49ab-8a33-b14e44e3c915.png"
+    },
+    {
+      "id": "implant_specialist_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-e0fdf397-cddd-45ad-9dc2-3218e17c1dce.png"
+    },
+    {
+      "id": "implant_specialist_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-f4b1da3a-f864-43cc-b9ea-0b55fca1884f.png"
+    },
+    {
+      "id": "implant_specialist_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-585fc000-ed69-4318-9949-1da964cd61e9.png"
+    },
+    {
+      "id": "implant_general_1",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-de946db0-459d-43cc-8730-5f3dddf57c42.png"
+    },
+    {
+      "id": "implant_general_2",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5d790ce9-da2b-44b2-9ca2-00641108b684.png",
+      "supersededSource": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-e730609f-80af-408c-82b6-5e39deb3d1d0.png"
+    },
+    {
+      "id": "implant_general_3",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-436b1e30-faca-4336-be7a-a9422f2c4930.png"
+    },
+    {
+      "id": "implant_general_4",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-cee86db4-9a43-47c4-a51e-f38e0a893490.png"
+    },
+    {
+      "id": "implant_general_5",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-7fbaf87a-3eba-4da6-8a36-2dfd796941d2.png"
+    }
+  ]
+}
