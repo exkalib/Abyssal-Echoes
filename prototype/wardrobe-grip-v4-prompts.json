@@ -1,0 +1,42 @@
+{
+  "date": "2026-09-06",
+  "mode": "built-in imagegen",
+  "scope": "blade × bare (and bare fingers under phase wrist rings) × male/female. Other melee/glove visuals remain withdrawn; no release.",
+  "method": "Hand, actual leather hilt, palm-side contact shadows and fingers authored together. Integrated sprite attached at body wrist. Original empty fist and standalone sword are not mounted for this exact sample.",
+  "pixelProcessing": "Native PNG RGBA retained; WebP encoding only. No local matting, recoloring, raster masks or anatomy edits.",
+  "attempts": [
+    {
+      "id": 1,
+      "prompt": "Use case: compositing\nAsset type: anatomically correct equipped RPG weapon sprite, one alloy sword held by one human right hand.\nInputs: Image 1 is the EXACT sword design to retain (silver alloy double edge, cyan central inset, small brass crossguard, black leather handle, round brass pommel). Image 2 is a NEGATIVE reference: the existing game composite is WRONG because a closed empty fist is pasted entirely in front of the handle. Do not copy its fist anatomy.\nPrimary request: redraw this SAME sword being genuinely grasped in the right hand, as ONE integrated weapon-plus-hand asset. The handle must sit inside the cupped palm, not behind a fist. The handle enters the thumb/index web at the top of the grip; show a narrow visible black leather cylinder inside that web. The palm and thumb base curve behind the handle, while the fingers curl around its near side and the thumb closes across the index finger. The fingertips terminate against the far side of the handle, not against the palm like an empty fist. Correct five-finger anatomy, contact compression and small occlusion shadows at skin/leather contact. The pommel exits below the little finger. A comfortable relaxed sword grip, not a crushing fist, no OK sign, no hole through the hand.\nComposition: portrait canvas; entire sword visible, blade points upward and slightly left (about 15 degrees left of vertical), pommel low and slightly right. Hand near the lower-right part of the sword, gripping immediately below the crossguard. A short right forearm approaches the wrist from above-right, almost vertically (about 15 degrees right of vertical). Neutral straight wrist connecting downward forearm to grip, without 90 degree bending. Exposed skin only, no sleeve, no body. Use a slightly side-on three-quarter view of the thumb side so the handle can clearly be seen seated in the palm between thumb and curled fingers. Keep the sword length and original metal design, no dagger conversion. Show ALL of sword and a short wrist stub with clear margins.\nStyle: realistic high-detail sci-fi game inventory character art, soft neutral cool frontal illumination, natural light beige skin, no dramatic shadows.\nBackground: genuinely TRANSPARENT PNG alpha, not a painted checkerboard, no white or gray background, no floor, no cast shadow, no labels, no UI. Preserve real alpha.\nAvoid: generic empty fist placed over a sword, handle passing behind the entire palm, fist self-contact blocking all evidence of grip, all four curled fingertips visible on the palm, broken wrist, extra fingers, cut-off blade or pommel, ornamental additions.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-1df36ed6-36b5-4513-af64-e39bb40f0d6b.png",
+      "use": "grasp reference; opaque background, not installed"
+    },
+    {
+      "id": 2,
+      "prompt": "Use case: background-extraction\nInput image is the edit target. Make the existing background genuinely transparent (RGBA alpha=0), removing every white/gray checkerboard square. Keep exactly the same integrated sword, gripping hand, short forearm, finger shapes, visible black handle between fingertips and palm, contact shadows, metallic details, framing and orientation. Do not redraw the grip or move anything. No painted checkerboard, no solid backdrop, no shadow outside the asset. Return the complete clean sprite with actual alpha transparency.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-b77c49da-4ef1-4b64-a7e2-cfd6812d1444.png",
+      "use": "shorter sword variant, not installed"
+    },
+    {
+      "id": 3,
+      "prompt": "Use case: precise-object-edit\nEdit target: the provided sword-and-hand asset. Preserve the exact hand anatomy and the visible black leather grip running BETWEEN fingertips and the palm. This is a genuine occupied hand, NOT a closed empty fist.\nChange only the blade-to-hand proportions: lengthen the sword blade above the crossguard so that the metal blade is SEVEN TIMES the palm width. The complete sword from point to pommel should be nine palm widths long. Do not enlarge the grip or the hand. Keep the same silver/cyan/brass design and the same slight upper-left inclination. Keep the small right wrist stub almost vertical from upper-right. Entire sword, wrist and hand visible, margins on all sides. High resolution portrait sprite, 2048 by 3072 if possible. The hand will sit low in the frame and the long slender blade extend almost to the top.\nPreserve the five-finger anatomy, natural light beige skin, contact shadows INSIDE the grasp and black leather visible along the inside of the curled fingertips. No extra fingers, no anatomy redesign, no handle behind the whole fist.\nBackground must be genuinely transparent alpha=0, WITHOUT checkerboard pixels, without black/white/gray backdrop, WITHOUT any glowing haze or halo, without drop shadow. Clean hard-surface and skin silhouette with normal fine antialiasing. This will be composited onto a dark game character. Only one held sword and short wrist, no text, no border, no body, no sleeve.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-87c54241-f98d-42db-b2b4-4577a9c92c73.png",
+      "use": "long blade draft; opaque background, not installed"
+    },
+    {
+      "id": 4,
+      "prompt": "Use case: background-extraction\nRemove the light gray-and-white checkerboard background from this image and output a genuinely transparent PNG with an alpha channel. Keep the sword and the gripping human hand completely unchanged. Preserve all solid edges, the small wrist, every finger and the original exact composition. Do not add lighting, haze, glow, shadow, blur, or any black background. Outside the sword and hand silhouette every background pixel must be fully transparent. This is a clean game sprite extraction, not a restyling.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-80c5ea92-735a-4de4-811d-0c7a9cbb0cf0.png",
+      "use": "transparent request returned RGB; not installed"
+    },
+    {
+      "id": 5,
+      "prompt": "Generate this exact single held sword and human hand on a transparent background. Replace the visible checkerboard with actual transparent PNG alpha pixels. Preserve every part of the sword, all five fingers, the hand physically grasping the leather handle, the neutral wrist, skin and metal materials, original canvas 1024x1536 and exact position. No new hand, no alteration to pose, no extra fingers, no added weapon, no background color, no checkerboard, no glow. This is an alpha-transparent game sprite. Actual PNG alpha outside the silhouette, not an illustration of a checkerboard.",
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-0c066212-4aa2-4468-8d18-e6fa633d3a37.png",
+      "use": "installed native-alpha source; user visual review pending"
+    }
+  ],
+  "asset": "assets/wearables-v2/weapon-blade-held-v4-bare.webp",
+  "calibration": "wardrobe-sword-hands.js → bare.weapons.blade",
+  "review": "../output/wardrobe-grip-review-v4/index.html"
+}

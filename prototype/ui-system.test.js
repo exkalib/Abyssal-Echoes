@@ -59,7 +59,8 @@ assert.match(game,/function skillPageEntries\(view\)[\s\S]*Object\.keys\(MASTERI
 assert.match(game,/function renderCareerPanel\(box\)[\s\S]*\['current','main','life'\][\s\S]*career-view-tabs/,'职业页必须把当前配置、战斗路线和生活路线分层');
 assert.match(system,/Primary progression pages[\s\S]*\.skill-library-card\.locked[\s\S]*\.career-path-card\.current/,'技能与职业一级页必须从统一视觉系统获得状态样式');
 assert.match(system,/RPG progression codex[\s\S]*\.tone-active[\s\S]*\.tone-field[\s\S]*\.career-primary-stage[\s\S]*\.career-life-dossiers/,'技能与职业必须使用统一 RPG 战典皮肤、语义色和主副职业层级');
-assert.match(game,/function renderSkillBrowser\(view,onMutate\)[\s\S]*replaceMountedNode\(detailHost\.children\[0\][\s\S]*function refreshSkillPanel\(\)[^\n]*_refreshSkillPanel/,'技能选择必须只替换详情，外部刷新必须委托已挂载的局部控制器');
+assert.match(game,/function renderSkillBrowser\(view,onMutate\)[\s\S]*mountThumbSheet\(detail,[\s\S]*browser\._sync[\s\S]*function refreshSkillPanel\(\)[^\n]*_refreshSkillPanel/,'技能选择必须打开上下文抽屉，外部刷新委托已挂载的局部控制器');
+assert.doesNotMatch(game.match(/function renderSkillPanel\(box\)\{[\s\S]*?(?=function refreshSkillPanel)/)[0],/replaceMountedNode|innerHTML\s*=|\brender\(\)/,'技能分类和装配不得重建图标库、槽位或整页');
 assert.match(game,/function switchView\(id\)[\s\S]*replaceMountedNode\(content,fresh,box\)[\s\S]*function refreshCareerPanel\(\)[^\n]*_refreshCareerPanel/,'职业分段必须只替换内容区，外部刷新必须委托已挂载的局部控制器');
 assert.doesNotMatch(game,/function refresh(?:Skill|Career)Panel\(\)[^\n]*replaceChildren/,'技能与职业刷新入口不得清空并重建整个页面');
 assert.match(rules,/角色 \/ 职业 \/ 技能 \/ 背包 \/ 任务[\s\S]*常驻战斗技能栏 → 战斗 \/ 生活 \/ 精通分类 → 已学能力 → 单份详情[\s\S]*当前配置 \/ 战斗路线 \/ 生活路线/,'统一规范必须固定五项主导航、默认已学与单份详情');

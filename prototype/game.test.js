@@ -54,6 +54,7 @@ source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,to
 source += `\n;Object.assign(this.api,{costText,recipeMaterialText,renderConstruction,renderSiteSheet,renderRecipeWorkbench,craft,smelt,batchQuantity,scaledCost,craftStationPresentation,skillLv,skillProgressText,careerSkillYieldMult,careerSkillCost,skillLevelEffectText,effectiveEconomyBonus,masteryAtEffectiveCap,masteryOverLevel,masteryBonus,masteryEffectText,upgradeMastery,useMasteryManual,beaconFloorSpec,winBeacon,equipmentRecycleYield,recycleEquipment,statHit,shieldMax,regenShield,recoveryAmount,normalizeCloudCode,validGameSave,createLocalBackup,parseLocalBackup,cloudSaveSummary,fieldActionPresentation,fieldDirective,flavor,taskQuestTarget,taskReadyNow,taskPriorityQuest,taskProgressText,taskRewardText,taskNextStep,renderTaskPanel,nativeShellVersion,legacyNativeUpgradeRequired,setPlayerAppearance,dollArt,MASTERIES});`;
 source += `\n;Object.assign(this.api,{GARDEN_CROPS,gardenSlotCount,gardenYield,gardenCropUiIcon,plantGarden,collectGardenPlot,settleGardenAutomation});`;
 source += `\n;Object.assign(this.api,{BEACON_STORY_ITEMS,BEACON_LOOT_TIERS,BEACON_LOOT_FLOOR,BEACON_EQUIPMENT,beaconRollLoot,beaconLootPreview,beaconEquipmentChance,beaconSkillBookChance,closeSiteSheet});`;
+source += `\n;Object.assign(this.api,{renderSkillDetail});`;
 source += `\n;Object.assign(this.api,{AREA_EVENTS,EXPLORATION_PACING,NPC_FIELD_DISCOVERIES,NPC_FIELD_RELOCATIONS,explorationPacingRange,scheduledDiscoveryNeed,milestoneNeed,neighborRouteNeed,areaEventNeed,npcDiscoveryNeed,resourceDiscoveryNeed,applyResourceDiscovery,applyDiscoveryMilestones,applyKnownNeighborRoutes,applyNpcDiscoveries,fieldEncounterChance,rollFieldEncounter,recordFieldSafeAction});`;
 source += `\n;Object.assign(this.api,{NPC_NAMES,NPC_PROFILE,STORY_SCENE_ASSETS,STORY_SCENE_LOCATIONS,NPC_FIRST_CONTACT,storySceneKey,storySceneSrc,storyNpcFromGiver,storyLocationForQuest,queueStoryScene,queueNpcFirstContact,queueQuestStoryScene,flushStoryScenes,resetStoryScenes});`;
 source += `\n;Object.assign(this.api,{ENDINGS,CORE_COMPONENTS,FINALE_QUEST_IDS,FINALE_PRIMARY_IDS,FINALE_CALIBRATION_IDS,questState,questDone,finishQuest,finaleQuestContact,finaleQuestNeed,finaleTaskStatus,finaleCompletedCount,finaleCalibrationCount,coreRecoveredCount,coreInstalledCount,coreProtocolReady,progressNpcFinaleQuest,installCoreComponent,finalBossOverrides,startFinalCoreBattle,beginCoreTruth,renderCoreControl,renderEndingPanel,endingAvailability,endingDisplayName,completeFailureEnding,triggerWarden,die});`;
@@ -156,10 +157,10 @@ pendingTests.push((async()=>{
 {
   const s=reset();Object.assign(s.inv,{scrap:3,knife:1,medkit:1,pierceBook:1,accessCard:1});
   const renderView=view=>{s.bagView=view;const box=new FakeElement(),nodes=[];a.renderBagPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);return nodes;};
-  let view=renderView('material'),markup=view.map(n=>n.innerHTML||'').join(' ');assert.equal(view.filter(n=>hasClass(n,'bag-category-tabs')).length,1);assert.equal(view.filter(n=>hasClass(n,'bag-category-tabs'))[0].children.length,4,'背包必须提供材料、装备、消耗品、特殊道具四个分类');assert.equal(view.some(n=>n.className==='loadout-console'),false,'材料页不得继续被装备纸娃娃占据首屏');assert.match(markup,/废铁 3/);assert.doesNotMatch(markup,/铁刀|急救包|破甲技能书|指挥权限卡/);
-  view=renderView('equipment');markup=view.map(n=>n.innerHTML||'').join(' ');assert.equal(view.some(n=>n.className==='loadout-console'),true,'装备页必须保留已装备接口');assert.match(markup,/铁刀/);assert.doesNotMatch(markup,/急救包|破甲技能书|指挥权限卡/);
+  let view=renderView('material'),markup=view.map(n=>n.innerHTML||'').join(' ');assert.equal(view.filter(n=>hasClass(n,'bag-category-tabs')).length,1);assert.equal(view.filter(n=>hasClass(n,'bag-category-tabs'))[0].children.length,4,'背包必须提供材料、装备、消耗品、特殊道具四个分类');assert.equal(view.some(n=>hasClass(n,'loadout-console')),false,'材料页不得继续被装备纸娃娃占据首屏');assert.match(markup,/废铁<\/span><small class="rpg-item-state">×3<\/small>/,'材料名称与数量必须在同一个可点击物品格中完整显示');assert.doesNotMatch(markup,/铁刀|急救包|破甲技能书|指挥权限卡/);
+  view=renderView('equipment');markup=view.map(n=>n.innerHTML||'').join(' ');assert.equal(view.some(n=>hasClass(n,'loadout-console')),true,'装备页必须保留已装备接口');assert.match(markup,/铁刀/);assert.doesNotMatch(markup,/急救包|破甲技能书|指挥权限卡/);
   Object.assign(s.player.equip,{weapon:'knife',offhand:'eshieldUnit',head:'helmet',body:'vest',hands:'workGloves',legs:'miningHarness',feet:'boots',back:'capacitorPack',implant:'lsChip',module:'critCore'});s.inv.knife=0;view=renderView('equipment');const filledSlot=view.find(n=>hasClass(n,'slotchip')&&n.dataset.slot==='weapon'),doll=view.find(n=>n.className==='doll-art-host');assert.ok(filledSlot&&doll,'人物装备槽和独立立绘更新容器必须同时存在');assert.equal(view.filter(n=>hasClass(n,'slotchip')).length,a.SLOTS.length,'每个装备部位都必须保留可选槽位');assert.match(filledSlot.innerHTML,/data-item="knife"/,'已装备槽位必须显示与背包一致的物品实物图');assert.match(doll.innerHTML,/doll-wearable wearable-portrait/,'正式背包必须使用逐部位装配母版');assert.match(doll.innerHTML,/data-wear-key="base"/,'初始底图必须立即可加载');assert.match(doll.innerHTML,/doll-art-retry/,'穿戴图失败时必须提供重试');assert.doesNotMatch(doll.innerHTML,/doll-gear-piece|doll-equipment-layer/,'不再接入库存图标拼贴层');
-  view=renderView('consumable');markup=view.map(n=>n.innerHTML||'').join(' ');assert.equal(view.some(n=>n.className==='loadout-console'),false,'消耗品页不得显示装备接口');assert.match(markup,/急救包/);assert.match(markup,/破甲技能书/);assert.doesNotMatch(markup,/铁刀|指挥权限卡|废铁 3/);
+  view=renderView('consumable');markup=view.map(n=>n.innerHTML||'').join(' ');assert.equal(view.some(n=>hasClass(n,'loadout-console')),false,'消耗品页不得显示装备接口');assert.match(markup,/急救包/);assert.match(markup,/破甲技能书/);assert.doesNotMatch(markup,/铁刀|指挥权限卡|废铁/);
   view=renderView('special');markup=view.map(n=>n.innerHTML||'').join(' ');assert.equal(view.some(n=>n.className==='loadout-console'),false,'特殊道具页不得显示装备接口');assert.match(markup,/指挥权限卡/);assert.doesNotMatch(markup,/急救包|破甲技能书|铁刀|废铁 3/);
 }
 
@@ -205,14 +206,14 @@ pendingTests.push((async()=>{
   assert.equal(nodes.some(n=>String(n.className).includes('facility-back')),false,'建筑操作页不得继续在顶部占用返回按钮空间');
   assert.equal(nodes.some(n=>hasClass(n,'station-equipment-profile')),false,'材料精炼配方不应展示装备属性');
   assert.ok(nodes.some(n=>n.className==='station-detail-body'),'下半屏材料内容必须拥有独立滚动容器');
-  assert.deepEqual(nodes.filter(n=>n.className==='station-step').map(n=>n.innerHTML),['-100','-10','+10','+100'],'批量控制必须提供正负10与100');
+  assert.deepEqual(nodes.filter(n=>n.className==='station-step').map(n=>n.innerHTML),['-10','-1','+1','+10'],'手机批量控制必须能逐件和十件调整，无需反复打开键盘');
   assert.equal(nodes.find(n=>n.className==='station-quantity').value,1,'操作台生产数量必须默认为1');
   assert.equal(nodes.some(n=>n.className==='station-status'),false,'操作台底部不得重复显示材料充足与本次批数');
   assert.equal(nodes.find(n=>String(n.className).includes('station-confirm')).textContent,'确认熔炼 · 1 批');
   assert.equal(a.craftStationPresentation({st:'work'}).confirm,'确认制造');assert.equal(a.craftStationPresentation({st:'chem'}).confirm,'确认合成');assert.equal(a.craftStationPresentation({st:'elec'}).confirm,'确认装配','不同建筑必须使用符合工艺语义的确认动作');
 }
 {
-  const s=reset();s.inv.knife=5;const top=new FakeElement(),bottom=new FakeElement();a.renderRecipeWorkbench(top,'test:recycle',[{id:'equip:knife',out:'knife',name:'拆解：铁刀',cost:{knife:1},outputs:{ingot:2},maxQty:5,ready:true,run(){}}],{tone:'recycle',confirm:'确认拆解',detailParent:bottom});const nodes=[];(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(bottom);const input=nodes.find(n=>n.className==='station-quantity'),plus100=nodes.find(n=>n.className==='station-step'&&n.innerHTML==='+100'),confirm=nodes.find(n=>String(n.className).includes('station-confirm'));assert.equal(input.max,'5','装备拆解数量上限必须等于背包中的闲置数量');plus100.click();assert.equal(input.value,5,'装备只有5件时，+100必须直接停在5，不能进入标红无效状态');assert.equal(confirm.disabled,false,'夹取到持有上限后拆解操作仍应可执行');
+  const s=reset();s.inv.knife=5;const top=new FakeElement(),bottom=new FakeElement();a.renderRecipeWorkbench(top,'test:recycle',[{id:'equip:knife',out:'knife',name:'拆解：铁刀',cost:{knife:1},outputs:{ingot:2},maxQty:5,ready:true,run(){}}],{tone:'recycle',confirm:'确认拆解',detailParent:bottom});const nodes=[];(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(bottom);const input=nodes.find(n=>n.className==='station-quantity'),plus10=nodes.find(n=>n.className==='station-step'&&n.innerHTML==='+10'),confirm=nodes.find(n=>String(n.className).includes('station-confirm'));assert.equal(input.max,'5','装备拆解数量上限必须等于背包中的闲置数量');plus10.click();assert.equal(input.value,5,'装备只有5件时，+10必须直接停在5，不能进入标红无效状态');assert.equal(confirm.disabled,false,'夹取到持有上限后拆解操作仍应可执行');
 }
 {
   const s=reset();Object.assign(s.inv,{scrap:99,copperScrap:99});const top=new FakeElement(),bottom=new FakeElement(),entries=[{id:'iron',out:'ingot',name:'铁锭配方',cost:{scrap:2},outputs:{ingot:1},ready:true,run(){}},{id:'copper',out:'copperIngot',name:'铜锭配方',cost:{copperScrap:2},outputs:{copperIngot:1},ready:true,run(){}}];a.renderRecipeWorkbench(top,'test:switch',entries,{tone:'thermal',confirm:'确认熔炼',detailParent:bottom});const topBefore=top.children[0],detailBefore=bottom.children[0],nodes=[];(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(top);const products=nodes.filter(n=>hasClass(n,'station-product'));assert.equal(products.length,2);products[1].click();const detailMarkup=[];(function walk(node){if(node.innerHTML)detailMarkup.push(node.innerHTML);(node.children||[]).forEach(walk);})(bottom);assert.equal(top.children[0],topBefore,'切换配方不能重建上方选择区');assert.notEqual(bottom.children[0],detailBefore,'切换配方必须立即替换下方详情');assert.match(detailMarkup.join(' '),/铜锭配方/,'点击第二个配方后必须当场展示第二个详情，不能关闭建筑后才生效');products[0].click();const switchedBack=[];(function walk(node){if(node.innerHTML)switchedBack.push(node.innerHTML);(node.children||[]).forEach(walk);})(bottom);assert.match(switchedBack.join(' '),/铁锭配方/,'同一次打开中必须能继续切回第一个配方');
@@ -258,7 +259,7 @@ pendingTests.push((async()=>{
 
 {
   assert.match(source,/function refreshFacilityOperation\(id\)[\s\S]{0,900}replaceMountedNode\(current,fresh,current\.parentNode\)/,'设施升级必须原位替换操作工作区，不得重建整页');
-  assert.match(source,/function renderMasteryCard\(card,k\)[\s\S]{0,1000}upgradeMastery\(k,\(\)=>renderMasteryCard\(card,k\)\)/,'精通升级只能就地更新当前卡片，不得刷新页面');assert.match(source,/function renderDefenseWorkbench[\s\S]{0,6500}upgradeDefense\([^;]+,refresh\)/,'防御升级必须使用局部刷新回调');assert.match(source,/function renderDefenseWorkbench[\s\S]{0,7500}replaceMountedNode\(detailParent\.children\[0\],detailHolder\.children\[0\],detailParent\)/,'防御升级必须原子替换哨戒塔工作区，不得清空页面或先清空详情');
+  assert.match(source,/function renderMasteryCard\(card,k\)[\s\S]{0,1000}upgradeMastery\(k,\(\)=>renderMasteryCard\(card,k\)\)/,'精通升级只能就地更新当前卡片，不得刷新页面');const defenseRefresh=source.slice(source.indexOf('function renderDefenseWorkbench'),source.indexOf('function gardenSlotCount'));assert.match(defenseRefresh,/upgradeDefense\(index,refresh\)/,'防御升级必须使用局部刷新回调');assert.match(defenseRefresh,/confirm\.disabled=nextConfirm\.disabled;confirm\.textContent=nextConfirm\.textContent/,'防御升级必须保留确认按钮，就地更新下一等级与可用态');assert.doesNotMatch(defenseRefresh,/renderDefenseWorkbench\(holder,detailHolder\)/,'防御升级不得再重建选择器和详情');
   assert.match(source,/function upgradeFacility\(id\)[\s\S]{0,700}refreshFacilityOperation\(id\)/,'设施升级必须刷新当前设施本身，不得依赖整页刷新和滚动恢复');
   assert.match(source,/function closeSiteSheet\(\)[\s\S]{0,180}site-sheet-backdrop[\s\S]{0,100}save\(\)/,'关闭底部详情弹层必须直接移除弹层，不得重建页面');
 }
@@ -369,7 +370,7 @@ pendingTests.push((async()=>{
   assert.match(source,/globalThis\.AudioContext\|\|globalThis\.webkitAudioContext[\s\S]*function playSfx\(kind\)/,'音效开关必须连接真实 WebAudio 输出');
   assert.match(source,/const MUSIC_THEMES=\{[\s\S]*camp:\{[\s\S]*settlement:\{[\s\S]*surface:\{[\s\S]*ark:\{[\s\S]*depth:\{[\s\S]*space:\{[\s\S]*combat:\{/,'背景音乐必须覆盖营地、聚居地、荒野、舰内、地下、星际与战斗场景');
   assert.match(source,/function scheduleAmbientBar\(\)[\s\S]*theme\.notes\.forEach[\s\S]*root\*ratio/,'背景音乐必须生成手机扬声器可听见的旋律声部');
-  assert.match(source,/pointerdown[^\n]*const audioReady=unlockAudio\(\),b=buttonFrom\(e\)/,'首次触摸任意位置都必须尝试启动背景音乐，不能只响应按钮');
+  assert.match(source,/pointerdown[^\n]*unlockAudio\(\);lastPress=null;const b=buttonFrom\(e\)/,'首次触摸任意位置都必须尝试启动背景音乐，点击音只由实际点击触发');
   assert.match(source,/function stopAudioVoices\(voices\)[\s\S]*voice\.osc\.stop\(\)[\s\S]*stopAudioVoices\(audioRuntime\.musicVoices\)/,'关闭音乐时必须停止已排程声部，不能重新漏出尾音');
   assert.match(source,/document\.hidden\)[\s\S]*audioRuntime\.ctx\.suspend\(\)/,'应用进入后台时必须暂停音频上下文');
   assert.match(source,/settingsToggle\('sound'[\s\S]{0,240}key:'soundVolume'[\s\S]{0,240}settingsToggle\('music'[\s\S]{0,240}key:'musicVolume'[\s\S]{0,240}settingsToggle\('vibration'/,'设置页必须把音效、音乐与触觉反馈收成三行并保留真实音量控制');
@@ -396,10 +397,10 @@ pendingTests.push((async()=>{
   assert.match(adaptiveIcon,/ic_launcher_art_v2/,'自适应图标必须使用幸存者与坠毁方舟主视觉');
   assert.ok(fs.existsSync(path.join(__dirname,'..','android','app','src','main','res','drawable-nodpi','ic_launcher_art_v2.png')),'应用图标主视觉文件必须存在');
   const androidBuild=fs.readFileSync(path.join(__dirname,'..','android','app','build.gradle'),'utf8');
-  assert.match(androidBuild,/versionCode 16/,'当前发布 APK 必须提升安装版本');
-  assert.match(androidBuild,/versionName "0\.7\.7"/,'当前发布 APK 必须展示新的应用版本');
+  assert.ok(Number(androidBuild.match(/versionCode (\d+)/)?.[1])>=16,'当前 APK 安装版本不得回退到旧更新协议之前');
+  assert.match(androidBuild,/versionName "\d+\.\d+\.\d+"/,'APK 必须声明可展示的语义版本');
   assert.match(androidBuild,/SHELL_VERSION", "11"/,'GitHub 更新能力必须提升外壳协议版本');
-  assert.match(androidBuild,/BUNDLED_BUILD", "1788519667L"/,'最新 APK 必须内置本次完整资源版本');
+  assert.ok(Number(androidBuild.match(/BUNDLED_BUILD", "(\d+)L"/)?.[1])>=1788519667,'APK 内置资源版本不得回退');
   assert.match(androidBuild,/UPDATE_BASE_URL[^\n]*https:\/\/github\.com\/exkalib\/Abyssal-Echoes\/releases\/latest\/download\//,'APK 更新资源必须固定走 GitHub Release');
   assert.match(androidBuild,/CLOUD_SAVE_URL[^\n]*https:\/\/abyssal-echoes-ark\.netlify\.app\/api\/cloud-save/,'APK 云存档必须固定走 Netlify 手动迁移接口');
   assert.match(androidBuild,/CLOUD_SAVE_URL/,'安卓外壳必须提供独立云存档接口地址');
@@ -436,17 +437,25 @@ pendingTests.push((async()=>{
   assert.match(source,/loadout-console/,'背包必须使用科幻装备终端容器');
   assert.match(source,/inventory-vault/,'背包物品必须使用独立物品仓容器');
   assert.match(source,/inventory-scroll/,'物品仓内容必须拥有独立滚动层，不能推动整页与底部菜单');
-  assert.match(source,/openSiteSheet\(['"]item['"],id\)/,'紧凑物品格必须先打开详情弹层，不能直接装备或消耗');
-  assert.match(source,/detailIcon=itemUiIcon\(ref\.id\)[\s\S]{0,1600}item-detail-emblem/,'物品详情主视觉必须复用物品仓的科幻实物图，不能放大 Emoji');
-  assert.match(source,/mchip',itemUiIcon\(id\)/,'材料分类必须继续使用统一物品实物图');
-  assert.match(source,/iicon">'\+itemUiIcon\(id\)/,'装备和特殊道具分类必须继续使用统一物品实物图');
+  const bagSource=source.slice(source.indexOf('function renderBagPanel'),source.indexOf('function refreshBagPanel'));
+  const bagEquipmentDetailSource=source.slice(source.indexOf('function renderBagEquipmentDetail'),source.indexOf('function renderBagPanel'));
+  assert.match(bagSource,/card\.onclick=\(\)=>showStoredItem\(id\)/,'材料、消耗品和特殊道具物品格必须先打开详情，不能点格子直接消耗');
+  assert.match(bagSource,/button\.onclick=\(\)=>\{state\.bagItemSelected=id;syncSelection\(\);showEquipment\(\);save\(\);\}/,'装备物品格只选择并打开装备详情，不执行穿戴');
+  assert.match(bagSource,/mountThumbSheet\(content,[\s\S]{0,200}bag-thumb-sheet/,'所有背包详情必须使用保持来源页的底部抽屉');
+  assert.match(bagSource,/sheet\.footer\.appendChild\(detail\._actions\)/,'穿戴确认必须放在抽屉固定底栏，不埋进属性滚动区');
+  assert.match(bagSource,/action\.onclick=\(\)=>\{if\(useBlocked\(\)\)return;[\s\S]{0,160}useItem\(id,/,'消耗品必须经过可用性判断和详情确认按钮才消耗');
+  assert.match(bagEquipmentDetailSource,/action\.onclick=\(\)=>P\(\)\.equip\[slot\]===selectedId\?unequip\(slot,onMutate\):equip\(slot,selectedId,onMutate\)/,'穿戴和卸下只绑定在详情确认按钮上');
+  assert.match(bagSource,/function renderStoredItems[\s\S]*itemUiIcon\(id\)/,'材料与其他存储分类都必须继续使用统一物品实物图');
+  assert.match(bagSource,/rpg-equipment-title[\s\S]{0,120}itemUiIcon\(id\)/,'物品抽屉主视觉必须复用仓库实物图，不能放大 Emoji');
+  assert.match(bagSource,/iicon">'\+itemUiIcon\(id\)/,'装备和特殊道具分类必须继续使用统一物品实物图');
   const itemIds=vm.runInContext('Object.keys(ITEMS)',sandbox);
   assert.equal(itemIds.length,220,'220 个物品包括新增的 77 件双路线装备');
   const assetPaths=new Set(),assetHashes=new Set(),crypto=require('node:crypto');
   itemIds.forEach(id=>{const src=vm.runInContext('itemArtSrc('+JSON.stringify(id)+')',sandbox),asset=path.join(__dirname,src.split('?')[0]);assert.ok(fs.existsSync(asset),id+' 缺少独立原画');assert.ok(fs.statSync(asset).size>1000,id+' 原画文件异常');assert.ok(!assetPaths.has(asset),id+' 与另一物品复用了路径');assetPaths.add(asset);const hash=crypto.createHash('sha256').update(fs.readFileSync(asset)).digest('hex');assert.ok(!assetHashes.has(hash),id+' 与另一物品具有完全重复的图片');assetHashes.add(hash);assert.ok(src.includes('/'+id+'.webp'),id+' 必须使用自己的原画');});
   assert.doesNotMatch(source,/ITEM_ART_ALIAS/,'不得用跨物品别名掩盖缺少独立图标');
   assert.match(source,/function itemUiIcon\(id\)[\s\S]{0,180}itemArtSrc\(id\)/,'所有面板共用独立原画路径接口');
-  assert.match(css,/\.item-detail-emblem \.item-art\{[^}]*width:58px[^}]*object-fit:contain/,'详情页必须以完整比例展示实物图');
+  assert.match(uiCss,/\.bag-thumb-sheet \.rpg-equipment-icon>\.item-art\{[^}]*width:72px/,'物品抽屉必须以清晰实物图作为主视觉');
+  assert.match(uiCss,/\.rpg-equipment-icon>\.item-art,[^}]*object-fit:contain/,'详情页实物图必须保持完整比例');
   const buildingIds=vm.runInContext('[...CAMP_BUILDINGS,...OUTPOST_BUILDINGS].map(x=>x.id)',sandbox);
   assert.equal(buildingIds.length,26,'营地与行星前哨的26座建筑必须全部进入独立实物图系统');
   buildingIds.forEach(id=>{const asset=path.join(__dirname,'assets','building-art-v1',id+(id==='research'?'.png':'.webp'));assert.ok(fs.existsSync(asset),id+' 缺少科幻建筑图');assert.ok(fs.statSync(asset).size>1000,id+' 的科幻建筑图文件异常');});
@@ -460,9 +469,9 @@ pendingTests.push((async()=>{
   assert.match(css,/\.camp-layout\s*\{[^}]*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/,'营地设施必须使用每行四个的手机宫格');
   assert.match(css,/\.cf-icon[^}]*width:62px[^}]*height:62px[\s\S]{0,500}\.cf-copy small,\.cf-copy em\{display:none\}/,'设施宫格必须使用上图标、下名称的紧凑结构');
   assert.doesNotMatch(source,/item-detail-facts/,'物品详情不得使用重复、笨重的三栏参数表');
-  assert.match(source,/item-detail-titlebar[\s\S]{0,1200}物品说明[\s\S]{0,1200}装备属性/,'物品详情必须按标题、说明和装备属性建立清晰层级');
-  assert.match(css,/\.item-detail-sheet \.site-sheet-close\{[^}]*border-left:1px solid[^}]*border-radius:0[^}]*background:transparent/s,'物品详情关闭按钮必须并入标题栏，不能继续使用悬浮圆形按钮');
-  assert.match(css,/\.itemgrid\s*\{[^}]*repeat\(5,minmax\(0,1fr\)\)/,'手机物品仓应使用五列紧凑物品格');
+  assert.match(bagEquipmentDetailSource,/rpg-equipment-title[\s\S]*equipmentStatsMarkup\(item\)[\s\S]*rpg-equipment-comparison/,'装备抽屉必须按物品主视觉、完整分组属性、可展开比较建立清晰层级');
+  assert.match(bagSource,/bag-detail-back','返回背包'[\s\S]{0,180}sheet\.footer\.appendChild\(back\)/,'返回背包必须位于固定底栏，单手不必伸到顶部找关闭');
+  assert.match(uiCss,/#panel\[data-view="bag"\] \.itemgrid\{[^}]*repeat\(4,minmax\(0,1fr\)\)/,'手机物品仓应使用四列紧凑物品格，保留图标及完整名称');
   assert.match(source,/panelOpen && !\[['"]char['"],['"]bag['"],['"]task['"],['"]set['"]\]\.includes\(state\.tab\)/,'自带模块标题的整页入口不应重复渲染旧标题与关闭栏');
   assert.match(html,/viewport-fit=cover/,'顶栏必须启用手机安全区');
   assert.match(html,/id="launch-screen"[\s\S]*id="launch-title">深渊回响[\s\S]*id="launch-status"[\s\S]*id="launch-enter"/,'启动页必须提供品牌、更新状态与进入游戏按钮');
@@ -500,11 +509,11 @@ pendingTests.push((async()=>{
   const campHome=js.slice(js.indexOf('function renderCampHome'),js.indexOf('function renderConstruction'));
   const campHero=js.slice(js.indexOf('function renderCampHero'),js.indexOf('function renderCampContacts'));
   assert.doesNotMatch(campHome,/camp-mapbar-top|renderWorldMap/,'营地主页不得再内联展开地图');
-  assert.match(campHero,/camp-hero-build[\s\S]*uiIcon\('build-control'\)\+'<span>建造<\/span>'[\s\S]*state\.campView='construct'/,'建造入口必须使用专属蓝图图标并进入建筑管理');
+  assert.match(campHome,/camp-home-dock[\s\S]*camp-build-action[\s\S]*uiIcon\('build-control'\)[\s\S]*state\.campView='construct'/,'建造入口必须在底部操作坞使用专属蓝图图标并进入建筑管理');
   assert.doesNotMatch(campHero,/防线管理|has-defense-actions|camp-hero-defense/,'营地卡片不得额外显示防线管理按钮，防线只从哨戒塔进入');
-  assert.match(css,/\.camp-hero-build\{[^}]*width:72px[^}]*height:52px[^}]*flex-direction:column/,'建筑管理入口必须使用紧凑的上图下文布局');
+  assert.match(fs.readFileSync(path.join(__dirname,'ui-system.css'),'utf8'),/\.camp-build-action\{[^}]*flex-direction:column[^}]*min-width:72px[^}]*min-height:60px/,'建筑管理入口必须使用拇指可达的上图下文布局');
   assert.match(html,/<symbol id="icon-build-control"[\s\S]{0,300}M3 21h18/,'建筑管理必须提供独立的科幻建筑蓝图图标');
-  assert.match(campHero,/campDefenseStats\(\)[\s\S]*设施防线[\s\S]*guard\.attack[\s\S]*guard\.defense[\s\S]*guard\.shield/,'营地概览只能展示真实的攻击、防御与护盾总值，并明确区分人物属性');
+  assert.doesNotMatch(campHero,/camp-defense-line/,'营地主视觉不再堆常驻防御指标格，真实防线仍在哨戒塔查看');
   assert.doesNotMatch(campHero,/FACILITIES|RAID CYCLE|夜袭未触发|已建设施/,'营地概览不得继续展示无决策意义的设施数和夜袭占位信息');
   assert.match(js,/wall:\s*\{ name:'简易围墙'[\s\S]*reinforcedWall:\{ name:'复合强化墙'[\s\S]*shieldNode:\s*\{ name:'局部护盾节点'[\s\S]*energyDome:\s*\{ name:'营地能量穹顶'/,'营地防御工事必须覆盖前期墙体、强化墙与后期能量护盾');
   assert.match(js,/function campDefenseStats\(\)[\s\S]{0,260}s\.attack\+=defAtk\(d\);s\.defense\+=defArmor\(d\);s\.shield\+=defShield\(d\)/,'营地防御统计必须分别汇总攻击、防御与护盾');
@@ -668,31 +677,32 @@ pendingTests.push((async()=>{
 }
 {
   const s=reset(),box=new FakeElement();a.renderCharPanel(box);const classes=box.children.map(x=>x.className||'');
-  const profile=box.children[0],growth=classes.findIndex(x=>x.startsWith('growth-nav character-quick-nav')),statMarkup=profile.innerHTML.match(/<div class="camp-metrics char-vitals char-profile-stats ui-stat-grid">([\s\S]*?)<\/div>$/),advanced=box.children.find(n=>hasClass(n,'stat-fold'));
-  assert.ok(hasClass(profile,'ui-panel'),'角色档案复用统一面板');assert.ok(statMarkup,'角色首屏保留核心状态');assert.equal((statMarkup[1].match(/class="ui-stat-chip"/g)||[]).length,6,'首屏只展示生命、体力、攻击、防御、速度与护盾');assert.ok(growth>0&&growth<box.children.indexOf(advanced),'基因成长入口必须在高级参数之前');assert.equal((advanced.innerHTML.match(/class="ui-stat-chip"/g)||[]).length,8,'其余八项属性仍可展开查看');assert.equal(advanced.open,false,'详细属性默认折叠，方便手机首屏查看成长入口');assert.equal(classes.includes('camp-command-card char-command skill-entry'),false,'技能由一级导航访问，不重复堆在角色页');
+  const profile=box.children[0],dock=box.children.find(n=>hasClass(n,'char-thumb-dock'));
+  assert.ok(hasClass(profile,'char-rpg-stage'),'角色以人物舞台为主');assert.equal((profile.innerHTML.match(/class="ui-stat-chip"/g)||[]).length,6,'首屏只展示生命、体力、攻击、防御、速度与护盾');assert.deepEqual(dock.children.map(n=>n.className),['gene-entry','echo-entry','stats-entry'],'基因、回响与详细属性都常驻底部手区');assert.equal(classes.includes('camp-command-card char-command skill-entry'),false,'技能由一级导航访问，不重复堆在角色页');
+  assert.match(profile.innerHTML,/doll-art-host char-rpg-portrait/,'角色页必须使用共享穿戴宿主');assert.ok(profile.innerHTML.includes(a.dollArt()),'角色页与背包必须使用同一个人物rig入口');assert.doesNotMatch(profile.innerHTML,/career-portraits-v1|assets\/loadout-/,'当前角色不能替换为另一张职业宣传立绘');assert.equal(typeof box._refreshCharPanel,'function','角色穿戴变化可以原位更新');
   assert.equal(s.charView,'overview');
 }
 {
   const s=reset();s.meta.careers.life={id:'noviceApprentice',level:1,xp:0};const box=new FakeElement();a.renderCharPanel(box);const classes=box.children.map(x=>x.className||'');
-  assert.equal(a.careerSummary('life'),'入门学徒 · Lv1');assert.ok(box.children[0].innerHTML.includes('char-profile-stats')&&classes.some(x=>x.startsWith('growth-nav character-quick-nav'))&&!classes.includes('camp-command-card char-command skill-entry')&&classes.filter(x=>x.startsWith('char-fold')).length===2,'入门职业继续显示核心状态、成长与可展开的详细属性');
+  assert.equal(a.careerSummary('life'),'入门学徒 · Lv1');assert.ok(box.children[0].innerHTML.includes('char-profile-stats')&&classes.includes('char-thumb-dock')&&!classes.includes('camp-command-card char-command skill-entry'),'入门职业继续显示核心状态和全部手区成长入口');
 }
 {
   const s=reset();s.skills.pierce.prof=10;s.skillView='active';const box=new FakeElement(),nodes=[];a.renderSkillPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);
-  assert.ok(nodes.some(n=>hasClass(n,'skill-browser'))&&nodes.some(n=>hasClass(n,'skill-detail-host')),'技能页必须使用能力库与常驻详情组成的响应式装配台');
+  assert.equal(nodes.filter(n=>hasClass(n,'skill-browser')).length,3,'三个技能分类必须各保留自己的图标库节点与滚动状态');assert.equal(nodes.some(n=>hasClass(n,'skill-detail-host')),false,'未点技能前不能用常驻详情挤占手机屏幕');
   assert.equal(nodes.filter(n=>String(n.className).startsWith('skill-loadout-slot')).length,3,'战斗技能栏必须始终显示三个槽位');assert.equal(nodes.filter(n=>String(n.className).includes('skill-category-tabs')).length,1,'技能页必须提供主动、自动与精通分类');
-  const skillCard=nodes.find(n=>String(n.className).startsWith('skill-library-card')),skillDetail=nodes.find(n=>String(n.className).startsWith('skill-detail-panel'));assert.equal(nodes.filter(n=>String(n.className).startsWith('skill-library-card')).length,1,'技能页默认只显示已学能力，不混入其他职业与未解锁技能');assert.equal(nodes.some(n=>hasClass(n,'locked')),false,'默认已学列表不得夹杂锁定卡');assert.equal(skillCard.dataset.skill,'pierce');assert.match(skillCard.innerHTML,/破甲射击[\s\S]*Lv1/,'简洁主动技能卡仍须显示名称与当前等级');assert.equal(nodes.filter(n=>String(n.className).startsWith('skill-detail-panel')).length,1,'选中技能只能显示一份详情');assert.match(skillDetail.innerHTML,/技能进度[\s\S]*Lv1 · 熟练度 0 \/ 10/,'完整熟练度与成长信息必须集中在技能详情');
-  const action=nodes.find(n=>String(n.className).includes('skill-detail-action'));assert.ok(action&&action.innerHTML.includes('装配到技能栏 01'),'选中主动技能后下半屏必须提供明确的目标槽位操作');action.onclick();assert.equal(s.skillSlots[0],'pierce','技能详情主操作必须把技能装配到当前选中槽');
-  const catalogue=nodes.find(n=>hasClass(n,'rpg-text-button')&&n.innerHTML==='全部图鉴');assert.ok(catalogue,'未来解锁路径必须保留在明确的图鉴入口');catalogue.onclick();const all=[];(function walk(node){all.push(node);(node.children||[]).forEach(walk);})(box);assert.equal(s.skillCatalogue,true);assert.ok(all.filter(n=>hasClass(n,'skill-library-card')).length>1);assert.ok(all.some(n=>hasClass(n,'skill-library-card')&&hasClass(n,'locked')),'主动打开图鉴后必须可以检查未学技能的解锁路径');
+  const active=nodes.find(n=>hasClass(n,'skill-browser')&&n.dataset.skillView==='active'),cards=active.children[0].children,visible=cards.filter(n=>!n.hidden);assert.equal(visible.length,1,'技能页默认只显示已学能力');assert.equal(visible[0].dataset.skill,'pierce');assert.equal(visible[0].children[1].children[0].innerHTML,'破甲射击');assert.equal(visible[0].children[1].children[1].textContent,'Lv1','图标下方保留当前等级');
+  const catalogue=nodes.find(n=>hasClass(n,'skill-catalogue-toggle'));assert.ok(catalogue,'未来解锁路径必须保留在底部图鉴入口');catalogue.onclick();assert.equal(s.skillCatalogue,true);assert.ok(cards.filter(n=>!n.hidden).length>1);assert.equal(active.children[0].children,cards,'图鉴开关只过滤原节点，不重建技能库');
 }
 {
   const s=reset();s.skills.pierce.prof=10;s.skills.heavy.prof=10;s.skillView='active';s.skillSelected='pierce';const box=new FakeElement();a.renderSkillPanel(box);
-  const [hero,overview,slots,tabs,browser]=box.children,cards=browser.children[0].children,heavy=cards.find(card=>(card.innerHTML||'').includes('重斩')),detailHost=browser.children[1],oldDetail=detailHost.children[0];assert.ok(heavy,'技能图鉴必须能选择第二个已解锁主动技能');heavy.onclick();
-  assert.equal(box.children[0],hero,'选择技能不得重建技能页标题');assert.equal(box.children[1],overview,'选择技能不得重建技能页统计');assert.equal(box.children[2],slots,'选择技能不得重建装配栏');assert.equal(box.children[3],tabs,'选择技能不得重建分类栏');assert.equal(box.children[4],browser,'选择技能不得重建能力图鉴');assert.notEqual(detailHost.children[0],oldDetail,'选择技能只应原子替换详情节点');assert.match(detailHost.children[0].innerHTML,/重斩/);
-  tabs.children[1].onclick();assert.equal(box.children[0],hero,'切换技能分类不得重建标题');assert.equal(box.children[1],overview,'切换技能分类不得重建统计');assert.equal(box.children[2],slots,'切换技能分类不得重建装配栏');assert.equal(box.children[3],tabs,'切换技能分类不得重建分类栏自身');assert.notEqual(box.children[4],browser,'切换技能分类只替换图鉴与详情区域');
+  const [hero,slots,browser,auto,mastery,dock]=box.children,tabs=dock.children[0],cards=browser.children[0].children,detail=a.renderSkillDetail('heavy',()=>box._refreshSkillPanel()),footer=new FakeElement();detail._mountActions(footer,()=>{});const actions=footer.children.find(n=>hasClass(n,'skill-assignment-slots'));
+  assert.equal(actions.children.length,3,'抽屉底部直接提供全部三个槽位，无需先返回上方选槽');actions.children[2].onclick();assert.equal(s.skillSlots[2],'heavy');assert.equal(actions.children[2].children[2].textContent,'点击卸下');actions.children[2].onclick();assert.equal(s.skillSlots[2],null,'再次点击明确标记的卸下位置必须真正卸下');
+  assert.equal(box.children[0],hero);assert.equal(box.children[1],slots);assert.equal(box.children[2],browser);assert.equal(browser.children[0].children,cards,'装配和卸下只更新原节点文字');
+  tabs.children[1].onclick();assert.equal(s.skillView,'auto');assert.equal(browser.hidden,true);assert.equal(auto.hidden,false);assert.equal(box.children[2],browser);assert.equal(box.children[3],auto);assert.equal(box.children[4],mastery);assert.equal(box.children[5],dock,'分类切换不得替换任意图标库或底部控制区');
 }
 {
-  const s=reset();s.meta.careers.life={id:'salvager',level:3,xp:0};s.skills.salvageSense.prof=20;s.skills.fieldSorting.prof=10;s.skillView='auto';s.skillSelected='salvageSense';const box=new FakeElement(),nodes=[];a.renderSkillPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);const markup=nodes.map(n=>n.innerHTML||'').join(' '),detail=nodes.find(n=>String(n.className).startsWith('skill-detail-panel'));
-  assert.match(markup,/残骸直觉[\s\S]*Lv2 · 自动生效/,'职业被动卡必须显示当前等级与自动生效状态');assert.match(detail.innerHTML,/当前 Lv2：采集 \+15%[\s\S]*技能进度[\s\S]*Lv2 · 熟练度 0 \/ 10/,'职业被动详情必须集中展示实际效果与完整熟练度，不能因简化卡片而丢失');
+  const s=reset();s.meta.careers.life={id:'salvager',level:3,xp:0};s.skills.salvageSense.prof=20;s.skills.fieldSorting.prof=10;s.skillView='auto';s.skillSelected='salvageSense';const box=new FakeElement(),nodes=[];a.renderSkillPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);const card=nodes.find(n=>n.dataset.skill==='salvageSense'),detail=a.renderSkillDetail('salvageSense',()=>{}),footer=new FakeElement();detail._mountActions(footer,()=>{});
+  assert.equal(card.children[1].children[1].textContent,'Lv2 · 自动','职业被动图标必须显示等级与自动状态');assert.match(detail.children.find(n=>hasClass(n,'rpg-skill-effect')).textContent,/采集 \+15%/,'抽屉必须展示真实效果');assert.match(detail.children[0].children[1].children[2].textContent,/Lv2 · 熟练度 0 \/ 10/);assert.equal(footer.children.some(n=>hasClass(n,'skill-assignment-slots')),false,'生活被动不得出现装配按钮');
 }
 {
   const s=reset();s.charView='careers';s.meta.careers.main={id:'vanguard',level:3,xp:12};s.meta.careers.life={id:'noviceCollector',level:2,xp:7};s.flags.job_vanguard_qualified=true;s.flags.job_salvager_qualified=true;const box=new FakeElement(),nodes=[];a.renderCharPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);

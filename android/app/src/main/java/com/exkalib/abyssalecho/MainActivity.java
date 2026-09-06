@@ -417,8 +417,12 @@ public final class MainActivity extends Activity {
     }
 
     private void handleBack() {
-        if (webView != null && webView.canGoBack()) webView.goBack();
-        else finishAfterTransition();
+        if (webView == null) { finishAfterTransition(); return; }
+        webView.evaluateJavascript("(function(){try{return typeof globalThis.abyssHandleBack==='function' && globalThis.abyssHandleBack();}catch(e){return false;}})()", handled -> {
+            if ("true".equals(handled) || isFinishing() || isDestroyed()) return;
+            if (webView != null && webView.canGoBack()) webView.goBack();
+            else finishAfterTransition();
+        });
     }
 
     @SuppressLint("GestureBackNavigation")

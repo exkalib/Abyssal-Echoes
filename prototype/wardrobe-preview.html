@@ -9,7 +9,7 @@
   <div class="wardrobe-preview-grid"><section><h2>男性母版</h2><div id="male"></div></section><section><h2>女性母版</h2><div id="female"></div></section></div>
   <p>检查：肩带、腰线、裤脚、腕部遮挡；切换鞋子时，脸和其他装备节点不应被替换。</p>
 </main>
-<script src="wardrobe.js"></script>
+<script src="wardrobe-fit.js"></script><script src="wardrobe-grips.js"></script><script src="wardrobe-hands.js"></script><script src="wardrobe-trigger-hands.js"></script><script src="wardrobe-sword-hands.js"></script><script src="wardrobe.js"></script>
 <script>
 const outfit={feet:null,body:null,offhand:null};
 const refresh=()=>{document.querySelectorAll('[data-wear-slot]').forEach(select=>select.value=outfit[select.dataset.wearSlot]||'');return Promise.all(['male','female'].map(sex=>updateWearablePortrait(document.getElementById(sex),sex,outfit,document.getElementById('fitting-career').value)));};

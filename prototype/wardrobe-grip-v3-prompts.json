@@ -1,0 +1,370 @@
+{
+  "date": "2026-09-06",
+  "mode": "built-in imagegen",
+  "notes": [
+    "Image source edits were performed by imagegen only. Native alpha is verified before installation.",
+    "Local processing: aspect-preserving resize and WebP encoding only; no matting or pixel masking.",
+    "Runtime anatomically selects original forearm cuffs and fits authored hand poses to the shared body rig.",
+    "Historical conclusions about old weapon grips are withdrawn."
+  ],
+  "attempts": [
+    {
+      "id": "reference-sword",
+      "prompt": "Generate on a genuinely transparent background. Production realistic sci-fi RPG hand-and-weapon anatomical reference, very large detailed close-up of a normal adult RIGHT hand firmly holding the exact knife in the reference. Reference is weapon design only; rotate it so blade points upper-left, pommel lower-right. Wrist enters from upper-right, forearm runs down-left into the hand, relaxed low carry as on a front-facing standing character. View the back/radial side of the hand at three-quarter angle, not the open palm. The four fingers actually curl all the way around the cylindrical hilt, thumb closes against index finger. Handle lies inside the palm and through the curled fingers; small stretches of real handle are visible above index and below little finger. Guard above index, outside the hand; pommel below little finger. Correct five-digit anatomy, believable contact pressure and shadows; no fist pasted over a weapon, no floating handle behind knuckles. Include only short bare wrist, one natural hand, the exact knife. No sleeve, no whole character, no labels, no extra objects. Knife must be clearly and physically held. Entire hand and knife contained within square canvas, consistent soft upper-left studio light, native alpha transparency with no background or checkerboard.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-a5e35c23-2e21-49e8-b22e-369007854199.png",
+      "status": "reference-or-superseded"
+    },
+    {
+      "id": "reference-firearm",
+      "prompt": "Generate on a genuinely transparent background. Production realistic sci-fi RPG hand-and-weapon anatomical reference: detailed close-up of a normal adult RIGHT hand correctly gripping the exact sci-fi pistol in the reference. Reference is weapon design only; rotate pistol so barrel points diagonally LOWER LEFT, about 35 degrees below horizontal, not upright or backward. Bare wrist enters from upper-right, forearm slopes down-left to the grip, low relaxed carry for a front-facing game character. View the back/radial three-quarter side of the hand; palm mostly concealed against the grip. Grip seated fully in the hand. MIDDLE, RING and LITTLE fingers curl around the grip below the trigger guard, arranged naturally from top to bottom. INDEX finger is the uppermost finger and lies straight along the side of the frame ABOVE and OUTSIDE the trigger guard, NOT a lower little finger hooked into it. Thumb wraps high around the opposite side of grip, web of thumb/index contacts backstrap. Correct five digits, natural knuckles, convincing physical contact and cast shadows. No open palm splayed toward viewer, no pinky on trigger, no six fingers, no floating gun, no mitten-shaped solid fist. Include only one short bare wrist, one hand, the complete exact pistol. No full character, no sleeve, no text, no border. Entire hand and pistol contained in a square canvas, soft upper-left light. Actual PNG alpha transparency, no background color or checkerboard.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-12aff34f-8666-46e0-b329-a9ce94ef9336.png",
+      "status": "reference-or-superseded"
+    },
+    {
+      "id": "sword-isolated",
+      "prompt": "Generate on a genuinely transparent background. Isolate only the existing bare hand and wrist from this image, unchanged. Remove the entire knife, including every visible blade, guard, handle and pommel pixel; those areas become real transparent alpha, including any little spaces where the hilt showed between fingers. Preserve the exact hand pose, all five fingers, thumb, nails, skin contours and contact shadows from this actually gripping hand. Do NOT fill the removed handle space with a solid palm or make a closed empty fist. Keep EXACT canvas, object positions and hand scale. The result is the original visible hand with a transparent weapon-shaped opening so the same knife can be composited behind it. No weapon, no gray/black fill, no checkerboard, no background; true alpha transparent PNG. Keep short bare wrist only as in source, no new arm or sleeve.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-06ba4264-0ff5-4bba-98a9-05772591bc73.png",
+      "status": "reference-or-superseded"
+    },
+    {
+      "id": "firearm-reference2",
+      "prompt": "Generate on a genuinely transparent background. A realistic close-up anatomical study for a sci-fi RPG: ONE normal right hand, firmly and naturally holding ONE conventional L-shaped futuristic pistol. Pistol points horizontally LEFT; simple brushed gray metal upper slide, small amber power line, a SINGLE black grip descending DOWN-RIGHT from the rear of the slide. Exactly one grip and one trigger guard. Natural adult bare right hand, seen from the dorsal/radial 3/4 side. Forearm enters from the RIGHT edge, hand wraps the black grip. Thumb high on side, THREE curled middle/ring/little fingers tightly around the grip, INDEX finger straight along the left-pointing frame ABOVE AND OUTSIDE the trigger guard. This is a non-firing resting carry pose. Show the correct anatomy and true contact; no open palm, no finger on trigger, no little finger pointing forward, no duplicate grip. Entire hand and pistol in frame with short wrist. Five fingers total, correct normal proportions, soft studio light, high quality 3D game realism. No text or background, actual transparent alpha PNG, not a checkerboard pattern. One weapon, one hand only.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-d48605f0-926a-4a16-a963-a7b1fb4164e4.png",
+      "status": "reference-or-superseded"
+    },
+    {
+      "id": "sword-alpha",
+      "prompt": "Generate on a genuinely transparent background. Keep this EXACT hand and wrist unchanged. Replace the checkerboard with actual PNG alpha transparency outside the hand. Preserve exact square canvas, placement, scale, five fingers, fingernails, curled knife-gripping pose, skin, contours. No knife, no prop, no background color, no checkerboard, no glow. Actual transparent PNG, not an illustration of a transparency grid.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-9ade5910-0a4d-48f0-8ce1-2929df3d40f0.png",
+      "status": "reference-or-superseded"
+    },
+    {
+      "id": "firearm-isolated",
+      "prompt": "Generate on a genuinely transparent background. Isolate ONLY the existing visible right hand and wrist from this image and remove the entire pistol. Preserve the EXACT anatomy, five fingers (thumb hidden on far side), straight index finger at top, three middle/ring/little fingers curved below, dorsal knuckles, wrist, contours and skin. Keep the SAME landscape canvas and all hand coordinates. Every visible gun pixel becomes real transparent alpha; do not reconstruct skin where the gun was in front of the hand. Preserve this precise pistol-holding pose, NOT an open palm or generic fist. No weapon, no prop, no extra digits, no black fill or transparency grid. Native transparent PNG alpha outside the existing visible hand. Keep exact hand placement/scale, no recenter or crop.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-a6a28f00-ebf6-48f2-b6f0-d8b44fc8f104.png",
+      "status": "reference-or-superseded"
+    },
+    {
+      "id": "firearm-alpha",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact right hand and wrist unchanged. Replace the checkerboard background with actual transparent PNG alpha. Preserve the same 1536x1024 landscape canvas, exact hand position/scale, straight top index finger and three curled lower fingers, hidden far-side thumb, skin and contours. No weapon, no prop, no added fingers, no background color, no checkerboard or glow. Actual alpha transparency outside the hand and between index/middle finger.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-94962701-41fa-4cc3-84de-51da3bf5531b.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "sword-down-reference",
+      "prompt": "Generate on a genuinely transparent background. Photorealistic sci-fi RPG equipment hand reference. ONE adult right hand carrying the exact knife from the reference in a RELAXED BLADE-DOWN inventory pose at the side of a front-facing standing person. Show only a short VERTICAL wrist entering straight DOWN from the TOP CENTER of the image, and the hand below it. The wrist must be straight and aligned vertically with the forearm, no horizontal arm, no arm entering from a corner. Blade points DOWN and slightly outward LEFT, only 10 degrees from vertical; pommel is ABOVE the fist, guard BELOW the fist. The hand wraps naturally and fully around the upright hilt: four distinct fingers curl around it, thumb locks over the index at the upper grip. Viewed from front/dorsal three-quarter side, neutral normal wrist and real contact. Knife handle lies INSIDE the hand, not behind a solid fist: visible handle above index and below little finger, blade guard outside the fingers. Correct five-digit anatomy, no sixth finger, no floating knife. Match supplied knife metal and black grip. Entire knife and hand in frame, square canvas, short bare wrist. This is non-combat lowered carry, not stabbing, not aiming, not a raised sword stance. Native alpha transparency, no checkerboard, no background, no text.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-daaa3b2a-cc8a-4772-b60e-57d89805226b.png",
+      "status": "reference-or-superseded"
+    },
+    {
+      "id": "sword-down-isolated",
+      "prompt": "Generate on a genuinely transparent background. Remove ONLY the knife from this image and keep ONLY the exact existing visible hand and short vertical wrist. Replace all knife pixels and the checkerboard with real alpha transparency, INCLUDING the long narrow black handle area visible between the palm on the left and curled fingers on the right. Do NOT invent or reconstruct hidden palm behind that handle. That central hilt-shaped slit must stay transparent so the knife can later be put back through the hand. Preserve exact finger contours, all five digits, wrist, skin and contact shadows. Preserve this exact 1254x1254 square canvas and the original hand position at the upper center; leave the lower half empty rather than recentering/enlarging the hand. No weapon, no solid background, no checkerboard drawing, no dark placeholder hilt. Exact visible hand extraction as true transparent PNG. Straight vertical wrist remains at top; this is the lowered knife-carry hand.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-06e8cf93-a9e7-41ba-809d-a8157182227c.png",
+      "status": "reference-or-superseded"
+    },
+    {
+      "id": "sword-down-alpha",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact hand and wrist unchanged. Replace all checkerboard with actual PNG alpha transparency, including the narrow vertical opening through the grip between the fingers. Preserve exact square canvas, hand position in the upper center and empty lower half, pose, finger contours and skin. No added fingers, no weapon, no background, no checkerboard. Actual PNG alpha outside hand and inside both openings.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-5713fde8-7a48-4d79-abad-80f67f64380d.png",
+      "status": "rejected-anatomy-and-opaque-background"
+    },
+    {
+      "id": "sword-neutral-wrist",
+      "prompt": "Generate on a genuinely transparent background, actual PNG alpha. Anatomical game equipment hand sprite correction. Preserve exactly the closed gripping fist, all five fingers, thumb over the index and natural curled middle/ring/little fingers, palm view, skin style, size and fist location in this reference. CHANGE ONLY THE WRIST AND SHORT FOREARM: the forearm must rise STRAIGHT UP from the back of the fist to the TOP CENTER of the canvas, NOT diagonally up toward the top-right corner. Redesign the wrist anatomically into a neutral handshake/hammer grip, as though comfortably holding a nearly upright knife handle in a lowered relaxed arm. Wrist emerges above the upper palm near x=0.62 and y=0.45, forearm extends upward to x=0.65 at top edge. Do not move the closed fingers or rotate the fist. No weapon is visible. No extra fingers, no open circle gesture, no fanned fingers. A clean short forearm continuous with the palm, not a dislocated bend. Canvas 1024x1024. Transparent outside hand, NO checkerboard, NO glow, NO solid background.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-c82d2842-ecff-4479-b411-486d752df262.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "firearm-workGloves",
+      "prompt": "Generate on a genuinely transparent background. Image 1 is the EDIT TARGET: one correctly posed right hand for a pistol resting grip. Image 2 is only the glove MATERIAL/DESIGN reference, not a pose or layout reference. Dress the one hand in Image 1 in this exact workGloves glove design. Preserve the EXACT original hand skeleton, finger lengths/positions, camera angle, one straight upper index finger pointing left, three curled lower fingers, far-side hidden thumb, wrist position, scale, and the exact 1536x1024 landscape canvas. Keep all five digit identities unchanged. Cover every nail and all hand skin with the glove, matching reference armor panels, seams and lights at natural glove thickness. Only hand and short wrist; do not add a long forearm gauntlet, elbow, another hand, sleeve, weapon or props. The long gauntlet is a separate game layer. Retain the negative gap under the extended index finger and all current contours. Same hand in same position, no recenter or crop. Native PNG alpha background, no glow, no solid backdrop, no checkerboard pattern. Only change the material into this glove, not the pose or body proportions.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-fed90924-0a2d-4e51-a208-f45cda897a73.png",
+      "status": "pending-final-fit-review"
+    },
+    {
+      "id": "firearm-alpha-workGloves",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact gloved hand and wrist unchanged. Replace the checkerboard with actual transparent PNG alpha outside the hand and between the straight index finger and the curled middle finger. Preserve exact 1536x1024 canvas, placement, scale, glove details, five digit identities and pose. No hand redesign, no weapons, no added fingers, no background color, no checkerboard, no glow. Actual alpha transparency.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-ddb34532-4059-47ef-863d-691a89a916a5.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "firearm-nanoWeaveGloves",
+      "prompt": "Generate on a genuinely transparent background. Image 1 is the EDIT TARGET: one correctly posed right hand for a pistol resting grip. Image 2 is only the glove MATERIAL/DESIGN reference, not a pose or layout reference. Dress the one hand in Image 1 in this exact nanoWeaveGloves glove design. Preserve the EXACT original hand skeleton, finger lengths/positions, camera angle, one straight upper index finger pointing left, three curled lower fingers, far-side hidden thumb, wrist position, scale, and the exact 1536x1024 landscape canvas. Keep all five digit identities unchanged. Cover every nail and all hand skin with the glove, matching reference armor panels, seams and lights at natural glove thickness. Only hand and short wrist; do not add a long forearm gauntlet, elbow, another hand, sleeve, weapon or props. The long gauntlet is a separate game layer. Retain the negative gap under the extended index finger and all current contours. Same hand in same position, no recenter or crop. Native PNG alpha background, no glow, no solid backdrop, no checkerboard pattern. Only change the material into this glove, not the pose or body proportions.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-74aced2a-760d-46aa-bf28-ac21736e1029.png",
+      "status": "pending-final-fit-review"
+    },
+    {
+      "id": "firearm-alpha-nanoWeaveGloves",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact gloved hand and wrist unchanged. Replace the checkerboard with actual transparent PNG alpha outside the hand and between the straight index finger and the curled middle finger. Preserve exact 1536x1024 canvas, placement, scale, glove details, five digit identities and pose. No hand redesign, no weapons, no added fingers, no background color, no checkerboard, no glow. Actual alpha transparency.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-04c3dd28-6f59-4ab4-9892-6e70e67b0e38.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "firearm-servoGauntlet",
+      "prompt": "Generate on a genuinely transparent background. Image 1 is the EDIT TARGET: one correctly posed right hand for a pistol resting grip. Image 2 is only the glove MATERIAL/DESIGN reference, not a pose or layout reference. Dress the one hand in Image 1 in this exact servoGauntlet glove design. Preserve the EXACT original hand skeleton, finger lengths/positions, camera angle, one straight upper index finger pointing left, three curled lower fingers, far-side hidden thumb, wrist position, scale, and the exact 1536x1024 landscape canvas. Keep all five digit identities unchanged. Cover every nail and all hand skin with the glove, matching reference armor panels, seams and lights at natural glove thickness. Only hand and short wrist; do not add a long forearm gauntlet, elbow, another hand, sleeve, weapon or props. The long gauntlet is a separate game layer. Retain the negative gap under the extended index finger and all current contours. Same hand in same position, no recenter or crop. Native PNG alpha background, no glow, no solid backdrop, no checkerboard pattern. Only change the material into this glove, not the pose or body proportions.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-4c241ef9-7247-4429-9773-08a44b434f1f.png",
+      "status": "pending-final-fit-review"
+    },
+    {
+      "id": "firearm-alpha-servoGauntlet",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact gloved hand and wrist unchanged. Replace the checkerboard with actual transparent PNG alpha outside the hand and between the straight index finger and the curled middle finger. Preserve exact 1536x1024 canvas, placement, scale, glove details, five digit identities and pose. No hand redesign, no weapons, no added fingers, no background color, no checkerboard, no glow. Actual alpha transparency.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-7a91e07a-b876-4292-b03a-4244d964f44c.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "firearm-hands_general_1",
+      "prompt": "Generate on a genuinely transparent background. Image 1 is the EDIT TARGET: one correctly posed right hand for a pistol resting grip. Image 2 is only the hands_general_1 glove MATERIAL/DESIGN reference, not a pose or layout reference. Dress the one hand in Image 1 in this glove, preserving its exact armor plates, accent colors and wrist details. Preserve the EXACT original hand skeleton, finger lengths/positions, camera angle, one straight upper index finger pointing left, three curled lower fingers, far-side hidden thumb, wrist position, scale, and exact 1536x1024 landscape canvas. Cover every nail and all skin with this full glove, at natural thickness. Only hand and short wrist; no long arm or elbow, no second hand, no weapon. Keep current negative gap under extended index. Same hand in same position; no recenter or crop. Native PNG alpha background, no glow, no solid backdrop or checkerboard. Change only glove material, not pose or proportions.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-643cff2a-ba53-43ce-adf2-a7e6cadc9288.png",
+      "status": "pending-final-fit-review"
+    },
+    {
+      "id": "firearm-alpha-hands_general_1",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact gloved hand and wrist unchanged. Replace the checkerboard with actual transparent PNG alpha outside the hand and between the straight index finger and the curled middle finger. Preserve exact 1536x1024 canvas, placement, scale, glove details, five digit identities and pose. No hand redesign, no weapons, no added fingers, no background color, no checkerboard, no glow. Actual alpha transparency.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-b3961975-ff34-4947-9ea4-e4119e0778a6.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "firearm-hands_general_2",
+      "prompt": "Generate on a genuinely transparent background. Image 1 is the EDIT TARGET: one correctly posed right hand for a pistol resting grip. Image 2 is only the hands_general_2 glove MATERIAL/DESIGN reference, not a pose or layout reference. Dress the one hand in Image 1 in this glove, preserving its exact armor plates, accent colors and wrist details. Preserve the EXACT original hand skeleton, finger lengths/positions, camera angle, one straight upper index finger pointing left, three curled lower fingers, far-side hidden thumb, wrist position, scale, and exact 1536x1024 landscape canvas. Cover every nail and all skin with this full glove, at natural thickness. Only hand and short wrist; no long arm or elbow, no second hand, no weapon. Keep current negative gap under extended index. Same hand in same position; no recenter or crop. Native PNG alpha background, no glow, no solid backdrop or checkerboard. Change only glove material, not pose or proportions.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-e163f44e-b008-450d-8097-2b6148d02ddf.png",
+      "status": "pending-final-fit-review"
+    },
+    {
+      "id": "firearm-alpha-hands_general_2",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact gloved hand and wrist unchanged. Replace the checkerboard with actual transparent PNG alpha outside the hand and between the straight index finger and the curled middle finger. Preserve exact 1536x1024 canvas, placement, scale, glove details, five digit identities and pose. No hand redesign, no weapons, no added fingers, no background color, no checkerboard, no glow. Actual alpha transparency.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-72e159ea-5956-41f1-a743-8d2b47b0b537.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "firearm-hands_general_3",
+      "prompt": "Generate on a genuinely transparent background. Image 1 is the EDIT TARGET: one correctly posed right hand for a pistol resting grip. Image 2 is only the hands_general_3 glove MATERIAL/DESIGN reference, not a pose or layout reference. Dress the one hand in Image 1 in this glove, preserving its exact armor plates, accent colors and wrist details. Preserve the EXACT original hand skeleton, finger lengths/positions, camera angle, one straight upper index finger pointing left, three curled lower fingers, far-side hidden thumb, wrist position, scale, and exact 1536x1024 landscape canvas. Cover every nail and all skin with this full glove, at natural thickness. Only hand and short wrist; no long arm or elbow, no second hand, no weapon. Keep current negative gap under extended index. Same hand in same position; no recenter or crop. Native PNG alpha background, no glow, no solid backdrop or checkerboard. Change only glove material, not pose or proportions.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-124f8937-ecf5-4610-a29e-7ce694b90b20.png",
+      "status": "pending-final-fit-review"
+    },
+    {
+      "id": "firearm-alpha-hands_general_3",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact gloved hand and wrist unchanged. Replace the checkerboard with actual transparent PNG alpha outside the hand and between the straight index finger and the curled middle finger. Preserve exact 1536x1024 canvas, placement, scale, glove details, five digit identities and pose. No hand redesign, no weapons, no added fingers, no background color, no checkerboard, no glow. Actual alpha transparency.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-cc798add-f48d-4999-999a-23ab67d550e6.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "firearm-hands_general_4",
+      "prompt": "Generate on a genuinely transparent background. Image 1 is the EDIT TARGET: one correctly posed right hand for a pistol resting grip. Image 2 is only the hands_general_4 glove MATERIAL/DESIGN reference, not a pose or layout reference. Dress the one hand in Image 1 in this glove, preserving its exact armor plates, accent colors and wrist details. Preserve the EXACT original hand skeleton, finger lengths/positions, camera angle, one straight upper index finger pointing left, three curled lower fingers, far-side hidden thumb, wrist position, scale, and exact 1536x1024 landscape canvas. Cover every nail and all skin with this full glove, at natural thickness. Only hand and short wrist; no long arm or elbow, no second hand, no weapon. Keep current negative gap under extended index. Same hand in same position; no recenter or crop. Native PNG alpha background, no glow, no solid backdrop or checkerboard. Change only glove material, not pose or proportions.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-bacc07fd-b16f-448e-9fba-bee8fd3dff8d.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "firearm-hands_general_5",
+      "prompt": "Generate on a genuinely transparent background. Image 1 is the EDIT TARGET: one correctly posed right hand for a pistol resting grip. Image 2 is only the hands_general_5 glove MATERIAL/DESIGN reference, not a pose or layout reference. Dress the one hand in Image 1 in this glove, preserving its exact armor plates, accent colors and wrist details. Preserve the EXACT original hand skeleton, finger lengths/positions, camera angle, one straight upper index finger pointing left, three curled lower fingers, far-side hidden thumb, wrist position, scale, and exact 1536x1024 landscape canvas. Cover every nail and all skin with this full glove, at natural thickness. Only hand and short wrist; no long arm or elbow, no second hand, no weapon. Keep current negative gap under extended index. Same hand in same position; no recenter or crop. Native PNG alpha background, no glow, no solid backdrop or checkerboard. Change only glove material, not pose or proportions.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-60543c7d-09e6-4afe-b684-40d36ec0d12f.png",
+      "status": "pending-final-fit-review"
+    },
+    {
+      "id": "firearm-alpha-hands_general_5",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact gloved hand and wrist unchanged. Replace the checkerboard with actual transparent PNG alpha outside the hand and between the straight index finger and the curled middle finger. Preserve exact 1536x1024 canvas, placement, scale, glove details, five digit identities and pose. No hand redesign, no weapons, no added fingers, no background color, no checkerboard, no glow. Actual alpha transparency.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-1cf67c70-7dd9-40bc-89c4-ad14988e5c5d.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "firearm-hands_specialist_5",
+      "prompt": "Generate on a genuinely transparent background. Image 1 is the EDIT TARGET: one correctly posed right hand for a pistol resting grip. Image 2 is only the hands_specialist_5 glove MATERIAL/DESIGN reference, not a pose or layout reference. Dress the one hand in Image 1 in this glove, preserving its exact armor plates, accent colors and wrist details. Preserve the EXACT original hand skeleton, finger lengths/positions, camera angle, one straight upper index finger pointing left, three curled lower fingers, far-side hidden thumb, wrist position, scale, and exact 1536x1024 landscape canvas. Cover every nail and all skin with this full glove, at natural thickness. Only hand and short wrist; no long arm or elbow, no second hand, no weapon. Keep current negative gap under extended index. Same hand in same position; no recenter or crop. Native PNG alpha background, no glow, no solid backdrop or checkerboard. Change only glove material, not pose or proportions.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-e103aa43-aa30-44aa-ae9e-cc2f0419ede7.png",
+      "status": "pending-final-fit-review"
+    },
+    {
+      "id": "firearm-alpha-hands_specialist_5",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact gloved hand and wrist unchanged. Replace the checkerboard with actual transparent PNG alpha outside the hand and between the straight index finger and the curled middle finger. Preserve exact 1536x1024 canvas, placement, scale, glove details, five digit identities and pose. No hand redesign, no weapons, no added fingers, no background color, no checkerboard, no glow. Actual alpha transparency.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-4a5645a7-be3b-4ceb-855a-19ff9699fed1.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "sword-neutral-workGloves",
+      "prompt": "Generate on a truly transparent background with native PNG alpha. Image 1 is the EXACT anatomical pose and image layout to preserve. Image 2 is ONLY the glove material/design reference. Dress the hand from image 1 in this specific glove: brown worn leather with black padded knuckles and a modest wrist buckle. Keep exactly the closed fist pose and all five fingers: thumb lays across the curled index, middle/ring/little curl tightly in a cylindrical weapon grip. Preserve the fingertip creases, palm-side camera angle, neutral wrist rising straight up, and exactly the fist location and silhouette of image 1. DO NOT use the open-hand pose of image 2. This is one single human-right/screen-left hand, short wrist only, not a pair. No long forearm: original equipped arm armor is retained separately at runtime. No weapon. No open circle gesture. No added digits. The future handle crosses diagonally through the closed fingers from upper-left to lower-right, exposing only its two ends when composed. Match original reference canvas 1254x1254. Preserve alpha transparency from image 1; no black backdrop, no checkerboard drawn into image, no glow, no contact shadow. Show the full hand and short upper wrist on an empty transparent canvas.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-f7941657-c909-48b5-bde2-9795fdcb18ce.png",
+      "status": "opaque-draft"
+    },
+    {
+      "id": "sword-neutral-alpha-workGloves",
+      "prompt": "Generate this exact single gloved closed hand on a transparent background. Replace the visible checkerboard with actual transparent PNG alpha pixels. Preserve every part of the hand, all five fingers, closed cylindrical grip, neutral wrist, glove materials, original canvas 1254x1254 and position. No new hand, no alteration to pose, no extra fingers, no weapon, no background color, no checkerboard, no glow. This is an alpha-transparent game sprite. Actual PNG alpha outside the silhouette, not an illustration of a checkerboard.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-283eaf87-aece-4477-8f1f-fa8d2db6f3c8.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "sword-neutral-nanoWeaveGloves",
+      "prompt": "Generate on a truly transparent background with native PNG alpha. Image 1 is the EXACT anatomical pose and image layout to preserve. Image 2 is ONLY the glove material/design reference. Dress the hand from image 1 in this specific glove: black nano fabric with delicate green circuit seams and small silver fingertip pads. Keep exactly the closed fist pose and all five fingers: thumb lays across the curled index, middle/ring/little curl tightly in a cylindrical weapon grip. Preserve the fingertip creases, palm-side camera angle, neutral wrist rising straight up, and exactly the fist location and silhouette of image 1. DO NOT use the open-hand pose of image 2. This is one single human-right/screen-left hand, short wrist only, not a pair. No long forearm: original equipped arm armor is retained separately at runtime. No weapon. No open circle gesture. No added digits. The future handle crosses diagonally through the closed fingers from upper-left to lower-right, exposing only its two ends when composed. Match original reference canvas 1254x1254. Preserve alpha transparency from image 1; no black backdrop, no checkerboard drawn into image, no glow, no contact shadow. Show the full hand and short upper wrist on an empty transparent canvas.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-54c0f9b9-e339-4b12-811d-0769ed3aa6c2.png",
+      "status": "opaque-draft"
+    },
+    {
+      "id": "sword-neutral-alpha-nanoWeaveGloves",
+      "prompt": "Generate this exact single gloved closed hand on a transparent background. Replace the visible checkerboard with actual transparent PNG alpha pixels. Preserve every part of the hand, all five fingers, closed cylindrical grip, neutral wrist, glove materials, original canvas 1254x1254 and position. No new hand, no alteration to pose, no extra fingers, no weapon, no background color, no checkerboard, no glow. This is an alpha-transparent game sprite. Actual PNG alpha outside the silhouette, not an illustration of a checkerboard.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-3a0f34ed-479a-49ac-a93e-819115235ca8.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "sword-neutral-servoGauntlet",
+      "prompt": "Generate on a truly transparent background with native PNG alpha. Image 1 is the EXACT anatomical pose and image layout to preserve. Image 2 is ONLY the glove material/design reference. Dress the hand from image 1 in this specific glove: dark grey mechanical armored fingers with orange illuminated accents and a cyan wrist joint. Keep exactly the closed fist pose and all five fingers: thumb lays across the curled index, middle/ring/little curl tightly in a cylindrical weapon grip. Preserve the fingertip creases, palm-side camera angle, neutral wrist rising straight up, and exactly the fist location and silhouette of image 1. DO NOT use the open-hand pose of image 2. This is one single human-right/screen-left hand, short wrist only, not a pair. No long forearm: original equipped arm armor is retained separately at runtime. No weapon. No open circle gesture. No added digits. The future handle crosses diagonally through the closed fingers from upper-left to lower-right, exposing only its two ends when composed. Match original reference canvas 1254x1254. Preserve alpha transparency from image 1; no black backdrop, no checkerboard drawn into image, no glow, no contact shadow. Show the full hand and short upper wrist on an empty transparent canvas.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-53d35ea9-a162-4af4-9421-5752c9a4390e.png",
+      "status": "opaque-draft"
+    },
+    {
+      "id": "sword-neutral-alpha-servoGauntlet",
+      "prompt": "Generate this exact single gloved closed hand on a transparent background. Replace the visible checkerboard with actual transparent PNG alpha pixels. Preserve every part of the hand, all five fingers, closed cylindrical grip, neutral wrist, glove materials, original canvas 1254x1254 and position. No new hand, no alteration to pose, no extra fingers, no weapon, no background color, no checkerboard, no glow. This is an alpha-transparent game sprite. Actual PNG alpha outside the silhouette, not an illustration of a checkerboard.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-c32aa2d4-d0c0-42aa-a3f4-382e1bfc0a85.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "sword-neutral-hands_general_1",
+      "prompt": "Generate on a truly transparent background with native PNG alpha. Image 1 is the EXACT anatomical pose and image layout to preserve. Image 2 is ONLY the glove material/design reference. Dress the hand from image 1 in this specific glove: scratched grey metal plate fingers over brown and black leather, small amber accents. Keep exactly the closed fist pose and all five fingers: thumb lays across the curled index, middle/ring/little curl tightly in a cylindrical weapon grip. Preserve the fingertip creases, palm-side camera angle, neutral wrist rising straight up, and exactly the fist location and silhouette of image 1. DO NOT use the open-hand pose of image 2. This is one single human-right/screen-left hand, short wrist only, not a pair. No long forearm: original equipped arm armor is retained separately at runtime. No weapon. No open circle gesture. No added digits. The future handle crosses diagonally through the closed fingers from upper-left to lower-right, exposing only its two ends when composed. Match original reference canvas 1254x1254. Preserve alpha transparency from image 1; no black backdrop, no checkerboard drawn into image, no glow, no contact shadow. Show the full hand and short upper wrist on an empty transparent canvas.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-e823b952-7760-4bc8-bf98-2b822087d5f5.png",
+      "status": "opaque-draft"
+    },
+    {
+      "id": "sword-neutral-alpha-hands_general_1",
+      "prompt": "Generate this exact single gloved closed hand on a transparent background. Replace the visible checkerboard with actual transparent PNG alpha pixels. Preserve every part of the hand, all five fingers, closed cylindrical grip, neutral wrist, glove materials, original canvas 1254x1254 and position. No new hand, no alteration to pose, no extra fingers, no weapon, no background color, no checkerboard, no glow. This is an alpha-transparent game sprite. Actual PNG alpha outside the silhouette, not an illustration of a checkerboard.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-bee6ab2f-b72a-47f2-b4db-14e56c2af048.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "sword-neutral-hands_general_2",
+      "prompt": "Generate on a truly transparent background with native PNG alpha. Image 1 is the EXACT anatomical pose and image layout to preserve. Image 2 is ONLY the glove material/design reference. Dress the hand from image 1 in this specific glove: scratched grey segmented armor with yellow panels and cyan light slits. Keep exactly the closed fist pose and all five fingers: thumb lays across the curled index, middle/ring/little curl tightly in a cylindrical weapon grip. Preserve the fingertip creases, palm-side camera angle, neutral wrist rising straight up, and exactly the fist location and silhouette of image 1. DO NOT use the open-hand pose of image 2. This is one single human-right/screen-left hand, short wrist only, not a pair. No long forearm: original equipped arm armor is retained separately at runtime. No weapon. No open circle gesture. No added digits. The future handle crosses diagonally through the closed fingers from upper-left to lower-right, exposing only its two ends when composed. Match original reference canvas 1254x1254. Preserve alpha transparency from image 1; no black backdrop, no checkerboard drawn into image, no glow, no contact shadow. Show the full hand and short upper wrist on an empty transparent canvas.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-f35f48c6-5a8d-4ba2-bc65-d5b6a2e56170.png",
+      "status": "opaque-draft"
+    },
+    {
+      "id": "sword-neutral-alpha-hands_general_2",
+      "prompt": "Generate this exact single gloved closed hand on a transparent background. Replace the visible checkerboard with actual transparent PNG alpha pixels. Preserve every part of the hand, all five fingers, closed cylindrical grip, neutral wrist, glove materials, original canvas 1254x1254 and position. No new hand, no alteration to pose, no extra fingers, no weapon, no background color, no checkerboard, no glow. This is an alpha-transparent game sprite. Actual PNG alpha outside the silhouette, not an illustration of a checkerboard.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-e209e15c-2359-4939-9bc9-c530c41da133.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "sword-neutral-hands_general_3",
+      "prompt": "Generate on a truly transparent background with native PNG alpha. Image 1 is the EXACT anatomical pose and image layout to preserve. Image 2 is ONLY the glove material/design reference. Dress the hand from image 1 in this specific glove: grey and yellow segmented armor, cyan round hand-back node and cyan light slits. Keep exactly the closed fist pose and all five fingers: thumb lays across the curled index, middle/ring/little curl tightly in a cylindrical weapon grip. Preserve the fingertip creases, palm-side camera angle, neutral wrist rising straight up, and exactly the fist location and silhouette of image 1. DO NOT use the open-hand pose of image 2. This is one single human-right/screen-left hand, short wrist only, not a pair. No long forearm: original equipped arm armor is retained separately at runtime. No weapon. No open circle gesture. No added digits. The future handle crosses diagonally through the closed fingers from upper-left to lower-right, exposing only its two ends when composed. Match original reference canvas 1254x1254. Preserve alpha transparency from image 1; no black backdrop, no checkerboard drawn into image, no glow, no contact shadow. Show the full hand and short upper wrist on an empty transparent canvas.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-c05f6a96-b5d0-424c-9fd7-5a2536c7d7fa.png",
+      "status": "opaque-draft"
+    },
+    {
+      "id": "sword-neutral-alpha-hands_general_3",
+      "prompt": "Generate this exact single gloved closed hand on a transparent background. Replace the visible checkerboard with actual transparent PNG alpha pixels. Preserve every part of the hand, all five fingers, closed cylindrical grip, neutral wrist, glove materials, original canvas 1254x1254 and position. No new hand, no alteration to pose, no extra fingers, no weapon, no background color, no checkerboard, no glow. This is an alpha-transparent game sprite. Actual PNG alpha outside the silhouette, not an illustration of a checkerboard.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-9b319e52-528b-4d6f-8d50-8b8701180568.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "sword-neutral-hands_general_4",
+      "prompt": "Generate on a truly transparent background with native PNG alpha. Image 1 is the EXACT anatomical pose and image layout to preserve. Image 2 is ONLY the glove material/design reference. Dress the hand from image 1 in this specific glove: ivory ceramic segmented armor over black joints with purple energy slits and subtle gold edges. Keep exactly the closed fist pose and all five fingers: thumb lays across the curled index, middle/ring/little curl tightly in a cylindrical weapon grip. Preserve the fingertip creases, palm-side camera angle, neutral wrist rising straight up, and exactly the fist location and silhouette of image 1. DO NOT use the open-hand pose of image 2. This is one single human-right/screen-left hand, short wrist only, not a pair. No long forearm: original equipped arm armor is retained separately at runtime. No weapon. No open circle gesture. No added digits. The future handle crosses diagonally through the closed fingers from upper-left to lower-right, exposing only its two ends when composed. Match original reference canvas 1254x1254. Preserve alpha transparency from image 1; no black backdrop, no checkerboard drawn into image, no glow, no contact shadow. Show the full hand and short upper wrist on an empty transparent canvas.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-3cb11882-5066-499b-b85c-c4f118126c92.png",
+      "status": "opaque-draft"
+    },
+    {
+      "id": "sword-neutral-alpha-hands_general_4",
+      "prompt": "Generate this exact single gloved closed hand on a transparent background. Replace the visible checkerboard with actual transparent PNG alpha pixels. Preserve every part of the hand, all five fingers, closed cylindrical grip, neutral wrist, glove materials, original canvas 1254x1254 and position. No new hand, no alteration to pose, no extra fingers, no weapon, no background color, no checkerboard, no glow. This is an alpha-transparent game sprite. Actual PNG alpha outside the silhouette, not an illustration of a checkerboard.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-845bbeac-5055-4846-be10-2a2d838f50bd.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "sword-neutral-hands_general_5",
+      "prompt": "Generate on a truly transparent background with native PNG alpha. Image 1 is the EXACT anatomical pose and image layout to preserve. Image 2 is ONLY the glove material/design reference. Dress the hand from image 1 in this specific glove: grey heavy alloy segmented armor with yellow corners and cyan energy channels. Keep exactly the closed fist pose and all five fingers: thumb lays across the curled index, middle/ring/little curl tightly in a cylindrical weapon grip. Preserve the fingertip creases, palm-side camera angle, neutral wrist rising straight up, and exactly the fist location and silhouette of image 1. DO NOT use the open-hand pose of image 2. This is one single human-right/screen-left hand, short wrist only, not a pair. No long forearm: original equipped arm armor is retained separately at runtime. No weapon. No open circle gesture. No added digits. The future handle crosses diagonally through the closed fingers from upper-left to lower-right, exposing only its two ends when composed. Match original reference canvas 1254x1254. Preserve alpha transparency from image 1; no black backdrop, no checkerboard drawn into image, no glow, no contact shadow. Show the full hand and short upper wrist on an empty transparent canvas.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-4e31d4e3-872c-4c6d-8e73-f28b7ba1a897.png",
+      "status": "opaque-draft"
+    },
+    {
+      "id": "sword-neutral-alpha-hands_general_5",
+      "prompt": "Generate this exact single gloved closed hand on a transparent background. Replace the visible checkerboard with actual transparent PNG alpha pixels. Preserve every part of the hand, all five fingers, closed cylindrical grip, neutral wrist, glove materials, original canvas 1254x1254 and position. No new hand, no alteration to pose, no extra fingers, no weapon, no background color, no checkerboard, no glow. This is an alpha-transparent game sprite. Actual PNG alpha outside the silhouette, not an illustration of a checkerboard.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-b308e718-2bed-4485-a3b0-732d2adfa0b3.png",
+      "status": "accepted-source"
+    },
+    {
+      "id": "sword-neutral-hands_specialist_5",
+      "prompt": "Generate on a truly transparent background with native PNG alpha. Image 1 is the EXACT anatomical pose and image layout to preserve. Image 2 is ONLY the glove material/design reference. Dress the hand from image 1 in this specific glove: ivory and dark grey mechanical fingers with gold pistons and cyan articulating joints. Keep exactly the closed fist pose and all five fingers: thumb lays across the curled index, middle/ring/little curl tightly in a cylindrical weapon grip. Preserve the fingertip creases, palm-side camera angle, neutral wrist rising straight up, and exactly the fist location and silhouette of image 1. DO NOT use the open-hand pose of image 2. This is one single human-right/screen-left hand, short wrist only, not a pair. No long forearm: original equipped arm armor is retained separately at runtime. No weapon. No open circle gesture. No added digits. The future handle crosses diagonally through the closed fingers from upper-left to lower-right, exposing only its two ends when composed. Match original reference canvas 1254x1254. Preserve alpha transparency from image 1; no black backdrop, no checkerboard drawn into image, no glow, no contact shadow. Show the full hand and short upper wrist on an empty transparent canvas.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-7a7963a1-5fa7-480d-b10f-78305722822b.png",
+      "status": "opaque-draft"
+    },
+    {
+      "id": "sword-neutral-alpha-hands_specialist_5",
+      "prompt": "Generate this exact single gloved closed hand on a transparent background. Replace the visible checkerboard with actual transparent PNG alpha pixels. Preserve every part of the hand, all five fingers, closed cylindrical grip, neutral wrist, glove materials, original canvas 1254x1254 and position. No new hand, no alteration to pose, no extra fingers, no weapon, no background color, no checkerboard, no glow. This is an alpha-transparent game sprite. Actual PNG alpha outside the silhouette, not an illustration of a checkerboard.",
+      "resultFile": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-dab15815-32c6-4ebe-8022-056a0217b65d.png",
+      "status": "accepted-source"
+    }
+  ],
+  "acceptedAssets": [
+    {
+      "file": "assets/wearables-v2/grip-sword-v3-neutral-bare.webp",
+      "attempt": "sword-neutral-wrist"
+    },
+    {
+      "file": "assets/wearables-v2/grip-trigger-v3-bare.webp",
+      "attempt": "firearm-alpha"
+    },
+    {
+      "file": "assets/wearables-v2/grip-sword-v3-neutral-workGloves.webp",
+      "attempt": "sword-neutral-alpha-workGloves"
+    },
+    {
+      "file": "assets/wearables-v2/grip-trigger-v3-workGloves.webp",
+      "attempt": "firearm-alpha-workGloves"
+    },
+    {
+      "file": "assets/wearables-v2/grip-sword-v3-neutral-nanoWeaveGloves.webp",
+      "attempt": "sword-neutral-alpha-nanoWeaveGloves"
+    },
+    {
+      "file": "assets/wearables-v2/grip-trigger-v3-nanoWeaveGloves.webp",
+      "attempt": "firearm-alpha-nanoWeaveGloves"
+    },
+    {
+      "file": "assets/wearables-v2/grip-sword-v3-neutral-servoGauntlet.webp",
+      "attempt": "sword-neutral-alpha-servoGauntlet"
+    },
+    {
+      "file": "assets/wearables-v2/grip-trigger-v3-servoGauntlet.webp",
+      "attempt": "firearm-alpha-servoGauntlet"
+    },
+    {
+      "file": "assets/wearables-v2/grip-sword-v3-neutral-hands_general_1.webp",
+      "attempt": "sword-neutral-alpha-hands_general_1"
+    },
+    {
+      "file": "assets/wearables-v2/grip-trigger-v3-hands_general_1.webp",
+      "attempt": "firearm-alpha-hands_general_1"
+    },
+    {
+      "file": "assets/wearables-v2/grip-sword-v3-neutral-hands_general_2.webp",
+      "attempt": "sword-neutral-alpha-hands_general_2"
+    },
+    {
+      "file": "assets/wearables-v2/grip-trigger-v3-hands_general_2.webp",
+      "attempt": "firearm-alpha-hands_general_2"
+    },
+    {
+      "file": "assets/wearables-v2/grip-sword-v3-neutral-hands_general_3.webp",
+      "attempt": "sword-neutral-alpha-hands_general_3"
+    },
+    {
+      "file": "assets/wearables-v2/grip-trigger-v3-hands_general_3.webp",
+      "attempt": "firearm-alpha-hands_general_3"
+    },
+    {
+      "file": "assets/wearables-v2/grip-sword-v3-neutral-hands_general_4.webp",
+      "attempt": "sword-neutral-alpha-hands_general_4"
+    },
+    {
+      "file": "assets/wearables-v2/grip-trigger-v3-hands_general_4.webp",
+      "attempt": "firearm-hands_general_4"
+    },
+    {
+      "file": "assets/wearables-v2/grip-sword-v3-neutral-hands_general_5.webp",
+      "attempt": "sword-neutral-alpha-hands_general_5"
+    },
+    {
+      "file": "assets/wearables-v2/grip-trigger-v3-hands_general_5.webp",
+      "attempt": "firearm-alpha-hands_general_5"
+    },
+    {
+      "file": "assets/wearables-v2/grip-sword-v3-neutral-hands_specialist_5.webp",
+      "attempt": "sword-neutral-alpha-hands_specialist_5"
+    },
+    {
+      "file": "assets/wearables-v2/grip-trigger-v3-hands_specialist_5.webp",
+      "attempt": "firearm-alpha-hands_specialist_5"
+    }
+  ]
+}

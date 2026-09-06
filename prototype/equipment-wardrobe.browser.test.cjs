@@ -37,7 +37,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
    const action=page.locator('.rpg-equipment-action');await action.scrollIntoViewIfNeeded();
    await page.evaluate(()=>{window.wearScroll={panel:document.querySelector('#panel'),top:document.querySelector('#panel').scrollTop,grid:document.querySelector('.rpg-gear-grid'),detail:document.querySelector('.rpg-equipment-detail'),action:document.querySelector('.rpg-equipment-action'),comparison:document.querySelector('.rpg-equipment-comparison'),open:document.querySelector('.rpg-equipment-comparison').open};});
    await action.click();await ready();assert.equal(await page.evaluate(()=>window.wearScroll.panel===document.querySelector('#panel')&&window.wearScroll.grid===document.querySelector('.rpg-gear-grid')&&window.wearScroll.detail===document.querySelector('.rpg-equipment-detail')&&window.wearScroll.action===document.querySelector('.rpg-equipment-action')&&window.wearScroll.comparison.open===window.wearScroll.open&&Math.abs(window.wearScroll.top-document.querySelector('#panel').scrollTop)<2),true,'wear retains the detail, action, open comparison and scroll '+width);
-   await page.locator('.rpg-equipment-action').click();await ready();
+   await page.locator('.rpg-equipment-action').click();await ready();await page.locator('.bag-detail-back').click();
   }
   // Decode failure retains the old equipment display; explicit retry loads the
   // current selection. Routing disables HTTP caching in this isolated context.

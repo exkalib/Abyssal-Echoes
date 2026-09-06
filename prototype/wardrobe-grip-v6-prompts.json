@@ -1,0 +1,31 @@
+{
+  "date": "2026-09-06",
+  "mode": "built-in imagegen",
+  "scope": "Only blade + bare fingers (including phaseGrip wrist rings), male/female. Other weapons and full gloves unchanged.",
+  "correction": "User rejected v5's outward aim and dagger-like short blade. Bring the tip near the hand column and restore visible longsword length while keeping natural hand size and palm-inward hold.",
+  "processing": "Native 1024×1536 alpha preserved; WebP encoding only. No local matting, raster masking, painting or non-proportional resizing.",
+  "asset": "assets/wearables-v2/weapon-blade-held-v6-centered-bare.webp",
+  "calibration": "wardrobe-sword-hands.js → bare.weapons.blade",
+  "review": "../output/wardrobe-grip-review-v6/index.html",
+  "attempts": [
+    {
+      "id": 1,
+      "prompt": "Use case: precise-object-edit\nAsset type: integrated right-hand + equipped longsword game sprite.\nImage 1 is the edit target: preserve this natural palm-inward, fist-opening-forward hand orientation and its straight neutral wrist. Image 2 shows the current result on the character; the sword is too short and points too far outward.\nMake ONLY these coordinated changes:\n1. Bring the sword's aim inward toward the character's center. From this front view the blade tip should project near the area ABOVE the gripping hand, only about HALF to ONE palm width to the LEFT of the hilt center, not several palm widths out toward the far left. This is still a forward and upward 3D hold, not a hand rolled palm-out to display a side-on sword. Keep angled guard/hilt depth.\n2. Restore the visual scale of a real LONGSWORD. The visible blade above the crossguard must be SEVEN to EIGHT palm widths long. The user explicitly rejects the previous short-dagger silhouette. A long slender roughly 80–90 cm silver alloy blade, thin cyan center strip, compact brass guard and modest round brass pommel. Use mild rather than extreme foreshortening. Do not widen the sword into a paddle, do not enlarge the hand, do not turn it into a knife.\nKeep the same hand's scale and anatomical proportions. The palm continues facing inward toward the body at image-right; the thumb/index fist opening faces forward. Keep the relaxed wrist and short forearm orientation almost vertical, with no side bend. The hand truly wraps the leather cylinder. Small finger rewrapping is allowed to accommodate the slightly changed aim, but do NOT substitute a frontal empty fist. The blade, guard, grip and pommel remain one straight rigid sword in correct perspective, no bend at the guard.\nRecompose on a tall portrait canvas, 1024x1536, so the longer blade fits fully with margins. Hand low in the frame; sword tip above and slightly left of the hand, with most of the blade close to the central column instead of reaching the left edge. Include only the whole sword, occupied hand and short bare wrist. Preserve the weapon details, skin tone and cool realistic game-character illumination.\nActual transparent PNG alpha background, no painted checkerboard, no solid backdrop, no glow, no words or arrows, no character body or sleeve.",
+      "references": [
+        "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-c3d84952-5a0b-49bd-b639-77c59071450f.png",
+        "../output/wardrobe-grip-v5-forward-a/portraits/blade-female.png"
+      ],
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-410fb4d7-47d9-437e-adb5-4a9f0f927b0e.png",
+      "status": "long-blade centered draft; painted checkerboard not installed"
+    },
+    {
+      "id": 2,
+      "prompt": "Generate this exact single long sword and gripping human hand on a transparent background. Replace the visible checkerboard with actual transparent PNG alpha pixels. Preserve the long blade length, the centered inward aim, every finger, palm-inward fist-opening-forward grasp, natural wrist, skin and metal materials, original portrait 1024x1536 framing and exact positions. No new hand, no shortening of the sword, no alteration to angle, no extra fingers, no background color, no checkerboard, no glow. This is an alpha-transparent game sprite. Actual PNG alpha outside the silhouette, not an illustration of a checkerboard.",
+      "references": [
+        "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-410fb4d7-47d9-437e-adb5-4a9f0f927b0e.png"
+      ],
+      "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-a15c94f9-65c3-472a-b399-d9bfc83c38cc.png",
+      "status": "actual-alpha source installed; scale set by palm width, not total sword bounding box"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "tool": "built-in imagegen",
+  "purpose": "body_general_5 shoulder and neck worn-state correction",
+  "originalReferences": [
+    "prototype/assets/wearables-v1/base-male.webp",
+    "prototype/assets/wearables-v1/base-female.webp",
+    "prototype/assets/equipment-art-v3/body_general_5.webp"
+  ],
+  "processing": "Alpha-preserving WebP format conversion only; no local matte extraction, pixel masks or background removal. Garment contours and neck opening use imagegen-native alpha. Original skin is restored between career clothing and the front collar; no rectangular torso replacement.",
+  "attempts": [
+    {
+      "sex": "male",
+      "stage": "worn",
+      "prompt": "Use case: identity-preserve.\nAsset type: production RPG paper-doll WORN upper-body armor replacement, male fit.\nImage 1 is the EDIT TARGET: the existing transparent full-body male character. Image 2 is only the armor design/material reference.\nEdit Image 1 in place: dress this same person in the interstellar expedition breastplate from Image 2, fitted physically around their actual torso and BOTH SHOULDERS. This is a wear/try-on edit, not a sticker pasted over the sweatshirt.\nKeep the exact full-body 2:3 canvas, camera, character scale, limb axes, position, facial identity, hair, head, exposed front neck, hands, relaxed hand poses, trousers, boots, and transparent background of Image 1. Do not crop or recenter the figure. Only replace the upper torso garment and cover shoulder crowns/upper deltoids.\nArmor design: layered curved pearlescent silver-white chest plates, fine champagne-gold seams, black flexible underarmor in the joints, one small cyan triangular sternum core. Faithful to Image 2, no extra accessories. Tailor the breastplate to this person's natural broad male chest, shoulders and straight waist.\nCRITICAL PHYSICAL FIT: rounded shoulder pauldrons must sit OVER the real shoulder crowns and wrap outward/down around upper arms; no gray sweatshirt shoulders poking above or outside the pauldrons. Connect shoulders to the cuirass with visible layered straps/hinges and believable ambient contact shadow. Keep gray sleeves below the upper-arm armor, unchanged wrist locations.\nCRITICAL NECK DEPTH: the tall dark INNER BACK COLLAR is BEHIND the human neck, partly hidden by it. The visible human throat sits inside the collar opening. The lower front silver collar rim curves around the base of the neck and occludes only its lower edge. NO black oval filled over the throat, no mannequin cavity painted in front of the human neck. The neck must clearly emerge THROUGH the collar, not stop above a flat black sticker.\nHem ends at the existing waistline, covering the sweatshirt torso without covering or moving the trousers. Realistic fitted clothing, coherent lighting, occlusion and soft contact shadows. Make it look genuinely worn.\nPreserve native TRUE ALPHA transparency outside the person. Do not paint black, white or checkerboard background. No helmet, no gloves, no weapon, no shield, no text, no border, no scene. Exactly one character in the original unchanged pose.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-a114a83c-f526-481a-bda2-c35b813d906f.png",
+      "accepted": false,
+      "reason": "Worn anatomy useful, but opaque checkerboard output rejected as a game asset."
+    },
+    {
+      "sex": "male",
+      "stage": "alpha",
+      "prompt": "Use case: background-extraction. EDIT TARGET is this image. Remove only the painted checkerboard backdrop and replace it with genuine RGBA alpha=0 transparency. This is not a request to draw a transparency-pattern preview. Produce an actually transparent PNG cutout. Preserve the exact existing character, pose, armor, face, visible neck, shoulder fitting, shadows, clothes, all edges and all coordinates. Preserve the current 1024x1536 canvas and framing; do not recenter, crop, zoom, redesign, or repaint the character. Remove all pale checkerboard pixels in every outside area and between arms/body. Keep every existing foreground detail. No background color, no checkerboard squares, no ground, no text. The armor must remain genuinely worn exactly as now; front throat visible, collar sides/back behind neck.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-189c595e-4cb8-4220-b294-496d4d0969bc.png",
+      "accepted": false,
+      "reason": "Worn anatomy useful, but opaque checkerboard output rejected as a game asset."
+    },
+    {
+      "sex": "male",
+      "stage": "alpha2",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact armored character unchanged. Remove the checkerboard background and return actual transparent PNG alpha everywhere outside the person, including between arms and torso. Preserve the same canvas, shoulder armor wrapping, visible human throat inside the collar, face, hands, clothing and pose. No background color, no checkerboard pattern, no ground. Actual PNG alpha transparency, not a drawing of transparency.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-a4b43a7b-6183-42bb-a657-4e84dc4ea5c5.png",
+      "accepted": false,
+      "reason": "Native-alpha worn reference retained, but rectangular torso compositing rejected after closeup review because sleeves and trouser edges formed visible seams."
+    },
+    {
+      "sex": "female",
+      "stage": "worn",
+      "prompt": "Use case: identity-preserve.\nAsset type: production RPG paper-doll WORN upper-body armor replacement, female fit.\nImage 1 is the EDIT TARGET: the existing transparent full-body female character. Image 2 is only the armor design/material reference.\nEdit Image 1 in place: dress this same person in the interstellar expedition breastplate from Image 2, fitted physically around their actual torso and BOTH SHOULDERS. This is a wear/try-on edit, not a sticker pasted over the sweatshirt.\nKeep the exact full-body 2:3 canvas, camera, character scale, limb axes, position, facial identity, hair, head, exposed front neck, hands, relaxed hand poses, trousers, boots, and transparent background of Image 1. Do not crop or recenter the figure. Only replace the upper torso garment and cover shoulder crowns/upper deltoids.\nArmor design: layered curved pearlescent silver-white chest plates, fine champagne-gold seams, black flexible underarmor in the joints, one small cyan triangular sternum core. Faithful to Image 2, no extra accessories. Tailor the breastplate to this person's existing adult female body, shoulder slope and narrow waist, functional fitted armor without cleavage or exaggerated breasts.\nCRITICAL PHYSICAL FIT: rounded shoulder pauldrons must sit OVER the real shoulder crowns and wrap outward/down around upper arms; no gray sweatshirt shoulders poking above or outside the pauldrons. Connect shoulders to the cuirass with visible layered straps/hinges and believable ambient contact shadow. Keep gray sleeves below the upper-arm armor, unchanged wrist locations.\nCRITICAL NECK DEPTH: the tall dark INNER BACK COLLAR is BEHIND the human neck, partly hidden by it. The visible human throat sits inside the collar opening. The lower front silver collar rim curves around the base of the neck and occludes only its lower edge. NO black oval filled over the throat, no mannequin cavity painted in front of the human neck. The neck must clearly emerge THROUGH the collar, not stop above a flat black sticker.\nHem ends at the existing waistline, covering the sweatshirt torso without covering or moving the trousers. Realistic fitted clothing, coherent lighting, occlusion and soft contact shadows. Make it look genuinely worn.\nPreserve native TRUE ALPHA transparency outside the person. Do not paint black, white or checkerboard background. No helmet, no gloves, no weapon, no shield, no text, no border, no scene. Exactly one character in the original unchanged pose.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-4226e5f9-1364-41b7-844b-f732e84d1a1a.png",
+      "accepted": false,
+      "reason": "Worn anatomy useful, but opaque checkerboard output rejected as a game asset."
+    },
+    {
+      "sex": "female",
+      "stage": "alpha",
+      "prompt": "Use case: background-extraction. EDIT TARGET is this image. Remove only the painted checkerboard backdrop and replace it with genuine RGBA alpha=0 transparency. This is not a request to draw a transparency-pattern preview. Produce an actually transparent PNG cutout. Preserve the exact existing character, pose, armor, face, visible neck, shoulder fitting, shadows, clothes, all edges and all coordinates. Preserve the current 1024x1536 canvas and framing; do not recenter, crop, zoom, redesign, or repaint the character. Remove all pale checkerboard pixels in every outside area and between arms/body. Keep every existing foreground detail. No background color, no checkerboard squares, no ground, no text. The armor must remain genuinely worn exactly as now; front throat visible, collar sides/back behind neck.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-b3369dc0-4b08-4c71-98d4-dfd6c54b9863.png",
+      "accepted": false,
+      "reason": "Worn anatomy useful, but opaque checkerboard output rejected as a game asset."
+    },
+    {
+      "sex": "female",
+      "stage": "alpha2",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact armored character unchanged. Remove the checkerboard background and return actual transparent PNG alpha everywhere outside the person, including between arms and torso. Preserve the same canvas, shoulder armor wrapping, visible human throat inside the collar, face, hands, clothing and pose. No background color, no checkerboard pattern, no ground. Actual PNG alpha transparency, not a drawing of transparency.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-50c4e5cd-b8ba-4c9b-aa6f-65d0e45faefe.png",
+      "accepted": false,
+      "reason": "Native-alpha worn reference retained, but rectangular torso compositing rejected after closeup review because sleeves and trouser edges formed visible seams."
+    },
+    {
+      "sex": "male",
+      "stage": "garment-isolation",
+      "prompt": "Generate on a genuinely transparent background. Precise object extraction from this reference: keep ONLY the fitted chest armor, black fitted underarmor torso, gold waist belt, collar and BOTH shoulder pauldrons in their EXACT current positions, scale, 1024x1536 canvas and worn shape. Remove the person’s head, visible throat/skin, hands, ALL gray sweatshirt sleeves, gray shirt hem, trousers and boots to actual alpha=0. The former human neck area must become a real transparent hole through the collar; preserve the fitted front rim and visible side/back collar around that neck-shaped hole, never fill it with black cloth. At the shoulders keep the curved hard shoulder plates and their black connected padding, but remove the gray fabric arms below them. At the waist stop precisely at the bottom curved gold belt edge; no strip of gray shirt or trousers below. Do not crop, recenter, resize or redesign the armor. This is a production full-canvas fitted wearable sprite, NOT an empty showroom garment redrawn upright. Native PNG alpha everywhere outside the actual armor, including the neck opening and all spaces. No background color or checkerboard.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-1ab3947f-93e3-4751-9ab2-4181bfd04e81.png",
+      "accepted": false,
+      "reason": "Garment shape and empty neck opening useful, but RGB checkerboard rejected."
+    },
+    {
+      "sex": "male",
+      "stage": "garment-native-alpha",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact isolated armor unchanged. Replace the checkerboard with actual transparent PNG alpha everywhere outside the armor AND inside the open neck hole. Do not paint a transparency pattern. Keep all armor edges, side/back collar, lower front collar, shoulder curves and curved waist hem exactly as now. No person, no human skin, no sleeves, no trousers, no background color, no checkerboard. Actual PNG alpha transparency. Keep the same canvas and object placement.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-08e9c81c-9d49-4538-af01-ef5f1ed26891.png",
+      "accepted": true,
+      "reason": "Native RGBA neck opening and garment edges verified; calibrated proportionally against original worn shoulder/waist positions.",
+      "runtimeAsset": "prototype/assets/wearables-v2/body_general_5-worn-male.webp"
+    },
+    {
+      "sex": "female",
+      "stage": "garment-isolation",
+      "prompt": "Generate on a genuinely transparent background. Precise object extraction from this reference: keep ONLY the fitted chest armor, black fitted underarmor torso, gold waist belt, collar and BOTH shoulder pauldrons in their EXACT current positions, scale, 1024x1536 canvas and worn shape. Remove the person’s head, visible throat/skin, hands, ALL gray sweatshirt sleeves, gray shirt hem, trousers and boots to actual alpha=0. The former human neck area must become a real transparent hole through the collar; preserve the fitted front rim and visible side/back collar around that neck-shaped hole, never fill it with black cloth. At the shoulders keep the curved hard shoulder plates and their black connected padding, but remove the gray fabric arms below them. At the waist stop precisely at the bottom curved gold belt edge; no strip of gray shirt or trousers below. Do not crop, recenter, resize or redesign the armor. This is a production full-canvas fitted wearable sprite, NOT an empty showroom garment redrawn upright. Native PNG alpha everywhere outside the actual armor, including the neck opening and all spaces. No background color or checkerboard.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-e1d3dd8b-2a1f-47e0-bf6b-6547b0cd6da2.png",
+      "accepted": false,
+      "reason": "Garment shape and empty neck opening useful, but RGB checkerboard rejected."
+    },
+    {
+      "sex": "female",
+      "stage": "garment-native-alpha",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact isolated armor unchanged. Replace the checkerboard with actual transparent PNG alpha everywhere outside the armor AND inside the open neck hole. Do not paint a transparency pattern. Keep all armor edges, side/back collar, lower front collar, shoulder curves and curved waist hem exactly as now. No person, no human skin, no sleeves, no trousers, no background color, no checkerboard. Actual PNG alpha transparency. Keep the same canvas and object placement.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-efea2534-f9a3-4b17-8920-4ada16abe5c7.png",
+      "accepted": true,
+      "reason": "Native RGBA neck opening and garment edges verified; calibrated proportionally against original worn shoulder/waist positions.",
+      "runtimeAsset": "prototype/assets/wearables-v2/body_general_5-worn-female.webp"
+    }
+  ]
+}

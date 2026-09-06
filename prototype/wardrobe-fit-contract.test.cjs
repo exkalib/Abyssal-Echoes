@@ -1,0 +1,38 @@
+const assert=require('node:assert/strict');
+const {assertWearableFitContacts}=require('./wardrobe-fit-contract.cjs');
+const item={id:'testBlade',slot:'weapon',sex:'male'};
+const valid={contacts:[{item:'testBlade',kind:'grip',anchor:[24,51],actual:[24.2,51.1],tolerance:.5,occluded:true,layerKey:'weapon-0'}]};
+const nodes=[{key:'weapon-0',slot:'weapon',zIndex:'9'},{key:'grip-right',slot:'grip',zIndex:'20'}];
+const check=(audit=valid,parts=nodes)=>assertWearableFitContacts(audit,item,parts);
+assert.deepEqual(check(),{contactCount:1,geometry:'passed',visualFit:'pending-human-review'});
+const bad=patch=>({contacts:[{...valid.contacts[0],...patch}]});
+assert.throws(()=>check(null),/contact audit/);
+assert.throws(()=>check({contacts:[]}),/measured contacts/);
+assert.throws(()=>check(bad({item:'differentBlade'})),/measured contacts/);
+assert.throws(()=>check(bad({actual:[25,51]})),/exceeds/);
+assert.throws(()=>check(bad({actual:[NaN,51]})),/measured 2D/);
+assert.throws(()=>check(bad({tolerance:20})),/cannot hide/);
+assert.throws(()=>check(bad({kind:'seam'})),/requires a grip/);
+assert.throws(()=>check(bad({occluded:false})),/occlusion relationship/);
+assert.throws(()=>check(valid,nodes.slice(0,1)),/real grip layer/);
+assert.throws(()=>check(valid,[nodes[0],{...nodes[1],zIndex:'8'}]),/render in front/);
+assert.throws(()=>check(bad({layerKey:'not-mounted'})),/mounted layer/);
+assert.throws(()=>check(bad({occlusion:'behind-shield'})),/cannot hide weapon grip/);
+const occupied=bad({occlusion:'authored-in-sprite',anatomy:'palm-handle-fingers'});
+const occupiedHilt=bad({occlusion:'occupied-hilt',anatomy:'palm-handle-fingers'});
+assert.equal(check(occupiedHilt,[nodes[0],{...nodes[1],occupiedHilt:true}]).visualFit,'pending-human-review');
+assert.throws(()=>check(occupiedHilt),/palm-handle-fingers sprite/,'old fists cannot be relabeled as occupied hilts');
+assert.throws(()=>check(occupiedHilt,[nodes[0],{...nodes[1],occupiedHilt:true},{...nodes[1],key:'duplicate'}]),/second empty fist/);
+assert.equal(check(occupied,[{...nodes[0],integratedGrip:true}]).visualFit,'pending-human-review','same-sprite contact is still not automatic visual approval');
+assert.throws(()=>check(occupied,[nodes[0]]),/integrated asset/,'cannot relabel an ordinary weapon as an occupied grip');
+assert.throws(()=>check(occupied,[{...nodes[0],integratedGrip:true},nodes[1]]),/separate fist/,'the old fist must not remain on top of the authored grip');
+assert.throws(()=>check(bad({occlusion:'authored-in-sprite'}),[{...nodes[0],integratedGrip:true}]),/same authored layer/);
+const shield={id:'testShield',slot:'offhand',sex:'female'},shieldContact={contacts:[{item:shield.id,kind:'grip',anchor:[75,51],actual:[75,51],tolerance:.5,occluded:true,occlusion:'behind-shield'}]};
+assert.equal(assertWearableFitContacts(shieldContact,shield,[{key:'offhand-0',slot:'offhand',zIndex:'10'},{key:'grip-left',slot:'grip',zIndex:'9'}]).geometry,'passed');
+assert.throws(()=>assertWearableFitContacts(shieldContact,shield,[{key:'offhand-0',slot:'offhand',zIndex:'10'},{key:'grip-left',slot:'grip',zIndex:'11'}]),/behind the shield face/);
+for(const slot of ['body','hands','legs','feet','head','back','implant','module']){
+ const mounted={id:slot,slot,sex:'female'},kind=slot==='module'?'hover':'seam';
+ const result=assertWearableFitContacts({contacts:[{item:slot,kind,anchor:[50,50],actual:[50,50],tolerance:.5}]},mounted,[{key:slot+'-0',slot,zIndex:'5'}]);
+ assert.equal(result.visualFit,'pending-human-review','geometry must never award a visual pass');
+}
+console.log('Wearable contact contract: displaced grips, missing foreground fingers, bogus tolerances, missing mounts rejected; visual review remains mandatory.');

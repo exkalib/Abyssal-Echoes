@@ -1887,7 +1887,7 @@ function skillAtkBonus(){ return 0; }
 function ensureCareerSkills(){ for(const k in SKILLS){const s=SKILLS[k];if(!s.career||!skillUnlocked(k))continue;const progress=state.skills[k]||(state.skills[k]={prof:0});progress.prof=Math.max(10,Math.min(SKILL_MAX_LEVEL*10,Number(progress.prof)||0));} }
 function equippedSlot(k){ return (state.skillSlots||[]).indexOf(k); }
 function equipSkill(k,slot,refresh){ const s=SKILLS[k]; if(!s||s.type!=='active'||!skillUnlocked(k)){log('只有已解锁的主动技能可以装备。','warn');return;} slot=slot==null?((state.skillSlots||[]).findIndex(x=>!x)):slot; if(slot<0)slot=state.skillSlotSel||0;
-  const old=equippedSlot(k); if(old>=0)state.skillSlots[old]=null; state.skillSlots[slot]=k; state.skillSlotSel=slot; log('技能栏 '+(slot+1)+' 已装配【'+s.name+'】。','good'); if(refresh)refresh();else render(); }
+  const old=equippedSlot(k); if(old>=0)state.skillSlots[old]=null; state.skillSlots[slot]=k; state.skillSlotSel=slot; log('技能栏 '+(slot+1)+' 已装配【'+s.name+'】。','good',{toast:false}); if(refresh)refresh();else render(); }
 function unequipSkill(slot,refresh){ if(!state.skillSlots[slot])return; state.skillSlots[slot]=null; state.skillSlotSel=slot; if(refresh)refresh();else render(); }
 
 const ECHO_UPGRADES = {
@@ -1898,8 +1898,8 @@ const ECHO_UPGRADES = {
 function endingOwned(id){ return state.meta.endingItems.includes(id); }
 function echoUpgradeCost(id){ const u=state.meta.echoUp[id]||0,e=ECHO_UPGRADES[id]; return e.base+u*e.step; }
 function refreshEchoMultipliers(){ const u=state.meta.echoUp; state.meta.mult={stamina:1+u.stamina*.1,collect:1+u.collect*.1,attr:1+u.attr*.05}; }
-function buyEchoUpgrade(id){ const e=ECHO_UPGRADES[id],cost=echoUpgradeCost(id); if(!e||state.meta.echo<cost){log('回响不足。','warn');return;}
-  state.meta.echo-=cost; state.meta.echoUp[id]++; refreshEchoMultipliers();state.echoOpen=true;markInlineChange('echo',id);log('✦ 回响强化【'+e.name+'】升至 '+state.meta.echoUp[id]+' 级。','good',{toast:false}); render(); }
+function buyEchoUpgrade(id,onChanged){ const e=ECHO_UPGRADES[id],cost=echoUpgradeCost(id); if(!e||state.meta.echo<cost){log('回响不足。','warn');return;}
+  state.meta.echo-=cost; state.meta.echoUp[id]++; refreshEchoMultipliers();state.echoOpen=true;markInlineChange('echo',id);log('✦ 回响强化【'+e.name+'】升至 '+state.meta.echoUp[id]+' 级。','good',{toast:false}); if(typeof onChanged==='function'){onChanged();renderTop();save();}else render(); }
 
 /* ================= 任务与地图条件 ================= */
 /* 远航里程碑跨死亡保留，但普通科技、建筑和资源仍遵守检查点回滚。 */
@@ -2730,15 +2730,16 @@ function queueNpcFirstContact(name,location,text){
   if(fieldEntry&&!state.flags[fieldNpcDiscoveryFlag(name,location)])return false;
   markFieldNpcContact(name,location);
   markStoryNpcMet(name);
-  return queueStoryScene({npc:name,location,onceKey:'npc-'+name,kind:'contact',eyebrow:'FIRST CONTACT // '+((LOCATIONS[location]&&LOCATIONS[location].zone)||'UNKNOWN'),title:'发现幸存者 · '+name,text:text||NPC_FIRST_CONTACT[name],action:'走近查看'});
+  return queueStoryScene({npc:name,location,onceKey:'npc-'+name,kind:'contact',eyebrow:'FIRST CONTACT // '+((LOCATIONS[location]&&LOCATIONS[location].zone)||'UNKNOWN'),title:'发现幸存者 · '+name,text:text||NPC_FIRST_CONTACT[name],action:'走近交谈',onComplete:()=>approachDiscoveredNpc(name,location)});
 }
+function approachDiscoveredNpc(name,location){if(P().location===location&&npcLocation(name)===location&&fieldNpcMapped(name,location)&&state.screen==='play'&&!state.combat)openNpcPanel(name);}
 function queueFieldNpcDiscovery(name,location,entry){
   if(!name)return false;
   markFieldNpcContact(name,location);
   markStoryNpcMet(name);
   entry=entry||fieldNpcDiscoveryEntry(name,location)||{};
   const place=LOCATIONS[location]&&LOCATIONS[location].name||'未知区域',lines=entry.lines||[name+'的现场信号已经重新接入手环。对方确实抵达了【'+place+'】，但在你找到这里之前，地图不会替你标出任何坐标。'];
-  return queueStoryScene({npc:name,location,onceKey:'field-npc-'+name+'-'+location,kind:'contact',eyebrow:(entry.relocated?'CONTACT REACQUIRED':'SURVIVOR SIGNAL')+' // '+((LOCATIONS[location]&&LOCATIONS[location].zone)||'UNKNOWN'),title:entry.title||((entry.relocated?'重新汇合 · ':'信号确认 · ')+name),lines,action:entry.action||'建立联系'});
+  return queueStoryScene({npc:name,location,onceKey:'field-npc-'+name+'-'+location,kind:'contact',eyebrow:(entry.relocated?'CONTACT REACQUIRED':'SURVIVOR SIGNAL')+' // '+((LOCATIONS[location]&&LOCATIONS[location].zone)||'UNKNOWN'),title:entry.title||((entry.relocated?'重新汇合 · ':'信号确认 · ')+name),lines,action:entry.action||'建立联系',onComplete:()=>approachDiscoveredNpc(name,location)});
 }
 function queueMissingFieldNpcStories(location){
   NPC_NAMES.forEach(name=>{const entry=fieldNpcDiscoveryEntry(name,location),flag=fieldNpcStoryFlag(name,location);if(npcLocation(name)!==location||!entry||!state.flags[fieldNpcDiscoveryFlag(name,location)]||state.flags[flag])return;state.flags[flag]=true;if(!queueNpcFirstContact(name,location))queueFieldNpcDiscovery(name,location,entry);});
@@ -2820,10 +2821,12 @@ function queueStandaloneFeedback(entry){
 function installInteractionFeedback(){
   if(interactionFeedbackInstalled)return;interactionFeedbackInstalled=true;
   const buttonFrom=e=>e.target&&e.target.closest?e.target.closest('button'):null;
-  const release=e=>{const b=pressedPointers.get(e.pointerId)||buttonFrom(e);pressedPointers.delete(e.pointerId);if(b)setTimeout(()=>b.classList.remove('is-touching'),120);};
-  document.addEventListener('pointerdown',e=>{const audioReady=unlockAudio(),b=buttonFrom(e);if(!b||b.disabled)return;const previous=pressedPointers.get(e.pointerId);if(previous&&previous!==b)previous.classList.remove('is-touching');pressedPointers.set(e.pointerId,b);b.classList.add('is-touching');audioReady.then(ok=>{if(ok)playSfx('tap');});if(state&&state.vibration!==false&&e.pointerType==='touch'&&typeof navigator!=='undefined'&&navigator.vibrate)try{navigator.vibrate(8);}catch(_){}},{passive:true});
+  let lastPress=null;
+  const release=e=>{const press=pressedPointers.get(e.pointerId);pressedPointers.delete(e.pointerId);if(!press)return;if(e.type==='pointercancel')press.moved=true;lastPress={...press,until:Date.now()+450};press.button.classList.remove('is-touching');};
+  document.addEventListener('pointerdown',e=>{unlockAudio();lastPress=null;const b=buttonFrom(e);if(!b||b.disabled)return;const previous=pressedPointers.get(e.pointerId);if(previous)previous.button.classList.remove('is-touching');pressedPointers.set(e.pointerId,{button:b,x:e.clientX,y:e.clientY,moved:false,touch:e.pointerType==='touch'});b.classList.add('is-touching');},{passive:true});
+  document.addEventListener('pointermove',e=>{const press=pressedPointers.get(e.pointerId);if(press&&Math.hypot(e.clientX-press.x,e.clientY-press.y)>10){press.moved=true;press.button.classList.remove('is-touching');}},{passive:true});
   document.addEventListener('pointerup',release,{passive:true});document.addEventListener('pointercancel',release,{passive:true});document.addEventListener('lostpointercapture',release,{passive:true});
-  document.addEventListener('click',e=>{const b=buttonFrom(e);if(!b||b.disabled)return;if(feedbackBatch){clearTimeout(feedbackFlushTimer);feedbackBatch=null;}const batch={entries:[]};feedbackBatch=batch;feedbackFlushTimer=setTimeout(()=>{if(feedbackBatch===batch)feedbackBatch=null;flushFeedbackBatch(batch);},0);},true);
+  document.addEventListener('click',e=>{const b=buttonFrom(e);if(!b||b.disabled)return;const recent=lastPress&&lastPress.button===b&&lastPress.until>Date.now();if(e.detail!==0&&recent&&lastPress.moved){e.preventDefault();e.stopImmediatePropagation();return;}unlockAudio().then(ok=>{if(ok)playSfx('tap');});if(state&&state.vibration!==false&&(e.pointerType==='touch'||(recent&&lastPress.touch))&&navigator.vibrate)try{navigator.vibrate(8);}catch(_){}if(feedbackBatch){clearTimeout(feedbackFlushTimer);feedbackBatch=null;}const batch={entries:[]};feedbackBatch=batch;feedbackFlushTimer=setTimeout(()=>{if(feedbackBatch===batch)feedbackBatch=null;flushFeedbackBatch(batch);},0);},true);
   document.addEventListener('visibilitychange',()=>{if(document.hidden){stopAmbientMusic();stopAudioVoices(audioRuntime.sfxVoices);if(audioRuntime.ctx&&audioRuntime.ctx.state==='running')audioRuntime.ctx.suspend().catch(()=>{});}else if(audioRuntime.ctx)unlockAudio();});
 }
 function setLogOpen(open){
@@ -2841,6 +2844,49 @@ function log(msg,cls,options){ const out=$('log'),peek=$('log-peek'),latest=$('l
   if(peek){ peek.classList.remove('hidden'); peek.classList.add('unread'); } if(latest)latest.textContent=msg; }
 function divider(){ const el=$('log'); const d=document.createElement('div'); d.className='line divider'; el.appendChild(d); el.scrollTop=el.scrollHeight; }
 function el(tag,cls,html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+let activeThumbSheet=null;
+function mountThumbSheet(content,options={}){
+  if(activeThumbSheet)activeThumbSheet.close(false);
+  const app=$('app'),source=document.activeElement,root=el('div','thumb-sheet-backdrop'),panel=el('section','thumb-sheet ui-dialog '+(options.className||'')),grip=el('button','thumb-sheet-grip','<span></span>'),body=el('div','thumb-sheet-body'),footer=el('footer','thumb-sheet-footer');
+  const siblings=Array.from(app.children).map(node=>({node,inert:node.inert}));
+  panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',options.label||'详情');panel.tabIndex=-1;
+  grip.type='button';grip.setAttribute('aria-label','收起详情');
+  if(content instanceof Node)body.appendChild(content);else if(typeof content==='string')body.innerHTML=content;
+  let closed=false,start=null;
+  const close=(restoreFocus=true)=>{
+    if(closed)return;closed=true;root.remove();siblings.forEach(({node,inert})=>{node.inert=inert;});app.classList.remove('thumb-sheet-open');document.removeEventListener('keydown',onKey);
+    if(activeThumbSheet===api)activeThumbSheet=null;
+    if(restoreFocus&&source&&source.isConnected)source.focus({preventScroll:true});
+    if(options.onClose)options.onClose();
+  };
+  const onKey=e=>{
+    if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();return;}
+    if(e.key!=='Tab')return;
+    const focusable=Array.from(panel.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),summary,[tabindex="0"]')).filter(node=>node.getClientRects().length),first=focusable[0],last=focusable.at(-1);
+    if(!first){e.preventDefault();panel.focus();}else if(e.shiftKey&&(document.activeElement===first||document.activeElement===panel)){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  };
+  root.addEventListener('pointerdown',e=>{start=e.target===root?{x:e.clientX,y:e.clientY}:null;});
+  root.addEventListener('pointerup',e=>{if(start&&e.target===root&&Math.hypot(e.clientX-start.x,e.clientY-start.y)<10)close();start=null;});
+  grip.onclick=()=>close();panel.append(grip,body,footer);root.appendChild(panel);
+  const api={root,panel,body,footer,close};activeThumbSheet=api;siblings.forEach(({node})=>{node.inert=true;});app.classList.add('thumb-sheet-open');app.appendChild(root);document.addEventListener('keydown',onKey);panel.focus({preventScroll:true});return api;
+}
+function handleGameBack(){
+  if(storySceneActive||document.querySelector('.story-cutscene'))return true;
+  if(activeThumbSheet){activeThumbSheet.close();return true;}
+  if(document.body.classList.contains('launch-pending'))return false;
+  if($('save-transfer-modal')){closeSaveTransfer();return true;}
+  if(state.siteSheet){closeSiteSheet();return true;}
+  if(state.combat||state.screen!=='play'||tutorialActive())return true;
+  if(state.mapOpen){closeContextMap();return true;}
+  if(state.npcTarget){state.npcTarget=null;if(P().location==='camp')state.campView='home';renderPanelTop();return true;}
+  const exit=$('panel')?.querySelector('.field-map-drawer-close,.ui-workspace__exit,.map-close,.gene-back,.tx-x[aria-label="关闭科技台"]');
+  if(exit&&!exit.disabled){exit.click();return true;}
+  if(state.tab==='set'&&settingsView!=='main'){settingsView='main';render();return true;}
+  if(state.tab!=='act'){state.tab='act';render();return true;}
+  if(state.campBuilding||state.campView!=='home'){state.campBuilding=null;state.campView='home';render();return true;}
+  return false;
+}
+globalThis.abyssHandleBack=handleGameBack;
 function uiIcon(name,cls){ return '<svg class="ui-icon'+(cls?' '+cls:'')+'" aria-hidden="true" focusable="false"><use href="#icon-'+name+'"></use></svg>'; }
 function uiModuleHeader(icon,code,name,desc,meta,cls){
   const header=el('header',(cls?cls+' ':'')+'ui-module-header');
@@ -3052,7 +3098,7 @@ function panelView(){
   if(P().location==='layer7'&&!state.mapOpen)return 'core';
   return state.mapOpen?'explore-map':'explore';
 }
-function render(){ if(_npcCapturing)return; normalizePanelNavigationState();renderTop(); const box=$('panel'),activeView=panelView(),keepFieldViewport=fieldViewportCanStayMounted(box,activeView);if(keepFieldViewport)Array.from(box.children).forEach(node=>{if(node!==retainedFieldViewport)node.remove();});else box.innerHTML='';box.classList.remove('camp-home','tutorial-panel','recipe-station-page','facility-operation-page','watch-defense-page','skill-console-page','skills-page','careers-page','character-page','npc-screen','settlement-shop-page','field-console','expedition-board','settlement-console','map-mode','camp-map-page','settings-home','settings-cloud','tasks-console','ui-page','ui-workspace','ui-canvas-workspace','core-control-page','ending-page');
+function render(){ if(_npcCapturing)return; if(activeThumbSheet)activeThumbSheet.close(false);normalizePanelNavigationState();renderTop(); const box=$('panel'),activeView=panelView(),keepFieldViewport=fieldViewportCanStayMounted(box,activeView);if(keepFieldViewport)Array.from(box.children).forEach(node=>{if(node!==retainedFieldViewport)node.remove();});else box.innerHTML='';box.classList.remove('camp-home','tutorial-panel','recipe-station-page','facility-operation-page','watch-defense-page','skill-console-page','skills-page','thumb-skills-page','careers-page','character-page','npc-screen','settlement-shop-page','field-console','expedition-board','settlement-console','map-mode','camp-map-page','settings-home','settings-cloud','tasks-console','ui-page','ui-workspace','ui-canvas-workspace','core-control-page','ending-page');
   box.dataset.view=activeView;
   const rootPage=['camp','explore','character','skills','careers','bag','tasks','settings'].includes(activeView),canvasWorkspace=['camp-map','explore-map','tech','genes'].includes(activeView),immersiveWorkspace=['facility','construction','settlement-shop','npc'].includes(activeView);
   box.classList.toggle('ui-page',rootPage);box.classList.toggle('ui-workspace',immersiveWorkspace);box.classList.toggle('ui-canvas-workspace',canvasWorkspace);
@@ -3388,11 +3434,11 @@ function refreshFacilityOperation(id){
   replaceMountedNode(current,fresh,current.parentNode);positions.forEach(position=>{const node=fresh.querySelector(position.selector);if(node)node.scrollTop=position.top;});renderTop();renderSiteSheet(panel);renderTabbar();save();
 }
 function openCampBuilding(id){ resetStationWorkbench(id);state.campBuilding=id; state.campView='home';if(id==='research'){state.techZoom=null;state.techPanX=0;state.techPanY=0;state.techSel=null;}setLogOpen(false); renderPanelTop(); }
-function renderCampHero(box){ const guard=campDefenseStats();
-  const unlocked=CAMP_BUILDINGS.filter(b=>!state.meta.built[b.id]&&hasBuildingTech(b.id)).length,hero=el('section','camp-hero');
+function renderCampHero(box){
+  const hero=el('section','camp-hero');
   const campName=String(state.campName).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-  hero.innerHTML='<div class="camp-hero-head"><span class="camp-mark" aria-hidden="true">'+uiIcon('camp')+'</span><span class="camp-hero-copy"><small>你的避风港</small><h1>'+campName+'</h1><p>休整 · 制造 · 准备下一次远征</p></span></div><div class="camp-defense-line"><span>设施防线</span><b>攻击 '+guard.attack+'</b><b>防御 '+guard.defense+'</b><b>护盾 '+guard.shield+'</b></div>';
-  const build=el('button','camp-hero-build',uiIcon('build-control')+'<span>建造</span>'+(unlocked?'<b>'+unlocked+'</b>':''));build.setAttribute('aria-label','建筑管理'+(unlocked?'，'+unlocked+'项可建造':''));build.onclick=()=>{state.campView='construct';setLogOpen(false);renderPanelTop();};hero.appendChild(build);box.appendChild(hero);
+  hero.innerHTML='<div class="camp-hero-head"><span class="camp-hero-copy"><small>方舟残骸 · 安全区域</small><h1>'+campName+'</h1><p>炉火尚温。整备之后，再走进迷雾。</p></span></div>';
+  box.appendChild(hero);
 }
 function renderCampContacts(box){
   const allNames=npcsAt('camp');if(!allNames.length)return;
@@ -3612,7 +3658,7 @@ function refreshNpcMode(){const terminal=document.querySelector('.npc-terminal')
 let campFacilityFilter='all';
 function campFacilityGroup(building){return ['smelt','craft','recycle','mess'].includes(building.kind)?'craft':['rest','garden','storage','defense','drone'].includes(building.kind)?'support':'special';}
 function renderCampHome(box){ state.campBuilding=null; state.campView='home'; box.classList.add('camp-home');
-  const content=el('div','camp-home-scroll');box.appendChild(content);renderCampHero(content);renderCampContacts(content);
+  renderCampHero(box);const content=el('div','camp-home-scroll');box.appendChild(content);renderCampContacts(content);
   const built=CAMP_BUILDINGS.filter(b=>state.meta.built[b.id]),head=el('div','camp-section-head','<span><b>营地设施</b></span><em>'+built.length+' 座 · 点击使用</em>');content.appendChild(head);
   const layout=el('div','camp-layout'),filters=el('nav','camp-facility-filters ui-segmented');filters.setAttribute('aria-label','按用途筛选设施');
   if(built.length<=6||!built.some(b=>campFacilityGroup(b)===campFacilityFilter))campFacilityFilter='all';
@@ -3620,16 +3666,11 @@ function renderCampHome(box){ state.campBuilding=null; state.campView='home'; bo
   built.forEach(b=>{ const damaged=!!state.meta.damaged[b.id],lv=buildingLevel(b.id),card=el('button','camp-facility '+b.tone+(damaged?' damaged':''));card.dataset.group=campFacilityGroup(b);card.hidden=campFacilityFilter!=='all'&&card.dataset.group!==campFacilityFilter;card.setAttribute('aria-label',b.name+' Lv'+lv+'，'+(damaged?'受损，点击修复':b.desc));
     card.innerHTML='<span class="cf-icon" aria-hidden="true">'+buildingUiIcon(b.id)+'</span><span class="cf-copy"><small>FACILITY // '+(damaged?'OFFLINE':'ONLINE')+'</small><b>'+b.name+'</b><em>'+(damaged?'受损停用 · '+costText({scrap:3})+' 修复':b.desc)+'</em></span><span class="cf-status"><small>'+(damaged?'STATE':'LEVEL')+'</small><b>'+(damaged?'ERR':String(lv).padStart(2,'0'))+'</b><i>'+(damaged?uiIcon('alert'):uiIcon('chevron-right'))+'</i></span>';
     card.onclick=damaged?()=>repairFacility(b.id):()=>openCampBuilding(b.id); layout.appendChild(card); }); content.appendChild(layout);
-  if(!built.length)content.appendChild(el('p','empty-note','营地还没有设施。点击右上方“建造”，安置第一座休眠仓。'));
-  renderCampCareerActions(content);
-  if(state.flags.mapUnlocked){const dock=el('footer','camp-home-dock'),depart=el('button','primary camp-depart',uiIcon('expedition')+'<span><b>出发探索</b><small>'+(state.mapUnread?'地图上有新的发现':'打开地图，选择目的地')+'</small></span>'+uiIcon('chevron-right'));depart.type='button';depart.onclick=openContextMap;dock.appendChild(depart);box.appendChild(dock);}
-}
-function renderCampCareerActions(box){
-  const sporeReady=skillUnlocked('sporeBoost');if(!sporeReady)return;
-  box.appendChild(el('div','camp-section-head','<span><small>LIFE CAREER</small><b>副职业行动</b></span><em>职业自动生效</em>'));
-  const list=el('div','operation-list career-field-actions');
-  if(sporeReady){const status=sporeBoostStatus();list.appendChild(operationRow(uiIcon('biohazard'),'催生孢子','培育副职业自动提供；独立于菌圃每日基础收获',status.text,status.used?'今日已用':'催生',!status.ok,performSporeBoost,status.ok?'primary':''));}
-  box.appendChild(list);
+  if(!built.length)content.appendChild(el('p','empty-note','营地还没有设施。点击下方“建造”，安置第一座休眠仓。'));
+  if(built.length>6)box.appendChild(filters);
+  const dock=el('footer','camp-home-dock'),unlocked=CAMP_BUILDINGS.filter(b=>!state.meta.built[b.id]&&hasBuildingTech(b.id)).length,build=el('button','camp-build-action',uiIcon('build-control')+'<span>建造'+(unlocked?' <b>'+unlocked+'</b>':'')+'</span>');build.type='button';build.setAttribute('aria-label','建筑管理'+(unlocked?'，'+unlocked+'项可建造':''));build.onclick=()=>{state.campView='construct';setLogOpen(false);renderPanelTop();};dock.appendChild(build);
+  if(state.flags.mapUnlocked){const depart=el('button','primary camp-depart',uiIcon('expedition')+'<span><b>出发探索</b><small>'+(state.mapUnread?'地图上有新的发现':'前往迷雾中的目的地')+'</small></span>'+uiIcon('chevron-right'));depart.type='button';depart.onclick=openContextMap;dock.appendChild(depart);}
+  box.appendChild(dock);
 }
 function renderConstruction(box){ state.campBuilding=null; state.campView='construct'; const shell=el('div','construction-workspace ui-workspace__shell'),content=el('div','construction-workspace-scroll ui-workspace__scroll');
   const available=CAMP_BUILDINGS.filter(b=>!state.meta.built[b.id]&&hasBuildingTech(b.id));
@@ -3749,15 +3790,17 @@ function fieldMarkerVisual(marker){
   return marker.kind==='npc'?npcPortraitMarkup(marker.target,'field-map-avatar'):uiIcon(marker.icon||'unknown');
 }
 function renderFieldMarkerDrawer(drawer,marker,id){
+  const markerKey=id+'|'+marker.id;if(drawer._fieldMarkerKey===markerKey&&drawer._refreshFieldMarker){drawer._refreshFieldMarker();return;}drawer._fieldMarkerKey=markerKey;drawer._refreshFieldMarker=null;
   drawer.innerHTML='';drawer.className='field-map-drawer is-open marker-'+marker.kind;
   const head=el('header','field-map-drawer-head','<span>'+fieldMarkerVisual(marker)+'</span><div><small>MAP CONTACT // '+marker.kind.toUpperCase()+'</small><b>'+marker.label+'</b></div>'),close=el('button','field-map-drawer-close ui-icon-button',uiIcon('close'));
-  close.type='button';close.setAttribute('aria-label','关闭地图地点详情');close.onclick=()=>{fieldMarkerSelection=null;drawer.className='field-map-drawer';drawer.innerHTML='';const selected=drawer.parentNode&&drawer.parentNode.querySelector('.field-map-marker.is-selected');if(selected)selected.classList.remove('is-selected');};head.appendChild(close);drawer.appendChild(head);
+  close.type='button';close.setAttribute('aria-label','关闭地图地点详情');close.onclick=()=>{fieldMarkerSelection=null;drawer._fieldMarkerKey=null;drawer._refreshFieldMarker=null;drawer.className='field-map-drawer';drawer.innerHTML='';const selected=drawer.parentNode&&drawer.parentNode.querySelector('.field-map-marker.is-selected');if(selected)selected.classList.remove('is-selected');};head.appendChild(close);drawer.appendChild(head);
   const body=el('div','field-map-drawer-body');drawer.appendChild(body);
-  const action=(label,meta,disabled,fn,cls)=>{const button=el('button','field-map-drawer-action '+(cls||''),'<span><b>'+label+'</b><small>'+meta+'</small></span>'+uiIcon('chevron-right'));button.type='button';button.disabled=!!disabled;if(!disabled)button.onclick=fn;body.appendChild(button);};
+  const action=(label,meta,disabled,fn,cls)=>{const button=el('button','field-map-drawer-action '+(cls||''),'<span><b>'+label+'</b><small>'+meta+'</small></span>'+uiIcon('chevron-right'));button.type='button';button.disabled=!!disabled;button.onclick=fn;body.appendChild(button);return button;};
   if(marker.kind==='resource'){
-    const site=resourceSiteOf(id),work=resourceWorkStatus(id),remaining=gatherAvailable(id),careerSkill=activeFieldGatherSkill(id),careerStatus=careerSkill?fieldGatherSkillStatus(careerSkill,id):null,ready=remaining&&work.ok&&(!careerStatus||careerStatus.ok);
+    const site=resourceSiteOf(id);
     body.appendChild(el('p','',site?'已标定产出：'+site.yield.map(key=>ITEMS[key].name).join(' · '):'资源读数缺失'));
-    action('开始'+resourceActionVerb(site,LOCATIONS[id].profile),(remaining?'储量 '+remaining+'/'+gatherLimit(id)+' · ':'储量耗尽 · ')+(careerStatus?careerStatus.text:work.text),!ready,()=>explore('gather'),'resource');
+    const gather=action('开始'+resourceActionVerb(site,LOCATIONS[id].profile),'',false,()=>explore('gather'),'resource'),readout=gather.querySelector('small');
+    drawer._refreshFieldMarker=()=>{const work=resourceWorkStatus(id),remaining=gatherAvailable(id),skill=activeFieldGatherSkill(id),status=skill?fieldGatherSkillStatus(skill,id):null;gather.disabled=!remaining||!work.ok||!!status&&!status.ok;readout.textContent=remaining?(status?status.text:'储量 '+remaining+'/'+gatherLimit(id)+' · '+work.text):'储量耗尽 · 约 '+resourceRecoveryRemaining(id)+' 小时恢复';};drawer._refreshFieldMarker();
   }else if(marker.kind==='npc'){
     const profile=npcProfile(marker.target);body.appendChild(el('p','',profile.role+' · '+profile.bio));action('与'+marker.target+'交谈','查看人物、任务与当前区域情报',false,()=>openNpcPanel(marker.target),'npc');
   }else if(marker.kind==='route'){
@@ -3766,7 +3809,7 @@ function renderFieldMarkerDrawer(drawer,marker,id){
   }else if(marker.kind==='operation'){
     const op=FIELD_OPERATIONS[marker.target],status=operationStatus(marker.target);body.appendChild(el('p','',op.desc));action(status.ok?'执行'+op.name:'查看修复条件',status.text,false,()=>openSiteSheet('operation',marker.target),'operation');
   }else if(marker.kind==='action'){
-    const siteAction=LOCATION_ACTIONS[id],remaining=locationActionRemaining(id),status=locationActionStatus(id);body.appendChild(el('p','',siteAction.desc));action(siteAction.name,!remaining?'今日次数已用完':status.text,!remaining||!status.ok,()=>performLocationAction(id),'action');
+    const siteAction=LOCATION_ACTIONS[id];body.appendChild(el('p','',siteAction.desc));const operate=action(siteAction.name,'',false,()=>performLocationAction(id),'action'),readout=operate.querySelector('small');drawer._refreshFieldMarker=()=>{const remaining=locationActionRemaining(id),status=locationActionStatus(id);operate.disabled=!remaining||!status.ok;readout.textContent=remaining?status.text:'今日次数已用完';};drawer._refreshFieldMarker();
   }else if(marker.kind==='boss'){
     const boss=ENEMIES[marker.target],era=COMBAT_ERAS[boss.era];body.appendChild(el('p','','区域首领已经被完整定位。挑战会立即进入首领战；失败不会重新隐藏坐标。'));body.appendChild(el('p','','生命 '+boss.hp+' · 攻击 '+boss.atk+' · 防御 '+boss.def));if(era)body.appendChild(el('p','','备战参考：Lv'+era.bossLevel+' · '+era.gear+'。带足治疗与武器补给；这不是进入等级限制。'));action('挑战'+boss.name,'首领威胁 '+boss.threat+' · 首次击败取得区域战利品',false,()=>startCombat(marker.target),'boss');
   }else if(marker.kind==='threat'){
@@ -3779,6 +3822,15 @@ function renderFieldMarkerDrawer(drawer,marker,id){
   drawer.scrollTop=0;
 }
 function fieldMapVisualKey(id,markers,fog){return [id,fog.complete?'clear':'fog',markers.map(marker=>marker.id).join(','),fog.holes.map(hole=>[hole.id,hole.x,hole.y,hole.rx,hole.ry].join(':')).join(',')].join('|');}
+function refreshFieldAfterAction(id){
+  const panel=$('panel');if(P().location!==id||panelView()!=='explore'||state.siteSheet||!fieldViewportCanStayMounted(panel,'explore')){render();return;}
+  const markers=fieldMapMarkers(id),fog=fieldFogState(id,markers),attempts=exploreAttempts(id),copy=panel.querySelector('.field-map-head-copy em'),status=retainedFieldViewport.querySelector('.field-map-empty,.field-map-readout'),fresh=fieldMapStatusNode(id,attempts,markers),drawer=retainedFieldViewport.querySelector('.field-map-drawer'),button=panel.querySelector('.field-explore-button');
+  if(copy)copy.textContent='已发现 '+fog.revealed+'/'+fog.total+' · 勘察 '+attempts+' 次';
+  if(status){status.className=fresh.className;status.innerHTML=fresh.innerHTML;}
+  if(drawer&&drawer._refreshFieldMarker)drawer._refreshFieldMarker();
+  if(button){const step=button.querySelector('small'),label=button.querySelector('b'),hint=button.querySelector('em'),cost=button.querySelector('strong');if(step)step.textContent='PRIMARY SURVEY // '+String(attempts+1).padStart(2,'0');if(label)label.textContent=attempts?'继续探索':'开始探索';if(hint)hint.textContent=attempts?'扩大测绘范围并寻找新地点':'从当前落脚点建立第一段地图';const costText=cost&&Array.from(cost.childNodes).find(node=>node.nodeType===3);if(costText)costText.textContent='体力 -'+areaActionCost(1);}
+  renderTop();save();flushStoryScenes();
+}
 function fieldMapStatusNode(id,attempts,markers){
   const directive=fieldDirective(id),report=state.lastFieldReport&&state.lastFieldReport.location===id?state.lastFieldReport:null;
   if(!attempts){if(markers.length)return el('div','field-map-empty route-known','<span>'+uiIcon('map')+'</span><small>RETURN VECTOR RESTORED</small><b>来路已经标定</b><p>进入区域时的足迹已驱散一片迷雾，其余地点仍需继续勘察。</p>');return el('div','field-map-empty','<span>'+uiIcon('scan')+'</span><small>UNSURVEYED TERRAIN</small><b>地图尚未建立</b><p>第一次探索前，迷雾下不会提前显示资源点、人物或道路。</p>');}
@@ -3803,7 +3855,7 @@ function renderFieldExpedition(box,id){
   const head=el('header','field-map-head'),mark=el('span','field-map-head-mark',uiIcon('expedition')),copy=el('span','field-map-head-copy','<small>'+region.name+' / '+here.zone+'</small><b>'+here.name+'</b><em>已发现 '+fog.revealed+'/'+fog.total+' · 勘察 '+attempts+' 次</em>'),tools=el('span','field-map-head-tools');
   const fullMap=el('button','field-head-tool',uiIcon('map')+'<span>地图</span>');fullMap.type='button';fullMap.setAttribute('aria-label','打开完整区域地图');fullMap.onclick=openContextMap;tools.appendChild(fullMap);
   if(returnRoute){const back=el('button','field-head-tool field-return-tool',uiIcon('camp')+'<span>回营</span>');back.type='button';back.setAttribute('aria-label','沿已知路线返回营地，消耗 '+returnRoute.cost+' 体力');back.title='返回营地 · 体力 -'+returnRoute.cost;back.onclick=()=>travelTo('camp');tools.appendChild(back);}
-  head.appendChild(mark);head.appendChild(copy);head.appendChild(tools);
+  head.appendChild(mark);head.appendChild(copy);
   let viewport=retainedFieldViewport&&retainedFieldViewport.dataset.visualKey===visualKey?retainedFieldViewport:null;
   const viewportMounted=!!viewport&&viewport.parentNode===box;if(viewportMounted)box.insertBefore(head,viewport);else box.appendChild(head);
   if(viewport){
@@ -3819,7 +3871,7 @@ function renderFieldExpedition(box,id){
   }
   if(reveal)pendingFieldReveal=null;
   const dock=el('footer','field-explore-dock'),exploreButton=el('button','field-explore-button primary','<span class="field-explore-icon">'+uiIcon('scan')+'</span><span><small>PRIMARY SURVEY // '+String(attempts+1).padStart(2,'0')+'</small><b>'+(attempts?'继续探索':'开始探索')+'</b><em>'+(attempts?'扩大测绘范围并寻找新地点':'从当前落脚点建立第一段地图')+'</em></span><strong>体力 -'+areaActionCost(1)+uiIcon('chevron-right')+'</strong>');
-  exploreButton.type='button';exploreButton.onclick=()=>explore('investigate');dock.appendChild(exploreButton);box.appendChild(dock);
+  exploreButton.type='button';exploreButton.onclick=()=>explore('investigate');dock.classList.add('field-thumb-dock');dock.appendChild(fullMap);dock.appendChild(exploreButton);if(tools.firstElementChild)dock.appendChild(tools.firstElementChild);box.appendChild(dock);
 }
 function installCoreComponent(id){
   const component=CORE_COMPONENTS.find(entry=>entry.id===id);if(P().location!=='layer7'||!component||!coreComponentOwned(id)||coreComponentInstalled(id))return false;
@@ -3945,48 +3997,54 @@ function skillToneClass(ref){
   const s=SKILLS[ref];if(!s)return 'tone-active';if(s.type==='passive')return 'tone-passive';if(s.type==='career')return 'tone-field';
   if(['heavy','blow'].includes(s.effect))return 'tone-power';if(['brace','bash'].includes(s.effect))return 'tone-guard';if(s.effect==='phase')return 'tone-phase';return 'tone-active';
 }
-function skillPanelCounts(){return {
-  active:Object.keys(SKILLS).filter(id=>SKILLS[id].type==='active'&&skillUnlocked(id)).length,
-  activeTotal:Object.keys(SKILLS).filter(id=>SKILLS[id].type==='active').length,
-  auto:Object.keys(SKILLS).filter(id=>['passive','career'].includes(SKILLS[id].type)&&skillUnlocked(id)).length,
-  autoTotal:Object.keys(SKILLS).filter(id=>['passive','career'].includes(SKILLS[id].type)).length,
-  mastery:Object.keys(MASTERIES).filter(id=>masteryLv(id)>0).length,
-  masteryTotal:Object.keys(MASTERIES).length
-};}
-function renderSkillOverview(){const record=careerRecord('main'),profile=record&&careerCombatProfile(record.id);return el('details','skill-overview growth-guide ui-card','<summary>'+uiIcon('document')+'<span>'+(record?careerDefinition(record.id).name+' · 战斗方式':'技能怎么使用')+'</span>'+uiIcon('chevron-right')+'</summary><p>'+(profile?profile.loop:'先选中一个战斗槽，再选择已学技能进行装配。生活技艺与精通自动生效。技能书和职业训练会带来新能力。')+'</p>');}
 function renderSkillLoadoutStrip(onSelect){
-  const slots=el('div','skill-loadout-strip');(state.skillSlots||[]).forEach((id,index)=>{const skill=id&&SKILLS[id],slot=el('button','skill-loadout-slot ui-card '+(id?skillToneClass(id):'tone-empty')+(state.skillSlotSel===index?' selected':'')+(skill?' filled':''));slot.type='button';slot.setAttribute('aria-pressed',state.skillSlotSel===index?'true':'false');slot.setAttribute('aria-label','战斗槽 '+(index+1)+' · '+(skill?skill.name:'空槽位'));slot.innerHTML='<span>0'+(index+1)+'</span><i>'+uiIcon(skill?skillEntryIcon(id):'slot-empty')+'</i><b>'+(skill?skill.name:'空槽位')+'</b><small>'+(skill?'Lv'+Math.max(1,skillLv(id)):state.skillSlotSel===index?'等待装配':'点击选择')+'</small>';slot.onclick=()=>onSelect(index,id);slots.appendChild(slot);});return slots;
+  const slots=el('div','skill-loadout-strip'),rows=[];
+  [0,1,2].forEach(index=>{const slot=el('button','skill-loadout-slot ui-card'),icon=el('i'),name=el('b'),level=el('small');slot.type='button';slot.appendChild(el('span','','0'+(index+1)));slot.appendChild(icon);slot.appendChild(name);slot.appendChild(level);slot.onclick=()=>onSelect(index,state.skillSlots[index]);rows.push({slot,index,icon,name,level});slots.appendChild(slot);});
+  slots._sync=()=>rows.forEach(({slot,index,icon,name,level})=>{const id=state.skillSlots[index],skill=id&&SKILLS[id];slot.className='skill-loadout-slot ui-card '+(skill?skillToneClass(id)+' filled':'tone-empty');slot.setAttribute('aria-label','战斗槽 '+(index+1)+' · '+(skill?skill.name+' · 查看或卸下':'空槽位 · 选择技能'));if(icon.dataset.skill!==(id||'')){icon.innerHTML=uiIcon(skill?skillEntryIcon(id):'slot-empty');icon.dataset.skill=id||'';}name.textContent=skill?skill.name:'待装配';level.textContent=skill?'Lv'+Math.max(1,skillLv(id)):'点击选招式';});slots._sync();return slots;
 }
 function renderSkillDetail(selected,onMutate){
-  if(!selected)return el('section','skill-detail-panel skill-detail-empty ui-panel','<span>'+uiIcon('skill')+'</span><b>这类能力还未学会</b><p>点“全部图鉴”查看获取方式。完成职业训练或获得技能书后，能力会出现在这里。</p>');
-  const mastery=selected.startsWith('mastery:'),id=mastery?selected.slice(8):selected,s=mastery?MASTERIES[id]:SKILLS[id],unlocked=skillEntryUnlocked(selected),slot=!mastery?equippedSlot(id):-1,active=!mastery&&s.type==='active',leveled=unlocked&&!mastery&&(active||!!s.career),level=leveled?Math.max(1,skillLv(id)):0,progress=leveled?skillProgressText(id):'',kind=mastery?'精通增益':active?'战斗主动':s.type==='career'?'副职业自动':'职业被动',source=mastery?('导师 '+s.npc+(unlocked?' · 当前 Lv'+masteryLv(id):'')):skillUnlockText(id,s),desc=mastery?(unlocked?masteryEffectText(id,masteryLv(id)):'Lv1 效果预览：'+masteryEffectText(id,1)):s.desc+(leveled?'<br><strong>当前 Lv'+level+'：'+skillLevelEffectText(id)+'</strong>':'');
-  const gear=active?skillEquipmentStatus(id):null,detail=el('section','skill-detail-panel ui-panel '+skillToneClass(selected)+' '+(unlocked?'online':'locked'));detail.dataset.skill=selected;detail.innerHTML='<div class="skill-detail-main"><span class="skill-detail-icon">'+uiIcon(skillEntryIcon(selected))+'</span><span><small>'+kind+' · '+(unlocked?'已学会':'未解锁')+'</small><h2>'+s.name+'</h2></span></div><p class="rpg-skill-effect">'+(leveled?'<strong>当前 Lv'+level+'：'+skillLevelEffectText(id)+'</strong>':desc)+'</p><div class="skill-detail-meta">'+(active?'<span><small>使用条件</small><b class="'+(gear.ok?'':'rpg-unready')+'">'+gear.text+' · '+skillResourceLabel(s)+'</b></span>':'')+'<span><small>'+(leveled?'技能进度':'运行方式')+'</small><b>'+(leveled?('Lv'+level+' · 熟练度 '+progress):(mastery?'精通自动生效':s.type==='career'?skillFieldLocation(id):'被动自动生效，不占战斗槽'))+'</b></span></div>';
-  if(!unlocked)detail.appendChild(el('p','rpg-unlock-note','获取方式 · '+source));
-  if(!mastery&&s.type==='active'){const action=el('button',(unlocked?'primary ui-button--primary ':'')+'skill-detail-action ui-button',unlocked?(slot>=0?'卸下技能栏 0'+(slot+1):'装配到技能栏 0'+((state.skillSlotSel||0)+1)):'尚未满足解锁条件');action.disabled=!unlocked;action.onclick=()=>slot>=0?unequipSkill(slot,onMutate):equipSkill(id,state.skillSlotSel||0,onMutate);const meta=detail.querySelector('.skill-detail-meta');if(meta)detail.insertBefore(action,meta);else detail.appendChild(action);}else{const linkedText=mastery?'向导师学习或研读精通手册提升等级':s.type==='career'?skillFieldLocation(id):'自动生效，无需装入技能栏';detail.appendChild(el('div','skill-auto-status',uiIcon(unlocked?'check':'lock')+'<span><b>'+(unlocked?linkedText:source)+'</b></span>'));}
-  if(leveled)detail.appendChild(el('details','growth-guide skill-growth-guide','<summary>'+uiIcon('document')+'<span>招式说明与成长</span>'+uiIcon('chevron-right')+'</summary><p>'+s.desc+'</p><p>'+(s.type==='passive'?'完成本职业对应行动积累熟练度。':'使用这项能力积累熟练度。')+'每 10 点提升一级，最高 Lv'+SKILL_MAX_LEVEL+'。</p>'));
-  return detail;
+  const mastery=selected.startsWith('mastery:'),id=mastery?selected.slice(8):selected,s=mastery?MASTERIES[id]:SKILLS[id],active=!mastery&&s.type==='active',kind=mastery?'精通 · 自动生效':active?'战斗主动':s.type==='career'?'生活技艺 · 无需装配':'被动 · 无需装配',detail=el('section','skill-detail-panel ui-panel '+skillToneClass(selected));
+  detail.dataset.skill=selected;const head=el('div','skill-detail-main'),copy=el('span'),effect=el('p','rpg-skill-effect'),level=el('em','skill-detail-level'),use=el('p','skill-detail-use');head.appendChild(el('span','skill-detail-icon',uiIcon(skillEntryIcon(selected))));copy.appendChild(el('small','',kind));copy.appendChild(el('h2','',s.name));copy.appendChild(level);head.appendChild(copy);detail.appendChild(head);detail.appendChild(effect);detail.appendChild(use);
+  const source=el('details','growth-guide skill-growth-guide','<summary>'+uiIcon('document')+'<span>如何获得与成长</span>'+uiIcon('chevron-right')+'</summary><p>'+(mastery?'导师 '+s.npc+' 可使用材料提升精通；持有精通训练手册时，也可以在这里研读。精通等级无上限，Lv101 起解锁超限效果。':skillUnlockText(id,s)+'。'+s.desc+'<br>使用对应能力或完成职业行动积累熟练度，每 10 点提升一级，最高 Lv'+SKILL_MAX_LEVEL+'。')+'</p>');detail.appendChild(source);
+  let footerSync=()=>{};
+  detail._sync=()=>{const unlocked=skillEntryUnlocked(selected),lv=mastery?masteryLv(id):Math.max(1,skillLv(id));detail.classList.toggle('online',unlocked);detail.classList.toggle('locked',!unlocked);level.textContent=unlocked?'Lv'+lv+(mastery?' · 永久增益':s.type==='active'||s.career?' · 熟练度 '+skillProgressText(id):''):'尚未学会';effect.textContent=mastery?masteryEffectText(id,unlocked?lv:1):skillLevelEffectText(id);if(active){const gear=skillEquipmentStatus(id);use.classList.toggle('rpg-unready',!gear.ok);use.textContent=(unlocked?'使用条件 · ':'学会后使用 · ')+gear.text+' · '+skillResourceLabel(s);}else use.textContent=!unlocked?'获取方式 · '+(mastery?'导师 '+s.npc+' / 精通训练手册':skillUnlockText(id,s)):mastery?'学会即永久生效，不占战斗槽。':s.type==='career'?skillFieldLocation(id):'已自动生效，不占战斗槽。';footerSync();};
+  detail._mountActions=(footer,onClose)=>{
+    const notice=el('p','skill-action-feedback');notice.setAttribute('aria-live','polite');footer.appendChild(notice);
+    const refresh=message=>{onMutate();renderTop();detail._sync();notice.textContent=message;};
+    const syncs=[];
+    if(active){
+      const label=el('p','skill-assignment-label','点一个位置装配 · 已装备的位置可卸下'),choices=el('div','skill-assignment-slots');footer.appendChild(label);footer.appendChild(choices);
+      [0,1,2].forEach(index=>{const button=el('button','skill-assign-slot ui-button'),number=el('small','', '技能栏 '+(index+1)),name=el('b'),hint=el('span');button.type='button';button.dataset.slot=String(index);button.appendChild(number);button.appendChild(name);button.appendChild(hint);button.onclick=()=>{if(!skillUnlocked(id))return;if(equippedSlot(id)===index){unequipSkill(index,()=>refresh('已卸下 '+s.name));}else equipSkill(id,index,()=>refresh('已装配到技能栏 '+(index+1)));};choices.appendChild(button);syncs.push(()=>{const previous=state.skillSlots[index],equipped=previous===id;button.disabled=!skillUnlocked(id);button.classList.toggle('equipped',equipped);button.setAttribute('aria-label',(equipped?'卸下':previous?'替换':'装配到')+'技能栏 '+(index+1));name.textContent=previous&&SKILLS[previous]?SKILLS[previous].name:'空位';hint.textContent=equipped?'点击卸下':previous?'替换为此技能':'装配此技能';});});
+      const book=Object.keys(ITEMS).find(key=>ITEMS[key].type==='book'&&ITEMS[key].skill===id);
+      if(book){const learn=el('button','skill-book-action ui-button');let shown=has(book);learn.type='button';learn.onclick=()=>{if(has(book)&&skillLv(id)<SKILL_MAX_LEVEL)useItem(book,()=>refresh('研读完成 · 当前 Lv'+skillLv(id)));};footer.appendChild(learn);syncs.push(()=>{shown=shown||has(book);learn.hidden=!shown;learn.disabled=skillLv(id)>=SKILL_MAX_LEVEL||!has(book);learn.textContent=skillLv(id)>=SKILL_MAX_LEVEL?'已达技能满级，无需研读':has(book)?'研读技能书 ×1 · 持有 '+state.inv[book]:'技能书已用完 · 探索或战斗可获得';});}
+    }else if(mastery){
+      const study=el('div','skill-mastery-study'),caption=el('p','skill-mastery-caption'),controls=el('div','skill-mastery-controls'),quantity=el('input','skill-mastery-quantity ui-input'),confirm=el('button','skill-mastery-confirm ui-button ui-button--primary'),guide=el('p','skill-mastery-guide');let count=1,shown=(state.inv.masteryManual||0)>0;quantity.type='number';quantity.min='1';quantity.inputMode='numeric';quantity.setAttribute('aria-label','研读手册数量');
+      const setCount=value=>{const held=state.inv.masteryManual||0;count=Math.max(1,Math.min(held||1,Math.floor(Number(value)||1)));quantity.value=held?String(count):'0';confirm.textContent=held?'研读 '+count+' 本 · Lv'+masteryLv(id)+' → Lv'+(masteryLv(id)+count):'手册已用完 · 当前 Lv'+masteryLv(id);};
+      [-1,1,10,100].forEach((delta,index)=>{const button=el('button','ui-button',delta>0?'+'+delta:String(delta));button.type='button';button.onclick=()=>setCount(count+delta);controls.appendChild(button);if(index===0)controls.appendChild(quantity);});quantity.oninput=()=>setCount(quantity.value);quantity.onblur=()=>setCount(quantity.value);confirm.type='button';confirm.onclick=()=>useMasteryManual(id,count,()=>refresh('精通已提升至 Lv'+masteryLv(id)));study.appendChild(caption);study.appendChild(controls);study.appendChild(confirm);footer.appendChild(study);footer.appendChild(guide);syncs.push(()=>{const held=state.inv.masteryManual||0;shown=shown||held>0;study.hidden=!shown;quantity.max=String(Math.max(1,held));quantity.disabled=!held;confirm.disabled=!held;Array.from(controls.querySelectorAll('button')).forEach(button=>button.disabled=!held);caption.textContent='精通训练手册 · 持有 '+held+' 本';guide.textContent=held?'调整数量后确认研读；此操作会消耗手册。':'暂无精通训练手册 · 找 '+s.npc+' 学习或升级';setCount(count);});
+    }else{const status=el('p','skill-auto-status');footer.appendChild(status);syncs.push(()=>{status.textContent=skillEntryUnlocked(selected)?s.type==='career'?skillFieldLocation(id):'已自动生效 · 无需装配':skillUnlockText(id,s);});}
+    const close=el('button','skill-sheet-close ui-button','收起技能');close.type='button';close.onclick=onClose;footer.appendChild(close);footerSync=()=>syncs.forEach(sync=>sync());footerSync();
+  };
+  detail._sync();return detail;
 }
 function skillFieldLocation(id){return ({sporeBoost:'菌圃 · 在每个培养块使用催生',fieldRepair:'损坏设施 · 修理时自动采用',quickScavenge:'野外资源点 · 采集时自动采用',pulseMining:'矿物资源点 · 开采时自动采用',precisionDismantle:'工业残骸 · 拆解时自动采用',strataExcavation:'矿层与遗迹 · 挖掘时自动采用',sterileSampling:'生物资源点 · 采样时自动采用'})[id]||'对应生活行动中自动生效';}
 function renderSkillBrowser(view,onMutate){
-  const entries=skillPageEntries(view).filter(ref=>state.skillCatalogue||skillEntryUnlocked(ref)).sort((a,b)=>Number(skillEntryUnlocked(b))-Number(skillEntryUnlocked(a))||String((a.startsWith('mastery:')?MASTERIES[a.slice(8)]:SKILLS[a]).name).localeCompare((b.startsWith('mastery:')?MASTERIES[b.slice(8)]:SKILLS[b]).name));if(!entries.includes(state.skillSelected))state.skillSelected=entries[0]||null;
-  const browser=el('div','skill-browser'),library=el('div','skill-library-grid'),cardRefs=[];let detailHost;
-  const tools=el('div','skill-library-tools','<span>'+(state.skillCatalogue?'全部能力 · 含未解锁':'已学能力')+' · '+entries.length+'</span>'),catalogue=el('button','rpg-text-button',state.skillCatalogue?'只看已学':'全部图鉴');catalogue.type='button';catalogue.setAttribute('aria-pressed',state.skillCatalogue?'true':'false');catalogue.onclick=()=>{state.skillCatalogue=!state.skillCatalogue;onMutate();};tools.appendChild(catalogue);library.appendChild(tools);
-  const select=(ref,force)=>{if(state.skillSelected===ref&&!force)return;state.skillSelected=ref;cardRefs.forEach(item=>{const active=item.ref===ref;item.card.classList.toggle('selected',active);item.card.setAttribute('aria-pressed',active?'true':'false');});replaceMountedNode(detailHost.children[0],renderSkillDetail(ref,onMutate),detailHost);save();};browser._selectSkill=select;
-  entries.forEach(ref=>{const unlocked=skillEntryUnlocked(ref),selected=state.skillSelected===ref,mastery=ref.startsWith('mastery:'),id=mastery?ref.slice(8):ref,s=mastery?MASTERIES[id]:SKILLS[id],equipped=!mastery&&equippedSlot(id)>=0,active=!mastery&&s.type==='active',leveled=unlocked&&!mastery&&(active||!!s.career),level=leveled?Math.max(1,skillLv(id)):0,progress=leveled?skillProgressText(id):'',typeLabel=mastery?'MASTERY':active?'ACTIVE':s.type==='career'?'FIELD':'PASSIVE',label=typeLabel+(unlocked&&(mastery||leveled)?' · LV '+(mastery?masteryLv(id):level):unlocked?' · ONLINE':' · LOCKED'),meta=mastery?(unlocked?masteryEffectText(id,masteryLv(id)):'导师 · '+s.npc):(unlocked?(leveled?('熟练度 '+progress+' · '+(active?skillResourceLabel(s):'自动生效')):'已自动生效'):skillUnlockText(id,s));
-    const card=el('button','skill-library-card ui-card '+skillToneClass(ref)+(selected?' selected':'')+(unlocked?' unlocked':' locked')+(equipped?' equipped':''));card.type='button';card.dataset.skill=ref;card.setAttribute('aria-pressed',selected?'true':'false');card.innerHTML='<span class="skill-card-icon">'+uiIcon(skillEntryIcon(ref))+'</span><span class="skill-card-copy"><b>'+s.name+'</b><em>'+(unlocked?(mastery?'Lv'+masteryLv(id):leveled?'Lv'+level+' · '+(active?skillResourceLabel(s):'自动生效'):'自动生效'):mastery?'导师 · '+s.npc:skillUnlockText(id,s))+'</em></span><i class="skill-card-state">'+(equipped?'已装 '+(equippedSlot(id)+1):unlocked?'':uiIcon('lock'))+'</i>';card.onclick=()=>select(ref);cardRefs.push({ref,card});library.appendChild(card);
-  });browser.appendChild(library);detailHost=el('div','skill-detail-host');detailHost.appendChild(renderSkillDetail(state.skillSelected,onMutate));browser.appendChild(detailHost);return browser;
+  const entries=skillPageEntries(view).sort((a,b)=>Number(skillEntryUnlocked(b))-Number(skillEntryUnlocked(a))),browser=el('div','skill-browser'),library=el('div','skill-library-grid'),cardRefs=[];let sheet=null,detail=null;
+  browser.dataset.skillView=view;library.setAttribute('aria-label',view==='active'?'战斗技能库':view==='auto'?'生活技艺库':'精通库');
+  const select=ref=>{if(!entries.includes(ref))return;if(sheet&&sheet.root.isConnected){if(state.skillSelected===ref)return;sheet.close();}state.skillSelected=ref;browser._sync();detail=renderSkillDetail(ref,onMutate);const mastery=ref.startsWith('mastery:'),definition=mastery?MASTERIES[ref.slice(8)]:SKILLS[ref];sheet=mountThumbSheet(detail,{className:'skill-thumb-sheet '+skillToneClass(ref),label:definition.name,onClose:()=>{sheet=null;detail=null;}});detail._mountActions(sheet.footer,sheet.close);save();};browser._selectSkill=select;
+  entries.forEach(ref=>{const mastery=ref.startsWith('mastery:'),id=mastery?ref.slice(8):ref,s=mastery?MASTERIES[id]:SKILLS[id],card=el('button','skill-library-card ui-card '+skillToneClass(ref)),copy=el('span','skill-card-copy'),meta=el('em'),badge=el('i','skill-card-state');card.type='button';card.dataset.skill=ref;card.setAttribute('aria-haspopup','dialog');copy.appendChild(el('b','',s.name));copy.appendChild(meta);card.appendChild(el('span','skill-card-icon',uiIcon(skillEntryIcon(ref))));card.appendChild(copy);card.appendChild(badge);card.onclick=()=>select(ref);cardRefs.push({ref,id,s,mastery,card,meta,badge});library.appendChild(card);});
+  const empty=el('div','skill-library-empty','<i>'+uiIcon('skill')+'</i><b>还没有学会这类能力</b><p>完成职业训练或获得技能书后，能力会出现在这里。</p><span>点下方“图鉴”查看获取方法</span>');browser.appendChild(library);browser.appendChild(empty);
+  browser._sync=()=>{let visible=0;cardRefs.forEach(({ref,id,s,mastery,card,meta,badge})=>{const unlocked=skillEntryUnlocked(ref),slot=mastery?-1:equippedSlot(id);card.hidden=!state.skillCatalogue&&!unlocked;if(!card.hidden)visible++;card.classList.toggle('unlocked',unlocked);card.classList.toggle('locked',!unlocked);card.classList.toggle('equipped',slot>=0);card.classList.toggle('selected',state.skillSelected===ref);card.setAttribute('aria-pressed',state.skillSelected===ref?'true':'false');meta.textContent=unlocked?'Lv'+(mastery?masteryLv(id):Math.max(1,skillLv(id)))+(mastery||s.type!=='active'?' · 自动':''):'未学会';badge.textContent=slot>=0?'已装 '+(slot+1):unlocked?'':'未解锁';});empty.hidden=visible>0;if(detail)detail._sync();};browser._sync();return browser;
 }
 function renderSkillPanel(box){
-  box.classList.add('skills-page');
-  state.skillView=['active','auto','mastery'].includes(state.skillView)?state.skillView:'active';const c=skillPanelCounts();
-  const hero=el('header','skill-console-head ui-module-header','<span class="skill-console-mark ui-module-header__mark">'+uiIcon('skill')+'</span><span><small>ABILITY</small><h1>技能</h1><p>战斗技能装入槽位，生活与精通自动生效</p></span>');box.appendChild(hero);
-  let overview=renderSkillOverview(),slots,browser;box.appendChild(overview);
-  const refreshInteractive=()=>{const freshOverview=renderSkillOverview(),freshSlots=renderSkillLoadoutStrip(selectSlot),freshBrowser=renderSkillBrowser(state.skillView,refreshInteractive);replaceMountedNode(overview,freshOverview,box);replaceMountedNode(slots,freshSlots,box);replaceMountedNode(browser,freshBrowser,box);overview=freshOverview;slots=freshSlots;browser=freshBrowser;renderTop();renderTabbar();save();};
-  const selectSlot=(index,id)=>{if(state.skillSlotSel===index&&(!id||state.skillSelected===id)&&state.skillView==='active')return;const changingView=state.skillView!=='active';state.skillSlotSel=index;state.skillView='active';syncTabs();Array.from(slots.children).forEach((slot,i)=>{slot.classList.toggle('selected',i===index);slot.setAttribute('aria-pressed',i===index?'true':'false');});if(changingView){if(id)state.skillSelected=id;const freshBrowser=renderSkillBrowser('active',refreshInteractive);replaceMountedNode(browser,freshBrowser,box);browser=freshBrowser;}else browser._selectSkill(id||state.skillSelected,true);save();};
-  slots=renderSkillLoadoutStrip(selectSlot);box.appendChild(slots);
-  const tabRefs=[],tabs=el('div','skill-category-tabs ui-segmented');function syncTabs(){tabRefs.forEach(item=>{const active=item.id===state.skillView;item.tab.classList.toggle('active',active);item.tab.setAttribute('aria-pressed',active?'true':'false');});}
-  [['active','战斗技能'],['auto','生活技艺'],['mastery','精通']].forEach(([id,label])=>{const tab=el('button',state.skillView===id?'active':'','<b>'+label+'</b>');tab.type='button';tab.setAttribute('aria-pressed',state.skillView===id?'true':'false');tab.onclick=()=>{if(state.skillView===id)return;state.skillView=id;state.skillSelected=null;syncTabs();const fresh=renderSkillBrowser(id,refreshInteractive);replaceMountedNode(browser,fresh,box);browser=fresh;save();};tabRefs.push({id,tab});tabs.appendChild(tab);});box.appendChild(tabs);
-  browser=renderSkillBrowser(state.skillView,refreshInteractive);box.appendChild(browser);box._refreshSkillPanel=refreshInteractive;
+  box.classList.add('skills-page','thumb-skills-page');state.skillView=['active','auto','mastery'].includes(state.skillView)?state.skillView:'active';
+  const hero=el('header','skill-console-head ui-module-header'),heroCopy=el('span'),heading=el('h1'),hint=el('p'),browsers={},tabRefs=[];hero.appendChild(el('span','skill-console-mark ui-module-header__mark',uiIcon('skill')));heroCopy.appendChild(heading);heroCopy.appendChild(hint);hero.appendChild(heroCopy);box.appendChild(hero);
+  const slots=renderSkillLoadoutStrip((index,id)=>{state.skillSlotSel=index;switchView('active');if(id)browsers.active._selectSkill(id);else{hint.textContent='点一个已学招式，在下方抽屉选择装配位置';}save();});box.appendChild(slots);
+  const refreshInteractive=()=>{slots._sync();Object.values(browsers).forEach(browser=>browser._sync());catalogue.setAttribute('aria-pressed',state.skillCatalogue?'true':'false');catalogue.classList.toggle('active',!!state.skillCatalogue);catalogueLabel.textContent=state.skillCatalogue?'已学':'图鉴';save();};
+  ['active','auto','mastery'].forEach(view=>{const browser=renderSkillBrowser(view,refreshInteractive);browsers[view]=browser;browser.hidden=state.skillView!==view;box.appendChild(browser);});
+  const dock=el('nav','skill-thumb-dock'),tabs=el('div','skill-category-tabs ui-segmented');dock.setAttribute('aria-label','技能分类');
+  function switchView(view){state.skillView=view;tabRefs.forEach(({id,tab})=>{const active=id===view;tab.classList.toggle('active',active);tab.setAttribute('aria-pressed',active?'true':'false');});Object.entries(browsers).forEach(([id,browser])=>browser.hidden=id!==view);heading.textContent=({active:'战斗技艺',auto:'生存技艺',mastery:'精通之路'})[view];hint.textContent=({active:'点招式查看 · 装配三招带入战斗',auto:'采集、制造与培育时生效 · 无需装配',mastery:'学会即永久生效 · 等级无上限'})[view];save();}
+  [['active','战斗','combat'],['auto','生活','salvage'],['mastery','精通','tech']].forEach(([id,label,icon])=>{const tab=el('button',state.skillView===id?'active':'',uiIcon(icon)+'<b>'+label+'</b>');tab.type='button';tab.setAttribute('aria-pressed',state.skillView===id?'true':'false');tab.onclick=()=>{if(state.skillView!==id)switchView(id);};tabRefs.push({id,tab});tabs.appendChild(tab);});dock.appendChild(tabs);
+  const catalogue=el('button','skill-catalogue-toggle rpg-text-button',uiIcon('document')),catalogueLabel=el('b');catalogue.appendChild(catalogueLabel);catalogue.type='button';catalogue.setAttribute('aria-label','切换已学技能与全部图鉴');catalogue.onclick=()=>{state.skillCatalogue=!state.skillCatalogue;refreshInteractive();};dock.appendChild(catalogue);box.appendChild(dock);box._refreshSkillPanel=refreshInteractive;switchView(state.skillView);refreshInteractive();
 }
 function refreshSkillPanel(){const box=$('panel');if(box&&panelView()==='skills'&&typeof box._refreshSkillPanel==='function'){box._refreshSkillPanel();return;}render();}
 function careerDefinition(id){return JOBS[id]||NOVICE_JOBS[id];}
@@ -4024,19 +4082,27 @@ function renderCareerDossier(kind,record){
 function renderCharPanel(box){
   if(state.charView==='genes')return renderGenePanel(box); if(state.charView==='careers')return renderCareerPanel(box); if(state.charView==='skills')return renderSkillPanel(box);
   box.classList.add('character-page');
-  const cells=[['生命',Math.max(0,P().hp)+' / '+maxHp()],['体力',P().stamina+' / '+Math.round(maxStamina())],['攻击',totalAtk()],['防御',totalDef()],['速度',baseSpd()],['护盾',(P().shield||0)+' / '+shieldMax()],['攻击距离',atkRange()],['移动距离',moveRange()],['暴击率',statCrit()+'%'],['暴击伤害',statCritDmg()+'%'],['闪避',statDodge()+'%'],['命中',statHit()+'%'],['护甲穿透',statPen()+'%'],['生命偷取',statLS()+'%']];
-  const statCells=cells.slice(0,6).map(c=>'<span class="ui-stat-chip"><small>'+c[0]+'</small><b>'+c[1]+'</b></span>').join('');
-  const profile=el('section','camp-hero char-console char-profile-card ui-panel'),main=careerRecord('main');
-  profile.innerHTML='<div class="camp-hero-head ui-module-header"><span class="camp-mark char-mark ui-module-header__mark" aria-hidden="true">'+uiIcon('personnel')+'</span><span class="camp-hero-copy"><small>SURVIVOR</small><h1>角色</h1><p>'+(main?careerDefinition(main.id).name:'方舟幸存者')+' · '+(state.playerAppearance==='female'?'女性':'男性')+'</p></span></div><div class="char-xp"><span><small>等级</small><b>'+P().level+'</b></span><div class="xpbar"><div class="xpfill" style="width:'+Math.min(100,P().xp/xpNeed(P().level)*100)+'%"></div></div><em>经验 '+P().xp+' / '+xpNeed(P().level)+'</em></div><div class="camp-metrics char-vitals char-profile-stats ui-stat-grid">'+statCells+'</div>';box.appendChild(profile);
-  if(P().infected)box.appendChild(el('div','warnline','感染状态 · 每次行动损失生命，需要抗感染血清'));
-  box.appendChild(el('div','camp-section-head char-section-head ui-section-header','<span><b>永久成长</b></span><em>跨轮回保留</em>'));
-  const nav=el('div','growth-nav character-quick-nav is-single');
-  const gene=el('button','camp-command-card char-command gene-entry ui-list-row','<span class="cc-icon">'+uiIcon('biohazard')+'</span><span class="cc-copy"><b>基因锁 · '+geneTier()+' 阶</b><em>'+Object.keys(state.meta.geneNodes||{}).filter(k=>state.meta.geneNodes[k]).length+' 个节点已激活 · 查看进化分支</em></span><span class="command-access"><i>'+uiIcon('chevron-right')+'</i></span>');gene.onclick=()=>{state.charView='genes';state.geneZoom=.78;state.genePanX=0;state.genePanY=0;renderPanelTop();};nav.appendChild(gene);
-  box.appendChild(nav);
-  const echo=el('details','char-fold echo-fold ui-card');echo.open=!!state.echoOpen;echo.addEventListener('toggle',()=>state.echoOpen=echo.open);echo.innerHTML='<summary class="camp-command-card char-fold-trigger ui-list-row"><span class="cc-icon char-module-code">'+uiIcon('core')+'</span><span class="cc-copy"><b>回响强化</b><em>可用回响 '+state.meta.echo+' · 提升轮回起点</em></span><span class="command-access"><i>'+uiIcon('chevron-right')+'</i></span></summary>';
-  const echoBody=el('div','char-fold-body');grid(echoBody,Object.entries(ECHO_UPGRADES).map(([id,e])=>{const lv=state.meta.echoUp[id]||0,cost=echoUpgradeCost(id);return {label:e.name+' Lv'+lv,cost:e.desc+' · 回响×'+cost,disabled:state.meta.echo<cost,cls:(state.meta.echo>=cost?'primary':'')+inlineChangeClass('echo',id),fn:()=>buyEchoUpgrade(id)};}));echo.appendChild(echoBody);box.appendChild(echo);
-  const advanced=el('details','char-fold stat-fold ui-card');advanced.open=!!state.charStatsOpen;advanced.addEventListener('toggle',()=>state.charStatsOpen=advanced.open);advanced.innerHTML='<summary class="camp-command-card char-fold-trigger ui-list-row"><span class="cc-icon">'+uiIcon('combat')+'</span><span class="cc-copy"><b>详细战斗属性</b><em>距离、暴击、命中与其他加成</em></span><span class="command-access"><i>'+uiIcon('chevron-right')+'</i></span></summary><div class="char-advanced-stats ui-stat-grid">'+cells.slice(6).map(c=>'<span class="ui-stat-chip"><small>'+c[0]+'</small><b>'+c[1]+'</b></span>').join('')+'</div>';box.appendChild(advanced);
+  const cells=()=>[['生命',Math.max(0,P().hp)+' / '+maxHp()],['体力',P().stamina+' / '+Math.round(maxStamina())],['攻击',totalAtk()],['防御',totalDef()],['速度',baseSpd()],['护盾',(P().shield||0)+' / '+shieldMax()],['攻击距离',atkRange()],['移动距离',moveRange()],['暴击率',statCrit()+'%'],['暴击伤害',statCritDmg()+'%'],['闪避',statDodge()+'%'],['命中',statHit()+'%'],['护甲穿透',statPen()+'%'],['生命偷取',statLS()+'%']];
+  const statMarkup=list=>list.map(c=>'<span class="ui-stat-chip"><small>'+c[0]+'</small><b>'+c[1]+'</b></span>').join('');
+  const main=careerRecord('main'),profile=el('section','char-rpg-stage');
+  profile.innerHTML='<div class="doll-art-host char-rpg-portrait">'+dollArt()+'</div><header class="char-rpg-identity"><small>方舟幸存者</small><h1>'+(main?careerDefinition(main.id).name:'无名旅人')+'</h1><span>Lv '+P().level+' · '+(state.playerAppearance==='female'?'女性':'男性')+'</span></header><div class="char-rpg-readout"><div class="char-xp"><span>经验 '+P().xp+' / '+xpNeed(P().level)+'</span><div class="xpbar"><div class="xpfill" style="width:'+Math.min(100,P().xp/xpNeed(P().level)*100)+'%"></div></div></div><div class="char-profile-stats ui-stat-grid">'+statMarkup(cells().slice(0,6))+'</div></div>';
+  box.appendChild(profile);
+  const artHost=profile.querySelector('.char-rpg-portrait');let artSignature;
+  const syncPortrait=()=>{const next=dollAppearanceSignature();if(!artHost||artSignature===next)return;artSignature=next;return refreshDollArt(artHost);};
+  const syncStats=()=>{const readout=profile.querySelector('.char-profile-stats');if(readout)readout.innerHTML=statMarkup(cells().slice(0,6));const current=careerRecord('main'),name=profile.querySelector('.char-rpg-identity h1'),identity=profile.querySelector('.char-rpg-identity>span');if(name)name.textContent=current?careerDefinition(current.id).name:'无名旅人';if(identity)identity.textContent='Lv '+P().level+' · '+(state.playerAppearance==='female'?'女性':'男性');syncPortrait();};
+  syncPortrait();box._refreshCharPanel=()=>{syncStats();renderTop();save();};
+  if(P().infected)box.appendChild(el('div','warnline','感染 · 每次行动损失生命，需要抗感染血清'));
+  const dock=el('nav','char-thumb-dock');dock.setAttribute('aria-label','角色成长与属性');
+  const gene=el('button','gene-entry',uiIcon('biohazard')+'<b>基因锁</b><small>'+geneTier()+' 阶进化</small>');gene.onclick=()=>{state.charView='genes';state.geneZoom=.78;state.genePanX=0;state.genePanY=0;renderPanelTop();};dock.appendChild(gene);
+  const echo=el('button','echo-entry',uiIcon('core')+'<b>回响强化</b><small>回响 '+state.meta.echo+'</small>');echo.onclick=()=>{
+    const body=el('section','char-echo-body'),head=el('header','char-sheet-heading','<small>跨轮回保留</small><h2>回响强化</h2><p></p>'),list=el('div','char-echo-options');body.append(head,list);const refs=[];
+    const sync=()=>{const count=head.querySelector('p');if(count)count.textContent='可用回响 '+state.meta.echo;const hint=echo.querySelector('small');if(hint)hint.textContent='回响 '+state.meta.echo;refs.forEach(({id,button})=>{const upgrade=ECHO_UPGRADES[id],lv=state.meta.echoUp[id]||0;button.innerHTML='<span><b>'+upgrade.name+' <em>Lv '+lv+'</em></b><small>'+upgrade.desc+'</small></span><span class="char-echo-price">强化<small>回响 '+echoUpgradeCost(id)+'</small></span>';button.disabled=state.meta.echo<echoUpgradeCost(id);});syncStats();};
+    Object.keys(ECHO_UPGRADES).forEach(id=>{const button=el('button','char-echo-upgrade');button.dataset.echo=id;button.onclick=()=>{buyEchoUpgrade(id,sync);button.classList.remove('just-updated');void button.offsetWidth;button.classList.add('just-updated');};refs.push({id,button});list.appendChild(button);});sync();
+    const sheet=mountThumbSheet(body,{className:'char-thumb-sheet',label:'回响强化'}),back=el('button','char-sheet-back','返回角色');back.onclick=()=>sheet.close();sheet.footer.appendChild(back);
+  };dock.appendChild(echo);
+  const advanced=el('button','stats-entry',uiIcon('combat')+'<b>战斗属性</b><small>距离与加成</small>');advanced.onclick=()=>{const body=el('section','char-stats-body','<header class="char-sheet-heading"><small>当前装配的实际属性</small><h2>战斗属性</h2></header><div class="char-advanced-stats ui-stat-grid">'+statMarkup(cells())+'</div>'),sheet=mountThumbSheet(body,{className:'char-thumb-sheet',label:'详细战斗属性'}),back=el('button','char-sheet-back','返回角色');back.onclick=()=>sheet.close();sheet.footer.appendChild(back);};dock.appendChild(advanced);box.appendChild(dock);
 }
+function refreshCharPanel(){const box=$('panel');if(box&&panelView()==='character'&&typeof box._refreshCharPanel==='function'){box._refreshCharPanel();return;}render();}
 const TREE_SVG_NS='http://www.w3.org/2000/svg';
 const TREE_ZOOM_MIN=.14;
 function treeCardBox(canvas,dataAttr,id){
@@ -4236,32 +4302,44 @@ function renderBagEquipmentDetail(onMutate){
     conflict.hidden=worn||status.ok;conflict.textContent=conflict.hidden?'':status.text;
     grip.hidden=!status.ok||!(item.slot==='weapon'||item.equipmentRole==='shield');grip.textContent=grip.hidden?'':status.text;
   }
-  detail._refreshEquippedState=syncState;syncState();return detail;
+  detail._refreshEquippedState=syncState;detail._actions=actionSlot;syncState();return detail;
 }
 function renderBagPanel(box){
-  const views=['equipment','material','consumable','special'],tabRefs=[],tabs=el('nav','bag-category-tabs ui-segmented'),body=el('div','rpg-bag-body');let refreshContent;
+  const views=['equipment','material','consumable','special'],tabRefs=[],tabs=el('nav','bag-category-tabs ui-segmented'),body=el('div','rpg-bag-body');let refreshContent,bagSheet=null;
+  const closeDetail=()=>{if(bagSheet)bagSheet.close();};
+  function showDetail(content,label){
+    closeDetail();const sheet=mountThumbSheet(content,{className:'bag-thumb-sheet',label,onClose:()=>{if(bagSheet===sheet)bagSheet=null;}});bagSheet=sheet;sheet.footer.classList.add('bag-thumb-footer');
+    const back=el('button','ui-button bag-detail-back','返回背包');back.type='button';back.onclick=()=>sheet.close();sheet.footer.appendChild(back);return sheet;
+  }
   state.bagView=views.includes(state.bagView)?state.bagView:'equipment';
-  views.forEach(id=>{const label=({equipment:'装备',material:'材料',consumable:'消耗品',special:'特殊'})[id],tab=el('button',state.bagView===id?'active':'','<b>'+label+'</b>');tab.type='button';tab.setAttribute('aria-pressed',state.bagView===id?'true':'false');tab.onclick=()=>{if(state.bagView===id)return;state.bagView=id;tabRefs.forEach(ref=>{ref.tab.classList.toggle('active',ref.id===id);ref.tab.setAttribute('aria-pressed',ref.id===id?'true':'false');});mountContent();save();};tabRefs.push({id,tab});tabs.appendChild(tab);});box.append(tabs,body);
+  views.forEach(id=>{const label=({equipment:'装备',material:'材料',consumable:'消耗品',special:'特殊'})[id],tab=el('button',state.bagView===id?'active':'','<b>'+label+'</b>');tab.type='button';tab.setAttribute('aria-pressed',state.bagView===id?'true':'false');tab.onclick=()=>{if(state.bagView===id)return;state.bagView=id;tabRefs.forEach(ref=>{ref.tab.classList.toggle('active',ref.id===id);ref.tab.setAttribute('aria-pressed',ref.id===id?'true':'false');});mountContent();save();};tabRefs.push({id,tab});tabs.appendChild(tab);});box.append(body,tabs);
   function mountContent(){
-    body.innerHTML='';body.dataset.category=state.bagView;
+    closeDetail();body.innerHTML='';body.dataset.category=state.bagView;
     if(state.bagView!=='equipment'){renderStoredItems();return;}
     if(!SLOTS.some(([slot])=>slot===state.bagSel))state.bagSel='weapon';
-    const loadout=el('details','loadout-console'),head=el('summary','loadout-head','<span><b>当前穿戴</b></span><em>点此收起 / 展开立绘</em>'),doll=el('div','doll'),artHost=el('div','doll-art-host'),slotRefs=[];loadout.open=true;
+    const loadout=el('section','loadout-console ui-bag-stage'),doll=el('div','doll'),artHost=el('div','doll-art-host'),slotRefs=[],slotViews=new Map();
     artHost.innerHTML=dollArt();doll.appendChild(artHost);refreshDollArt(artHost);
-    SLOTS.forEach(([slot,label])=>{const pos=DOLL_L[slot];if(!pos)return;const button=el('button','slotchip');button.type='button';button.dataset.slot=slot;button.style.left=pos.cx/DOLL_W*100+'%';button.style.top=pos.cy/DOLL_H*100+'%';button.onclick=()=>{if(state.bagSel===slot)return;state.bagSel=slot;state.bagItemSelected=P().equip[slot]||null;syncSelection();save();};slotRefs.push({slot,label,button});doll.appendChild(button);});loadout.append(head,doll);body.appendChild(loadout);
-    const vault=el('section','inventory-vault'),vaultHead=el('header','vault-head'),scroll=el('div','inventory-scroll'),grid=el('div','itemgrid rpg-gear-grid'),empty=el('p','rpg-empty-note'),detailHost=el('div','rpg-equipment-detail-host'),cards=new Map();let artSignature=dollAppearanceSignature();
-    scroll.append(grid,empty);vault.append(vaultHead,scroll);body.append(vault,detailHost);
+    SLOTS.forEach(([slot,label])=>{const pos=DOLL_L[slot];if(!pos)return;const button=el('button','slotchip');button.type='button';button.dataset.slot=slot;button.style.left=pos.cx/DOLL_W*100+'%';button.style.top=pos.cy/DOLL_H*100+'%';button.onclick=()=>selectSlot(slot);slotRefs.push({slot,label,button});doll.appendChild(button);});loadout.appendChild(doll);body.appendChild(loadout);
+    const vault=el('section','inventory-vault'),vaultHead=el('header','vault-head'),slotPicker=el('button','bag-slot-picker ui-button'),count=el('em'),scroll=el('div','inventory-scroll'),grid=el('div','itemgrid rpg-gear-grid'),empty=el('p','rpg-empty-note'),cards=new Map();let artSignature=dollAppearanceSignature();
+    slotPicker.type='button';slotPicker.setAttribute('aria-label','切换装备部位');slotPicker.onclick=()=>{const choices=el('div','bag-slot-choices');const sheet=showDetail(choices,'选择装备部位');SLOTS.forEach(([slot,label])=>{const worn=P().equip[slot],button=el('button','bag-slot-choice ui-button'+(state.bagSel===slot?' selected':''),uiIcon(SLOT_ICON[slot])+'<span><b>'+label+'</b><small>'+(worn?ITEMS[worn].name:'未穿戴')+'</small></span>');button.type='button';button.setAttribute('aria-pressed',state.bagSel===slot?'true':'false');button.onclick=()=>{sheet.close();selectSlot(slot);};choices.appendChild(button);});};
+    vaultHead.append(slotPicker,count);scroll.append(grid,empty);vault.append(scroll,vaultHead);body.appendChild(vault);
+    function selectSlot(slot){
+      if(state.bagSel===slot)return;slotViews.set(state.bagSel,{item:state.bagItemSelected,top:scroll.scrollTop});closeDetail();state.bagSel=slot;state.bagItemSelected=slotViews.get(slot)?.item||P().equip[slot]||null;syncSelection();scroll.scrollTop=slotViews.get(slot)?.top||0;save();
+    }
+    function showEquipment(){
+      const detail=renderBagEquipmentDetail(refreshEquipment),sheet=showDetail(detail,ITEMS[state.bagItemSelected]?.name||'装备详情');if(detail._actions)sheet.footer.appendChild(detail._actions);sheet.detail=detail;
+    }
     function ownedEquipment(){return [...new Set(Object.keys(state.inv).filter(id=>ITEMS[id]&&ITEMS[id].type==='equip'&&state.inv[id]>0).concat(Object.values(P().equip).filter(id=>ITEMS[id])))];}
     function syncCards(){
       const ids=ownedEquipment();cards.forEach((card,id)=>{if(!ids.includes(id)){card.remove();cards.delete(id);}});
-      ids.forEach(id=>{if(cards.has(id))return;const item=ITEMS[id],button=el('button','item');button.type='button';button.dataset.item=id;button.innerHTML='<span class="iicon">'+itemUiIcon(id)+'</span><span class="iname">'+item.name+'</span><small class="rpg-item-state"></small>';button.onclick=()=>{if(state.bagItemSelected===id)return;state.bagItemSelected=id;syncSelection();save();};cards.set(id,button);grid.appendChild(button);});
+      ids.forEach(id=>{if(cards.has(id))return;const item=ITEMS[id],button=el('button','item');button.type='button';button.dataset.item=id;button.innerHTML='<span class="iicon">'+itemUiIcon(id)+'</span><span class="iname">'+item.name+'</span><small class="rpg-item-state"></small>';button.onclick=()=>{state.bagItemSelected=id;syncSelection();showEquipment();save();};cards.set(id,button);grid.appendChild(button);});
     }
     function syncSelection(){
       const slot=state.bagSel,available=ownedEquipment().filter(id=>ITEMS[id].slot===slot),label=SLOTS.find(row=>row[0]===slot)[1];
       if(!available.includes(state.bagItemSelected))state.bagItemSelected=available.includes(P().equip[slot])?P().equip[slot]:available[0]||null;
       slotRefs.forEach(ref=>{const id=P().equip[ref.slot],item=id&&ITEMS[id];ref.button.classList.toggle('filled',!!item);ref.button.classList.toggle('sel',ref.slot===slot);ref.button.setAttribute('aria-pressed',ref.slot===slot?'true':'false');ref.button.setAttribute('aria-label',ref.label+'，'+(item?item.name:'初始服装 / 空装备位'));const markup='<span class="sc-box">'+(item?itemUiIcon(id):uiIcon(SLOT_ICON[ref.slot]||'slot-empty'))+'</span><span class="sc-nm">'+ref.label+'</span>';if(ref.button.innerHTML!==markup)ref.button.innerHTML=markup;});
       cards.forEach((card,id)=>{card.hidden=ITEMS[id].slot!==slot;card.classList.toggle('selected',id===state.bagItemSelected);card.classList.toggle('equipped',P().equip[slot]===id);card.setAttribute('aria-pressed',id===state.bagItemSelected?'true':'false');card.setAttribute('aria-label',ITEMS[id].name+'，'+(P().equip[slot]===id?'当前穿戴':'背包 '+state.inv[id]+' 件'));const status=card.querySelector&&card.querySelector('.rpg-item-state');if(status)status.textContent=P().equip[slot]===id?'穿戴中':'×'+state.inv[id];});
-      vaultHead.innerHTML='<span><b>'+label+' · 可替换装备</b></span><em>'+available.length+' 件</em>';empty.hidden=available.length>0;empty.textContent='暂无'+label+'装备';const currentDetail=detailHost.children[0];if(currentDetail?.dataset.item===state.bagItemSelected&&currentDetail._refreshEquippedState)currentDetail._refreshEquippedState();else replaceMountedNode(currentDetail,renderBagEquipmentDetail(refreshEquipment),detailHost);
+      slotPicker.innerHTML=uiIcon(SLOT_ICON[slot])+'<b>'+label+'</b>'+uiIcon('chevron-right');count.textContent=available.length+' 件 · 点击查看';empty.hidden=available.length>0;empty.textContent='暂无'+label+'装备，试试其他部位';const currentDetail=bagSheet&&bagSheet.detail;if(currentDetail?.dataset.item===state.bagItemSelected&&currentDetail._refreshEquippedState)currentDetail._refreshEquippedState();
     }
     function refreshEquipment(){
       const signature=dollAppearanceSignature();if(signature!==artSignature){refreshDollArt(artHost);artSignature=signature;}
@@ -4270,11 +4348,24 @@ function renderBagPanel(box){
     refreshContent=refreshEquipment;syncCards();syncSelection();
   }
   function renderStoredItems(){
-    const view=state.bagView,ids=Object.keys(state.inv).filter(id=>state.inv[id]>0&&ITEMS[id]&&(view==='material'?ITEMS[id].type==='mat':view==='consumable'?['use','book','masteryBook'].includes(ITEMS[id].type):!['mat','equip','use','book','masteryBook'].includes(ITEMS[id].type)));
-    if(view==='special')state.meta.endingItems.filter(id=>ITEMS[id]&&ITEMS[id].type!=='equip'&&!ids.includes(id)).forEach(id=>ids.push(id));
-    const vault=el('section','inventory-vault'),scroll=el('div','inventory-scroll'),grid=el('div',view==='material'?'mats':'itemgrid');
-    vault.appendChild(el('header','vault-head','<span><b>'+({material:'材料仓',consumable:'消耗品',special:'特殊道具'})[view]+'</b></span><em>'+ids.length+' 类</em>'));
-    ids.forEach(id=>{const item=ITEMS[id];if(view==='material'){grid.appendChild(el('span','mchip',itemUiIcon(id)+'<span>'+item.name+' '+state.inv[id]+'</span>'));return;}const button=el('button','item');button.type='button';button.innerHTML='<span class="iicon">'+itemUiIcon(id)+'</span><span class="iname">'+item.name+'</span><small class="rpg-item-state">×'+(state.inv[id]||1)+'</small>';button.setAttribute('aria-label',item.name+'，查看详情');button.onclick=()=>openSiteSheet('item',id);grid.appendChild(button);});if(ids.length)scroll.appendChild(grid);else scroll.appendChild(el('p','rpg-empty-note','当前分类没有物品'));vault.appendChild(scroll);body.appendChild(vault);refreshContent=mountContent;
+    const view=state.bagView,vault=el('section','inventory-vault'),scroll=el('div','inventory-scroll'),grid=el('div','itemgrid'),count=el('em'),head=el('header','vault-head','<span><b>'+({material:'材料仓',consumable:'消耗品',special:'特殊道具'})[view]+'</b></span>'),empty=el('p','rpg-empty-note','当前分类没有物品'),cards=new Map();head.appendChild(count);vault.appendChild(head);scroll.append(grid,empty);vault.appendChild(scroll);body.appendChild(vault);
+    function idsInView(){const ids=Object.keys(state.inv).filter(id=>state.inv[id]>0&&ITEMS[id]&&(view==='material'?ITEMS[id].type==='mat':view==='consumable'?['use','book','masteryBook'].includes(ITEMS[id].type):!['mat','equip','use','book','masteryBook'].includes(ITEMS[id].type)));if(view==='special')state.meta.endingItems.filter(id=>ITEMS[id]&&ITEMS[id].type!=='equip'&&!ids.includes(id)).forEach(id=>ids.push(id));return ids;}
+    function syncStoredItems(){
+      const ids=idsInView();cards.forEach((card,id)=>{if(!ids.includes(id)){card.remove();cards.delete(id);}});ids.forEach(id=>{let card=cards.get(id);if(!card){const item=ITEMS[id];card=el('button','item');card.type='button';card.dataset.item=id;card.innerHTML='<span class="iicon">'+itemUiIcon(id)+'</span><span class="iname">'+item.name+'</span><small class="rpg-item-state">×'+(state.inv[id]||1)+'</small>';card.setAttribute('aria-label',item.name+'，查看详情');card.onclick=()=>showStoredItem(id);cards.set(id,card);grid.appendChild(card);}const quantity=card.querySelector&&card.querySelector('.rpg-item-state');if(quantity)quantity.textContent='×'+(state.inv[id]||1);});count.textContent=ids.length+' 类';empty.hidden=ids.length>0;if(bagSheet&&bagSheet.syncItem)bagSheet.syncItem();
+    }
+    function showStoredItem(id){
+      const item=ITEMS[id],type=({mat:'材料',use:'消耗品',book:'技能书',masteryBook:'精通手册',key:'关键道具',trophy:'结局道具'})[item.type]||'物品',desc=item.desc||(item.type==='book'?'研读后提升【'+SKILLS[item.skill].name+'】熟练度。':item.type==='masteryBook'?'选择一项精通，研读后提升对应精通等级。':item.type==='mat'?'用于营地建造、制作与科技研究。':item.type==='use'?'使用后立即生效。':'探索与任务中自动验证，无需主动使用。'),detail=el('section','bag-item-detail'),held=el('p','bag-item-held');
+      detail.innerHTML='<div class="rpg-equipment-title"><span class="rpg-equipment-icon">'+itemUiIcon(id)+'</span><span><small>'+type+'</small><h2>'+item.name+'</h2></span></div>';detail.append(held,el('p','bag-item-description',desc));const effects=[item.hp&&'恢复生命 '+recoveryAmount(item.hp,item.hpPct,maxHp()),item.stamina&&'恢复体力 '+recoveryAmount(item.stamina,item.staminaPct,maxStamina()),item.cure==='infection'&&'清除感染',item.emp&&'机械敌人瘫痪 3 回合',item.buff&&item.buff.name+' · '+item.buff.charges+' 次',item.type==='book'&&'熟练度 +20'].filter(Boolean);if(effects.length)detail.appendChild(el('div','bag-item-effects ui-stat-grid',effects.map(text=>'<span class="ui-stat-chip">'+text+'</span>').join('')));if(MATERIAL_SOURCES[id])detail.appendChild(el('div','bag-item-source','<b>获取地点</b><p>'+MATERIAL_SOURCES[id]+'</p>'));
+      const sheet=showDetail(detail,item.name),usable=['use','book','masteryBook'].includes(item.type),action=usable?el('button','primary bag-item-use'):null;
+      function useBlocked(){
+        if(!has(id))return '已用完';if(item.type==='book'&&skillLv(item.skill)>=SKILL_MAX_LEVEL)return '技能已满级';if(item.type!=='use')return '';
+        if(item.emp&&!(state.combat&&state.combat.mech))return '机械战斗中使用';if(item.food&&state.combat)return '战斗中不能进食';if(item.cure==='infection'&&!P().infected)return '当前没有感染';
+        if(!item.buff&&!item.cure&&!item.emp&&(item.hp||item.stamina)&&!(item.hp&&P().hp<maxHp())&&!(item.stamina&&P().stamina<Math.round(maxStamina())))return item.hp&&item.stamina?'生命和体力已满':item.hp?'生命已满':'体力已满';return '';
+      }
+      if(action){action.type='button';action.onclick=()=>{if(useBlocked())return;if(item.type==='masteryBook'){sheet.close();openSiteSheet('masteryBook');return;}useItem(id,()=>{syncStoredItems();renderTop();save();});};sheet.footer.appendChild(action);}
+      sheet.syncItem=()=>{const qty=state.inv[id]||0,owned=qty||(state.meta.endingItems.includes(id)?1:0);held.textContent='持有 '+owned+' 件';if(action){const blocked=useBlocked();action.disabled=!!blocked;action.textContent=blocked||(item.type==='masteryBook'?'选择精通':item.type==='book'?'研读 1 本':'使用 1 个');}};sheet.syncItem();
+    }
+    refreshContent=syncStoredItems;syncStoredItems();
   }
   mountContent();box._refreshBagPanel=()=>{refreshContent();renderTop();renderTabbar();save();};
 }
@@ -4565,7 +4656,7 @@ function craftStationPresentation(b){
   return map[b.st]||{confirm:'确认制造',code:'MANUFACTURE'};
 }
 function buildRecipeWorkbenchDetail(entry,ui,opts,refresh,tone){
-  const entryMax=entry.maxQty==null?9999:Math.max(1,Math.floor(Number(entry.maxQty)||1)),detail=el('section','station-recipe-detail'),detailBody=el('div','station-detail-body');
+  const quantityLimit=()=>entry.maxQty==null?9999:Math.max(0,Math.floor(Number(entry.heldId?state.inv[entry.heldId]:entry.maxQty)||0)),detail=el('section','station-recipe-detail'),detailBody=el('div','station-detail-body');let entryMax=Math.max(1,quantityLimit());
   detailBody.appendChild(el('div','station-result','<span class="station-result-art ui-art-frame">'+itemUiIcon(entry.out)+'</span><span><small>SELECTED OUTPUT</small><b>'+entry.name+'</b><p>'+(entry.desc||ITEMS[entry.out].desc||'生产完成后自动放入背包')+'</p></span><em>持有 '+(state.inv[entry.out]||0)+'</em>'));
   const outputItem=ITEMS[entry.out],equipmentStats=outputItem&&outputItem.type==='equip'?statTags(outputItem).split(' ').filter(Boolean):[];
   if(equipmentStats.length)detailBody.appendChild(el('section','station-equipment-profile ui-card','<div><small>EQUIPMENT STATS</small><b>装备属性</b></div><div class="station-equipment-stats ui-stat-grid">'+equipmentStats.map(stat=>'<span class="ui-stat-chip">'+stat+'</span>').join('')+'</div>'));
@@ -4574,27 +4665,28 @@ function buildRecipeWorkbenchDetail(entry,ui,opts,refresh,tone){
   Object.entries(entry.cost||{}).forEach(([id,n])=>{const row=el('div','station-material ui-list-row'),art=el('span','station-material-art ui-art-frame',itemUiIcon(id)),copy=el('span','station-material-copy'),need=el('em','station-material-need');row.appendChild(art);row.appendChild(copy);row.appendChild(need);materials.appendChild(row);materialRefs[id]={row,copy,need,perBatch:n};});
   detailBody.appendChild(materials);
   const outputs=el('div','station-output-list'),outputRefs={};
-  Object.entries(entry.outputs||{[entry.out]:1}).forEach(([id,n])=>{const row=el('span','station-output',itemUiIcon(id)+'<b>'+ITEMS[id].name+'</b><em></em>');outputs.appendChild(row);outputRefs[id]={row,perBatch:n};});
+  Object.entries(entry.outputs||{[entry.out]:1}).forEach(([id,n])=>{const row=el('span','station-output',itemUiIcon(id)+'<b>'+ITEMS[id].name+'</b>'),amount=el('em');row.appendChild(amount);outputs.appendChild(row);outputRefs[id]={row,amount,perBatch:n};});
   const batch=el('div','station-batch'),fixed=!!entry.fixed,input=el('input','station-quantity');
   batch.appendChild(el('span','station-batch-copy','<small>PRODUCTION BATCH</small><b>'+(fixed?'唯一组件':'生产批次')+'</b><em>'+(fixed?'该项目只能制造 1 件':'可直接输入，范围 1—'+entryMax)+'</em>'));
   const controls=el('div','station-quantity-controls');
   if(fixed)controls.appendChild(el('span','station-fixed-quantity','1'));
   else{
-    [-100,-10].forEach(delta=>{const button=el('button','station-step',String(delta));button.type='button';button.onclick=()=>sync(ui.qty+delta);controls.appendChild(button);});
+    [-10,-1].forEach(delta=>{const button=el('button','station-step',String(delta));button.type='button';button.onclick=()=>sync(ui.qty+delta);controls.appendChild(button);});
     input.type='number';input.min='1';input.max=String(entryMax);input.inputMode='numeric';input.setAttribute('aria-label','生产批次数量');controls.appendChild(input);
-    [10,100].forEach(delta=>{const button=el('button','station-step','+'+delta);button.type='button';button.onclick=()=>sync(ui.qty+delta);controls.appendChild(button);});
+    [1,10].forEach(delta=>{const button=el('button','station-step','+'+delta);button.type='button';button.onclick=()=>sync(ui.qty+delta);controls.appendChild(button);});
   }
   batch.appendChild(controls);detailBody.appendChild(batch);
   detailBody.appendChild(el('div','station-output-head','<span><small>EXPECTED OUTPUT</small><b>预计产出</b></span>'));detailBody.appendChild(outputs);
   const confirm=el('button','primary station-confirm',opts.confirm||'确认生产');confirm.type='button';confirm.onclick=()=>entry.run(fixed?1:ui.qty,refresh);detail.appendChild(detailBody);detail.appendChild(confirm);
   function sync(value){
-    const qty=fixed?1:Math.min(entryMax,batchQuantity(value));ui.qty=qty;if(!fixed)input.value=qty;
+    entryMax=Math.max(1,quantityLimit());const qty=fixed?1:Math.min(entryMax,batchQuantity(value));ui.qty=qty;if(!fixed){input.max=String(entryMax);input.value=qty;}
+    const stock=detailBody.querySelector('.station-result>em'),description=detailBody.querySelector('.station-result p');if(stock)stock.textContent='持有 '+(state.inv[entry.out]||0);if(description&&entry.desc)description.textContent=entry.desc;
     Object.entries(materialRefs).forEach(([id,ref])=>{const have=state.inv[id]||0,need=ref.perBatch*qty,enough=have>=need;ref.row.className='station-material ui-list-row '+(enough?'enough':'short');ref.copy.innerHTML='<b>'+ITEMS[id].name+'</b><small>现有 '+have+' / 需 '+need+'</small>';ref.need.innerHTML='<small>本次</small><b>'+need+'</b>';});
-    Object.entries(outputRefs).forEach(([id,ref])=>{ref.row.innerHTML=itemUiIcon(id)+'<b>'+ITEMS[id].name+'</b><em>×'+(ref.perBatch*qty)+'</em>';});
-    const ready=entry.ready!==false&&!entry.done,affordable=canAfford(scaledCost(entry.cost,qty));confirm.disabled=!ready||!affordable;confirm.textContent=entry.done?'已完成':(opts.confirm||'确认生产')+' · '+qty+' 批';
+    Object.entries(outputRefs).forEach(([id,ref])=>{ref.amount.textContent='×'+((entry.outputs&&entry.outputs[id]||ref.perBatch)*qty);});
+    const ready=entry.ready!==false&&!entry.done&&quantityLimit()>0,affordable=canAfford(scaledCost(entry.cost,qty));confirm.disabled=!ready||!affordable;confirm.textContent=entry.done?'已完成':(opts.confirm||'确认生产')+' · '+qty+' 批';
   }
-  sync(ui.qty);if(!fixed){input.oninput=()=>sync(input.value);input.onblur=()=>sync(input.value);}
-  if(!opts.detailParent)return detail;const detailShell=el('div','station-workbench station-detail-workbench '+tone);detailShell.appendChild(detail);return detailShell;
+  detail._refreshStationDetail=()=>sync(ui.qty);sync(ui.qty);if(!fixed){input.oninput=()=>{if(input.value===''){confirm.disabled=true;return;}sync(input.value);};input.onblur=()=>sync(input.value);}
+  if(!opts.detailParent)return detail;const detailShell=el('div','station-workbench station-detail-workbench '+tone);detailShell._refreshStationDetail=detail._refreshStationDetail;detailShell.appendChild(detail);return detailShell;
 }
 function renderRecipeWorkbench(parent,key,entries,opts){
   opts=opts||{};const tone=opts.tone||'',shell=el('div','station-workbench '+tone),picker=el('div','station-picker'),splitGroup=opts.detailParent&&opts.splitKey?(STATION_UI[opts.splitKey]||(STATION_UI[opts.splitKey]={group:null,scroll:0})):null;
@@ -4602,10 +4694,13 @@ function renderRecipeWorkbench(parent,key,entries,opts){
   if(!entries.length){const message=opts.empty||'暂无已解锁配方。继续研究科技或寻找蓝图。';picker.appendChild(el('div','facility-empty',message));parent.appendChild(shell);if(opts.detailParent&&!opts.splitKey)opts.detailParent.appendChild(el('div','station-empty-detail','<small>PRODUCTION CONSOLE</small><b>没有可操作的配方</b><p>'+message+'</p>'));return;}
   const ui=stationUiState(key,entries),scrollState=splitGroup||ui,products=el('div','station-product-grid'),productRefs=[],scrollHost=opts.scrollHost||(opts.detailParent&&parent.closest&&parent.closest('.recipe-station-top'))||(opts.detailParent&&document.querySelector('.recipe-station-top'));if(scrollHost&&!opts.scrollHost)opts.scrollHost=scrollHost;if(splitGroup&&!splitGroup.group)splitGroup.group=key;
   if(scrollHost){requestAnimationFrame(()=>{scrollHost.scrollTop=scrollState.scroll||0;});scrollHost.onscroll=()=>{scrollState.scroll=scrollHost.scrollTop;};}
-  const refresh=()=>{if(scrollHost)scrollState.scroll=scrollHost.scrollTop;const holder=el('div'),detailHolder=opts.detailParent?el('div'):null,nextOpts=detailHolder?Object.assign({},opts,{detailParent:detailHolder,scrollHost}):opts;renderRecipeWorkbench(holder,key,entries,nextOpts);replaceMountedNode(shell,holder.children[0],shell.parentNode);if(detailHolder)replaceMountedNode(opts.detailParent.children[0],detailHolder.children[0],opts.detailParent);};
-  const selectEntry=entry=>{if(entry.id===ui.id&&(!splitGroup||splitGroup.group===key))return;if(splitGroup)splitGroup.group=key;ui.id=entry.id;ui.qty=1;productRefs.forEach(ref=>{const active=ref.entry.id===ui.id;ref.tile.classList.toggle('selected',active);ref.tile.setAttribute('aria-pressed',active?'true':'false');});const fresh=buildRecipeWorkbenchDetail(entry,ui,opts,refresh,tone),container=opts.detailParent||shell;replaceMountedNode(container.children[container.children.length-1],fresh,container);};
+  const refresh=()=>{if(scrollHost)scrollState.scroll=scrollHost.scrollTop;productRefs.forEach(({entry,tile})=>{if(entry.update)Object.assign(entry,entry.update());if(entry.fixed)entry.done=entry.done||ownsItem(entry.out);const held=state.inv[entry.heldId||entry.out]||0,stock=tile.querySelector('small');tile.classList.toggle('done',!!entry.done);if(stock)stock.textContent=entry.done?'已完成':entry.gate||((entry.heldId?'可处理 ':'持有 ')+held);});const container=opts.detailParent||shell,current=container.children[container.children.length-1];if(current&&current._refreshStationDetail)current._refreshStationDetail();
+    if(key.startsWith('starDock:')){const dock=document.querySelector('.facility-section.shipyard'),assemble=dock&&dock.querySelector('.facility-main-action'),summary=dock&&dock.querySelector('.workbench-visual>div>b'),ready=shipReady();if(assemble){assemble.disabled=ready||SHIP_COMPONENTS.some(id=>!has(id));assemble.textContent=ready?'回声号已完成':'完成远征舰总装';}if(summary)summary.textContent=ready?'远征舰【回声号】已服役':'回声号总装 '+SHIP_COMPONENTS.filter(has).length+'/'+SHIP_COMPONENTS.length;}
+    renderTop();save();};
+  const clearSelection=()=>productRefs.forEach(ref=>{ref.tile.classList.remove('selected');ref.tile.setAttribute('aria-pressed','false');});
+  const selectEntry=entry=>{if(entry.id===ui.id&&(!splitGroup||splitGroup.group===key))return;if(splitGroup){if(opts.detailParent._clearStationSelection)opts.detailParent._clearStationSelection();splitGroup.group=key;opts.detailParent._clearStationSelection=clearSelection;}ui.id=entry.id;ui.qty=1;productRefs.forEach(ref=>{const active=ref.entry.id===ui.id;ref.tile.classList.toggle('selected',active);ref.tile.setAttribute('aria-pressed',active?'true':'false');});const fresh=buildRecipeWorkbenchDetail(entry,ui,opts,refresh,tone),container=opts.detailParent||shell;replaceMountedNode(container.children[container.children.length-1],fresh,container);};
   entries.forEach(entry=>{const selected=entry.id===ui.id,held=state.inv[entry.heldId||entry.out]||0,heldLabel=entry.heldId?'可处理 ':'持有 ',tile=el('button','station-product ui-card'+(selected?' selected':'')+(entry.done?' done':'')+(entry.ready===false?' gated':''));tile.type='button';tile.setAttribute('aria-pressed',selected?'true':'false');tile.innerHTML='<span class="station-product-art ui-art-frame">'+itemUiIcon(entry.out)+'</span><b>'+entry.name+'</b><small>'+(entry.done?'已完成':entry.gate||(heldLabel+held))+'</small>';tile.onclick=()=>selectEntry(entry);productRefs.push({entry,tile});products.appendChild(tile);});
-  picker.appendChild(products);parent.appendChild(shell);if(splitGroup&&splitGroup.group!==key)return;
+  picker.appendChild(products);parent.appendChild(shell);if(splitGroup&&splitGroup.group!==key){clearSelection();return;}if(splitGroup)opts.detailParent._clearStationSelection=clearSelection;
   const entry=entries.find(e=>e.id===ui.id)||entries[0],detailNode=buildRecipeWorkbenchDetail(entry,ui,opts,refresh,tone);(opts.detailParent||shell).appendChild(detailNode);
 }
 const DEFENSE_UI_ICONS={wall:'defense-wall',trap:'defense-trap',gun:'defense-gun',reinforcedWall:'defense-reinforced',laser:'defense-laser',plasma:'defense-plasma',shieldNode:'defense-shield',arc:'defense-arc',drone:'defense-drone',energyDome:'defense-dome'};
@@ -4621,9 +4716,17 @@ function renderDefenseWorkbench(parent,detailParent){
     body.appendChild(el('div','station-result defense-result','<span class="station-result-art ui-art-frame">'+defenseUiIcon(entry.id)+'</span><span><small>'+(current?'ACTIVE DEFENSE':'CONSTRUCTION READY')+'</small><b>'+entry.type.name+'</b><p>'+(current?'当前 Lv '+current.level+' · '+defenseStatText(current):'建成后 '+defenseStatText(preview))+'</p></span><em>'+(current?'Lv '+current.level:'未建造')+'</em>'));
     const stats=[['combat','攻击',defAtk(preview)],['armor','防御',defArmor(preview)],['offhand','护盾',defShield(preview)],['locate','射程',defRange(preview)]].filter(row=>row[2]);body.appendChild(el('section','station-equipment-profile defense-stat-profile ui-card','<div><small>'+(current?'NEXT LEVEL':'INITIAL SPECS')+'</small><b>'+(current?'下一级属性':'建成属性')+'</b></div><div class="station-equipment-stats ui-stat-grid">'+stats.map(row=>'<span class="ui-stat-chip">'+uiIcon(row[0])+' '+row[1]+' '+row[2]+'</span>').join('')+'</div>'));
     body.appendChild(el('div','station-subhead','<span><small>MATERIAL INPUT</small><b>'+(current?'升级所需材料':'建造所需材料')+'</b></span><em>'+(can?'库存已满足':'库存不足')+'</em>'));const materials=el('div','station-material-grid');Object.entries(cost).forEach(([id,need])=>{const have=state.inv[id]||0;materials.appendChild(el('div','station-material ui-list-row '+(have>=need?'enough':'short'),'<span class="station-material-art ui-art-frame">'+itemUiIcon(id)+'</span><span class="station-material-copy"><b>'+ITEMS[id].name+'</b><small>现有 '+have+' / 需 '+need+'</small></span><em class="station-material-need"><small>本次</small><b>'+need+'</b></em>'));});body.appendChild(materials);
-    const detailShell=el('div','station-workbench station-detail-workbench defense-workbench'),confirm=el('button','primary station-confirm',current?'升级至 Lv '+(current.level+1):'建造 '+entry.type.name);confirm.type='button';confirm.disabled=!can;confirm.onclick=()=>{if(current)upgradeDefense(state.defenses.indexOf(current),refresh);else buildDefense(entry.id,refresh);};detail.appendChild(body);detail.appendChild(confirm);detailShell.appendChild(detail);return detailShell;};
+    const detailShell=el('div','station-workbench station-detail-workbench defense-workbench'),confirm=el('button','primary station-confirm',current?'升级至 Lv '+(current.level+1):'建造 '+entry.type.name);confirm.type='button';confirm.disabled=!can;confirm.onclick=()=>{const index=state.defenses.findIndex(defense=>defense.key===entry.id);if(index>=0)upgradeDefense(index,refresh);else buildDefense(entry.id,refresh);};detail.appendChild(body);detail.appendChild(confirm);detailShell.appendChild(detail);return detailShell;};
   const productRefs=[];entries.forEach(entry=>{const selected=entry.id===ui.id,tile=el('button','station-product defense-product ui-card'+(selected?' selected':'')+(entry.built?'':' gated'));tile.type='button';tile.setAttribute('aria-pressed',selected?'true':'false');tile.innerHTML='<span class="station-product-art defense-product-art ui-art-frame">'+defenseUiIcon(entry.id)+'</span><b>'+entry.type.name+'</b><small>'+(entry.built?'Lv '+entry.level:'待建造')+'</small>';tile.onclick=()=>{if(entry.id===ui.id)return;ui.id=entry.id;productRefs.forEach(ref=>{const active=ref.entry.id===ui.id;ref.tile.classList.toggle('selected',active);ref.tile.setAttribute('aria-pressed',active?'true':'false');});replaceMountedNode(detailParent.children[0],buildDetail(entry),detailParent);};productRefs.push({entry,tile});products.appendChild(tile);});
-  picker.appendChild(products);parent.appendChild(shell);refresh=()=>{if(scrollHost)ui.scroll=scrollHost.scrollTop;const holder=el('div'),detailHolder=el('div');renderDefenseWorkbench(holder,detailHolder);replaceMountedNode(shell,holder.children[0],shell.parentNode);replaceMountedNode(detailParent.children[0],detailHolder.children[0],detailParent);};detailParent.appendChild(buildDetail(entries.find(item=>item.id===ui.id)||entries[0]));
+  picker.appendChild(products);parent.appendChild(shell);refresh=()=>{
+    if(scrollHost)ui.scroll=scrollHost.scrollTop;productRefs.forEach(({entry,tile})=>{entry.built=state.defenses.find(defense=>defense.key===entry.id);entry.level=entry.built?entry.built.level:0;tile.classList.toggle('gated',!entry.built);const level=tile.querySelector('small');if(level)level.textContent=entry.built?'Lv '+entry.level:'待建造';});
+    const current=detailParent.children[0],fresh=buildDetail(entries.find(item=>item.id===ui.id)||entries[0]);
+    ['.defense-result small','.defense-result p','.defense-result>em','.defense-stat-profile>div>small','.defense-stat-profile>div>b','.station-subhead b','.station-subhead>em'].forEach(selector=>{const old=current.querySelector(selector),next=fresh.querySelector(selector);if(old&&next)old.textContent=next.textContent;});
+    const oldStats=current.querySelector('.station-equipment-stats'),newStats=fresh.querySelector('.station-equipment-stats');if(oldStats&&newStats)oldStats.innerHTML=newStats.innerHTML;
+    const oldMaterials=current.querySelector('.station-material-grid'),newMaterials=fresh.querySelector('.station-material-grid');if(oldMaterials&&newMaterials){const keys=node=>Array.from(node.querySelectorAll('.station-material-copy b')).map(item=>item.textContent).join('|');if(keys(oldMaterials)!==keys(newMaterials))oldMaterials.replaceChildren(...newMaterials.children);else Array.from(oldMaterials.children).forEach((row,index)=>{const next=newMaterials.children[index];row.className=next.className;['.station-material-copy small','.station-material-need b'].forEach(selector=>{const value=row.querySelector(selector),updated=next.querySelector(selector);if(value&&updated)value.textContent=updated.textContent;});});}
+    const confirm=current.querySelector('.station-confirm'),nextConfirm=fresh.querySelector('.station-confirm');if(confirm&&nextConfirm){confirm.disabled=nextConfirm.disabled;confirm.textContent=nextConfirm.textContent;}
+    const summary=parent.querySelector('.watch-console>div>b'),header=document.querySelector('.facility-header-summary'),b=CAMP_BUILDINGS.find(building=>building.kind==='defense');if(summary){const guard=campDefenseStats();summary.textContent='攻击 '+guard.attack+' · 防御 '+guard.defense+' · 护盾 '+guard.shield;}if(header&&b)header.innerHTML=facilityHeaderDetail(b);renderTop();save();
+  };detailParent.appendChild(buildDetail(entries.find(item=>item.id===ui.id)||entries[0]));
 }
 function gardenSlotCount(){return Math.min(4,buildingLevel('garden')+1);}
 function gardenCrop(id){return GARDEN_CROPS.find(c=>c.id===id);}
@@ -4634,15 +4737,15 @@ function plantGarden(slot,cropId,refresh){const plots=normalizeGardenPlots(),cro
 function collectGardenPlot(slot,automatic,refresh){const plots=normalizeGardenPlots();if(!Number.isInteger(slot)||slot<0||slot>=plots.length)return false;const plot=plots[slot],crop=plot&&gardenCrop(plot.crop);if(!crop||state.time<plot.readyAt)return false;const out=gardenYield(crop);Object.entries(out).forEach(([id,n])=>gainMat(id,n));plots[slot]=null;gainCareerXp('life',6,'biologist');log((automatic?'采收机器人已入库：':'培养槽收获：')+Object.entries(out).map(([id,n])=>ITEMS[id].name+'×'+n).join('、')+'。','good',{toast:false});if(refresh)refresh();return true;}
 function settleGardenAutomation(){if(!state||!state.meta||!state.meta.built.garden||buildingLevel('garden')<3)return;const plots=normalizeGardenPlots();plots.forEach((plot,index)=>{if(plot&&state.time>=plot.readyAt)collectGardenPlot(index,true);});}
 function renderGardenWorkbench(parent,detailParent){
-  const plots=normalizeGardenPlots(),lv=buildingLevel('garden'),crops=GARDEN_CROPS.filter(c=>c.level<=lv),ui=stationUiState('garden:crops',crops),shell=el('div','garden-workbench');let refresh;
+  const plots=normalizeGardenPlots(),lv=buildingLevel('garden'),crops=GARDEN_CROPS.filter(c=>c.level<=lv),ui=stationUiState('garden:crops',crops),shell=el('div','garden-workbench');
   shell.appendChild(el('div','station-heading garden-heading','<span><small>BIOCULTURE DECK</small><b>培养与播种</b></span><em>作物按游戏时间生长</em>'));
   const beds=el('div','garden-bed-grid'),bedRefs=[];
-  const replaceBed=index=>{const fresh=makeBed(index);replaceMountedNode(bedRefs[index],fresh,beds);bedRefs[index]=fresh;};const refreshBed=index=>{replaceBed(index);renderTop();save();};
+  const replaceBed=index=>{const fresh=makeBed(index);replaceMountedNode(bedRefs[index],fresh,beds);bedRefs[index]=fresh;};const refreshBed=index=>{replaceBed(index);const selected=gardenCrop(ui.id)||crops[0],materials=detailParent.querySelectorAll('.station-material');Object.entries(selected.cost).forEach(([id,n],i)=>{const row=materials[i],copy=row&&row.querySelector('.station-material-copy small');if(row)row.className='station-material '+((state.inv[id]||0)>=n?'enough':'short');if(copy)copy.textContent='现有 '+(state.inv[id]||0)+' / 需 '+n;});renderTop();save();};
   const makeBed=index=>{const plot=normalizeGardenPlots()[index],crop=plot&&gardenCrop(plot.crop),selected=gardenCrop(ui.id)||crops[0],ready=!!plot&&state.time>=plot.readyAt,remain=plot?Math.max(0,plot.readyAt-state.time):0,status=sporeBoostStatus(index),clickable=ready||!plot,bed=el('article','garden-bed ui-card '+(ready?'ready':plot?'growing':'empty')),main=el(clickable?'button':'div','garden-bed-main',plot?gardenCropUiIcon(crop)+'<b>'+crop.name+'</b><small>'+(ready?'收获培养物':'剩余 '+remain+' 小时')+'</small>':uiIcon('plus')+'<b>空培养槽</b><small>播种 '+selected.name+'</small>'),skill=el('button','garden-bed-skill'+(status.ok?' active':''),uiIcon('skill-spore-boost')+'<span><b>催生孢子</b><small>'+(!plot?'播种后可用':ready?'培养物已成熟':status.ok?'体力 '+status.cost+' · 推进 '+sporeBoostHours()+' 小时':status.text)+'</small></span>');
-    bed.dataset.slot=String(index);if(clickable){main.type='button';main.onclick=()=>ready?collectGardenPlot(index,false,()=>refreshBed(index)):plantGarden(index,selected.id,refresh);}skill.type='button';skill.disabled=!status.ok;if(status.ok)skill.onclick=()=>performSporeBoost(index,()=>refreshBed(index));bed.append(main,skill);return bed;};
+    bed.dataset.slot=String(index);if(clickable){main.type='button';main.onclick=()=>ready?collectGardenPlot(index,false,()=>refreshBed(index)):plantGarden(index,selected.id,()=>refreshBed(index));}skill.type='button';skill.disabled=!status.ok;if(status.ok)skill.onclick=()=>performSporeBoost(index,()=>refreshBed(index));bed.append(main,skill);return bed;};
   plots.forEach((_,index)=>{const bed=makeBed(index);bedRefs[index]=bed;beds.appendChild(bed);});shell.appendChild(beds);
 const buildDetail=selected=>{const detail=el('section','station-recipe-detail garden-detail'),body=el('div','station-detail-body');body.appendChild(el('div','station-result','<span class="station-result-art garden-crop-art ui-art-frame">'+gardenCropUiIcon(selected)+'</span><span><small>SELECTED CULTURE</small><b>'+selected.name+'</b><p>'+selected.desc+'</p></span><em>'+selected.hours+' 小时</em>'));body.appendChild(el('div','station-subhead','<span><small>CULTURE INPUT</small><b>植入成本</b></span><em>成熟后可重新播种</em>'));const mats=el('div','station-material-grid');Object.entries(selected.cost).forEach(([id,n])=>mats.appendChild(el('div','station-material '+((state.inv[id]||0)>=n?'enough':'short'),'<span class="station-material-art ui-art-frame">'+itemUiIcon(id)+'</span><span class="station-material-copy"><b>'+ITEMS[id].name+'</b><small>现有 '+(state.inv[id]||0)+' / 需 '+n+'</small></span><em class="station-material-need"><small>本次</small><b>'+n+'</b></em>')));body.appendChild(mats);body.appendChild(el('div','garden-yield','<small>EXPECTED HARVEST</small><b>'+Object.entries(gardenYield(selected)).map(([id,n])=>itemUiIcon(id)+ITEMS[id].name+'×'+n).join(' · ')+'</b>'));detail.appendChild(body);detail.appendChild(el('div','garden-automation',uiIcon(lv>=3?'check':'lock')+'<span><b>'+(lv>=3?'采收机器人已启用':'Lv3 解锁采收机器人')+'</b><small>'+(lv>=3?'成熟时自动收获并存入背包':'升级生态循环舱后自动化')+'</small></span>'));const detailShell=el('div','station-workbench station-detail-workbench garden-detail-workbench');detailShell.appendChild(detail);return detailShell;};
-  const picker=el('div','station-product-grid garden-crop-grid'),cropRefs=[];crops.forEach(crop=>{const active=crop.id===ui.id,tile=el('button','station-product garden-crop ui-card'+(active?' selected':''));tile.type='button';tile.setAttribute('aria-pressed',active?'true':'false');tile.innerHTML='<span class="station-product-art garden-crop-art ui-art-frame">'+gardenCropUiIcon(crop)+'</span><b>'+crop.name+'</b><small>'+crop.hours+'h · '+Object.entries(gardenYield(crop)).map(([id,n])=>ITEMS[id].name+'×'+n).join(' ')+'</small>';tile.onclick=()=>{if(ui.id===crop.id)return;ui.id=crop.id;cropRefs.forEach(ref=>{const selected=ref.crop.id===ui.id;ref.tile.classList.toggle('selected',selected);ref.tile.setAttribute('aria-pressed',selected?'true':'false');});plots.forEach((plot,index)=>{if(!plot)replaceBed(index);});replaceMountedNode(detailParent.children[0],buildDetail(crop),detailParent);};cropRefs.push({crop,tile});picker.appendChild(tile);});shell.appendChild(picker);parent.appendChild(shell);refresh=()=>{const holder=el('div'),detailHolder=el('div');renderGardenWorkbench(holder,detailHolder);replaceMountedNode(shell,holder.children[0],shell.parentNode);replaceMountedNode(detailParent.children[0],detailHolder.children[0],detailParent);};detailParent.appendChild(buildDetail(gardenCrop(ui.id)||crops[0]));
+  const picker=el('div','station-product-grid garden-crop-grid'),cropRefs=[];crops.forEach(crop=>{const active=crop.id===ui.id,tile=el('button','station-product garden-crop ui-card'+(active?' selected':''));tile.type='button';tile.setAttribute('aria-pressed',active?'true':'false');tile.innerHTML='<span class="station-product-art garden-crop-art ui-art-frame">'+gardenCropUiIcon(crop)+'</span><b>'+crop.name+'</b><small>'+crop.hours+'h · '+Object.entries(gardenYield(crop)).map(([id,n])=>ITEMS[id].name+'×'+n).join(' ')+'</small>';tile.onclick=()=>{if(ui.id===crop.id)return;ui.id=crop.id;cropRefs.forEach(ref=>{const selected=ref.crop.id===ui.id;ref.tile.classList.toggle('selected',selected);ref.tile.setAttribute('aria-pressed',selected?'true':'false');});plots.forEach((plot,index)=>{if(!plot)replaceBed(index);});replaceMountedNode(detailParent.children[0],buildDetail(crop),detailParent);};cropRefs.push({crop,tile});picker.appendChild(tile);});shell.appendChild(picker);parent.appendChild(shell);detailParent.appendChild(buildDetail(gardenCrop(ui.id)||crops[0]));
 }
 const DRONE_CYCLE_HOURS=6;
 const DRONE_MODELS=[
@@ -4672,9 +4775,9 @@ function renderDroneWorkbench(parent,detailParent){
     body.appendChild(el('section','station-equipment-profile ui-card','<div><small>AUTO COLLECTION</small><b>自动采集属性</b></div><div class="station-equipment-stats ui-stat-grid"><span class="ui-stat-chip">周期 '+DRONE_CYCLE_HOURS+' 小时</span><span class="ui-stat-chip">单架 '+Object.entries(perCycle).map(([id,n])=>ITEMS[id].name+'×'+n).join(' · ')+'</span><span class="ui-stat-chip">当前机群 '+(fleet[model.id]?Object.entries(fleetCycle).map(([id,n])=>ITEMS[id].name+'×'+n).join(' · '):'暂无产出')+'</span></div>'));
     body.appendChild(el('div','station-subhead','<span><small>MATERIAL INPUT</small><b>建造所需材料</b></span><em>数量可批量设置</em>'));const materials=el('div','station-material-grid'),refs={};Object.entries(model.cost).forEach(([id,n])=>{const row=el('div','station-material ui-list-row'),copy=el('span','station-material-copy'),need=el('em','station-material-need');row.appendChild(el('span','station-material-art ui-art-frame',itemUiIcon(id)));row.appendChild(copy);row.appendChild(need);materials.appendChild(row);refs[id]={row,copy,need,n};});body.appendChild(materials);
     const batch=el('div','station-batch'),controls=el('div','station-quantity-controls'),input=el('input','station-quantity');batch.appendChild(el('span','station-batch-copy','<small>BUILD BATCH</small><b>建造数量</b><em>数量越多，自动采集产量越高</em>'));[-10,-1].forEach(delta=>{const button=el('button','station-step',String(delta));button.type='button';button.onclick=()=>sync(ui.qty+delta);controls.appendChild(button);});input.type='number';input.min='1';input.max='9999';input.inputMode='numeric';controls.appendChild(input);[1,10].forEach(delta=>{const button=el('button','station-step','+'+delta);button.type='button';button.onclick=()=>sync(ui.qty+delta);controls.appendChild(button);});batch.appendChild(controls);body.appendChild(batch);
-    const confirm=el('button','primary station-confirm','建造无人机');confirm.type='button';confirm.onclick=()=>buildDrone(model.id,ui.qty,refresh);detail.appendChild(body);detail.appendChild(confirm);const detailShell=el('div','station-workbench station-detail-workbench drone-workbench');detailShell.appendChild(detail);function sync(value){ui.qty=batchQuantity(value);input.value=ui.qty;Object.entries(refs).forEach(([id,ref])=>{const have=state.inv[id]||0,need=ref.n*ui.qty,enough=have>=need;ref.row.className='station-material ui-list-row '+(enough?'enough':'short');ref.copy.innerHTML='<b>'+ITEMS[id].name+'</b><small>现有 '+have+' / 需 '+need+'</small>';ref.need.innerHTML='<small>本次</small><b>'+need+'</b>';});confirm.disabled=!canAfford(scaledCost(model.cost,ui.qty));confirm.textContent='建造 '+model.name+' · '+ui.qty+' 架';}sync(ui.qty);input.oninput=()=>sync(input.value);input.onblur=()=>sync(input.value);return detailShell;};
+    const confirm=el('button','primary station-confirm','建造无人机');confirm.type='button';confirm.onclick=()=>buildDrone(model.id,ui.qty,refresh);detail.appendChild(body);detail.appendChild(confirm);const detailShell=el('div','station-workbench station-detail-workbench drone-workbench');detailShell.appendChild(detail);function sync(value){ui.qty=batchQuantity(value);input.value=ui.qty;Object.entries(refs).forEach(([id,ref])=>{const have=state.inv[id]||0,need=ref.n*ui.qty,enough=have>=need;ref.row.className='station-material ui-list-row '+(enough?'enough':'short');ref.copy.innerHTML='<b>'+ITEMS[id].name+'</b><small>现有 '+have+' / 需 '+need+'</small>';ref.need.innerHTML='<small>本次</small><b>'+need+'</b>';});const held=body.querySelector('.station-result>em'),yieldText=body.querySelector('.ui-stat-chip:last-child');if(held)held.textContent='持有 '+fleet[model.id];if(yieldText)yieldText.textContent='当前机群 '+(fleet[model.id]?Object.entries(droneYield(model,fleet[model.id])).map(([id,n])=>ITEMS[id].name+'×'+n).join(' · '):'暂无产出');confirm.disabled=!canAfford(scaledCost(model.cost,ui.qty));confirm.textContent='建造 '+model.name+' · '+ui.qty+' 架';}detailShell._refreshStationDetail=()=>sync(ui.qty);sync(ui.qty);input.oninput=()=>{if(input.value===''){confirm.disabled=true;return;}sync(input.value);};input.onblur=()=>sync(input.value);return detailShell;};
   const products=el('div','station-product-grid drone-product-grid'),productRefs=[];entries.forEach(model=>{const active=model.id===selected.id,tile=el('button','station-product drone-product ui-card'+(active?' selected':''));tile.type='button';tile.setAttribute('aria-pressed',active?'true':'false');tile.innerHTML='<span class="station-product-art ui-art-frame">'+uiIcon(model.icon)+'</span><b>'+model.name+'</b><small>已建造 '+fleet[model.id]+'</small>';tile.onclick=()=>{if(model.id===ui.id)return;ui.id=model.id;ui.qty=1;productRefs.forEach(ref=>{const selected=ref.model.id===ui.id;ref.tile.classList.toggle('selected',selected);ref.tile.setAttribute('aria-pressed',selected?'true':'false');});replaceMountedNode(detailParent.children[0],buildDetail(model),detailParent);};productRefs.push({model,tile});products.appendChild(tile);});picker.appendChild(products);shell.appendChild(picker);parent.appendChild(shell);
-  refresh=()=>{const holder=el('div'),detailHolder=el('div');renderDroneWorkbench(holder,detailHolder);replaceMountedNode(shell,holder.children[0],shell.parentNode);replaceMountedNode(detailParent.children[0],detailHolder.children[0],detailParent);};detailParent.appendChild(buildDetail(selected));
+  refresh=()=>{productRefs.forEach(({model,tile})=>{const count=tile.querySelector('small');if(count)count.textContent='已建造 '+fleet[model.id];});const total=picker.querySelector('.station-heading>em');if(total)total.textContent=Object.values(fleet).reduce((sum,n)=>sum+n,0)+' 架在线 · 每 '+DRONE_CYCLE_HOURS+' 小时自动入库';const detail=detailParent.children[0];if(detail&&detail._refreshStationDetail)detail._refreshStationDetail();renderTop();save();};detailParent.appendChild(buildDetail(selected));
 }
 function renderBuilding(box,id){
   const b=CAMP_BUILDINGS.find(x=>x.id===id);if(!b)return;if(state.meta.damaged[id]){state.campBuilding=null;render();return;}
@@ -4690,7 +4793,7 @@ function renderBuilding(box,id){
     const action=el('button','primary facility-main-action','进入休眠仓');action.onclick=()=>rest(()=>refreshFacilityOperation(b.id));sec.appendChild(action);
   } else if(b.kind==='smelt'){
     sec.innerHTML='<div class="furnace-console"><span class="furnace-core"><i></i><b>'+uiIcon('energy')+'</b></span><span><small>THERMAL CORE</small><b>熔炉温度稳定</b><em>设施等级使每次熔炼额外产出 '+(buildingLevel('smelt')-1)+' 份</em></span></div>';
-    const entries=SMELT.filter(s=>hasSmeltTech(s.id)).map(s=>{const levelOk=buildingLevel('smelt')>=(s.level||1),out=smeltOutput(s);return {id:s.id,out:s.out,name:s.name,desc:'每批产出 '+ITEMS[s.out].name+'×'+out,cost:s.cost,outputs:{[s.out]:out},ready:levelOk,gate:levelOk?'':'需要熔炼炉 Lv'+(s.level||1),run:(qty,refresh)=>smelt(s,qty,refresh)};});
+    const entries=SMELT.filter(s=>hasSmeltTech(s.id)).map(s=>{const levelOk=buildingLevel('smelt')>=(s.level||1),out=smeltOutput(s);return {id:s.id,out:s.out,name:s.name,desc:'每批产出 '+ITEMS[s.out].name+'×'+out,cost:s.cost,outputs:{[s.out]:out},ready:levelOk,gate:levelOk?'':'需要熔炼炉 Lv'+(s.level||1),update:()=>{const amount=smeltOutput(s);return {desc:'每批产出 '+ITEMS[s.out].name+'×'+amount,outputs:{[s.out]:amount}};},run:(qty,refresh)=>smelt(s,qty,refresh)};});
     renderRecipeWorkbench(sec,b.id,entries,{tone:'thermal',code:'THERMAL REFINING',title:'选择熔炼配方',confirm:'确认熔炼',empty:'当前没有已解锁的熔炼配方。',detailParent});
   } else if(b.kind==='craft'){
     sec.innerHTML='<div class="workbench-visual"><span>'+uiIcon('construct')+'</span><div><small>ASSEMBLY QUEUE</small><b>'+({work:'工程装配台',armor:'防护裁剪台',chem:'无菌调配台',elec:'晶圆与超导台',data:'量子演算台',energy:'聚变封装台',printer:'分子打印阵列',bio:'生物构造阵列',echo:'回响观测阵列',field:'重力场装配环'}[b.st]||'制造终端')+'</b><em>选择已解锁配方，材料会在制作时扣除。</em></div></div>';
@@ -5093,7 +5196,7 @@ function smelt(s,quantity,refresh){ const count=batchQuantity(quantity);if(!faci
 function train(refresh){ if(state.inv.scrap<10){log('训练材料不足：'+costText({scrap:10})+'。','warn');return;} const xp=40+buildingLevel('range')*40; state.inv.scrap-=10; gainXp(xp); log('完成训练，经验 +'+xp+'。','good'); advanceTime(2); if(refresh)refresh();else render(); }
 function recoveryAmount(flat,pct,cap){return Math.max(Number(flat)||0,Math.round(cap*(Number(pct)||0)/100));}
 function useItem(id,refresh){ if(!has(id)){log('没有这个物品。','warn');return;} const it=ITEMS[id];
-  if(it.type==='book'){ state.inv[id]--; gainProf(it.skill,20); log('研读'+it.name+',【'+SKILLS[it.skill].name+'】熟练度+20。','good'); if(refresh)refresh();else render(); return; }
+  if(it.type==='book'){ state.inv[id]--; gainProf(it.skill,20); log('研读'+it.name+',【'+SKILLS[it.skill].name+'】熟练度+20。','good',{toast:false}); if(refresh)refresh();else render(); return; }
   if(it.type!=='use'){log('不能直接使用。','warn');return;}
   if(it.food&&state.combat){log('战斗中无法进食，先脱离接触。','warn');return;}
   state.inv[id]--;
@@ -5124,8 +5227,8 @@ function payAreaAction(base,free){
 function performLocationAction(id){
   const a=LOCATION_ACTIONS[id];
   if(!a||P().location!==id)return false;
-  if(!locationActionRemaining(id)){log('这处场景行动今天已经达到上限，次日会刷新。','dim');render();return false;}
-  const status=locationActionStatus(id);if(!status.ok){log(status.text+'。','warn');render();return false;}
+  if(!locationActionRemaining(id)){log('这处场景行动今天已经达到上限，次日会刷新。','dim');refreshFieldAfterAction(id);return false;}
+  const status=locationActionStatus(id);if(!status.ok){log(status.text+'。','warn');refreshFieldAfterAction(id);return false;}
   if(!payAreaAction(a.cost))return false;
   recordLocationAction(id);
   const total=a.outcomes.reduce((sum,o)=>sum+o.w,0);let roll=Math.random()*total,outcome=a.outcomes[a.outcomes.length-1];
@@ -5134,7 +5237,7 @@ function performLocationAction(id){
   if(outcome.gain){const gained=[];for(const [item,range] of Object.entries(outcome.gain)){const n=range[0]+Math.floor(Math.random()*(range[1]-range[0]+1));gainMat(item,n);gained.push(ITEMS[item].name+'×'+n);}log('获得：'+gained.join('、'),'good');}
   gainCareerXp('life',2,'salvager');divider();syncQuestProgress(true);
   if(outcome.enemy){log('地点行动引发了敌对接触。','warn');startCombat(outcome.enemy);return true;}
-  checkStamina();render();return true;
+  checkStamina();refreshFieldAfterAction(id);return true;
 }
 function fieldGatherSkillApplicable(skillId,id){
   const skill=SKILLS[skillId],loc=LOCATIONS[id],site=resourceSiteOf(id);if(!skill||!loc||!site||!skill.fieldVerbs)return false;
@@ -5153,11 +5256,11 @@ function fieldGatherSkillStatus(skillId,id){
   return {ok:true,text:'储量 '+gatherAvailable(id)+'/'+gatherLimit(id)+' · 体力 -'+cost,work,base,cost,skill};
 }
 function performFieldGatherSkill(skillId){
-  const id=P().location,status=fieldGatherSkillStatus(skillId,id),skill=SKILLS[skillId];if(!status.ok){log(status.text+'。','warn');render();return false;}
+  const id=P().location,status=fieldGatherSkillStatus(skillId,id),skill=SKILLS[skillId];if(!status.ok){log(status.text+'。','warn');refreshFieldAfterAction(id);return false;}
   if(!payAreaAction(status.base))return false;
   const usedLv=Math.max(1,skillLv(skillId)),skillYield=careerSkillYieldMult(skillId);if(!gatherArea(id,status.work.yieldMult*skillYield,skill.career))return false;gainProf(skillId,1);
   log('副职业能力【'+skill.name+'】Lv'+usedLv+' 生效：本次产量 ×'+skillYield+(skill.safeGather?'，未触发敌对遭遇':'')+'。','good');
-  syncQuestProgress(true);checkStamina();render();return true;
+  syncQuestProgress(true);checkStamina();refreshFieldAfterAction(id);return true;
 }
 function quickScavengeStatus(id){return fieldGatherSkillStatus('quickScavenge',id);}
 function quickScavengeApplicable(id){return fieldGatherSkillApplicable('quickScavenge',id);}
@@ -5271,18 +5374,18 @@ function explore(mode){
     if(loc.enemies&&loc.enemies.length){log('你主动搜索并锁定了本区域的威胁。','warn');startCombat(loc.enemies[Math.floor(Math.random()*loc.enemies.length)]);return;}
     log('扫描没有发现可交战目标。','dim');render();return;
   }
-  if(mode==='gather'&&!resourceSiteDiscovered(id)){log('先继续探索，发现并登记资源点后才能定向采集。','warn');render();return;}
-  if(mode==='gather'&&!gatherAvailable(id)){log('资源点储量耗尽，约 '+resourceRecoveryRemaining(id)+' 小时后恢复一次采集量。','dim');render();return;}
+  if(mode==='gather'&&!resourceSiteDiscovered(id)){log('先继续探索，发现并登记资源点后才能定向采集。','warn');refreshFieldAfterAction(id);return;}
+  if(mode==='gather'&&!gatherAvailable(id)){log('资源点储量耗尽，约 '+resourceRecoveryRemaining(id)+' 小时后恢复一次采集量。','dim');refreshFieldAfterAction(id);return;}
   const work=mode==='gather'?resourceWorkStatus(id):null,careerSkill=mode==='gather'?activeFieldGatherSkill(id):null,careerStatus=careerSkill?fieldGatherSkillStatus(careerSkill,id):null;
-  if(work&&!work.ok){log(work.text+'。','warn');render();return;}
-  if(careerStatus&&!careerStatus.ok){log(careerStatus.text+'。','warn');render();return;}
+  if(work&&!work.ok){log(work.text+'。','warn');refreshFieldAfterAction(id);return;}
+  if(careerStatus&&!careerStatus.ok){log(careerStatus.text+'。','warn');refreshFieldAfterAction(id);return;}
   if(!payAreaAction(careerStatus?careerStatus.base:(work?work.base:1),work&&work.free&&!careerStatus)) return;
   if(id==='layer7'&&!state.meta.wardenDone&&mode!=='gather'){log('这里不再进行普通探索。六件组件必须从核心控制室接入。','warn');render();return;}
   if(mode==='gather'){
     const skill=careerSkill&&SKILLS[careerSkill],usedLv=careerSkill?Math.max(1,skillLv(careerSkill)):0,skillYield=careerSkill?careerSkillYieldMult(careerSkill):1,gathered=gatherArea(id,work.yieldMult*skillYield,skill?skill.career:'salvager');if(skill&&gathered){gainProf(careerSkill,1);log('副职业能力【'+skill.name+'】Lv'+usedLv+' 生效：本次'+resourceActionVerb(resourceSiteOf(id),loc.profile)+'产量 ×'+skillYield+'。','good');}syncQuestProgress(true);
     const canAmbush=!(skill&&skill.safeGather)&&(loc.enemies||[]).length,danger=canAmbush?rollFieldEncounter(endingOwned('beacon')?.18:.26):false;if(!canAmbush)recordFieldSafeAction();
     if(danger){log('采集声引来了附近的敌对生物。','warn');startCombat(loc.enemies[Math.floor(Math.random()*loc.enemies.length)]);return;}
-    checkStamina(); render(); return;
+    checkStamina(); refreshFieldAfterAction(id); return;
   }
   /* 用底层“已发现”状态做差值，而不是用当前可见标记做差值。
      新区域第一次勘察会把早已知晓的相邻路线显示出来；它们不是本次发现，不能补播解锁动画。 */
@@ -5295,7 +5398,7 @@ function explore(mode){
   applyResourceDiscovery(id,attempts);applyDiscoveryMilestones(id,attempts);applyKnownNeighborRoutes(id,attempts);
   syncQuestProgress(true);const mappedAfter=fieldMapMarkers(id),newMarkerIds=mappedAfter.map(marker=>marker.id).filter(markerId=>!mappedBefore.has(markerId)),nextFog=fieldFogState(id,mappedAfter);pendingFieldReveal=newMarkerIds.length?{location:id,markerIds:newMarkerIds,complete:nextFog.freshComplete}:null;if(P().hp<=0){die();return;}
   if(outcome==='combat')return;
-  checkStamina(); render();
+  checkStamina(); refreshFieldAfterAction(id);
 }
 function setFieldReport(location,title,text,tone){state.lastFieldReport={location,title,text,tone:tone||'story',time:state.time};}
 function flavor(id){ const profile=LOCATIONS[id].profile,pool={

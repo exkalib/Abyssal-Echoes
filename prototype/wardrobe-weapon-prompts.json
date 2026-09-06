@@ -1,0 +1,749 @@
+{
+  "tool": "built-in image_gen",
+  "date": "2026-09-05",
+  "policy": "Generated alpha must be preserved. No local background extraction or masks. Rejected RGB outputs are not runtime assets.",
+  "prompts": [
+    {
+      "id": "knife",
+      "prompt": "Use case: precise-object-edit. Asset type: transparent handheld weapon layer for a realistic post-apocalyptic science-fiction RPG character paper-doll. Input Image 1 is the edit target. Preserve the actual weapon design, materials, wear marks, and lighting, but REMOVE ALL sheaths, holsters, scabbards, belts, clips for belt mounting, buckles, securing bands, shoulder slings and carrying straps. Output exactly ONE bare ready-to-use weapon and nothing else, on genuinely transparent alpha background (not a painted checkerboard, not gray or black). No hand, person, floor, shadow backdrop, UI, text or border. The weapon must be entirely in frame with 7% transparent padding; portrait 1024x1536 composition; side-view with very slight three-quarter depth. Top-left soft key lighting. Do not rotate into diagonal product presentation. Subject: bare combat knife. Preserve black knurled cylindrical handle, brass inset pommel, compact metal crossguard and the worn silver-gray drop-point blade; remove the entire long sheath and its two transverse holding bands so the cutting edge and tip are exposed. Handle is TOP at x50%, handle center y18%, blade points vertically DOWN. Bare blade should read distinctly as a knife, no body surrounding blade.",
+      "reference": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/knife.webp",
+      "attempt": "original-reference",
+      "accepted": false,
+      "reason": "RGB with painted checkerboard"
+    },
+    {
+      "id": "pistol",
+      "prompt": "Use case: precise-object-edit. Asset type: transparent handheld weapon layer for a realistic post-apocalyptic science-fiction RPG character paper-doll. Input Image 1 is the edit target. Preserve the actual weapon design, materials, wear marks, and lighting, but REMOVE ALL sheaths, holsters, scabbards, belts, clips for belt mounting, buckles, securing bands, shoulder slings and carrying straps. Output exactly ONE bare ready-to-use weapon and nothing else, on genuinely transparent alpha background (not a painted checkerboard, not gray or black). No hand, person, floor, shadow backdrop, UI, text or border. The weapon must be entirely in frame with 7% transparent padding; portrait 1024x1536 composition; side-view with very slight three-quarter depth. Top-left soft key lighting. Do not rotate into diagonal product presentation. Subject: unholstered dark steel sci-fi semiautomatic pistol with orange power accents. Remove every holster/backplate and all three huge belt/leg straps. Keep only gun: squared metal slide/barrel, trigger guard, orange emitter and angled textured pistol grip. Barrel points vertically DOWN; gun grip protrudes toward image RIGHT near the upper quarter. Empty trigger guard hole stays transparent. Grip center clearly separated from trigger at approximately x64%,y27%. No belt anywhere.",
+      "reference": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/pistol.webp",
+      "attempt": "original-reference",
+      "accepted": false,
+      "reason": "RGB with painted checkerboard"
+    },
+    {
+      "id": "rifle",
+      "prompt": "Use case: precise-object-edit. Asset type: transparent handheld weapon layer for a realistic post-apocalyptic science-fiction RPG character paper-doll. Input Image 1 is the edit target. Preserve the actual weapon design, materials, wear marks, and lighting, but REMOVE ALL sheaths, holsters, scabbards, belts, clips for belt mounting, buckles, securing bands, shoulder slings and carrying straps. Output exactly ONE bare ready-to-use weapon and nothing else, on genuinely transparent alpha background (not a painted checkerboard, not gray or black). No hand, person, floor, shadow backdrop, UI, text or border. The weapon must be entirely in frame with 7% transparent padding; portrait 1024x1536 composition; side-view with very slight three-quarter depth. Top-left soft key lighting. Do not rotate into diagonal product presentation. Subject: bare black-and-gunmetal assault rifle with curved box magazine, top optic, orange illuminated seams and skeletal stock. Remove the entire loose carrying sling and strap attachment accessories. Keep the stock at TOP and muzzle pointing vertically DOWN; pistol grip protrudes toward image RIGHT near y34%. Preserve stock, scope, trigger guard, magazine and all gun hardware; no human attached.",
+      "reference": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/rifle.webp",
+      "attempt": "original-reference",
+      "accepted": false,
+      "reason": "RGB with painted checkerboard"
+    },
+    {
+      "id": "knife",
+      "reference": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/knife.webp",
+      "prompt": "Generate on a genuinely transparent background. Use case: precise-object-edit. Asset type: transparent handheld weapon layer for a realistic post-apocalyptic science-fiction RPG character paper-doll. Input Image 1 is the edit target. Preserve the actual weapon design, materials, wear marks, and lighting, but REMOVE ALL sheaths, holsters, scabbards, belts, clips for belt mounting, buckles, securing bands, shoulder slings and carrying straps. Output exactly ONE bare ready-to-use weapon and nothing else, on transparent alpha background. No hand, person, floor, shadow backdrop, UI, text or border. The weapon must be entirely in frame with 7% transparent padding; square canvas composition, weapon centered vertically; side-view with very slight three-quarter depth. Top-left soft key lighting. Do not rotate into diagonal product presentation. Subject: bare combat knife. Preserve black knurled cylindrical handle, brass inset pommel, compact metal crossguard and the worn silver-gray drop-point blade; remove the entire long sheath and its two transverse holding bands so the cutting edge and tip are exposed. Handle is TOP at x50%, handle center y18%, blade points vertically DOWN. Bare blade should read distinctly as a knife, no body surrounding blade. Actual PNG alpha transparency everywhere outside the single weapon; NEVER paint checkerboards or any flat backdrop. Square canvas.",
+      "attempt": "square-original-reference",
+      "accepted": false,
+      "reason": "RGB with painted checkerboard"
+    },
+    {
+      "id": "pistol",
+      "reference": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/pistol.webp",
+      "prompt": "Generate on a genuinely transparent background. Use case: precise-object-edit. Asset type: transparent handheld weapon layer for a realistic post-apocalyptic science-fiction RPG character paper-doll. Input Image 1 is the edit target. Preserve the actual weapon design, materials, wear marks, and lighting, but REMOVE ALL sheaths, holsters, scabbards, belts, clips for belt mounting, buckles, securing bands, shoulder slings and carrying straps. Output exactly ONE bare ready-to-use weapon and nothing else, on transparent alpha background. No hand, person, floor, shadow backdrop, UI, text or border. The weapon must be entirely in frame with 7% transparent padding; square canvas composition, weapon centered vertically; side-view with very slight three-quarter depth. Top-left soft key lighting. Do not rotate into diagonal product presentation. Subject: unholstered dark steel sci-fi semiautomatic pistol with orange power accents. Remove every holster/backplate and all three huge belt/leg straps. Keep only gun: squared metal slide/barrel, trigger guard, orange emitter and angled textured pistol grip. Barrel points vertically DOWN; gun grip protrudes toward image RIGHT near the upper quarter. Empty trigger guard hole stays transparent. Grip center clearly separated from trigger at approximately x64%,y27%. No belt anywhere. Actual PNG alpha transparency everywhere outside the single weapon; NEVER paint checkerboards or any flat backdrop. Square canvas.",
+      "attempt": "square-original-reference",
+      "accepted": false,
+      "reason": "RGB with painted checkerboard"
+    },
+    {
+      "id": "rifle",
+      "reference": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/rifle.webp",
+      "prompt": "Generate on a genuinely transparent background. Use case: precise-object-edit. Asset type: transparent handheld weapon layer for a realistic post-apocalyptic science-fiction RPG character paper-doll. Input Image 1 is the edit target. Preserve the actual weapon design, materials, wear marks, and lighting, but REMOVE ALL sheaths, holsters, scabbards, belts, clips for belt mounting, buckles, securing bands, shoulder slings and carrying straps. Output exactly ONE bare ready-to-use weapon and nothing else, on transparent alpha background. No hand, person, floor, shadow backdrop, UI, text or border. The weapon must be entirely in frame with 7% transparent padding; square canvas composition, weapon centered vertically; side-view with very slight three-quarter depth. Top-left soft key lighting. Do not rotate into diagonal product presentation. Subject: bare black-and-gunmetal assault rifle with curved box magazine, top optic, orange illuminated seams and skeletal stock. Remove the entire loose carrying sling and strap attachment accessories. Keep the stock at TOP and muzzle pointing vertically DOWN; pistol grip protrudes toward image RIGHT near y34%. Preserve stock, scope, trigger guard, magazine and all gun hardware; no human attached. Actual PNG alpha transparency everywhere outside the single weapon; NEVER paint checkerboards or any flat backdrop. Square canvas.",
+      "attempt": "square-original-reference",
+      "accepted": false,
+      "reason": "RGB with painted checkerboard"
+    },
+    {
+      "id": "knife",
+      "attempt": "background-alpha-correction",
+      "prompt": "Use case: background-extraction. Input Image 1 is the exact knife to preserve. Deliver a PNG image with an actual alpha channel. Remove the existing white and gray checkerboard entirely: every pixel outside the knife silhouette must have alpha = 0. Checkerboard squares in the reference are an error and are NOT part of the artwork. Keep the weapon exactly unchanged, same size and position, no sheaths, no hand. Transparent output means RGBA with invisible background, NOT visual imitation of transparency, NOT a white background, NOT a black background. This asset will be composited over a character at runtime and any opaque background makes it unusable. Return the knife cutout itself.",
+      "reference": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-f2353aca-d5c4-4c33-87f4-272f9adcaa63.png",
+      "accepted": false,
+      "reason": "RGB with painted checkerboard"
+    },
+    {
+      "id": "knife",
+      "prompt": "Generate on a genuinely transparent background. One unsheathed combat knife for a realistic dark science-fiction RPG, a clean isolated transparent sprite. Black knurled cylindrical grip, small steel guard with a brass inset, long worn silver-gray drop-point blade with a short serrated spine. Handle at top, exposed blade points straight down. Entire weapon centered with generous empty margin. Soft top-left lighting. Bare weapon only: no sheath, no straps, no hand, no scenery. Preserve crisp detailed game art with realistic steel and leather. Actual PNG alpha transparency everywhere outside the knife. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-6c5e1839-b699-48be-9709-5f6beaf18dd1.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-knife.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "knife",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.9114176432291666,
+        "grip": [
+          0.5,
+          0.224
+        ],
+        "bounds": [
+          0.4076,
+          0.0143,
+          0.1849,
+          0.9661
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "pistol",
+      "prompt": "Generate on a genuinely transparent background. A single bare science-fiction semiautomatic pistol for a realistic post-apocalyptic RPG. Worn black steel frame, silver-gray squared slide, small amber-orange energy strips, black textured angled grip and a clearly open trigger guard. This is the ready-to-fire GUN ALONE, with its muzzle visibly exposed. No holster, no carry mount, no straps, no character or hand. Side view, barrel oriented vertically downward and grip protruding right. Soft top-left lighting, highly detailed clean sprite. Entire object centered with generous empty margin. Actual PNG alpha transparency everywhere outside the gun and through the trigger-guard opening. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-2243c43d-de53-4fe2-bff8-ad1d693cb1f6.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-pistol.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "pistol",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.6897566053602431,
+        "grip": [
+          0.654,
+          0.207
+        ],
+        "bounds": [
+          0.1992,
+          0.0143,
+          0.6745,
+          0.9714
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "rifle",
+      "prompt": "Generate on a genuinely transparent background. A single bare science-fiction assault rifle for a realistic post-apocalyptic RPG. Worn black and gunmetal receiver, open skeletal stock, curved metal magazine, small optical scope, amber-orange illuminated seams. Side view with stock at top, muzzle pointing vertically down and textured pistol grip extending to the right above the trigger guard. Exactly one ready-to-fire gun. No sling, belt, carrying straps, rack, character, hand or scenery. Soft top-left light, realistic detailed game sprite. Entire weapon centered with generous empty margin. Actual PNG alpha transparency everywhere outside the weapon and through the stock and trigger guard. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-66b0ddd3-f39c-4427-a1dc-d562b64475a8.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-rifle.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "rifle",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.8622758653428819,
+        "grip": [
+          0.594,
+          0.344
+        ],
+        "bounds": [
+          0.3177,
+          0.0078,
+          0.3802,
+          0.9844
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "crowbar",
+      "prompt": "Generate on a genuinely transparent background. A single battered red-painted steel crowbar, hooked claw at the TOP, flattened pry claw at the BOTTOM, coarse dirty tan rope around the CENTER grip. Worn silver scraping on claw edges, industrial salvage design. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and leather. One centered weapon, entire silhouette visible with generous empty margin. No sheath, holster, straps, mounts, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-823ede72-ba99-4978-bf2a-76763c938945.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-crowbar.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "crowbar",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.9196421305338541,
+        "grip": [
+          0.539,
+          0.518
+        ],
+        "bounds": [
+          0.2852,
+          0.013,
+          0.4466,
+          0.9766
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "blade",
+      "prompt": "Generate on a genuinely transparent background. A single bare science-fiction longsword, black cylindrical wrapped grip at TOP, compact silver and bronze guard, exposed broad steel blade pointing straight DOWN, slim cyan illuminated groove through the center. Worn black-gray industrial metal, small brass fasteners. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and leather. One centered weapon, entire silhouette visible with generous empty margin. No sheath, holster, straps, mounts, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-f9395fdd-e422-4597-8ba3-0b4a8e29f1a0.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-blade.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "blade",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.9408331976996528,
+        "grip": [
+          0.499,
+          0.132
+        ],
+        "bounds": [
+          0.4102,
+          0.0104,
+          0.1797,
+          0.9779
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "eblade",
+      "prompt": "Generate on a genuinely transparent background. A single bare science-fiction energy sword, black cylindrical grip at TOP, small silver guard with a vivid cyan circular energy core, narrow straight electric-blue blade pointing DOWN within a thin gunmetal edge frame. Fine blue arcs stay inside the blade. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and leather. One centered weapon, entire silhouette visible with generous empty margin. No sheath, holster, straps, mounts, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-499c4e3c-c475-44cc-bdaa-dde9098f49c9.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-eblade.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "eblade",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.9298977322048612,
+        "grip": [
+          0.5,
+          0.13
+        ],
+        "bounds": [
+          0.4271,
+          0.0104,
+          0.1471,
+          0.9792
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "sever",
+      "prompt": "Generate on a genuinely transparent background. A single bare industrial chainsword, brown leather-wrapped grip at TOP, compact round dark-steel motor hub beneath it, red-painted flat armored blade body pointing DOWN with exposed chain teeth along both edges. Worn chipped red paint, small cyan status lens on the motor, brass rivets. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and leather. One centered weapon, entire silhouette visible with generous empty margin. No sheath, holster, straps, mounts, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-ad8d7527-e49d-4f26-906c-aa736dc3dd04.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-sever.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "sever",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.8966623942057291,
+        "grip": [
+          0.505,
+          0.153
+        ],
+        "bounds": [
+          0.4297,
+          0.0104,
+          0.1432,
+          0.9766
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "plasmaSaber",
+      "prompt": "Generate on a genuinely transparent background. A single bare plasma saber, black ribbed cylindrical grip at TOP, small industrial metal guard with orange power indicator, fiery amber-orange curved energy blade pointing DOWN, dark steel supporting spine along the back edge. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and leather. One centered weapon, entire silhouette visible with generous empty margin. No sheath, holster, straps, mounts, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-eaf55b57-c412-4554-b745-615954fe56e4.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-plasmaSaber.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "plasmaSaber",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.90484619140625,
+        "grip": [
+          0.483,
+          0.151
+        ],
+        "bounds": [
+          0.431,
+          0.0052,
+          0.2266,
+          0.9453
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "phaseBlade",
+      "prompt": "Generate on a genuinely transparent background. A single bare phase dagger, black braided leather grip at TOP, gunmetal star-shaped guard with small glowing violet circular core, broad curved purple crystalline blade pointing DOWN. Exposed sharp faceted blade, restrained violet internal light, silver blade spine. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and leather. One centered weapon, entire silhouette visible with generous empty margin. No sheath, holster, straps, mounts, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-58627c78-da31-4f41-a942-545d81a95d90.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-phaseBlade.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "phaseBlade",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.9095967610677084,
+        "grip": [
+          0.501,
+          0.195
+        ],
+        "bounds": [
+          0.3659,
+          0.0013,
+          0.2708,
+          0.9857
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "voidBlade",
+      "prompt": "Generate on a genuinely transparent background. A single bare void sword, black wrapped cylindrical grip at TOP, circular cyan-lit steel guard, long narrow dark twisted blade pointing DOWN with cyan energy running through the helical cutting edge. Small steel ring pommel. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and leather. One centered weapon, entire silhouette visible with generous empty margin. No sheath, holster, straps, mounts, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-9a0013b0-b01b-447f-b213-51bf07542998.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-voidBlade.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "voidBlade",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.9400092230902778,
+        "grip": [
+          0.501,
+          0.162
+        ],
+        "bounds": [
+          0.4258,
+          0.0065,
+          0.151,
+          0.9857
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "blade_general_1",
+      "prompt": "Generate on a genuinely transparent background. A single bare broad survival machete with a brown leather spiral-wrapped black grip at TOP, compact bronze-riveted steel guard, long exposed worn gray steel blade pointing DOWN, gently curved chopping edge and sharp angled tip. One small amber status insert in the guard. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and leather. One centered weapon, entire silhouette visible with generous empty margin. No sheath, holster, straps, mounts, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-b6a7fb37-5c31-4023-93d3-f34004421c7c.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-blade_general_1.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "blade_general_1",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.9086185031467013,
+        "grip": [
+          0.484,
+          0.177
+        ],
+        "bounds": [
+          0.431,
+          0.0013,
+          0.1393,
+          0.9974
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "blade_general_2",
+      "prompt": "Generate on a genuinely transparent background. A single bare industrial utility sword with black ribbed cylindrical grip at TOP, compact yellow-and-steel guard, long straight exposed silver steel cutting blade pointing DOWN, dark spine with small yellow caution-painted panels and cyan indicator. Blade is a cutting implement, not a closed rectangular container. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and leather. One centered weapon, entire silhouette visible with generous empty margin. No sheath, holster, straps, mounts, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-7489807f-60b4-4512-ab49-76a62236fa4b.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-blade_general_2.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "blade_general_2",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.9417317708333334,
+        "grip": [
+          0.5,
+          0.154
+        ],
+        "bounds": [
+          0.4388,
+          0.0091,
+          0.1224,
+          0.9818
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "blade_general_3",
+      "prompt": "Generate on a genuinely transparent background. A single bare advanced rescue sword with black spiral grip at TOP, compact yellow gunmetal guard with a blue round sensor, exposed broad silver-gray blade pointing DOWN, stepped angular cutting edge, inset yellow spine and small blue energy channel. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and leather. One centered weapon, entire silhouette visible with generous empty margin. No sheath, holster, straps, mounts, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-635ce0c0-4f66-452b-ac4e-0dea6b3bbc91.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-blade_general_3.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "blade_general_3",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.9290584988064237,
+        "grip": [
+          0.501,
+          0.143
+        ],
+        "bounds": [
+          0.3919,
+          0,
+          0.2161,
+          0.9974
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "blade_general_4",
+      "prompt": "Generate on a genuinely transparent background. A single bare phase longsword, angled black wrapped grip at TOP, small white-metal guard with violet circular node, exposed elegant silver blade pointing DOWN with an angular tip and a thin internal violet light strip. White ceramic spine panels and small brass fasteners, no surrounding case. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and leather. One centered weapon, entire silhouette visible with generous empty margin. No sheath, holster, straps, mounts, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-ab024089-25b6-4de3-ad63-83a7ecdf1a7c.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-blade_general_4.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "blade_general_4",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.9286719428168403,
+        "grip": [
+          0.187,
+          0.167
+        ],
+        "bounds": [
+          0.0651,
+          0.0169,
+          0.8438,
+          0.9688
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "blade_general_5",
+      "prompt": "Generate on a genuinely transparent background. A single bare high-tech star-alloy sword, ergonomic black grip at TOP, small titanium-and-gold guard with cyan circular energy node, long broad exposed silver blade pointing DOWN, black center fuller, cyan energy line, gold accents along the spine. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and leather. One centered weapon, entire silhouette visible with generous empty margin. No sheath, holster, straps, mounts, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-e50b040a-6281-42e2-bd7d-9c35b9e629cd.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-blade_general_5.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "blade_general_5",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.9288770887586806,
+        "grip": [
+          0.499,
+          0.137
+        ],
+        "bounds": [
+          0.3919,
+          0,
+          0.2161,
+          1
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "plasmaRifle",
+      "prompt": "Generate on a genuinely transparent background. A single bare plasma rifle, white ceramic and worn dark-steel body with small orange warning panels, skeletal stock at TOP, long blue plasma chamber along the barrel pointing straight DOWN, compact side optic, clearly exposed textured pistol grip protruding RIGHT above the trigger guard. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and materials. One centered weapon, entire silhouette visible with generous empty margin. No sling, belt, sheath, holster, straps, mounting plate, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon and through all openings. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-277da1a0-b5eb-4078-8cc5-9aded768ff4c.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-plasmaRifle.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "plasmaRifle",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.8736640082465278,
+        "grip": [
+          0.583,
+          0.373
+        ],
+        "bounds": [
+          0.3581,
+          0.0052,
+          0.2852,
+          0.9844
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "gravLance",
+      "prompt": "Generate on a genuinely transparent background. A single bare gravity lance, tall slender spear with an exposed sharp cobalt-blue crystalline tip at TOP, ornate steel-and-brass circular energy generator immediately below the tip, long black segmented shaft extending DOWN with a clearly graspable cylindrical middle section and compact brass pommel. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and materials. One centered weapon, entire silhouette visible with generous empty margin. No sling, belt, sheath, holster, straps, mounting plate, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon and through all openings. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-b7546bee-80bf-403e-a489-21c8c527566e.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-gravLance.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "gravLance",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.9625922309027778,
+        "grip": [
+          0.5,
+          0.566
+        ],
+        "bounds": [
+          0.457,
+          0.0065,
+          0.0872,
+          0.987
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "swarmRifle",
+      "prompt": "Generate on a genuinely transparent background. A single bare biomechanical swarm rifle, black charred-metal body fused with dark organic ribbing, small scarlet glowing fissures, compact open skeletal stock at TOP, tapered gun barrel pointing DOWN ending in a visible red-orange muzzle, textured black pistol grip protruding RIGHT above the trigger guard. This is recognizably a gun with a separate graspable grip, not a creature. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and materials. One centered weapon, entire silhouette visible with generous empty margin. No sling, belt, sheath, holster, straps, mounting plate, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon and through all openings. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-637126ff-0e28-4b27-a5e0-46d7168bdb07.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-swarmRifle.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "swarmRifle",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.8755459255642362,
+        "grip": [
+          0.607,
+          0.329
+        ],
+        "bounds": [
+          0.3802,
+          0.0013,
+          0.2878,
+          0.9857
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "vacuumCarbine",
+      "prompt": "Generate on a genuinely transparent background. A single bare vacuum carbine, slim worn white-and-gunmetal rifle with skeletal stock at TOP, thin vivid cyan energy rails along a long barrel pointing straight DOWN, small black side optic, exposed angled black pistol grip protruding RIGHT above the trigger guard. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and materials. One centered weapon, entire silhouette visible with generous empty margin. No sling, belt, sheath, holster, straps, mounting plate, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon and through all openings. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-e87e5152-b8ba-497e-99f1-4e6dd0898690.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-vacuumCarbine.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "vacuumCarbine",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.9207763671875,
+        "grip": [
+          0.575,
+          0.294
+        ],
+        "bounds": [
+          0.4063,
+          0.0013,
+          0.2135,
+          0.9922
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "firearm_general_1",
+      "prompt": "Generate on a genuinely transparent background. A single bare rugged survival sidearm, worn charcoal steel semiautomatic pistol with a short scratched silver-gray slide, small copper fasteners and one amber energy indicator. Barrel points straight DOWN, black crosshatched pistol grip protrudes RIGHT near the top. Visible exposed muzzle and open trigger guard. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and materials. One centered weapon, entire silhouette visible with generous empty margin. No sling, belt, sheath, holster, straps, mounting plate, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon and through all openings. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-280b6631-a531-47e6-b6c1-6a5038b121df.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-firearm_general_1.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "firearm_general_1",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.7348531087239584,
+        "grip": [
+          0.646,
+          0.212
+        ],
+        "bounds": [
+          0.2266,
+          0.0273,
+          0.638,
+          0.9362
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "firearm_general_2",
+      "prompt": "Generate on a genuinely transparent background. A single bare industrial utility sidearm, angular dark-steel semiautomatic pistol with yellow caution-painted slide panels, silver edges and two small cyan status strips. Barrel points straight DOWN, black rubberized pistol grip protrudes RIGHT near the top. Visible exposed muzzle and open trigger guard. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and materials. One centered weapon, entire silhouette visible with generous empty margin. No sling, belt, sheath, holster, straps, mounting plate, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon and through all openings. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-b41030b0-ccf8-42e0-b2d5-caeebc3b7ed5.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-firearm_general_2.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "firearm_general_2",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.7330356174045138,
+        "grip": [
+          0.643,
+          0.2
+        ],
+        "bounds": [
+          0.2357,
+          0.013,
+          0.6172,
+          0.9635
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "firearm_general_3",
+      "prompt": "Generate on a genuinely transparent background. A single bare advanced tactical sidearm, angular gunmetal pistol with a slightly longer hexagonal barrel, restrained ochre-yellow accents and paired small blue energy cells set into the receiver. Barrel points straight DOWN, black checkered pistol grip protrudes RIGHT near the top. Visible muzzle and open trigger guard. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and materials. One centered weapon, entire silhouette visible with generous empty margin. No sling, belt, sheath, holster, straps, mounting plate, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon and through all openings. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-6d82dd29-be0b-4e92-9787-728d46e26cc2.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-firearm_general_3.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "firearm_general_3",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.7582041422526041,
+        "grip": [
+          0.638,
+          0.178
+        ],
+        "bounds": [
+          0.2891,
+          0.013,
+          0.5599,
+          0.9596
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "firearm_general_4",
+      "prompt": "Generate on a genuinely transparent background. A single bare phase sidearm, elegant white ceramic and black-steel pistol with a slim violet energy channel through the exposed slide, dark trigger guard, small brass screws. Barrel points straight DOWN, contoured black pistol grip protrudes RIGHT near the top. Visible open muzzle, no cover below it. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and materials. One centered weapon, entire silhouette visible with generous empty margin. No sling, belt, sheath, holster, straps, mounting plate, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon and through all openings. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-6199b36f-e3c3-46ad-b8fb-54fd9a01fabb.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-firearm_general_4.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "firearm_general_4",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.7727508544921875,
+        "grip": [
+          0.614,
+          0.185
+        ],
+        "bounds": [
+          0.2799,
+          0.0339,
+          0.5195,
+          0.9206
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    },
+    {
+      "id": "firearm_general_5",
+      "prompt": "Generate on a genuinely transparent background. A single bare stellar-alloy sidearm, premium worn titanium-gray pistol with restrained gold armor trim and a bright cyan linear power core inset in the slide. Barrel points straight DOWN, contoured textured black pistol grip protrudes RIGHT near the top. Distinct compact exposed muzzle, open trigger guard. Ready-to-use handheld weapon sprite for a realistic post-apocalyptic science-fiction RPG. Soft top-left lighting, realistic detailed metal and materials. One centered weapon, entire silhouette visible with generous empty margin. No sling, belt, sheath, holster, straps, mounting plate, hand, character or scenery. Actual PNG alpha transparency everywhere outside the weapon and through all openings. Square canvas.",
+      "attempt": "short-fresh-no-reference",
+      "accepted": true,
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-8c2dec68-2bb6-4fc5-9411-9667168e8bf7.png",
+      "runtimeAsset": "prototype/assets/wearables-v2/weapon-firearm_general_5.webp",
+      "processing": "Resize within 768x768 preserving alpha, WebP quality 94 / alphaQuality 100. No background extraction, masking, recoloring or compositing.",
+      "validation": {
+        "id": "firearm_general_5",
+        "width": 768,
+        "height": 768,
+        "channels": 4,
+        "transparentFraction": 0.7507273356119791,
+        "grip": [
+          0.664,
+          0.215
+        ],
+        "bounds": [
+          0.2878,
+          0.0286,
+          0.5625,
+          0.9245
+        ]
+      },
+      "visualSourceReview": "Bare held object with no sheath, holster or sling; grip individually located on visible handle. On-character visual fit remains a separate acceptance gate."
+    }
+  ],
+  "rejectedSources": [
+    {
+      "id": "knife",
+      "attempt": "original-reference",
+      "source": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-f2353aca-d5c4-4c33-87f4-272f9adcaa63.png"
+    },
+    {
+      "id": "pistol",
+      "attempt": "original-reference",
+      "source": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-fd6d1e02-4bd5-43e1-a14c-4ffb69ae752f.png"
+    },
+    {
+      "id": "rifle",
+      "attempt": "original-reference",
+      "source": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-8528734a-2844-4d8a-8d92-6ac4c02b265a.png"
+    },
+    {
+      "id": "knife",
+      "attempt": "square-original-reference",
+      "source": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-ee5e5d56-cfbd-46bd-b185-a33dca2741ec.png"
+    },
+    {
+      "id": "pistol",
+      "attempt": "square-original-reference",
+      "source": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-7356c88d-88c7-437f-82d8-da7fc2e4b96f.png"
+    },
+    {
+      "id": "rifle",
+      "attempt": "square-original-reference",
+      "source": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-52f2e524-3331-4a37-8320-eadc6acf8466.png"
+    },
+    {
+      "id": "knife",
+      "attempt": "background-alpha-correction",
+      "source": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-7c6d3008-c461-4f69-ac53-f73f686796ea.png"
+    }
+  ],
+  "successfulStrategy": "Brand-new generation with no referenced images; short visual description preserves each equipment identity. Explicit genuinely transparent background and actual PNG alpha requirements."
+}

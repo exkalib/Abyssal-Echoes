@@ -68,14 +68,14 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
         for(const [owner,cls] of Object.entries(specialClasses))if(cls)assert.equal(classes.split(/\s+/).includes(cls),owner===tab,'page class '+cls+' must not leak into '+view);
         if(tab==='char'){
           assert.equal(await page.locator('.char-profile-stats .ui-stat-chip').count(),6);
-          assert.equal(await page.locator('.stat-fold').getAttribute('open'),null);
+          assert.equal(await page.locator('.thumb-sheet').count(),0);
           assert.equal(await page.locator('.gene-entry').isVisible(),true);
-          await page.locator('.stat-fold>summary').click();
-          assert.equal(await page.locator('.char-advanced-stats .ui-stat-chip:visible').count(),8,'advanced stats remain accessible');
-          await page.locator('.stat-fold>summary').click();
-          await page.locator('.echo-fold>summary').click();
-          assert.equal(await page.locator('.echo-fold').evaluate(node=>node.open),true);
-          await page.locator('.echo-fold>summary').click();
+          await page.locator('.stats-entry').click();
+          assert.equal(await page.locator('.char-advanced-stats .ui-stat-chip:visible').count(),14,'full actual stats remain accessible in the drawer');
+          await page.locator('.char-sheet-back').click();
+          await page.locator('.echo-entry').click();
+          assert.equal(await page.locator('.char-echo-options').isVisible(),true);
+          await page.locator('.char-sheet-back').click();
         }
         await verifyPage(view);
       }
@@ -92,8 +92,13 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
       assert.equal(await page.locator('#panel').getAttribute('data-view'),'character');
       await verifyPage('character returned from gene tree');
       await page.locator('#tabbar button[data-tab="bag"]').click();
-      await page.locator('summary.loadout-head').click();
-      assert.equal(await page.locator('.loadout-console').evaluate(node=>node.open),false,'wardrobe can collapse without leaving inventory');
+      assert.equal(await page.locator('.ui-bag-stage .doll').isVisible(),true,'wardrobe remains a game stage instead of a collapsible report');
+      assert.equal(await page.locator('.rpg-equipment-detail').count(),0,'main inventory must not become a long inline equipment report');
+      const bagControls=await page.evaluate(()=>{const slot=document.querySelector('.bag-slot-picker').getBoundingClientRect(),tabs=document.querySelector('.bag-category-tabs').getBoundingClientRect(),body=document.querySelector('.rpg-bag-body');return {slotTop:slot.top,tabsTop:tabs.top,tabsBottom:tabs.bottom,outerScroll:body.scrollHeight>body.clientHeight+1};});
+      assert.ok(bagControls.slotTop>=viewport.height*.65&&bagControls.tabsTop>bagControls.slotTop,'slot and category controls belong in the lower thumb zone');
+      assert.ok(bagControls.tabsBottom<=viewport.height);assert.equal(bagControls.outerScroll,false,'only the inventory tray should scroll');
+      await page.locator('.bag-slot-picker').click();await page.locator('.bag-slot-choice').filter({hasText:'头部'}).click();
+      assert.equal(await page.evaluate(()=>state.bagSel),'head','the lower slot picker must switch actual equipment candidates');
       await page.locator('.bag-category-tabs button').filter({hasText:'材料'}).click();
       const vaultFit=await page.locator('.inventory-vault').evaluate(node=>({height:node.clientHeight,body:node.parentElement.clientHeight,scrollMax:getComputedStyle(node.querySelector('.inventory-scroll')).maxHeight}));
       assert.equal(vaultFit.scrollMax,'none','stored items should use all remaining height, not a tiny fixed window');

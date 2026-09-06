@@ -1,0 +1,714 @@
+{
+  "tool": "built-in imagegen",
+  "date": "2026-09-05",
+  "policy": "Native generated alpha required. New generations and precise reference edits only through built-in imagegen. Local processing limited to alpha-preserving resize/format conversion.",
+  "reviewPolicy": "An accepted source has five digits, the correct equipment identity and native alpha. Geometry and real equip checks do not by themselves constitute final visual fit approval. Retired six-finger references must never be reused.",
+  "acceptedCount": 10,
+  "rejectedCount": 14,
+  "wearTest": "prototype/wardrobe-trigger-hands.browser.test.cjs: 10 hand styles x 2 firearms x 2 sexes = 40 real equip, firearm-to-blade pose switch, unequip-restore and dual-contact checks. Grouped visual review separately recorded.",
+  "visualReview": {
+    "date": "2026-09-05",
+    "metadataLocked": true,
+    "reviewer": "grip_catalog",
+    "evidenceDirectory": "/tmp/abyssal-trigger-hands-locked-20260905",
+    "scope": "All 10 final grouped sheets personally inspected: bare, nanoWeaveGloves, servoGauntlet, hands_general_1, hands_general_2, hands_general_3, hands_general_4, hands_general_5, workGloves and hands_specialist_5; each sheet contains male and female actual equip renders with pistol and rifle (40 portraits total).",
+    "result": "No visible floating handle or disconnected wrist found in this representative firearm fit matrix. Independent trigger index, palm/handle contact, muzzle direction, hand scale and long-bracer seams reviewed. Final five-digit source anatomy also independently reviewed by fit_audit and root.",
+    "limits": "This is the 40-case firearm subset, not final approval of every weapon, armor combination or gameplay interaction. Broader final QA is recorded separately. Contact alpha is diagnostic only: an antialiased fingertip edge or a valid grip channel must not be moved just to maximize pixel alpha.",
+    "finalGunCloseups": {
+      "directory": "/tmp/abyssal-wardrobe-fit-locked-final-20260905/portraits",
+      "filenamePattern": "{id}-{male|female}-hand.png",
+      "ids": ["pistol", "rifle", "plasmaRifle", "swarmRifle", "vacuumCarbine", "firearm_general_1", "firearm_general_2", "firearm_general_3", "firearm_general_4", "firearm_general_5"],
+      "personallyViewedCount": 20,
+      "result": "All twenty final 600x440 closeups inspected individually using the corrected five-digit bare hand. Handle is enclosed by thumb and three curled fingers; separate index enters the trigger-guard region; wrist meets sleeve; barrel points out/down. No source or contact-coordinate change required."
+    }
+  },
+  "attempts": [
+    {
+      "id": "bare",
+      "prompt": "Generate on a genuinely transparent background. One isolated realistic bare human RIGHT hand and short wrist for a front-view RPG character, occupying image center. Wrist enters from TOP, hand hangs DOWN at the person's right side (screen-left in the character). Three-quarter palm-side view of a real one-handed downward-pointing pistol grip pose, NOT a closed fist and NOT a front view of flat knuckles. Index finger is clearly separate: it reaches diagonally DOWN-LEFT from the palm and curls inward as if pressing a trigger below the hand. Middle, ring and little fingers curl together around an invisible angled pistol handle; thumb opposes them on the image-right inner side. A narrow open grip channel between thumb and curled fingers; fingers naturally overlap a handle that will be placed behind this hand. Only the anatomically correct hand, five digits, neutral warm skin, soft upper-left light, realistic game character painting. No actual pistol, no handle object, no arm beyond short wrist, no body, no jewelry, no backdrop, no shadow plane. Actual PNG alpha transparency everywhere outside the hand. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-424851d3-1f0b-44e7-bb5c-f127024a85e4.png",
+      "accepted": false,
+      "reason": "Index points straight down rather than hooking the trigger."
+    },
+    {
+      "id": "bare",
+      "prompt": "Generate on a genuinely transparent background. Isolated realistic human RIGHT HAND gripping an INVISIBLE downward-pointing pistol. Short wrist at TOP, palm in three-quarter side view, fingers below, thumb on image RIGHT. A real trigger-pull hand pose: index finger bends 90 degrees at BOTH joints and its fingertip curls BACK toward the palm, making a SHORT C-shaped trigger hook on the LOWER LEFT side. The index is clearly separate from the other three curled fingers. Absolutely NO straight pointing finger and NO pointing gesture. Middle, ring and little fingers curl tightly around the invisible diagonal pistol grip, thumb opposes them from the other side. Visible small negative-space channel for a handle behind the fingers. Compact natural anatomy, five digits, subtle skin texture, neutral light skin, soft upper-left lighting, realistic sci-fi RPG character artwork. One hand only, no gun, no object, no background, no body, no captions. Actual PNG alpha transparency everywhere outside the hand. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-ccaa2dcf-4c84-437c-8351-5b0df044f4c6.png",
+      "accepted": false,
+      "reason": "Extra digit: independent index and thumb plus FOUR curled fingers (six total). Initial visual review was corrected by two independent reviewers; this source and its derived work glove were retired."
+    },
+    {
+      "id": "workGloves",
+      "prompt": "Generate on a genuinely transparent background. One isolated realistic gloved human RIGHT HAND gripping an INVISIBLE downward-pointing pistol. Wrist at TOP, palm in three-quarter side view, fingers below, thumb on image RIGHT. A real trigger-pull hand pose: index finger bends 90 degrees at BOTH joints and its fingertip curls BACK toward the palm, making a SHORT C-shaped trigger hook on the LOWER LEFT side. The index is clearly separate from the other three curled fingers. Absolutely NO straight pointing finger and NO pointing gesture. Middle, ring and little fingers curl tightly around the invisible diagonal pistol grip, thumb opposes them from the other side. A small negative-space channel for the handle behind the fingers. Five functional digits. Worn brown leather work glove, black rubber palm, separated dark steel knuckle plates, black wrist belt and brushed-metal square buckle; short thick brown cuff. Soft upper-left light, realistic post-apocalyptic sci-fi RPG character equipment painting. All fingertips completely covered by this glove. One right glove only, NOT a pair. No gun, no handle object, no body, no background, no captions. Actual PNG alpha transparency everywhere outside the glove. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-4f87a77b-f4c8-4640-8760-936fc0ad54dd.png",
+      "accepted": false,
+      "reason": "Extra digit: independent trigger index plus four curled fingers. Not a runtime asset."
+    },
+    {
+      "id": "nanoWeaveGloves",
+      "prompt": "Generate on a genuinely transparent background. One isolated realistic gloved human RIGHT HAND gripping an INVISIBLE downward-pointing pistol. Wrist at TOP, palm in three-quarter side view, fingers below, thumb on image RIGHT. A real trigger-pull hand pose: index finger bends 90 degrees at BOTH joints and its fingertip curls BACK toward the palm, making a SHORT C-shaped trigger hook on the LOWER LEFT side. The index is clearly separate from the other three curled fingers. Absolutely NO straight pointing finger and NO pointing gesture. Middle, ring and little fingers curl tightly around the invisible diagonal pistol grip, thumb opposes them from the other side. A small negative-space channel for the handle behind the fingers. Five functional digits. Close-fitting black nanoweave mesh glove, thin luminous green circuit lines along fingers, small silver knuckle shells, triangular emerald-green device on a medium black wrist cuff. Soft upper-left light, realistic post-apocalyptic sci-fi RPG character equipment painting. All fingertips completely covered by this glove. One right glove only, NOT a pair. No gun, no handle object, no body, no background, no captions. Actual PNG alpha transparency everywhere outside the glove. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-557b0cde-9964-4d8e-a21c-102c502338f3.png",
+      "accepted": true,
+      "reason": "Five digits and firearm-specific C-shaped trigger index; source independently reviewed.",
+      "runtimeAsset": "prototype/assets/wearables-v2/grip-trigger-nanoWeaveGloves.webp",
+      "processing": "Resize/format only. Native generated alpha is preserved; no local masking, matting or pixel editing.",
+      "landmarks": {
+        "file": "../wearables-v2/grip-trigger-nanoWeaveGloves",
+        "width": 768,
+        "height": 768,
+        "left": {
+          "bounds": [
+            0.1888,
+            0,
+            0.6563,
+            0.9453
+          ],
+          "wrist": [
+            0.555,
+            0.285
+          ],
+          "grip": [
+            0.66,
+            0.65
+          ],
+          "trigger": [
+            0.354,
+            0.801
+          ]
+        },
+        "size": [
+          8,
+          7.682
+        ],
+        "fit": {
+          "male": {
+            "size": [
+              8,
+              7.682
+            ],
+            "rotation": {
+              "left": 12
+            }
+          },
+          "female": {
+            "size": [
+              7.6,
+              7.298
+            ],
+            "rotation": {
+              "left": 12
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "servoGauntlet",
+      "prompt": "Generate on a genuinely transparent background. One isolated realistic gloved human RIGHT HAND gripping an INVISIBLE downward-pointing pistol. Wrist at TOP, palm in three-quarter side view, fingers below, thumb on image RIGHT. A real trigger-pull hand pose: index finger bends 90 degrees at BOTH joints and its fingertip curls BACK toward the palm, making a SHORT C-shaped trigger hook on the LOWER LEFT side. The index is clearly separate from the other three curled fingers. Absolutely NO straight pointing finger and NO pointing gesture. Middle, ring and little fingers curl tightly around the invisible diagonal pistol grip, thumb opposes them from the other side. A small negative-space channel for the handle behind the fingers. Five functional digits. Heavy dark gunmetal servo gauntlet with articulated metal fingers over black flexible palm, round cyan wrist hinge, two slender orange hydraulic pistons up a long tapered steel forearm bracer. Include the complete long forearm bracer above the wrist; keep the human hand normally sized and use a compact functional palm, not a huge robotic fist. Soft upper-left light, realistic post-apocalyptic sci-fi RPG character equipment painting. All fingertips completely covered by this glove. One right glove only, NOT a pair. No gun, no handle object, no body, no background, no captions. Actual PNG alpha transparency everywhere outside the glove. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-03dbcd71-acd8-42c5-819e-f41d7ca1c4fa.png",
+      "accepted": true,
+      "reason": "Five digits and firearm-specific C-shaped trigger index; source independently reviewed.",
+      "runtimeAsset": "prototype/assets/wearables-v2/grip-trigger-servoGauntlet.webp",
+      "processing": "Resize/format only. Native generated alpha is preserved; no local masking, matting or pixel editing.",
+      "landmarks": {
+        "file": "../wearables-v2/grip-trigger-servoGauntlet",
+        "width": 768,
+        "height": 768,
+        "left": {
+          "bounds": [
+            0.2331,
+            0.0013,
+            0.6055,
+            0.944
+          ],
+          "wrist": [
+            0.518,
+            0.61
+          ],
+          "grip": [
+            0.425,
+            0.785
+          ],
+          "trigger": [
+            0.285,
+            0.85
+          ]
+        },
+        "size": [
+          15.7,
+          16.318
+        ],
+        "fit": {
+          "male": {
+            "size": [
+              15.7,
+              16.318
+            ],
+            "rotation": {
+              "left": -9
+            }
+          },
+          "female": {
+            "size": [
+              14.915,
+              15.502
+            ],
+            "rotation": {
+              "left": -6
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "hands_general_1",
+      "prompt": "Generate on a genuinely transparent background. One isolated realistic gloved human RIGHT HAND gripping an INVISIBLE downward-pointing pistol. Wrist at TOP, palm in three-quarter side view, fingers below, thumb on image RIGHT. A real trigger-pull hand pose: index finger bends 90 degrees at BOTH joints and its fingertip curls BACK toward the palm, making a SHORT C-shaped trigger hook on the LOWER LEFT side. The index is clearly separate from the other three curled fingers. Absolutely NO straight pointing finger and NO pointing gesture. Middle, ring and little fingers curl tightly around the invisible diagonal pistol grip, thumb opposes them from the other side. A small negative-space channel for the handle behind the fingers. Five functional digits. Worn black leather expedition glove with antique-brass trim, separate small hexagonal silver knuckle plates, black wrist belt with bronze rectangular buckle and a small amber indicator. Medium cuff. Soft upper-left light, realistic post-apocalyptic sci-fi RPG character equipment painting. All fingertips completely covered by this glove. One right glove only, NOT a pair. No gun, no handle object, no body, no background, no captions. Actual PNG alpha transparency everywhere outside the glove. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-f4540394-c874-46cc-8fc2-df8266c2ae6e.png",
+      "accepted": true,
+      "reason": "Five digits and firearm-specific C-shaped trigger index; source independently reviewed.",
+      "runtimeAsset": "prototype/assets/wearables-v2/grip-trigger-hands_general_1.webp",
+      "processing": "Resize/format only. Native generated alpha is preserved; no local masking, matting or pixel editing.",
+      "landmarks": {
+        "file": "../wearables-v2/grip-trigger-hands_general_1",
+        "width": 768,
+        "height": 768,
+        "left": {
+          "bounds": [
+            0.1745,
+            0.0117,
+            0.6771,
+            0.9063
+          ],
+          "wrist": [
+            0.535,
+            0.275
+          ],
+          "grip": [
+            0.65,
+            0.6
+          ],
+          "trigger": [
+            0.328,
+            0.67
+          ]
+        },
+        "size": [
+          8.2,
+          7.317
+        ],
+        "fit": {
+          "male": {
+            "size": [
+              8.2,
+              7.317
+            ],
+            "rotation": {
+              "left": 6
+            }
+          },
+          "female": {
+            "size": [
+              7.79,
+              6.951
+            ],
+            "rotation": {
+              "left": 6
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "hands_general_2",
+      "prompt": "Generate on a genuinely transparent background. One isolated realistic gloved human RIGHT HAND gripping an INVISIBLE downward-pointing pistol. Wrist at TOP, palm in three-quarter side view, fingers below, thumb on image RIGHT. A real trigger-pull hand pose: index finger bends 90 degrees at BOTH joints and its fingertip curls BACK toward the palm, making a SHORT C-shaped trigger hook on the LOWER LEFT side. The index is clearly separate from the other three curled fingers. Absolutely NO straight pointing finger and NO pointing gesture. Middle, ring and little fingers curl tightly around the invisible diagonal pistol grip, thumb opposes them from the other side. A small negative-space channel for the handle behind the fingers. Five functional digits. Industrial black leather armored glove with scratched yellow hard-shell back plates, gray polygonal palm-back armor, tiny cyan LEDs, black wrist strap and square metal clasp; medium cuff. Soft upper-left light, realistic post-apocalyptic sci-fi RPG character equipment painting. All fingertips completely covered by this glove. One right glove only, NOT a pair. No gun, no handle object, no body, no background, no captions. Actual PNG alpha transparency everywhere outside the glove. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-b75f0276-010f-4b2a-bfd3-2a86fde49e44.png",
+      "accepted": false,
+      "reason": "Extra digit: independent trigger index plus four curled fingers. Not a runtime asset."
+    },
+    {
+      "id": "hands_general_3",
+      "prompt": "Generate on a genuinely transparent background. One isolated realistic gloved human RIGHT HAND gripping an INVISIBLE downward-pointing pistol. Wrist at TOP, palm in three-quarter side view, fingers below, thumb on image RIGHT. A real trigger-pull hand pose: index finger bends 90 degrees at BOTH joints and its fingertip curls BACK toward the palm, making a SHORT C-shaped trigger hook on the LOWER LEFT side. The index is clearly separate from the other three curled fingers. Absolutely NO straight pointing finger and NO pointing gesture. Middle, ring and little fingers curl tightly around the invisible diagonal pistol grip, thumb opposes them from the other side. A small negative-space channel for the handle behind the fingers. Five functional digits. Tactical graphite steel armored glove with clean yellow angular plate edges, small yellow finger armor, black flexible palm, round cyan lens set into an armored medium-height wrist cuff. Soft upper-left light, realistic post-apocalyptic sci-fi RPG character equipment painting. All fingertips completely covered by this glove. One right glove only, NOT a pair. No gun, no handle object, no body, no background, no captions. Actual PNG alpha transparency everywhere outside the glove. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-12215804-b196-451a-a13a-6f9d1af5558b.png",
+      "accepted": true,
+      "reason": "Five digits and firearm-specific C-shaped trigger index; source independently reviewed.",
+      "runtimeAsset": "prototype/assets/wearables-v2/grip-trigger-hands_general_3.webp",
+      "processing": "Resize/format only. Native generated alpha is preserved; no local masking, matting or pixel editing.",
+      "landmarks": {
+        "file": "../wearables-v2/grip-trigger-hands_general_3",
+        "width": 768,
+        "height": 768,
+        "left": {
+          "bounds": [
+            0.1576,
+            0,
+            0.668,
+            0.9427
+          ],
+          "wrist": [
+            0.464,
+            0.3
+          ],
+          "grip": [
+            0.56,
+            0.56
+          ],
+          "trigger": [
+            0.282,
+            0.685
+          ]
+        },
+        "size": [
+          8.4,
+          7.903
+        ],
+        "fit": {
+          "male": {
+            "size": [
+              8.4,
+              7.903
+            ],
+            "rotation": {
+              "left": 18
+            }
+          },
+          "female": {
+            "size": [
+              7.98,
+              7.508
+            ],
+            "rotation": {
+              "left": 18
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "hands_general_4",
+      "prompt": "Generate on a genuinely transparent background. One isolated realistic gloved human RIGHT HAND gripping an INVISIBLE downward-pointing pistol. Wrist at TOP, palm in three-quarter side view, fingers below, thumb on image RIGHT. A real trigger-pull hand pose: index finger bends 90 degrees at BOTH joints and its fingertip curls BACK toward the palm, making a SHORT C-shaped trigger hook on the LOWER LEFT side. The index is clearly separate from the other three curled fingers. Absolutely NO straight pointing finger and NO pointing gesture. Middle, ring and little fingers curl tightly around the invisible diagonal pistol grip, thumb opposes them from the other side. A small negative-space channel for the handle behind the fingers. Five functional digits. Elegant white ceramic phase glove with black flexible palm and joints, smooth segmented white finger shells, violet light seams, tapered medium-tall white-and-black wrist cuff. Soft upper-left light, realistic post-apocalyptic sci-fi RPG character equipment painting. All fingertips completely covered by this glove. One right glove only, NOT a pair. No gun, no handle object, no body, no background, no captions. Actual PNG alpha transparency everywhere outside the glove. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-c65757c2-5e13-4e6c-9246-0d5b5514c755.png",
+      "accepted": true,
+      "reason": "Five digits and firearm-specific C-shaped trigger index; source independently reviewed.",
+      "runtimeAsset": "prototype/assets/wearables-v2/grip-trigger-hands_general_4.webp",
+      "processing": "Resize/format only. Native generated alpha is preserved; no local masking, matting or pixel editing.",
+      "landmarks": {
+        "file": "../wearables-v2/grip-trigger-hands_general_4",
+        "width": 768,
+        "height": 768,
+        "left": {
+          "bounds": [
+            0.2669,
+            0,
+            0.5091,
+            0.944
+          ],
+          "wrist": [
+            0.46,
+            0.305
+          ],
+          "grip": [
+            0.61,
+            0.56
+          ],
+          "trigger": [
+            0.374,
+            0.628
+          ]
+        },
+        "size": [
+          7.9,
+          9.766
+        ],
+        "fit": {
+          "male": {
+            "size": [
+              7.9,
+              9.766
+            ],
+            "rotation": {
+              "left": 14
+            }
+          },
+          "female": {
+            "size": [
+              7.505,
+              9.278
+            ],
+            "rotation": {
+              "left": 14
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "hands_general_5",
+      "prompt": "Generate on a genuinely transparent background. One isolated realistic gloved human RIGHT HAND gripping an INVISIBLE downward-pointing pistol. Wrist at TOP, palm in three-quarter side view, fingers below, thumb on image RIGHT. A real trigger-pull hand pose: index finger bends 90 degrees at BOTH joints and its fingertip curls BACK toward the palm, making a SHORT C-shaped trigger hook on the LOWER LEFT side. The index is clearly separate from the other three curled fingers. Absolutely NO straight pointing finger and NO pointing gesture. Middle, ring and little fingers curl tightly around the invisible diagonal pistol grip, thumb opposes them from the other side. A small negative-space channel for the handle behind the fingers. Five functional digits. Advanced gunmetal glove with gold geometric trim, layered articulated finger plates over black leather palm, rectangular cyan illuminated display on an armored medium-tall wrist cuff. Soft upper-left light, realistic post-apocalyptic sci-fi RPG character equipment painting. All fingertips completely covered by this glove. One right glove only, NOT a pair. No gun, no handle object, no body, no background, no captions. Actual PNG alpha transparency everywhere outside the glove. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-7f5f0e74-9bb5-4ab9-b6d8-f5fe245c61e8.png",
+      "accepted": false,
+      "reason": "Extra digit: independent trigger index plus four curled fingers. Not a runtime asset."
+    },
+    {
+      "id": "hands_specialist_5",
+      "prompt": "Generate on a genuinely transparent background. One isolated realistic gloved human RIGHT HAND gripping an INVISIBLE downward-pointing pistol. Wrist at TOP, palm in three-quarter side view, fingers below, thumb on image RIGHT. A real trigger-pull hand pose: index finger bends 90 degrees at BOTH joints and its fingertip curls BACK toward the palm, making a SHORT C-shaped trigger hook on the LOWER LEFT side. The index is clearly separate from the other three curled fingers. Absolutely NO straight pointing finger and NO pointing gesture. Middle, ring and little fingers curl tightly around the invisible diagonal pistol grip, thumb opposes them from the other side. A small negative-space channel for the handle behind the fingers. Five functional digits. Ivory-white and brass-gold exoskeleton gauntlet, articulated small white fingers over black flexible palm, bright thin cyan wrist ring, long tapered ivory forearm armor with slender gold pistons and a fine gold star insignia. Include the complete long forearm bracer above the wrist, but keep the human hand normally sized and the palm compact. Soft upper-left light, realistic post-apocalyptic sci-fi RPG character equipment painting. All fingertips completely covered by this glove. One right glove only, NOT a pair. No gun, no handle object, no body, no background, no captions. Actual PNG alpha transparency everywhere outside the glove. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-e59ae0fd-df1b-4cfb-9fd7-b970d5961af0.png",
+      "accepted": false,
+      "reason": "Extra digit: independent trigger index plus four curled fingers. Not a runtime asset."
+    },
+    {
+      "id": "workGloves",
+      "prompt": "Generate on a genuinely transparent background. One realistic brown leather human RIGHT glove in a pistol trigger-pull pose. Wrist cuff at TOP, palm-side three-quarter view. The INDEX FINGER is a single short C-shaped hook sticking out to image LEFT; its fingertip curls back toward the palm. Exactly THREE OTHER FINGERS — middle, ring, little — form exactly three curled rows below the palm, and one opposing thumb on image RIGHT. Exactly five digits total. No closed four-finger fist plus an extra index; no extra fingers; no straight pointing gesture. The three curled fingers grip an invisible diagonal handle and index hooks into its invisible trigger guard. Worn brown leather with black flexible palm, separated small dark steel finger plates, black wrist strap with a square brushed-metal buckle, short thick brown cuff. Soft upper-left light, realistic post-apocalyptic game equipment painting. One glove, no weapon, no handle object, no body, no background, no captions. Actual PNG alpha transparency everywhere outside this glove. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-eda2db46-e645-4b3b-bd69-fc3e54ddcccb.png",
+      "accepted": false,
+      "reason": "Extra fourth curled finger despite explicit five-digit prompt."
+    },
+    {
+      "id": "workGloves",
+      "prompt": "Generate on a genuinely transparent background. Isolated realistic human RIGHT HAND wearing a worn brown leather work glove with black flexible palm and a short brown wrist cuff and black buckle strap gripping an INVISIBLE downward-pointing pistol. Short wrist at TOP, palm in three-quarter side view, fingers below, thumb on image RIGHT. A real trigger-pull hand pose: index finger bends 90 degrees at BOTH joints and its fingertip curls BACK toward the palm, making a SHORT C-shaped trigger hook on the LOWER LEFT side. The index is clearly separate from the other three curled fingers. Absolutely NO straight pointing finger and NO pointing gesture. Middle, ring and little fingers curl tightly around the invisible diagonal pistol grip, thumb opposes them from the other side. Visible small negative-space channel for a handle behind the fingers. Compact natural anatomy, five digits, completely covered fingers, black flexible palm, soft upper-left lighting, realistic sci-fi RPG character artwork. One hand only, no gun, no object, no background, no body, no captions. Actual PNG alpha transparency everywhere outside the hand. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-64ff0a91-6821-485b-8f12-0b53bc21b27e.png",
+      "accepted": false,
+      "reason": "Pose direction changed: trigger finger moved to the wrong side relative to the approved gun sources; unsuitable for this rig."
+    },
+    {
+      "id": "hands_general_2",
+      "prompt": "Generate on a genuinely transparent background. Isolated realistic human RIGHT HAND wearing a black industrial glove with yellow scratched armor panels, cyan indicator lights and medium wrist cuff gripping an INVISIBLE downward-pointing pistol. Short wrist at TOP, palm in three-quarter side view, fingers below, thumb on image RIGHT. A real trigger-pull hand pose: index finger bends 90 degrees at BOTH joints and its fingertip curls BACK toward the palm, making a SHORT C-shaped trigger hook on the LOWER LEFT side. The index is clearly separate from the other three curled fingers. Absolutely NO straight pointing finger and NO pointing gesture. Middle, ring and little fingers curl tightly around the invisible diagonal pistol grip, thumb opposes them from the other side. Visible small negative-space channel for a handle behind the fingers. Compact natural anatomy, five digits, completely covered fingers, black flexible palm, soft upper-left lighting, realistic sci-fi RPG character artwork. One hand only, no gun, no object, no background, no body, no captions. Actual PNG alpha transparency everywhere outside the hand. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-07564aeb-9737-42e0-bb86-0486399a6aaf.png",
+      "accepted": false,
+      "reason": "Pose direction changed: trigger finger moved to the wrong side relative to the approved gun sources; unsuitable for this rig."
+    },
+    {
+      "id": "hands_specialist_5",
+      "prompt": "Generate on a genuinely transparent background. Isolated realistic human RIGHT HAND wearing an ivory white and gold mechanical glove with a cyan wrist ring and a long narrow ivory-and-gold forearm bracer above the wrist gripping an INVISIBLE downward-pointing pistol. Short wrist at TOP, palm in three-quarter side view, fingers below, thumb on image RIGHT. A real trigger-pull hand pose: index finger bends 90 degrees at BOTH joints and its fingertip curls BACK toward the palm, making a SHORT C-shaped trigger hook on the LOWER LEFT side. The index is clearly separate from the other three curled fingers. Absolutely NO straight pointing finger and NO pointing gesture. Middle, ring and little fingers curl tightly around the invisible diagonal pistol grip, thumb opposes them from the other side. Visible small negative-space channel for a handle behind the fingers. Compact natural anatomy, five digits, completely covered fingers, black flexible palm, soft upper-left lighting, realistic sci-fi RPG character artwork. One hand only, no gun, no object, no background, no body, no captions. Actual PNG alpha transparency everywhere outside the hand. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-55771b9f-6ccc-4c43-96f6-1841aadc7b31.png",
+      "accepted": false,
+      "reason": "Pose direction changed: trigger finger moved to the wrong side relative to the approved gun sources; unsuitable for this rig."
+    },
+    {
+      "id": "workGloves",
+      "prompt": "Generate on a genuinely transparent background. Dress this exact hand and wrist in a worn brown leather work glove with black palm, a short cuff and black buckle strap. Preserve the exact five-finger anatomy, the separate C-shaped index on the LEFT, thumb on RIGHT, wrist position, finger positions, and pose of the reference. Do not add or remove a finger. No weapon, no handle. Keep the exact transparent background as actual PNG alpha; never paint any background or checkerboard. One gloved hand, square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-00b4950e-a355-4542-9d2b-e9eea9f9a469.png",
+      "reference": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-ccaa2dcf-4c84-437c-8351-5b0df044f4c6.png",
+      "accepted": false,
+      "reason": "Inherited six-digit anatomy from the retired bare reference."
+    },
+    {
+      "id": "bare",
+      "prompt": "Generate on a genuinely transparent background. Replace this glove with bare human skin, keeping EXACTLY the reference hand's anatomy and pose. Keep the left C-shaped index, right thumb, and exactly THREE curled fingers. Remove every glove, armor and cuff, show a short bare wrist instead. No extra finger; preserve only the existing five digits. Natural light skin and soft upper-left lighting. No gun or object. Preserve actual alpha transparency, never paint a background. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-808c937d-181b-4155-ba7c-25a5a4e8112a.png",
+      "reference": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-557b0cde-9964-4d8e-a21c-102c502338f3.png",
+      "accepted": false,
+      "reason": "Removing the glove introduced a fourth curled finger; six digits, retired."
+    },
+    {
+      "id": "workGloves",
+      "prompt": "Generate on a genuinely transparent background. Repaint this exact five-finger glove as worn BROWN LEATHER with a black palm, short brown cuff and black buckle strap. Preserve EXACTLY the left C-shaped index, right thumb and THREE curled fingers of the reference. Do not add a finger or change any finger position. Remove green lights and silver armor; replace with simple brown leather padding. No gun or object. Preserve actual alpha transparency, never paint a background. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-e6e89b3d-2ec9-43c1-a657-3a80f9b11ba2.png",
+      "reference": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-557b0cde-9964-4d8e-a21c-102c502338f3.png",
+      "accepted": true,
+      "reason": "Correct five-finger nano pose preserved with separate brown work-glove materials.",
+      "runtimeAsset": "prototype/assets/wearables-v2/grip-trigger-workGloves.webp",
+      "processing": "Resize/format only. Native generated alpha is preserved; no local masking, matting or pixel editing.",
+      "landmarks": {
+        "file": "../wearables-v2/grip-trigger-workGloves",
+        "width": 768,
+        "height": 768,
+        "left": {
+          "bounds": [
+            0.1849,
+            0,
+            0.6654,
+            0.9453
+          ],
+          "wrist": [
+            0.555,
+            0.285
+          ],
+          "grip": [
+            0.66,
+            0.65
+          ],
+          "trigger": [
+            0.354,
+            0.801
+          ]
+        },
+        "size": [
+          8.1,
+          7.672
+        ],
+        "fit": {
+          "male": {
+            "size": [
+              8.1,
+              7.672
+            ],
+            "rotation": {
+              "left": 12
+            }
+          },
+          "female": {
+            "size": [
+              7.695,
+              7.288
+            ],
+            "rotation": {
+              "left": 12
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "hands_general_2",
+      "prompt": "Generate on a genuinely transparent background. Change only the material and cuff of this exact five-finger glove: worn black industrial glove with scratched YELLOW armor plates, tiny CYAN indicators and a medium black wrist cuff. Preserve EXACTLY the left C-shaped index, right thumb and THREE curled fingers of the reference. All five fingertips fully covered. Do not add a finger or alter any finger shape or position. Replace all green lights with this style's cyan accents. Keep the hand compact and normally sized even if forearm armor is long. No gun or other object. Preserve actual PNG alpha transparency, never paint a background. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-23ca1f4d-bdaa-4c08-a6d3-05441a8400d7.png",
+      "reference": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-557b0cde-9964-4d8e-a21c-102c502338f3.png",
+      "accepted": true,
+      "reason": "Correct five-finger nano pose preserved with equipment-specific materials and cuff.",
+      "runtimeAsset": "prototype/assets/wearables-v2/grip-trigger-hands_general_2.webp",
+      "processing": "Resize/format only. Native generated alpha is preserved; no local masking, matting or pixel editing.",
+      "landmarks": {
+        "file": "../wearables-v2/grip-trigger-hands_general_2",
+        "width": 768,
+        "height": 768,
+        "left": {
+          "bounds": [
+            0.1849,
+            0,
+            0.6706,
+            0.9492
+          ],
+          "wrist": [
+            0.55,
+            0.285
+          ],
+          "grip": [
+            0.66,
+            0.65
+          ],
+          "trigger": [
+            0.354,
+            0.805
+          ]
+        },
+        "size": [
+          8.25,
+          7.785
+        ],
+        "fit": {
+          "male": {
+            "size": [
+              8.25,
+              7.785
+            ],
+            "rotation": {
+              "left": 12
+            }
+          },
+          "female": {
+            "size": [
+              7.837,
+              7.396
+            ],
+            "rotation": {
+              "left": 12
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "hands_general_5",
+      "prompt": "Generate on a genuinely transparent background. Change only the material and cuff of this exact five-finger glove: advanced graphite-metal glove with GOLD angular trim, black flexible palm, and a rectangular CYAN display on a medium-tall cuff. Preserve EXACTLY the left C-shaped index, right thumb and THREE curled fingers of the reference. All five fingertips fully covered. Do not add a finger or alter any finger shape or position. Replace all green lights with this style's cyan accents. Keep the hand compact and normally sized even if forearm armor is long. No gun or other object. Preserve actual PNG alpha transparency, never paint a background. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-f25c8610-84f1-4f33-a301-a0d465ffc001.png",
+      "reference": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-557b0cde-9964-4d8e-a21c-102c502338f3.png",
+      "accepted": true,
+      "reason": "Correct five-finger nano pose preserved with equipment-specific materials and cuff.",
+      "runtimeAsset": "prototype/assets/wearables-v2/grip-trigger-hands_general_5.webp",
+      "processing": "Resize/format only. Native generated alpha is preserved; no local masking, matting or pixel editing.",
+      "landmarks": {
+        "file": "../wearables-v2/grip-trigger-hands_general_5",
+        "width": 768,
+        "height": 768,
+        "left": {
+          "bounds": [
+            0.1719,
+            0,
+            0.6771,
+            0.9518
+          ],
+          "wrist": [
+            0.54,
+            0.278
+          ],
+          "grip": [
+            0.66,
+            0.65
+          ],
+          "trigger": [
+            0.344,
+            0.805
+          ]
+        },
+        "size": [
+          8.3,
+          7.778
+        ],
+        "fit": {
+          "male": {
+            "size": [
+              8.3,
+              7.778
+            ],
+            "rotation": {
+              "left": 12
+            }
+          },
+          "female": {
+            "size": [
+              7.885,
+              7.389
+            ],
+            "rotation": {
+              "left": 12
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "hands_specialist_5",
+      "prompt": "Generate on a genuinely transparent background. Change only the material and cuff of this exact five-finger glove: IVORY WHITE and BRASS GOLD articulated glove with black flexible palm, thin CYAN wrist ring, and a complete LONG tapered ivory forearm bracer above the wrist with gold pistons and a small gold star. Preserve EXACTLY the left C-shaped index, right thumb and THREE curled fingers of the reference. All five fingertips fully covered. Do not add a finger or alter any finger shape or position. Replace all green lights with this style's cyan accents. Keep the hand compact and normally sized even if forearm armor is long. No gun or other object. Preserve actual PNG alpha transparency, never paint a background. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-19a4d1c9-a1c3-40aa-9dcc-e66bd89fa458.png",
+      "reference": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-557b0cde-9964-4d8e-a21c-102c502338f3.png",
+      "accepted": false,
+      "reason": "Correct five digits, but the forearm bracer was cropped short. Superseded by a full-length generation."
+    },
+    {
+      "id": "bare",
+      "prompt": "This hand has SIX fingers, which is an error. REMOVE the very lowest extra curled finger at bottom center, including its visible fingernail near the bottom edge. Keep the three curled fingers above it unchanged. Keep the separate C-shaped index on left and thumb on right unchanged. Result must have exactly FIVE fingers: one index, one thumb, THREE curled fingers. Do not add replacement fingers. No other changes. Preserve genuine PNG alpha transparency outside the hand.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-60c0d3d8-e5b4-450a-b0c1-c3361b7cc302.png",
+      "reference": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-808c937d-181b-4155-ba7c-25a5a4e8112a.png",
+      "accepted": false,
+      "reason": "Imagegen removed the extra bottom finger correctly, but output was RGB on black; not a runtime asset."
+    },
+    {
+      "id": "bare",
+      "prompt": "Generate on a genuinely transparent background. Keep this exact anatomically correct FIVE-finger bare hand unchanged. Replace the black background with actual transparent PNG alpha. Keep exactly one thumb, one C-shaped index and THREE curled fingers; preserve their positions and natural skin. No additional fingers, no object, no background color, no checkerboard. Actual PNG alpha transparency everywhere outside the hand.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-728d6161-6253-4d2c-82a5-3c8916f41687.png",
+      "reference": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-60c0d3d8-e5b4-450a-b0c1-c3361b7cc302.png",
+      "accepted": true,
+      "reason": "Correct five-digit bare hand; imagegen restored actual alpha. Independently re-counted by main agent after replacement.",
+      "runtimeAsset": "prototype/assets/wearables-v2/grip-trigger-bare.webp",
+      "processing": "Resize/format only. Native generated alpha is preserved; no local masking, matting or pixel editing.",
+      "landmarks": {
+        "file": "../wearables-v2/grip-trigger-bare",
+        "width": 740,
+        "height": 768,
+        "left": {
+          "bounds": [
+            0.1527,
+            0,
+            0.8027,
+            0.9128
+          ],
+          "wrist": [
+            0.61,
+            0.23
+          ],
+          "grip": [
+            0.6,
+            0.59
+          ],
+          "trigger": [
+            0.278,
+            0.854
+          ]
+        },
+        "size": [
+          8,
+          6.294
+        ],
+        "fit": {
+          "male": {
+            "size": [
+              8,
+              6.294
+            ],
+            "rotation": {
+              "left": 23
+            }
+          },
+          "female": {
+            "size": [
+              7.6,
+              5.979
+            ],
+            "rotation": {
+              "left": 25
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "hands_specialist_5",
+      "prompt": "Generate on a genuinely transparent background. Zoom out this exact five-finger white-and-gold gauntlet so its COMPLETE LONG FOREARM BRACER fits above the wrist. Preserve the exact hand anatomy and pose, including left C-shaped index, right thumb and only THREE curled fingers. Uniformly reduce the hand in the canvas to make room above it. Hand occupies bottom THIRD of image, tapered ivory-and-gold forearm bracer occupies upper TWO THIRDS, entire object in frame with transparent padding. Forearm has gold pistons, cyan seams and small gold star; no upper arm or body. Do not add fingers. Actual PNG alpha transparency everywhere outside the glove and bracer. Square canvas.",
+      "sourcePng": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-8dff9a6c-6f48-4b2d-9aad-c268b696af68.png",
+      "reference": "/Users/wangyao/.codex/generated_images/01a0713d-963b-7d33-8386-c4cef12fd1fe/exec-19a4d1c9-a1c3-40aa-9dcc-e66bd89fa458.png",
+      "accepted": true,
+      "reason": "Correct five-finger nano geometry retained; complete long bracer now fits in frame with original alpha.",
+      "runtimeAsset": "prototype/assets/wearables-v2/grip-trigger-hands_specialist_5.webp",
+      "processing": "Resize/format only. Native generated alpha is preserved; no local masking, matting or pixel editing.",
+      "landmarks": {
+        "file": "../wearables-v2/grip-trigger-hands_specialist_5",
+        "width": 768,
+        "height": 768,
+        "left": {
+          "bounds": [
+            0.2956,
+            0.0065,
+            0.5169,
+            0.9857
+          ],
+          "wrist": [
+            0.53,
+            0.597
+          ],
+          "grip": [
+            0.518,
+            0.825
+          ],
+          "trigger": [
+            0.389,
+            0.918
+          ]
+        },
+        "size": [
+          13.1,
+          16.654
+        ],
+        "fit": {
+          "male": {
+            "size": [
+              13.1,
+              16.654
+            ],
+            "rotation": {
+              "left": -5
+            }
+          },
+          "female": {
+            "size": [
+              12.445,
+              15.821
+            ],
+            "rotation": {
+              "left": -2
+            }
+          }
+        }
+      }
+    }
+  ]
+}

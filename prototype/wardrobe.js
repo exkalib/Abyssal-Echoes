@@ -1,6 +1,11 @@
 /* Fixed-pose wardrobe rig. Every item has a fitted, true-alpha physical layer.
  * V3 inventory thumbnails show the same wearable object's canonical artwork. */
 const WEARABLE_ROOT='assets/wearables-v1/';
+const wearableFits=typeof WEARABLE_FIT_V2!=='undefined'?WEARABLE_FIT_V2:require('./wardrobe-fit.js').WEARABLE_FIT_V2;
+const wearableGrips=typeof WEARABLE_GRIPS!=='undefined'?WEARABLE_GRIPS:require('./wardrobe-grips.js').WEARABLE_GRIPS;
+const wearableHands=typeof WEARABLE_HOLD_HANDS!=='undefined'?WEARABLE_HOLD_HANDS:require('./wardrobe-hands.js').WEARABLE_HOLD_HANDS;
+const wearableTriggerHands=typeof WEARABLE_TRIGGER_HANDS!=='undefined'?WEARABLE_TRIGGER_HANDS:require('./wardrobe-trigger-hands.js').WEARABLE_TRIGGER_HANDS;
+const wearableSwordHands=typeof WEARABLE_SWORD_HANDS!=='undefined'?WEARABLE_SWORD_HANDS:require('./wardrobe-sword-hands.js').WEARABLE_SWORD_HANDS;
 const WEARABLE_UNIFORMS=['bulwark','vanguard','infiltrator'];
 const WEARABLE_ORDER=['back','legs','feet','body','hands','weapon','offhand','head','implant','module'];
 const WEARABLE_ART={
@@ -1061,7 +1066,7 @@ function loadWearableSource(src){
   if(!wearableImageCache.has(src)){const image=new Image();image.src=src;const ready=image.decode().catch(error=>{wearableImageCache.delete(src);throw error;});wearableImageCache.set(src,ready);}
   return wearableImageCache.get(src);
 }
-function wearableSpecification(gender,equipment={},career,lifeCareers=[]){
+function legacyWearableSpecification(gender,equipment={},career,lifeCareers=[]){
   const sex=gender==='female'?'female':'male',layers=[{key:'base',src:WEARABLE_ROOT+'base-'+sex+'.webp',slot:'base',item:'base-'+sex}];
   // At runtime a glove replaces the bare-hand region, not the whole body. This
   // is part visibility in the rig; source images and their alpha stay untouched.
@@ -1070,7 +1075,7 @@ function wearableSpecification(gender,equipment={},career,lifeCareers=[]){
   else if(coversFeet)layers[0].clip='inset(0 0 '+(100-baseHem)+'% 0)';
   const job={noviceGuard:'bulwark',noviceScout:'vanguard',noviceStriker:'infiltrator'}[career]||career;
   if(WEARABLE_UNIFORMS.includes(job)){
-    const wrist=sex==='female'?44:46,hem=sex==='female'?87:90;
+    const wrist=sex==='female'?44:46,hem=Math.min(sex==='female'?87:90,wearableFits[equipment.feet]?.baseCutY?.[sex]??100);
     // Only clothing is displayed from career artwork. The original face, bare
     // hands and shoes remain the same character; armor mounts above the uniform.
     layers.push({key:'uniform',src:WEARABLE_ROOT+'uniform-'+job+'-'+sex+'.webp',slot:'uniform',item:job,x:0,y:0,sx:1,sy:1,clip:'polygon(0 16%,100% 16%,100% '+wrist+'%,68% '+wrist+'%,68% 59%,100% 59%,100% '+hem+'%,0 '+hem+'%,0 59%,32% 59%,32% '+wrist+'%,0 '+wrist+'%)'});
@@ -1087,25 +1092,185 @@ function wearableSpecification(gender,equipment={},career,lifeCareers=[]){
   });
   return layers;
 }
+// Source coordinates are projected through object-fit:contain into the 2:3
+// portrait plane. Rotation uses physical pixels (Y spans 1.5 times X), so a leg
+// follows the hip/knee/ankle axis rather than rotating in a distorted square.
+function wearableSourcePoint(art,point){
+  const ratio=art.width/art.height,w=Math.min(1,1.5*ratio),h=Math.min(1,1/(1.5*ratio));
+  return [((1-w)/2+point[0]*w)*100,((1-h)/2+point[1]*h)*100];
+}
+function wearableTransformPoint(spec,point){
+  const p=wearableSourcePoint(spec.art,point),o=spec.pivotPoint,r=(spec.rotation||0)*Math.PI/180;
+  const x=(p[0]-o[0])*spec.sx,y=(p[1]-o[1])*spec.sy*1.5;
+  return [o[0]+spec.x+x*Math.cos(r)-y*Math.sin(r),o[1]+spec.y+(x*Math.sin(r)+y*Math.cos(r))/1.5];
+}
+function fittedWearableSpec(piece,slot,item,index){
+  const b=piece.bounds,t=piece.target,p=piece.pivot||[.5,0],point=[b[0]+b[2]*p[0],b[1]+b[3]*p[1]];
+  const top=wearableSourcePoint(piece,[b[0],b[1]]),bottom=wearableSourcePoint(piece,[b[0]+b[2],b[1]+b[3]]),pivot=wearableSourcePoint(piece,point),anchor=[t[0]+t[2]*p[0],t[1]+t[3]*p[1]];
+  return {key:slot+'-'+index,src:WEARABLE_ROOT+piece.file+'.webp',slot,item,half:piece.half,clip:piece.clip,art:piece,
+    x:anchor[0]-pivot[0],y:anchor[1]-pivot[1],sx:t[2]/(bottom[0]-top[0]),sy:t[3]/(bottom[1]-top[1]),
+    origin:pivot[0]+'% '+pivot[1]+'%',pivotPoint:pivot,rotation:piece.rotation||0,contact:{sourcePoint:point,anchor},fit:'calibrated'};
+}
+const WEARABLE_BODY_WRISTS={male:[[26.1,46],[73.9,46]],female:[[26.5,44],[73.5,44]]};
+// V8 rotates the whole lower arm at the elbow, not the wrist in isolation.
+// Clothing and armor use this same physical transform; face/body identity stays.
+const WEARABLE_FOREARM_V8={male:{elbow:[30,32.5],rotation:-15,scale:.82},female:{elbow:[30.2,31],rotation:-15,scale:.84}};
+function posedForearmPoint(sex,point){
+  const {elbow,rotation,scale}=WEARABLE_FOREARM_V8[sex],r=rotation*Math.PI/180;
+  const x=(point[0]-elbow[0])*scale,y=(point[1]-elbow[1])*1.5*scale;
+  return [elbow[0]+x*Math.cos(r)-y*Math.sin(r),elbow[1]+(x*Math.sin(r)+y*Math.cos(r))/1.5];
+}
+function posedForearmSpec(spec,sex){
+  const pose=WEARABLE_FOREARM_V8[sex],pivot=spec.pivotPoint||[50,0];
+  const anchor=posedForearmPoint(sex,[pivot[0]+(spec.x||0),pivot[1]+(spec.y||0)]);
+  const next={...spec,pivotPoint:pivot,origin:pivot[0]+'% '+pivot[1]+'%',x:anchor[0]-pivot[0],y:anchor[1]-pivot[1],sx:(spec.sx||1)*pose.scale,sy:(spec.sy||1)*pose.scale,rotation:(spec.rotation||0)+pose.rotation};
+  for(const key of ['contact','triggerContact','gripContact'])if(spec[key])next[key]={...spec[key],anchor:posedForearmPoint(sex,spec[key].anchor)};
+  return next;
+}
+function wearablePlaneClip(spec,points){
+  const [ox,oy]=spec.pivotPoint,r=(spec.rotation||0)*Math.PI/180,c=Math.cos(r),s=Math.sin(r);
+  return 'polygon('+points.map(([px,py])=>{
+    const x=px-ox-spec.x,y=(py-oy-spec.y)*1.5;
+    return (ox+(x*c+y*s)/spec.sx)+'% '+(oy+(-x*s+y*c)/(spec.sy*1.5))+'%';
+  }).join(',')+')';
+}
+function wearableCuffClip(spec,cutY){
+  const [ox,oy]=spec.pivotPoint,r=(spec.rotation||0)*Math.PI/180;
+  const y=([x,y])=>oy+spec.y+((x-ox)*spec.sx*Math.sin(r)+(y-oy)*spec.sy*1.5*Math.cos(r))/1.5;
+  const left=spec.half==='right'?50:0,right=spec.half==='left'?50:100,points=[[left,0],[right,0],[right,100],[left,100]],result=[];
+  for(let i=0;i<points.length;i++){
+    const a=points[i],b=points[(i+1)%points.length],ya=y(a),yb=y(b),insideA=ya<=cutY,insideB=yb<=cutY;
+    if(insideA)result.push(a);
+    if(insideA!==insideB){const t=(cutY-ya)/(yb-ya);result.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]);}
+  }
+  return 'polygon('+result.map(point=>point.map(n=>n+'%').join(' ')).join(',')+')';
+}
+function grippingHandSpec(sex,equipment,side,item){
+  const kind=wearableGrips[item]?.kind,pose=side==='right'?'shield':['sidearm','longgun'].includes(kind)?'trigger':['bar','staff'].includes(kind)?'shaft':'sword';
+  const catalog=pose==='trigger'?wearableTriggerHands:pose==='shield'?wearableHands:wearableSwordHands;
+  const glove=equipment.hands&&equipment.hands!=='phaseGrip'?equipment.hands:'bare',art=catalog[glove]?.weapons?.[item]||catalog[glove];
+  if(!art)throw new Error('Missing wearable hand pose: '+glove+'/'+pose);
+  const part=art[side]||art,b=part.bounds;
+  const bodyWrist=WEARABLE_BODY_WRISTS[sex][side==='left'?0:1],wrist=art.forearmPose==='v8'?posedForearmPoint(sex,bodyWrist):bodyWrist,factor=sex==='female'?.95:1,sexFit=art.fit?.[sex],w=sexFit?.size[0]??art.size[0]*factor,h=sexFit?.size[1]??art.size[1]*factor;
+  const pivot=[(part.wrist[0]-b[0])/b[2],(part.wrist[1]-b[1])/b[3]],target=[wrist[0]-w*pivot[0],wrist[1]-h*pivot[1],w,h];
+  const single=pose!=='shield',rotation=typeof sexFit?.rotation==='number'?sexFit.rotation:sexFit?.rotation[side]??(side==='left'?3:-3);
+  const spec=fittedWearableSpec({...art,bounds:b,target,pivot,half:single?undefined:side,rotation},'grip',item,side);
+  if(art.cutTop)spec.clip='inset('+wearableSourcePoint(art,[0,art.cutTop])[1]+'% 0 0 0)';
+  if(art.wristCutContour){
+    spec.clip='polygon('+art.wristCutContour.map(point=>wearableSourcePoint(art,point).map(n=>n+'%').join(' ')).join(',')+')';
+  }else if(art.wristOverlap!==undefined){
+    const y=wrist[1]-art.wristOverlap;
+    // For an occupied grip retain the blade above the wrist. Only the forearm
+    // stub meets the sleeve cut; this is not a mask through palm or fingers.
+    const points=art.integratedWeapon?[[-100,-100],[wrist[0]-art.wristCutOffset,-100],[wrist[0]-art.wristCutOffset,y],[200,y],[200,150],[-100,150]]:[[-100,y],[200,y],[200,150],[-100,150]];
+    spec.clip=wearablePlaneClip(spec,points);
+  }
+  spec.handleAxis=part.handleAxis||art.handleAxis;spec.indexRest=part.indexRest;
+  spec.key='grip-'+side;spec.gripPoint=part.grip;spec.triggerPoint=part.trigger;spec.handItem=glove;spec.z=22;spec.pose=pose;spec.occupiedHilt=!!art.occupiedHilt;spec.integratedGrip=!!art.integratedWeapon;return spec;
+}
+function heldWearableSpec(art,slot,item,hand){
+  if(hand.integratedGrip)return {...hand,key:slot+'-0',slot,fit:'authored-occupied-grip',
+    gripContact:{sourcePoint:hand.gripPoint,anchor:wearableTransformPoint(hand,hand.gripPoint),kind:'grip',occluded:true,occlusion:'authored-in-sprite',anatomy:'palm-handle-fingers'}};
+  const pivot=wearableSourcePoint(art,art.grip),top=wearableSourcePoint(art,[art.bounds[0],art.bounds[1]]),bottom=wearableSourcePoint(art,[art.bounds[0]+art.bounds[2],art.bounds[1]+art.bounds[3]]);
+  const anchor=wearableTransformPoint(hand,hand.gripPoint);let scale=art.length/(bottom[1]-top[1]),rotation=art.rotation||0,triggerContact;
+  if(hand.pose==='sword')rotation+=155;
+  else if(hand.pose==='shaft')rotation=-17;
+  const sourceIndex=hand.indexRest?art.indexRest:art.trigger,handIndex=hand.indexRest||hand.triggerPoint;
+  if(sourceIndex&&handIndex){
+    const source=wearableSourcePoint(art,sourceIndex),target=wearableTransformPoint(hand,handIndex),a=[source[0]-pivot[0],(source[1]-pivot[1])*1.5],b=[target[0]-anchor[0],(target[1]-anchor[1])*1.5];
+    scale=Math.hypot(...b)/Math.hypot(...a);rotation=(Math.atan2(b[1],b[0])-Math.atan2(a[1],a[0]))*180/Math.PI;
+    triggerContact={sourcePoint:sourceIndex,anchor:target,kind:'grip',occluded:true,occlusion:'front-fingers',anatomy:hand.indexRest?'index-outside-guard':'index-trigger'};
+  }else if(art.handleAxis&&hand.handleAxis){
+    const source=wearableSourcePoint(art,art.handleAxis),target=wearableTransformPoint(hand,hand.handleAxis),a=[source[0]-pivot[0],(source[1]-pivot[1])*1.5],b=[target[0]-anchor[0],(target[1]-anchor[1])*1.5];
+    rotation=(Math.atan2(b[1],b[0])-Math.atan2(a[1],a[0]))*180/Math.PI;
+  }
+  return {key:slot+'-0',src:art.source,slot,item,art,x:anchor[0]-pivot[0],y:anchor[1]-pivot[1],sx:scale,sy:scale,origin:pivot[0]+'% '+pivot[1]+'%',pivotPoint:pivot,rotation,z:slot==='offhand'?24:21,fit:art.status,triggerContact,
+    contact:{sourcePoint:art.grip,anchor,kind:'grip',occluded:true,occlusion:slot==='offhand'?'behind-shield':hand.occupiedHilt?'occupied-hilt':'front-fingers',anatomy:hand.occupiedHilt?'palm-handle-fingers':undefined}};
+}
+function wearableSpecification(gender,equipment={},career,lifeCareers=[]){
+  equipment=Object.fromEntries(Object.entries(equipment).filter(([slot,id])=>WEARABLE_ART[id]?.slot===slot));
+  const sex=gender==='female'?'female':'male',layers=legacyWearableSpecification(sex,equipment,career,lifeCareers),held={};
+  for(const [slot,side] of [['weapon','left'],['offhand','right']])if(wearableGrips[equipment[slot]])held[side]=grippingHandSpec(sex,equipment,side,equipment[slot]);
+  const gloves=wearableFits[equipment.hands]?.coversHands??WEARABLE_ART[equipment.hands]?.coversHands;
+  const hem=wearableFits[equipment.feet]?.baseCutY?.[sex]??(WEARABLE_ART[equipment.feet]?.coversFeet?(sex==='female'?87:88.5):100);
+  const left=gloves||held.left?WEARABLE_BODY_WRISTS[sex][0][1]:60,right=gloves||held.right?WEARABLE_BODY_WRISTS[sex][1][1]:60;
+  layers[0].clip=(left<60||right<60||hem<100)?'polygon(0 0,100% 0,100% '+right+'%,67% '+right+'%,67% 60%,100% 60%,100% '+hem+'%,0 '+hem+'%,0 60%,33% 60%,33% '+left+'%,0 '+left+'%)':undefined;
+  for(const slot of WEARABLE_ORDER){
+    const id=equipment[slot],fit=wearableFits[id],grip=wearableGrips[id];if(!fit&&!grip)continue;
+    for(let i=layers.length-1;i>=0;i--)if(layers[i].slot===slot)layers.splice(i,1);
+    if(grip){layers.push(heldWearableSpec(grip,slot,id,held[slot==='weapon'?'left':'right']));continue;}
+    fit[sex].forEach((piece,index)=>{
+      // On the gripping side the closed glove replaces the entire relaxed hand;
+      // retaining both is what previously produced doubled fingers and cuffs.
+      if(slot==='hands'&&fit.coversHands!==false&&held[piece.half]){
+        if(held[piece.half].art.retainCuff){
+          const cuff=fittedWearableSpec(piece,slot,id,index);cuff.key='cuff-'+piece.half;cuff.slot='cuff';cuff.z=held[piece.half].art.occupiedHilt?20:23;
+          cuff.clip=wearableCuffClip(cuff,WEARABLE_BODY_WRISTS[sex][piece.half==='left'?0:1][1]+.25);layers.push(held[piece.half].art.forearmPose==='v8'?posedForearmSpec(cuff,sex):cuff);
+        }
+        return;
+      }
+      let spec=fittedWearableSpec(piece,slot,id,index);spec.pose=slot==='hands'?'relaxed':undefined;
+      if(slot==='hands'&&piece.half==='left'&&held.left?.art.forearmPose==='v8')spec=posedForearmSpec(spec,sex);
+      layers.push(spec);
+    });
+    if(fit.mount)layers.push({key:fit.mount,slot:'mount',item:fit.mount,mount:slot,x:slot==='module'?86:87,y:slot==='module'?25:36,z:27});
+  }
+  const torso=wearableFits[equipment.body];
+  if(torso?.wornTorso){
+    // The garment's native alpha contains the actual neck opening, shoulder
+    // curves and hem. Preserve sleeves/trousers; never replace a rectangular ROI.
+    // Original skin sits above career clothing but behind the armor's front rim.
+    layers.push({key:'body-identity',slot:'anatomy',item:'base-head-'+sex,src:WEARABLE_ROOT+'base-'+sex+'.webp',x:0,y:0,sx:1,sy:1,z:3,clip:'inset(0 0 81.4% 0)'});
+  }
+  if(held.left?.art.forearmPose==='v8'){
+    const elbowY=WEARABLE_FOREARM_V8[sex].elbow[1],wristY=WEARABLE_BODY_WRISTS[sex][0][1];
+    for(const layer of [...layers].filter(s=>['base','uniform'].includes(s.slot)||(s.slot==='body'&&!torso?.wornTorso))){
+      const spec={x:0,y:0,sx:1,sy:1,pivotPoint:[50,0],...layer};
+      // Only actual sleeves follow the forearm. Worn torso sprites end above
+      // the elbow: this broad plane must never cut/rotate their side waist plates.
+      const arm={...spec,key:'forearm-'+layer.key,slot:'forearm',z:layer.slot==='body'?7:layer.slot==='uniform'?3:2,
+        clip:wearablePlaneClip(spec,[[0,elbowY-.85],[35,elbowY-.85],[33,wristY+.2],[0,wristY+.2]])};
+      layers.push(posedForearmSpec(arm,sex));
+      const lower=layer.slot==='base'?hem:layer.slot==='uniform'?Math.min(sex==='female'?87:90,hem):100;
+      const top=layer.slot==='uniform'?16:0;
+      const oppositeCut=layer.slot==='uniform'?WEARABLE_BODY_WRISTS[sex][1][1]:right;
+      layer.clip=wearablePlaneClip(spec,[[0,top],[100,top],[100,oppositeCut],[67,oppositeCut],[67,60],[100,60],[100,lower],[0,lower],[0,60],[33,60],[33,wristY+.2],[35,elbowY],[0,elbowY]]);
+    }
+  }
+  layers.push(...Object.values(held).filter(hand=>!hand.integratedGrip));
+  return layers;
+}
+function wearableFitAudit(gender,equipment={},career){
+  const specs=wearableSpecification(gender,equipment,career),contacts=[];
+  for(const spec of specs){
+    if(!spec.contact||!WEARABLE_ART[spec.item])continue;
+    for(const c of [spec.contact,spec.triggerContact,spec.gripContact].filter(Boolean)){
+      const kind=c.kind||(['module','implant','back'].includes(spec.slot)?'socket':'seam');
+      contacts.push({item:spec.item,kind,anchor:c.anchor,actual:wearableTransformPoint(spec,c.sourcePoint),sourcePoint:c.sourcePoint,layerKey:spec.key,tolerance:kind==='grip'?.35:1,occluded:c.occluded,occlusion:c.occlusion,anatomy:c.anatomy});
+    }
+  }
+  return {contacts,visualFit:'requires-human-review'};
+}
 async function updateWearablePortrait(host,gender,equipment,career,lifeCareers=[]){
   const specs=wearableSpecification(gender,equipment,career,lifeCareers),keep=new Set(specs.map(s=>s.key));
   const version=(host._wearableVersion||0)+1;host._wearableVersion=version;
   // Decode before changing the mounted layer. Rapid choices cannot finish out of
   // order or leave the character blank while a new asset is still loading.
-  await Promise.all(specs.map(spec=>loadWearableSource(spec.src)));
+  await Promise.all(specs.filter(spec=>spec.src).map(spec=>loadWearableSource(spec.src)));
   if(host._wearableVersion!==version)return false;
   host.classList.add('wearable-portrait');host.dataset.gender=gender==='female'?'female':'male';
   host.setAttribute('role','img');host.setAttribute('aria-label',(gender==='female'?'女性':'男性')+'当前穿戴');
   for(const old of host.querySelectorAll('[data-wear-key]'))if(!keep.has(old.dataset.wearKey))old.remove();
   for(const spec of specs){
     let img=host.querySelector('[data-wear-key="'+spec.key+'"]');
-    if(!img){img=document.createElement('img');img.dataset.wearKey=spec.key;img.alt='';img.draggable=false;host.appendChild(img);}
+    if(!img){img=document.createElement(spec.mount?'span':'img');img.dataset.wearKey=spec.key;img.alt='';img.draggable=false;host.appendChild(img);}
+    if(spec.mount){img.className='wearable-dock';img.dataset.slot='mount';img.dataset.item=spec.item;img.dataset.mount=spec.mount;img.style.left=spec.x+'%';img.style.top=spec.y+'%';img.style.zIndex=spec.z;img.innerHTML='<i></i><b>'+ (spec.mount==='module'?'M':'N')+'</b>';continue;}
     if(img.getAttribute('src')!==spec.src)img.src=spec.src;
-    img.dataset.slot=spec.slot;img.dataset.item=spec.item;img.style.zIndex=spec.slot==='base'?1:spec.slot==='uniform'?2:spec.slot==='back'?0:spec.slot==='life'?20:WEARABLE_ORDER.indexOf(spec.slot)+2;
-    img.style.transform=spec.slot==='base'?'none':'translate('+spec.x+'%,'+spec.y+'%) scale('+spec.sx+','+spec.sy+')';
+    img.dataset.slot=spec.slot;img.dataset.item=spec.item;img.dataset.pose=spec.pose||'';img.dataset.handItem=spec.handItem||'';img.dataset.integratedGrip=spec.integratedGrip?'true':'';img.dataset.occupiedHilt=spec.occupiedHilt?'true':'';img.style.zIndex=spec.z??({base:1,uniform:2,back:0,legs:4,feet:5,body:6,hands:9,weapon:21,offhand:24,grip:22,head:26,implant:28,module:28,life:30}[spec.slot]);
+    img.style.transform=spec.slot==='base'?'none':'translate('+spec.x+'%,'+spec.y+'%) rotate('+(spec.rotation||0)+'deg) scale('+spec.sx+','+spec.sy+')';
     img.style.transformOrigin=spec.origin||'50% 0%';
     img.style.clipPath=spec.clip||(spec.half==='left'?'inset(0 50% 0 0)':spec.half==='right'?'inset(0 0 0 50%)':'none');
   }
   return true;
 }
-if(typeof module!=='undefined'&&module.exports)module.exports={WEARABLE_ROOT,WEARABLE_ORDER,WEARABLE_ART,WEARABLE_UNIFORMS,wearableSpecification};
+if(typeof module!=='undefined'&&module.exports)module.exports={WEARABLE_ROOT,WEARABLE_ORDER,WEARABLE_ART,WEARABLE_UNIFORMS,wearableSpecification,wearableFitAudit,wearableTransformPoint,fittedWearableSpec};
