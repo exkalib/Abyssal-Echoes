@@ -134,10 +134,11 @@ const output=process.env.THUMB_SCREENSHOT_DIR||path.join(__dirname,'../output/mo
    await page.locator('.bag-category-tabs button').filter({hasText:'材料'}).tap();await page.locator('.bag-category-tabs button').filter({hasText:'消耗品'}).tap();
    assert.equal(await page.locator('.inventory-scroll').evaluate(n=>n.scrollTop),consumableTop);assert.equal(await page.locator('.rpg-bag-body').getAttribute('data-selected-item'),'masteryManual');
    const manualsBefore=await page.evaluate(()=>state.inv.masteryManual);await quick.tap();
-   assert.deepEqual(await page.evaluate(()=>[state.tab,state.charView,state.skillView]),['char','skills','mastery']);
-   assert.equal(await page.locator('.skill-mastery-study').count(),1);assert.equal(await page.locator('.skill-mastery-confirm').count(),1);
-   assert.equal(await page.locator('.bag-thumb-sheet,.mastery-book-sheet').count(),0);assert.equal(await page.locator('#panel').evaluate(n=>n.inert),false,'mastery page does not retain a closed drawer lock');
+   assert.deepEqual(await page.evaluate(()=>[state.tab,state.charView,state.skillView]),['char','skills','active']);
+   await page.locator('.skill-study-sheet').waitFor();assert.equal(await page.locator('.skill-projection').count(),1);assert.equal(await page.locator('.skill-mastery-study').count(),1);
+   assert.equal(await page.locator('.bag-thumb-sheet,.mastery-book-sheet').count(),0);assert.equal(await page.locator('#panel').evaluate(n=>n.inert),true,'only the explicit study overlay locks its background');
    assert.equal(await page.evaluate(()=>state.inv.masteryManual),manualsBefore,'opening the mastery page never spends a manual');
+   await page.locator('.skill-study-back').tap();await page.locator('.skill-collection-back').tap();assert.equal(await page.locator('#panel').evaluate(n=>n.inert),false);
    await page.locator('#tabbar [data-tab="bag"]').tap();assert.equal(await page.evaluate(()=>state.inv.masteryManual),manualsBefore,'returning to the backpack does not spend a manual');
    await page.locator('.bag-category-tabs button').filter({hasText:'装备'}).tap();await ready();
    const reopen=async()=>{await page.locator('#tabbar [data-tab="char"]').tap();await page.locator('#tabbar [data-tab="bag"]').tap();await ready();};

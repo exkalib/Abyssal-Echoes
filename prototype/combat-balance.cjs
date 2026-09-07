@@ -66,10 +66,12 @@ function runFight(sim,stage,role,enemy,seed,options={}){
  const {rotation=true,training=true}=options;
  stage={...stage,level:sim.a.ENEMIES[enemy].boss?stage.bossLevel||stage.level:stage.level};
  const {a}=sim;sim.seed(seed);const s=configure(a,stage,role,{training}),hp=s.player.hp,stamina=s.player.stamina,ammo=s.inv.ammo,cell=s.inv.weaponCell;
- a.startCombat(enemy);const c=s.combat,actions={},initial={hp,stamina,atk:a.totalAtk(),def:a.totalDef(),shield:a.shieldMax()},ledger={minHp:hp};
+ const actions={},initial={hp,stamina,atk:a.totalAtk(),def:a.totalDef(),shield:a.shieldMax(),spd:a.baseSpd()},ledger={minHp:hp};
+ s.player.shield=a.shieldMax();
  // Observe every real state write: a healed finishing blow must not erase damage
  // taken earlier, and a potion must not disguise stamina spent during the fight.
  for(const key of ['hp','shield','stamina']){let value=s.player[key];ledger[key+'Spent']=0;ledger[key+'Restored']=0;Object.defineProperty(s.player,key,{enumerable:true,configurable:true,get:()=>value,set(next){ledger[key+(next<value?'Spent':'Restored')]+=Math.abs(next-value);value=next;if(key==='hp')ledger.minHp=Math.min(ledger.minHp,next);}});}
+ a.startCombat(enemy);const c=s.combat;
  for(let n=0;n<200&&!c.result;n++){
   const action=chooseAction(a,s,role,rotation),before=c.playerTurns;
   if(action==='attack')a.playerAttack();else if(action==='approach')a.approach();else if(action==='rest')a.catchBreath();else if(action.startsWith('item:'))a.combatItem(action.slice(5));else a.useSkill(action);

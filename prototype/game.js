@@ -299,6 +299,7 @@ const MASTERIES = {
   critMastery:    {name:'暴击精通', stat:'crit',         perLv:1,  route:'combat',npc:'哈里斯',desc:'暴击率 +{v}%',overStat:'critDmg',overPerLv:2,overDesc:'弱点撕裂：暴击伤害 +{v}%'},
   critDmgMastery: {name:'暴伤精通', stat:'critDmg',      perLv:10, route:'combat',npc:'哈里斯',desc:'暴击伤害 +{v}%',overStat:'atkPct',overPerLv:1,overDesc:'冲击增幅：攻击力 +{v}%'},
   speedMastery:   {name:'速度精通', stat:'spd',          perLv:1,  route:'combat',npc:'阿勇',  desc:'速度 +{v}',overStat:'atkPct',overPerLv:.5,overDesc:'动能蓄势：攻击力 +{v}%'},
+  rangeMastery:   {name:'射程精通', stat:'rangeAdd',     perLv:1,  route:'combat',npc:'哈里斯',desc:'所有武器与攻击技能距离 +{v}',overStat:'pen',overPerLv:.5,overDesc:'空间贯穿：护甲穿透 +{v}%'},
   staminaMastery: {name:'耐力精通', stat:'stMax',        perLv:1,  route:'surv',  npc:'阿勇',  desc:'体力上限 +{v}',overStat:'hpPct',overPerLv:1,overDesc:'代谢闭环：生命上限 +{v}%'},
   shieldMastery:  {name:'护盾精通', stat:'shield',       perLv:1,  route:'surv',  npc:'小唐',  desc:'护盾上限 +{v}',overStat:'defPct',overPerLv:1,overDesc:'场甲耦合：防御力 +{v}%'},
 };
@@ -354,7 +355,7 @@ const NPC_TEACH = {
   '老周': ['mineMastery','recycleMastery'],
   '阿珍': ['craftMastery'],
   '陈嫂': ['gardenMastery'],
-  '哈里斯':['attackMastery','critMastery','critDmgMastery'],
+  '哈里斯':['attackMastery','critMastery','critDmgMastery','rangeMastery'],
   '小唐': ['defenseMastery','shieldMastery'],
   '阿勇': ['speedMastery','staminaMastery'],
 };
@@ -1817,7 +1818,9 @@ function migrateStaminaBase(){
   state.staminaBaseVersion=STAMINA_BASE_VERSION;
   return true;
 }
-function atkRange(){ const w=eqOf('weapon'); return (w?(w.range||1):1) + techBonus('rangeAdd'); }
+function attackRangeBonus(){return techBonus('rangeAdd')+masteryBonus('rangeAdd');}
+function atkRange(){ const w=eqOf('weapon'); return (w?(w.range||1):1) + attackRangeBonus(); }
+function skillRange(s){return s.target==='self'?Infinity:(s.range||(s.kind==='melee'||s.kind==='shield'?1:(eqOf('weapon')?.range||1)))+attackRangeBonus();}
 function attackResource(skill){
   const w=eqOf('weapon'),type=skill&&skill.resource==='stamina'?'melee':w&&w.weaponType?w.weaponType:'melee';
   if(skill&&skill.kind==='ranged'&&type!=='ranged')return {ready:false,compatible:false,reason:'需要装备枪械'};
@@ -1843,7 +1846,7 @@ function skillEquipmentStatus(k){
 }
 function skillUseStatus(k){
   const s=SKILLS[k];if(!s||s.type!=='active')return {ok:false,text:'不是战斗主动技能',resource:{ready:false,compatible:false},maxRange:0,chargeCost:0,compatible:false,rangeOk:false};
-  const resource=attackResource(s),equipment=skillEquipmentStatus(s),maxRange=s.target==='self'?Infinity:(s.range||(s.kind==='melee'||s.kind==='shield'?1:atkRange())),rangeOk=!state.combat||s.target==='self'||state.combat.distNow<=maxRange,chargeCost=s.chargeCost||0,charge=combatCareerState(),enoughCharge=!chargeCost||charge&&charge.charge>=chargeCost;
+  const resource=attackResource(s),equipment=skillEquipmentStatus(s),maxRange=skillRange(s),rangeOk=!state.combat||s.target==='self'||state.combat.distNow<=maxRange,chargeCost=s.chargeCost||0,charge=combatCareerState(),enoughCharge=!chargeCost||charge&&charge.charge>=chargeCost;
   let text='';if(!skillUnlocked(k))text='技能尚未解锁';else if(!equipment.ok)text=equipment.text;else if(!rangeOk)text='射程不足 · 需要 '+maxRange;else if(!resource.ready)text=resource.reason;else if(!enoughCharge)text=(charge?charge.label:'职业充能')+'不足 · 需要 '+chargeCost+' 格';
   return {ok:!text,text:text||attackResourceText(resource)+(chargeCost?' · '+charge.label+' -'+chargeCost:''),resource,maxRange,chargeCost,compatible:equipment.ok,rangeOk};
 }
@@ -3873,6 +3876,7 @@ function renderFieldExpedition(box,id){
   viewport.appendChild(fieldMapStatusNode(id,attempts,markers));viewport.appendChild(drawer);restoreFieldMarkerSelection(viewport,drawer,markers,id);box.appendChild(viewport);acknowledgeFieldFog(id,fog);
   }
   if(reveal)pendingFieldReveal=null;
+  renderCareerRitualPrompt(box,id);
   const dock=el('footer','field-explore-dock'),exploreButton=el('button','field-explore-button primary','<span class="field-explore-icon">'+uiIcon('scan')+'</span><span><small>PRIMARY SURVEY // '+String(attempts+1).padStart(2,'0')+'</small><b>'+(attempts?'继续探索':'开始探索')+'</b><em>'+(attempts?'扩大测绘范围并寻找新地点':'从当前落脚点建立第一段地图')+'</em></span><strong>体力 -'+areaActionCost(1)+uiIcon('chevron-right')+'</strong>');
   exploreButton.type='button';exploreButton.onclick=()=>explore('investigate');dock.classList.add('field-thumb-dock');dock.appendChild(fullMap);dock.appendChild(exploreButton);if(tools.firstElementChild)dock.appendChild(tools.firstElementChild);box.appendChild(dock);
 }
@@ -3959,7 +3963,7 @@ const SKILL_UI={
   combatRhythm:'skill-combat-rhythm',reactiveArmor:'skill-reactive-armor',weakpointModel:'skill-weakpoint-model',salvageSense:'skill-salvage-sense',fieldSorting:'skill-field-sorting',precisionFab:'skill-precision-fab',thermalControl:'skill-thermal-control',bioCycle:'skill-bio-cycle',adaptiveCulture:'skill-adaptive-culture',
   quickScavenge:'skill-quick-scavenge',pulseMining:'skill-pulse-mining',precisionDismantle:'skill-precision-dismantle',strataExcavation:'skill-strata-excavation',fieldRepair:'skill-field-repair',sporeBoost:'skill-spore-boost',sterileSampling:'skill-sterile-sampling',tacticalScan:'skill-tactical-scan',shieldBash:'skill-shield-bash',heavyBlow:'skill-heavy-blow'
 };
-const MASTERY_UI={gatherMastery:'salvage',mineMastery:'scan',recycleMastery:'refresh',craftMastery:'construct',gardenMastery:'medical',attackMastery:'combat',defenseMastery:'armor',critMastery:'locate',critDmgMastery:'pierce',speedMastery:'phase',staminaMastery:'energy',shieldMastery:'offhand'};
+const MASTERY_UI={gatherMastery:'salvage',mineMastery:'scan',recycleMastery:'refresh',craftMastery:'construct',gardenMastery:'medical',attackMastery:'combat',defenseMastery:'armor',critMastery:'locate',critDmgMastery:'pierce',speedMastery:'phase',rangeMastery:'locate',staminaMastery:'energy',shieldMastery:'offhand'};
 const SKILL_EFFECT_UI={
   kineticReprisal:'shield',overloadVolley:'burst',riftExecution:'phase',
   pierce:'lance',heavy:'cleave',pulseBurst:'burst',combatRhythm:'rhythm',kineticBrace:'shield',reactiveArmor:'shield',phaseStrike:'phase',weakpointModel:'scan',
@@ -3975,7 +3979,7 @@ function skillLevelEffectText(k,previewLevel){
   if(s.effect==='heavy')return num(1.8+lv*.05)+' 倍伤害';
   if(s.effect==='burst')return num(1.7+lv*.15)+' 倍伤害 · 穿甲 25%';
   if(s.effect==='brace')return '恢复 '+Math.round(Math.min(.65,.3+lv*.05)*100)+'% 护盾 · 下次敌人行动防御 +'+Math.round(Math.min(.6,.25+lv*.05)*100)+'% · 动能 +'+(skillUnlocked('reactiveArmor')?2:1);
-  if(s.effect==='phase')return num(1.55+lv*.15)+' 倍伤害 · 3 格突进 · 完全穿甲 · 必定暴击';
+  if(s.effect==='phase')return num(1.55+lv*.15)+' 倍伤害 · '+skillRange(s)+' 格突进 · 完全穿甲 · 必定暴击';
   if(s.effect==='scan')return '目标防御 -'+Math.round(Math.min(.6,.25+lv*.05)*100)+'% · 持枪有效扫描积累锁定';
   if(s.effect==='bash')return num(1.17+lv*.03)+' 倍伤害 · 命中动能 +1 · 下次敌人行动防御 +5';
   if(s.effect==='blow')return num(1.45+lv*.05)+' 倍伤害 · 穿甲 20% · 相位 +'+(skillUnlocked('weakpointModel')?2:1);
@@ -4007,50 +4011,74 @@ function renderSkillDetail(selected,onMutate){
   let footerSync=()=>{},previewCount=1;
   const syncEffects=()=>{const unlocked=skillEntryUnlocked(selected),lv=mastery?masteryLv(id):Math.max(1,skillLv(id)),book=active&&Object.keys(ITEMS).find(key=>ITEMS[key].type==='book'&&ITEMS[key].skill===id&&has(key)),nextLv=mastery?lv+previewCount:book?Math.min(SKILL_MAX_LEVEL,Math.floor((skillProf(id)+20)/10)):Math.min(SKILL_MAX_LEVEL,lv+1);currentLabel.textContent='当前 Lv'+(unlocked?lv:0);effect.textContent=!unlocked?'尚未生效':mastery?masteryEffectText(id,lv):skillLevelEffectText(id);nextLabel.textContent=mastery||book&&lv<SKILL_MAX_LEVEL?'研读后 Lv'+nextLv:!unlocked?'学会后 Lv1':lv>=SKILL_MAX_LEVEL?'技能已满级':'下一级 Lv'+nextLv;nextEffect.textContent=mastery?masteryEffectText(id,nextLv):skillLevelEffectText(id,unlocked||book?nextLv:1);};
   detail._previewMastery=count=>{previewCount=count;syncEffects();};
-  detail._sync=()=>{const unlocked=skillEntryUnlocked(selected),lv=mastery?masteryLv(id):Math.max(1,skillLv(id)),slot=active?equippedSlot(id):-1;detail.classList.toggle('online',unlocked);detail.classList.toggle('locked',!unlocked);level.textContent=!unlocked?'尚未学会':active?(slot>=0?'已装配 · 技能栏 '+(slot+1):'未装配')+' · 熟练度 '+skillProgressText(id):mastery?'永久生效 · 等级无上限':'已自动生效 · 熟练度 '+skillProgressText(id);syncEffects();if(active){const gear=skillEquipmentStatus(id);use.classList.toggle('rpg-unready',!gear.ok);use.textContent=(unlocked?'使用条件 · ':'学会后使用 · ')+gear.text+' · '+skillResourceLabel(s);}else use.textContent=!unlocked?'获取方式 · '+(mastery?'导师 '+s.npc+' / 精通训练手册':skillUnlockText(id,s)):mastery?'每本手册升 1 级，也可找 '+s.npc+' 用材料训练。':s.type==='career'?skillFieldLocation(id):'被动能力，不占战斗技能栏。';footerSync();};
-  detail._mountActions=(footer,onClose)=>{
-    const notice=el('p','skill-action-feedback');notice.hidden=!active;notice.setAttribute('aria-live','polite');footer.appendChild(notice);
+  detail._sync=()=>{const unlocked=skillEntryUnlocked(selected),lv=mastery?masteryLv(id):Math.max(1,skillLv(id)),slot=active?equippedSlot(id):-1;detail.classList.toggle('online',unlocked);detail.classList.toggle('locked',!unlocked);level.textContent=!unlocked?'尚未学会':active?(slot>=0?'已装配 · 技能栏 '+(slot+1):'未装配')+' · 熟练度 '+skillProgressText(id):mastery?'永久生效 · 等级无上限':'已自动生效 · 熟练度 '+skillProgressText(id);syncEffects();if(active){const gear=skillEquipmentStatus(id);use.classList.toggle('rpg-unready',!gear.ok);use.textContent=(unlocked?'使用条件 · ':'学会后使用 · ')+gear.text+' · '+skillResourceLabel(s)+(s.target==='self'?'':' · 距离 '+skillRange(s));}else use.textContent=!unlocked?'获取方式 · '+(mastery?'导师 '+s.npc+' / 精通训练手册':skillUnlockText(id,s)):mastery?'每本手册升 1 级，也可找 '+s.npc+' 用材料训练。':s.type==='career'?skillFieldLocation(id):'被动能力，不占战斗技能栏。';footerSync();};
+  detail._mountActions=(footer,onClose,options={})=>{
+    const notice=el('p','skill-action-feedback');notice.hidden=!active||options.loadoutOnly;notice.setAttribute('aria-live','polite');footer.appendChild(notice);
     const refresh=message=>{onMutate();renderTop();detail._sync();notice.textContent=message;};
     const syncs=[];
     if(active){
-      notice.textContent='点击技能栏装配 · 点击此技能所在栏卸下';const choices=el('div','skill-assignment-slots skill-loadout-strip');footer.appendChild(choices);
-      [0,1,2].forEach(index=>{const button=el('button','skill-assign-slot ui-button'),number=el('small','', '技能栏 '+(index+1)),name=el('b'),hint=el('span');button.type='button';button.dataset.slot=String(index);button.appendChild(number);button.appendChild(name);button.appendChild(hint);button.onclick=()=>{if(!skillUnlocked(id))return;if(equippedSlot(id)===index){unequipSkill(index,()=>refresh('已卸下 '+s.name));}else equipSkill(id,index,()=>refresh('已装配到技能栏 '+(index+1)));};choices.appendChild(button);syncs.push(()=>{const previous=state.skillSlots[index],equipped=previous===id;button.disabled=!skillUnlocked(id);button.classList.toggle('equipped',equipped);button.setAttribute('aria-label',(equipped?'卸下':previous?'替换':'装配到')+'技能栏 '+(index+1));name.textContent=previous&&SKILLS[previous]?SKILLS[previous].name:'空位';hint.textContent=equipped?'点击卸下':previous?'替换为此技能':'装配此技能';});});
-      const book=Object.keys(ITEMS).find(key=>ITEMS[key].type==='book'&&ITEMS[key].skill===id);
+      notice.textContent='点击技能栏装配 · 点击此技能所在栏卸下';const choices=el('div','skill-assignment-slots skill-loadout-strip');if(!options.trainingOnly)footer.appendChild(choices);else notice.hidden=true;
+      [0,1,2].forEach(index=>{const button=el('button','skill-assign-slot ui-button'),number=el('small','skill-slot-emblem', '技能栏 '+(index+1)),name=el('b'),hint=el('span');button.type='button';button.dataset.slot=String(index);button.appendChild(number);button.appendChild(name);button.appendChild(hint);button.onclick=()=>{if(!skillUnlocked(id))return;if(equippedSlot(id)===index){unequipSkill(index,()=>refresh('已卸下 '+s.name));}else equipSkill(id,index,()=>refresh('已装配到技能栏 '+(index+1)));};choices.appendChild(button);syncs.push(()=>{const previous=state.skillSlots[index],equipped=previous===id;button.disabled=!skillUnlocked(id);button.classList.toggle('equipped',equipped);button.setAttribute('aria-label',(equipped?'卸下':previous?'替换':'装配到')+'技能栏 '+(index+1));if(options.loadoutOnly&&number.dataset.skill!==(previous||'')){number.dataset.skill=previous||'';number.innerHTML=uiIcon(previous?skillEntryIcon(previous):'plus');}name.textContent=previous&&SKILLS[previous]?SKILLS[previous].name:'空位';hint.textContent=equipped?'点击卸下':previous?'替换为此技能':'装配此技能';});});
+      const book=!options.loadoutOnly&&Object.keys(ITEMS).find(key=>ITEMS[key].type==='book'&&ITEMS[key].skill===id);
       if(book){const learn=el('button','skill-book-action ui-button ui-button--primary');learn.type='button';learn.onclick=()=>{if(has(book)&&skillLv(id)<SKILL_MAX_LEVEL)useItem(book,()=>refresh('研读完成 · 当前 Lv'+skillLv(id)));};footer.appendChild(learn);syncs.push(()=>{learn.disabled=skillLv(id)>=SKILL_MAX_LEVEL||!has(book);learn.textContent=skillLv(id)>=SKILL_MAX_LEVEL?'已满级':has(book)?'研读 1 本 · 持有 '+state.inv[book]+' · 熟练度 +20':'缺少 '+ITEMS[book].name+' ×1';});}
-      else{const growth=el('p','skill-upgrade-cost');footer.appendChild(growth);syncs.push(()=>{growth.textContent=skillUnlocked(id)?skillLv(id)>=SKILL_MAX_LEVEL?'已达技能满级':'使用招式积累熟练度 · 距下一级 '+(10-skillProf(id)%10)+' 点':skillUnlockText(id,s);});}
-    }else if(mastery){
+      else if(!options.loadoutOnly){const growth=el('p','skill-upgrade-cost');footer.appendChild(growth);syncs.push(()=>{growth.textContent=skillUnlocked(id)?skillLv(id)>=SKILL_MAX_LEVEL?'已达技能满级':'使用招式积累熟练度 · 距下一级 '+(10-skillProf(id)%10)+' 点':skillUnlockText(id,s);});}
+    }else if(mastery&&!options.loadoutOnly){
       const study=el('div','skill-mastery-study'),caption=el('p','skill-mastery-caption'),controls=el('div','skill-mastery-controls'),quantity=el('input','skill-mastery-quantity ui-input'),confirm=el('button','skill-mastery-confirm ui-button ui-button--primary'),guide=el('p','skill-mastery-guide');let count=1;quantity.type='number';quantity.min='1';quantity.inputMode='numeric';quantity.setAttribute('aria-label','研读手册数量');
       const setCount=value=>{const held=state.inv.masteryManual||0;count=Math.max(1,Math.min(held||1,Math.floor(Number(value)||1)));quantity.value=held?String(count):'0';confirm.textContent=held?'研读 '+count+' 本 · Lv'+masteryLv(id)+' → Lv'+(masteryLv(id)+count):'缺少精通训练手册 ×1';detail._previewMastery(count);};
       [-1,1,10,100].forEach((delta,index)=>{const button=el('button','ui-button',delta>0?'+'+delta:String(delta));button.type='button';button.onclick=()=>setCount(count+delta);controls.appendChild(button);if(index===0)controls.appendChild(quantity);});quantity.oninput=()=>setCount(quantity.value);quantity.onblur=()=>setCount(quantity.value);confirm.type='button';confirm.onclick=()=>useMasteryManual(id,count,()=>refresh('精通已提升至 Lv'+masteryLv(id)));study.appendChild(caption);study.appendChild(controls);study.appendChild(confirm);footer.appendChild(study);detail.appendChild(guide);syncs.push(()=>{const held=state.inv.masteryManual||0;quantity.max=String(Math.max(1,held));quantity.disabled=!held;confirm.disabled=!held;Array.from(controls.querySelectorAll('button')).forEach(button=>button.disabled=!held);caption.textContent='手册 '+held+' 本 · 每本 +1 级';guide.textContent=held?'':'找 '+s.npc+' 训练 · '+costText(masteryCost(id));guide.hidden=!!held;setCount(count);});
-    }else{const status=el('p','skill-auto-status');footer.appendChild(status);syncs.push(()=>{status.textContent=skillEntryUnlocked(selected)?s.type==='career'?'生活能力已就绪 · 不占战斗技能栏':'已自动生效 · 无需装配':skillUnlockText(id,s);});}
+    }else if(!options.loadoutOnly){const status=el('p','skill-auto-status');footer.appendChild(status);syncs.push(()=>{status.textContent=skillEntryUnlocked(selected)?s.type==='career'?'生活能力已就绪 · 不占战斗技能栏':'已自动生效 · 无需装配':skillUnlockText(id,s);});}
     footerSync=()=>syncs.forEach(sync=>sync());footerSync();
   };
   detail._sync();return detail;
 }
 function skillFieldLocation(id){return ({sporeBoost:'菌圃 · 在每个培养块使用催生',fieldRepair:'损坏设施 · 修理时自动采用',quickScavenge:'野外资源点 · 采集时自动采用',pulseMining:'矿物资源点 · 开采时自动采用',precisionDismantle:'工业残骸 · 拆解时自动采用',strataExcavation:'矿层与遗迹 · 挖掘时自动采用',sterileSampling:'生物资源点 · 采样时自动采用'})[id]||'对应生活行动中自动生效';}
-function renderSkillBrowser(view,onSelect){
+function renderSkillBrowser(view,onSelect,options={}){
   const entries=skillPageEntries(view).sort((a,b)=>Number(skillEntryUnlocked(b))-Number(skillEntryUnlocked(a))),browser=el('div','skill-browser'),library=el('div','skill-library-grid'),cardRefs=[];
   browser.dataset.skillView=view;library.setAttribute('aria-label',view==='active'?'主动技能库':view==='auto'?'自动能力库':'基础精通库');
-  browser._selectSkill=ref=>{if(!entries.includes(ref))return;browser._selected=ref;state.skillSelected=ref;browser._sync();onSelect(ref);save();};
+  browser._selectSkill=ref=>{if(!entries.includes(ref))return;browser._selected=ref;if(options.remember!==false)state.skillSelected=ref;browser._sync();onSelect(ref);if(options.remember!==false)save();};
   entries.forEach(ref=>{const mastery=ref.startsWith('mastery:'),id=mastery?ref.slice(8):ref,s=mastery?MASTERIES[id]:SKILLS[id],card=el('button','skill-library-card ui-card '+skillToneClass(ref)),copy=el('span','skill-card-copy'),meta=el('em'),badge=el('i','skill-card-state');card.type='button';card.dataset.skill=ref;card.setAttribute('aria-controls','skill-selected-detail');copy.appendChild(el('b','',s.name));copy.appendChild(meta);card.appendChild(el('span','skill-card-icon',uiIcon(skillEntryIcon(ref))));card.appendChild(copy);card.appendChild(badge);card.onclick=()=>browser._selectSkill(ref);cardRefs.push({ref,id,s,mastery,card,meta,badge});library.appendChild(card);});
-  const empty=el('div','skill-library-empty','<i>'+uiIcon('skill')+'</i><b>还没有学会这类能力</b><p>完成职业训练或获得技能书后，会出现在这里。</p><span>勾选“显示未学”，查看获取方式</span>');browser.appendChild(library);browser.appendChild(empty);
+  const empty=el('div','skill-library-empty','<i>'+uiIcon('skill')+'</i><b>还没有学会这类能力</b><p>完成职业训练或获得技能书后，会出现在这里。</p><span>打开「技能图鉴」查看获取线索</span>');browser.appendChild(library);browser.appendChild(empty);
   browser._visibleRefs=()=>cardRefs.filter(row=>!row.card.hidden).map(row=>row.ref);
-  browser._sync=()=>{let visible=0;cardRefs.forEach(({ref,id,s,mastery,card,meta,badge})=>{const unlocked=skillEntryUnlocked(ref),slot=mastery?-1:equippedSlot(id);card.hidden=!mastery&&!state.skillCatalogue&&!unlocked;if(!card.hidden)visible++;card.classList.toggle('unlocked',unlocked);card.classList.toggle('locked',!unlocked);card.classList.toggle('equipped',slot>=0);card.classList.toggle('selected',browser._selected===ref);card.setAttribute('aria-pressed',browser._selected===ref?'true':'false');meta.textContent=unlocked?'Lv'+(mastery?masteryLv(id):Math.max(1,skillLv(id))):mastery?'Lv0 · 可研读':'未学会';badge.textContent=slot>=0?'已装 '+(slot+1):'';});empty.hidden=visible>0;};browser._sync();return browser;
+  browser._sync=()=>{let visible=0;cardRefs.forEach(({ref,id,s,mastery,card,meta,badge})=>{const unlocked=skillEntryUnlocked(ref),slot=mastery?-1:equippedSlot(id);card.hidden=!mastery&&!(options.catalogue??state.skillCatalogue)&&!unlocked;if(!card.hidden)visible++;card.classList.toggle('unlocked',unlocked);card.classList.toggle('locked',!unlocked);card.classList.toggle('equipped',slot>=0);card.classList.toggle('selected',browser._selected===ref);card.setAttribute('aria-pressed',browser._selected===ref?'true':'false');meta.textContent=unlocked?'Lv'+(mastery?masteryLv(id):Math.max(1,skillLv(id))):mastery?'Lv0 · 可研读':'未学会';badge.textContent=slot>=0?'已装 '+(slot+1):'';});empty.hidden=visible>0;};browser._sync();return browser;
+}
+function openSkillStudy(ref,onMutate,returnTo){
+  const detail=renderSkillDetail(ref,onMutate),sheet=mountThumbSheet(detail,{className:'skill-study-sheet '+skillToneClass(ref),label:(ref.startsWith('mastery:')?MASTERIES[ref.slice(8)].name:SKILLS[ref].name)+' · 研习详情'}),back=el('button','skill-study-back',returnTo?'返回能力列表':'返回战技');
+  detail._mountActions(sheet.footer,null,{trainingOnly:true});back.onclick=()=>{sheet.close();if(returnTo)returnTo();};sheet.footer.appendChild(back);
+}
+function openSkillCollection(view,onMutate,scrollTop=0){
+  const mastery=view==='mastery',content=el('section','skill-collection-content','<header><i>'+uiIcon(mastery?'implant':'module')+'</i><span><small>'+(mastery?'永久成长 · 等级无上限':'已学能力 · 无需装配')+'</small><h2>'+(mastery?'基础精通':'被动与生活能力')+'</h2></span></header>');let sheet;
+  const browser=renderSkillBrowser(view,ref=>{const top=sheet.body.scrollTop;openSkillStudy(ref,onMutate,()=>openSkillCollection(view,onMutate,top));},{catalogue:false,remember:false});
+  browser.classList.add('skill-collection-library');browser.querySelector('.skill-library-empty').innerHTML='<b>尚未获得自动能力</b><p>职业训练与探索会让新的能力出现在这里。</p>';content.appendChild(browser);
+  sheet=mountThumbSheet(content,{className:'skill-collection-sheet',label:mastery?'基础精通':'被动与生活能力'});const back=el('button','skill-collection-back','返回战技');back.onclick=()=>sheet.close();sheet.footer.appendChild(back);sheet.body.scrollTop=scrollTop;
 }
 function renderSkillPanel(box){
-  box.classList.add('skills-page','thumb-skills-page');state.skillView=['active','auto','mastery'].includes(state.skillView)?state.skillView:'active';
-  const hero=el('header','skill-console-head ui-module-header'),heading=el('h1','','技能'),count=el('span','skill-library-count'),hint=el('p','skill-view-hint'),browsers={},tabRefs=[],inspector=el('section','skill-inspector'),detailBody=el('div','skill-inspector-body'),actions=el('footer','skill-action-dock');let detail=null;
-  inspector.id='skill-selected-detail';inspector.append(detailBody,actions);hero.append(heading,count);box.appendChild(hero);
-  const catalogue=el('button','skill-catalogue-toggle rpg-text-button',uiIcon('check')+'<b>显示未学</b>');catalogue.type='button';catalogue.setAttribute('aria-label','显示未学技能');hero.appendChild(catalogue);
-  const showDetail=ref=>{if(detail&&detail.dataset.skill===ref)return;detail=ref?renderSkillDetail(ref,refreshInteractive):null;inspector.className='skill-inspector '+(ref?skillToneClass(ref):'');detailBody.replaceChildren();actions.replaceChildren();if(detail){detailBody.appendChild(detail);detail._mountActions(actions);}else detailBody.appendChild(el('p','skill-selection-empty','选择一项能力，查看效果与获取方式。'));inspector.classList.toggle('is-empty',!detail);};
-  const ensureSelection=()=>{const browser=browsers[state.skillView],visible=browser._visibleRefs(),ref=visible.includes(browser._selected)?browser._selected:visible.includes(state.skillSelected)?state.skillSelected:visible.find(id=>equippedSlot(id)>=0)||visible[0];if(ref)browser._selectSkill(ref);else showDetail(null);};
-  function syncLibraryCount(){const browser=browsers[state.skillView];count.textContent=browser._visibleRefs().length+' 项';requestAnimationFrame(()=>{if(browser!==browsers[state.skillView])return;count.textContent=browser._visibleRefs().length+' 项'+(browser.scrollHeight>browser.clientHeight+1?' · 上滑查看更多':'');});}
-  const refreshInteractive=()=>{Object.values(browsers).forEach(browser=>browser._sync());catalogue.setAttribute('aria-pressed',state.skillCatalogue?'true':'false');catalogue.classList.toggle('active',!!state.skillCatalogue);if(detail)detail._sync();syncLibraryCount();save();};
-  const dock=el('nav','skill-thumb-dock'),tabs=el('div','skill-category-tabs ui-segmented');dock.setAttribute('aria-label','技能分类');
-  function switchView(view){state.skillView=view;tabRefs.forEach(({id,tab})=>{const active=id===view;tab.classList.toggle('active',active);tab.setAttribute('aria-pressed',active?'true':'false');});Object.entries(browsers).forEach(([id,browser])=>browser.hidden=id!==view);hint.textContent=({active:'选招式，再点下方技能栏装配',auto:'已学能力自动生效，无需装配',mastery:'永久增益 · 每本手册 +1 级 · 等级无上限'})[view];catalogue.hidden=view==='mastery';ensureSelection();syncLibraryCount();save();}
-  [['active','主动技能'],['auto','自动生效'],['mastery','基础精通']].forEach(([id,label])=>{const tab=el('button','','<b>'+label+'</b>');tab.type='button';tab.onclick=()=>{if(state.skillView!==id)switchView(id);};tabRefs.push({id,tab});tabs.appendChild(tab);});dock.appendChild(tabs);box.append(dock,hint);
-  ['active','auto','mastery'].forEach(view=>{const browser=renderSkillBrowser(view,showDetail);browsers[view]=browser;browser.hidden=state.skillView!==view;box.appendChild(browser);});box.appendChild(inspector);
-  catalogue.onclick=()=>{state.skillCatalogue=!state.skillCatalogue;refreshInteractive();ensureSelection();};box._refreshSkillPanel=refreshInteractive;switchView(state.skillView);refreshInteractive();
+  box.classList.add('skills-page','thumb-skills-page');const entryView=state.skillView,entrySkill=state.skillSelected;state.skillView='active';
+  const hero=el('header','skill-console-head'),heading=el('span','','战斗招式'),count=el('span','skill-library-count'),stage=el('section','skill-projection'),visual=el('div','skill-projection-visual'),readout=el('div','skill-projection-readout'),name=el('h1'),level=el('span','skill-projection-level'),identity=el('div','skill-projection-identity'),effect=el('p','skill-projection-effect'),use=el('p','skill-projection-use'),status=el('small','skill-projection-status'),actions=el('footer','skill-game-actions'),loadout=el('div','skill-game-loadout'),study=el('button','skill-study-entry');let detail=null,browser;
+  stage.id='skill-selected-detail';stage.setAttribute('aria-label','当前技能');identity.append(name,level);readout.append(identity,status,effect,use);stage.append(visual,readout);hero.append(heading,count);
+  const catalogue=el('button','skill-catalogue-toggle rpg-text-button',uiIcon('document')+'<b>技能图鉴</b>');catalogue.type='button';catalogue.setAttribute('aria-label','查看未学技能图鉴');hero.appendChild(catalogue);
+  const syncProjection=()=>{
+    if(!detail){name.textContent='等待能力接入';level.textContent='';status.textContent='';effect.textContent='完成职业训练，或在探索中找到技能书。';use.textContent='获得能力后，在这里选择招式与装配。';study.disabled=true;study.textContent='尚无可研习能力';return;}
+    const ref=detail.dataset.skill,mastery=ref.startsWith('mastery:'),id=mastery?ref.slice(8):ref,s=mastery?MASTERIES[id]:SKILLS[id],unlocked=skillEntryUnlocked(ref),active=!mastery&&s.type==='active',slot=active?equippedSlot(id):-1;
+    name.textContent=s.name;level.textContent='Lv '+(mastery?masteryLv(id):unlocked?Math.max(1,skillLv(id)):0);status.textContent=!unlocked?'尚未学会':active?(slot>=0?'已装配 · 技能栏 '+(slot+1):'未装配 · 点下方技能栏装入'):mastery?'永久生效 · 精通无上限':'自动生效 · 无需装配';
+    effect.textContent=unlocked?(mastery?masteryEffectText(id,masteryLv(id)):skillLevelEffectText(id)):(mastery?'每次研习都能让你更进一步。':skillUnlockText(id,s));
+    use.textContent=active?(skillEquipmentStatus(id).text+' · '+skillResourceLabel(s)+(s.target==='self'?'':' · 距离 '+skillRange(s))):mastery?'通过导师训练或研读手册提升':s.type==='career'?skillFieldLocation(id):s.desc;
+    use.classList.toggle('rpg-unready',active&&!skillEquipmentStatus(id).ok);stage.classList.toggle('locked',!unlocked);
+    study.disabled=false;study.innerHTML=uiIcon(unlocked?'tech':'document')+'<span>'+(!unlocked&&!mastery?'获取线索':mastery?'研习精通':active?'招式研习':'能力详情')+'</span>'+uiIcon('chevron-right');
+    study.onclick=()=>openSkillStudy(ref,refreshInteractive);
+  };
+  const showDetail=ref=>{
+    if(detail&&detail.dataset.skill===ref)return;
+    detail=ref?renderSkillDetail(ref,refreshInteractive):null;stage.className='skill-projection '+(ref?skillToneClass(ref):'');stage.dataset.skill=ref||'';visual.dataset.effect=ref?skillEffectClass(ref):'scan';
+    visual.replaceChildren(el('div','skill-projection-emblem',uiIcon(ref?skillEntryIcon(ref):'implant')),el('i','projection-ray ray-one'),el('i','projection-ray ray-two'),el('i','projection-ray ray-three'));
+    loadout.replaceChildren();if(detail)detail._mountActions(loadout,null,{loadoutOnly:true});loadout.hidden=!ref||ref.startsWith('mastery:')||SKILLS[ref].type!=='active';syncProjection();
+  };
+  const ensureSelection=()=>{const visible=browser._visibleRefs(),ref=visible.includes(browser._selected)?browser._selected:visible.includes(state.skillSelected)?state.skillSelected:visible.find(id=>equippedSlot(id)>=0)||visible[0];if(ref)browser._selectSkill(ref);else showDetail(null);};
+  function syncLibraryCount(){count.textContent=browser._visibleRefs().length+' 项';requestAnimationFrame(()=>{count.textContent=browser._visibleRefs().length+' 项'+(browser.scrollHeight>browser.clientHeight+1?' · 上滑查看更多':'');});}
+  const refreshInteractive=()=>{browser._sync();catalogue.setAttribute('aria-pressed',state.skillCatalogue?'true':'false');catalogue.setAttribute('aria-label',state.skillCatalogue?'返回已学技能':'查看未学技能图鉴');catalogue.innerHTML=uiIcon('document')+'<b>'+(state.skillCatalogue?'返回已学':'技能图鉴')+'</b>';catalogue.classList.toggle('active',!!state.skillCatalogue);if(detail)detail._sync();syncProjection();syncLibraryCount();save();};
+  const utilities=el('div','skill-scene-utilities');[['auto','自动能力','module'],['mastery','基础精通','implant']].forEach(([view,label,icon])=>{const button=el('button','skill-scene-entry','<i>'+uiIcon(icon)+'</i><span>'+label+'</span>');button.type='button';button.dataset.collection=view;button.onclick=()=>openSkillCollection(view,refreshInteractive);utilities.appendChild(button);});stage.appendChild(utilities);
+  browser=renderSkillBrowser('active',showDetail);actions.append(loadout,study);box.append(stage,hero,browser,actions);
+  catalogue.onclick=()=>{state.skillCatalogue=!state.skillCatalogue;refreshInteractive();ensureSelection();};box._refreshSkillPanel=refreshInteractive;ensureSelection();refreshInteractive();
+  if(entryView==='auto'||entryView==='mastery')requestAnimationFrame(()=>{if(!box.isConnected||panelView()!=='skills')return;if(entryView==='mastery'&&entrySkill&&entrySkill.startsWith('mastery:')&&MASTERIES[entrySkill.slice(8)])openSkillStudy(entrySkill,refreshInteractive,()=>openSkillCollection('mastery',refreshInteractive));else openSkillCollection(entryView,refreshInteractive);});
 }
 function refreshSkillPanel(){const box=$('panel');if(box&&panelView()==='skills'&&typeof box._refreshSkillPanel==='function'){box._refreshSkillPanel();return;}render();}
 function careerDefinition(id){return JOBS[id]||NOVICE_JOBS[id];}
@@ -4183,58 +4211,63 @@ function renderGeneDetail(box){const id=state.geneSel,g=id&&GENE_BY_ID[id],d=el(
 function refreshGeneSelection(){const cv=document.querySelector('.gene-canvas'),detail=document.querySelector('.gene-det');if(!cv||!detail||!detail.replaceWith){render();return;}const focus=state.geneSel&&GENE_BY_ID[state.geneSel]?geneFocusSet(state.geneSel):null;cv.classList.toggle('has-focus',!!focus);cv.querySelectorAll('[data-gid]').forEach(node=>{node.classList.toggle('sel',node.dataset.gid===state.geneSel);node.classList.toggle('out',!!focus&&!focus.has(node.dataset.gid));});const holder=el('div');renderGeneDetail(holder);detail.replaceWith(holder.children[0]);drawGeneTreeLines();save();}
 function refreshGenePanel(){const box=$('panel'),vp=box&&box.querySelector&&box.querySelector('.gene-vp'),detail=box&&box.querySelector&&box.querySelector('.gene-det');if(!box||!vp||!detail||!vp.replaceWith||!detail.replaceWith){render();return;}const holder=el('div');renderGenePanel(holder),freshVp=holder.children[0],freshDetail=holder.children[1];vp.replaceWith(freshVp);detail.replaceWith(freshDetail);renderTop();renderTabbar();save();}
 function renderGenePanel(box){const fitOnOpen=state.geneZoom==null||state.geneLayout!=='vertical-v1';state.geneLayout='vertical-v1';const vp=el('div','treevp gene-vp'),back=el('button','tx-x gene-back ui-icon-button',uiIcon('chevron-left'));back.setAttribute('aria-label','返回角色');back.onclick=()=>{state.charView='overview';state.geneSel=null;render();};vp.appendChild(back);const tb=el('div','tzoom gene-tools'),plus=el('button','ui-icon-button',uiIcon('plus')),txt=el('span','gene-zoom-text'),minus=el('button','ui-icon-button',uiIcon('minus')),fit=el('button','ui-icon-button',uiIcon('fit'));plus.setAttribute('aria-label','放大基因树');minus.setAttribute('aria-label','缩小基因树');fit.setAttribute('aria-label','按整行宽度铺满基因树');plus.onclick=()=>geneTreeSetZoom((state.geneZoom||.78)*1.22);minus.onclick=()=>geneTreeSetZoom((state.geneZoom||.78)*.82);fit.onclick=geneTreeFit;tb.append(plus,txt,minus,fit);vp.appendChild(tb);const focus=state.geneSel&&GENE_BY_ID[state.geneSel]?geneFocusSet(state.geneSel):null,cv=el('div','treecanvas gene-canvas'+(focus?' has-focus':''));cv.style.width=GENE_TREE.W+'px';cv.style.height=GENE_TREE.H+'px';GENE_TREE.stages.forEach((y,i)=>{const p=el('div','techphase gene-phase','<span>0'+(i+1)+'</span> STAGE');p.style.top=y+'px';cv.appendChild(p);});Object.entries(GENE_TREE.labels).forEach(([branch,p])=>{const lab=el('div','techcluster-title gene-cluster',uiIcon(GENE_ICON[branch])+'<span>'+branch+'序列</span>');lab.style.left=p.x+'px';lab.style.top=p.y+'px';lab.style.setProperty('--c',GENE_COLOR[branch]);cv.appendChild(lab);});GENE_NODES.forEach(g=>cv.appendChild(geneNodeEl(g,focus)));const stage=el('div','tree-stage');stage.appendChild(cv);vp.appendChild(stage);box.appendChild(vp);renderGeneDetail(box);if(state.geneZoom==null){state.geneZoom=.78;state.genePanX=0;state.genePanY=0;}requestAnimationFrame(()=>{drawGeneTreeLines();if(fitOnOpen)geneTreeFit();else geneTreeApply();attachGeneTreeGestures(vp);observeTreeViewport(vp,geneTreeFit,geneTreeApply,'gene');});}
-function careerVisibleJobs(kind){return Object.entries(JOBS).filter(([,j])=>j.kind===kind);}
-function careerRoutePresentation(kind,id){
-  const job=JOBS[id],record=kind==='main'?careerRecord('main'):careerRecord('life',id),same=!!record&&careerTrackId(record.id)===id,current=same&&record.id===id,promotion=same&&!current,noviceId=job.novice||Object.keys(NOVICE_JOBS).find(k=>NOVICE_JOBS[k].formal===id),novice=NOVICE_JOBS[noviceId],req=jobRequirementStatus(id),entry=novice&&noviceJobStatus(noviceId),changing=kind==='main'&&!!record&&!same;
-  const allowed=req.ok&&!current&&(kind==='life'?promotion:(!record||promotion||changing&&has('reclassCore')));
-  let status=current?'已就任':promotion?(req.ok?'可晋升':'已入门'):changing?'未转职':entry&&entry.ok?'可学习':'未学习',next='',note='',label='',action=null,enabled=false;
-  if(current){
-    const nextSkill=careerSkillIds(id,job).map(k=>SKILLS[k]).filter(s=>(s.careerLevel||1)>record.level).sort((a,b)=>(a.careerLevel||1)-(b.careerLevel||1))[0];
-    next=record.level>=10?'职业成长已完成':nextSkill?'Lv'+nextSkill.careerLevel+' 解锁「'+nextSkill.name+'」':kind==='main'?'继续战斗，提升职业等级':'完成对应作业，提升专精等级';
-    note=kind==='main'?'职业能力在技能页管理':'采集、制造与培育能力在对应操作中生效';label=kind==='main'?'管理战斗技能':'查看生活技能';enabled=true;
-    action=()=>{state.tab='char';state.charView='skills';state.skillView=kind==='main'?'active':'auto';state.skillCatalogue=false;render();};
-  }else if(!record&&novice&&!novice.tutorial){
-    next=entry.ok?'导师考核已满足，可以开始学习':entry.text;note='入门导师 · '+careerGuideLabel(novice.npc);label='学习 '+novice.name;enabled=entry.ok;action=refresh=>chooseNoviceJob(noviceId,refresh);
-  }else if(!record&&novice&&novice.tutorial){
-    next=entry.text;note='入门导师 · '+careerGuideLabel(novice.npc);label='序章教学后获得';
-  }else{
-    next=!req.ok?req.text:changing&&!has('reclassCore')?'需要职业重构核心 ×1':promotion?'晋升条件已满足，保留当前职业等级':'资格已满足，可以就任';
-    note='晋升导师 · '+careerGuideLabel(job.npc);label=promotion?'晋升为 '+job.name:changing?'消耗重构核心转职':'取得资格后就任';enabled=allowed;action=refresh=>chooseJob(id,refresh);
-  }
-  return {job,record:same?record:null,same,current,promotion,noviceId,novice,req,entry,changing,status,next,note,label,enabled,action};
+function renderCareerRitualPrompt(box,location){
+  Object.entries(JOBS).filter(([id,j])=>j.ritual&&j.ritual.location===location&&state.flags[j.qualification]&&(!careerRecord('main')||careerRecord('main').id!==id)).forEach(([id,j])=>{
+    const prompt=el('button','site-prompt career-ritual-prompt','<span class="sp-mark">'+uiIcon(careerUi(id).icon)+'</span><span><small>导师授予的仪式资格</small><b>'+j.name+' · 转职仪式</b><em>查看仪式条件</em></span><i>'+uiIcon('chevron-right')+'</i>');
+    prompt.onclick=()=>{
+      const old=careerRecord('main'),changing=old&&careerTrackId(old.id)!==id,req=jobRequirementStatus(id),ready=req.ok&&(!changing||has('reclassCore')),body=el('section','career-dossier','<header class="career-dossier-heading"><span><small>现场仪式</small><h2>'+j.name+'</h2></span></header><p>'+j.desc+'</p><p>装备 '+ITEMS[j.ritual.item].name+'；消耗 '+costText(j.ritual.cost)+(changing?'；职业重构核心 ×1':'')+'。</p><p>'+(!req.ok?req.text:changing&&!has('reclassCore')?'缺少职业重构核心':'仪式条件已满足')+'</p>'),sheet=mountThumbSheet(body,{className:'career-profile-sheet',label:'转职仪式'}),confirm=el('button','primary career-ritual-confirm','开始仪式'),back=el('button','career-dossier-back','暂不开始');
+      confirm.disabled=!ready;confirm.onclick=()=>{sheet.close();chooseJob(id);};back.onclick=()=>sheet.close();sheet.footer.append(confirm,back);
+    };box.appendChild(prompt);
+  });
 }
-function renderCareerRoute(kind,onChange){
-  const jobs=careerVisibleJobs(kind),section=el('section','career-track-section career-bridge '+kind),key=kind==='main'?'careerMainSelected':'careerLifeSelected',current=careerRecord(kind),initial=current&&careerTrackId(current.id);
-  if(!jobs.some(([id])=>id===state[key]))state[key]=jobs.some(([id])=>id===initial)?initial:jobs[0]&&jobs[0][0];
-  const host=el('div','rpg-route-detail career-inspection'),list=el('div','rpg-route-selectors'),refs=[],dock=el('footer','career-route-dock'),next=el('div','rpg-route-next'),nextLabel=el('small'),nextStep=el('b'),nextNote=el('span'),action=el('button','career-route-action ui-button');next.append(nextLabel,nextStep,nextNote);
-  host.setAttribute('aria-label','职业能力与成长');list.setAttribute('aria-label',kind==='main'?'选择战斗路线':'选择生活专精');action.type='button';dock.append(next,action);section.append(host,list,dock);
-  const refresh=()=>{
-    const selected=careerRoutePresentation(kind,state[key]);
-    refs.forEach(ref=>{const info=careerRoutePresentation(kind,ref.id),active=ref.id===state[key];ref.button.classList.toggle('selected',active);ref.button.setAttribute('aria-pressed',String(active));ref.status.textContent=info.status;ref.button.classList.toggle('learned',info.same);});
-    replaceMountedNode(host.children[0],renderCareerRouteDetail(kind,state[key],onChange),host);
-    nextLabel.textContent=selected.current?'成长方向':'下一步';nextStep.textContent=selected.next;nextNote.textContent=selected.note;
-    action.textContent=selected.label;action.disabled=!selected.enabled;action.classList.toggle('primary',selected.enabled);action.onclick=()=>{const latest=careerRoutePresentation(kind,state[key]);if(latest.enabled&&latest.action)latest.action(onChange);};
-  };
-  jobs.forEach(([id,j])=>{const ui=careerUi(id),button=el('button','rpg-route-selector ui-card','<i>'+uiIcon(ui.icon)+'</i><b>'+j.name+'</b>'),status=el('small');button.appendChild(status);button.type='button';button.dataset.career=id;button.onclick=()=>{if(state[key]===id)return;state[key]=id;refresh();host.scrollTop=0;save();};refs.push({id,button,status});list.appendChild(button);});
-  section._refreshCareerRoute=refresh;refresh();return section;
+function careerStatMarkup(job,level){
+  const groups={};Object.entries(careerBonusAt(job,level)).forEach(([key,value])=>{const label=STAT_LABEL[key],percent=key.endsWith('Pct')||['crit','critDmg','dodge','hit','pen'].includes(key),entry={percent,text:(key==='damageReductionPct'?'−':'+')+Number(value.toFixed(2))+(percent?'%':'')};(groups[label]||(groups[label]=[])).push(entry);});
+  return Object.entries(groups).map(([label,values])=>'<div class="career-stat"><span>'+label+'</span><b>'+values.sort((a,b)=>Number(a.percent)-Number(b.percent)).map(v=>'<em>'+v.text+'</em>').join(' ')+'</b></div>').join('');
 }
-function renderCareerRouteDetail(kind,id,onChange){
-  const info=careerRoutePresentation(kind,id),{job:j,record:r}=info,ui=careerUi(id),profile=kind==='main'?careerCombatProfile(id):null,gear=profile&&info.same?careerEquipmentStatus(id):null,card=el('article','career-path-card ui-card '+(info.same?'current':'preview'));
-  const xp=r?'<div class="career-xp"><span><i style="width:'+(r.level>=10?100:Math.min(100,r.xp/careerXpNeed(r.level)*100))+'%"></i></span><em>'+(r.level>=10?'成长完成':r.xp+' / '+careerXpNeed(r.level))+'</em></div>':'';
-  card.dataset.career=id;card.innerHTML='<div class="career-route-hero">'+(kind==='main'?careerPortraitMarkup(id,'career-route-art'):'<div class="career-profession-seal" aria-hidden="true">'+uiIcon(ui.icon)+'</div>')+'<div class="career-route-copy"><div class="career-path-title"><span class="career-path-emblem">'+uiIcon(ui.icon)+'</span><span><small>'+(info.same?(kind==='main'?'当前主战':'已掌握 · 并行生效'):'路线预览 · '+info.status)+'</small><b>'+(r?careerDefinition(r.id).name:j.name)+'</b><em>'+(r?'Lv '+r.level+' · ':'')+(profile?profile.weaponText:ui.role)+'</em></span></div>'+xp+'<p class="rpg-career-loop">'+(profile?profile.loop:j.desc)+'</p>'+(gear?'<p class="rpg-gear-readiness '+(gear.ok?'ready':'rpg-unready')+'">'+uiIcon(gear.ok?'check':'alert')+gear.text+'</p>':'')+'</div></div>';
-  const facts=el('div','rpg-route-facts'),abilities=el('details','rpg-career-expand career-abilities','<summary>职业能力与成长</summary><div class="career-path-abilities"><div>'+careerAbilityPreviewMarkup(careerSkillIds(id,j),info.same)+'</div></div><div class="career-growth-grid"><span><small>'+(r?'当前职业加成':'就任加成')+'</small><b>'+bonusText(r?careerBonusAt(careerDefinition(r.id),r.level):j.bonus)+'</b></span><span><small>正式职业每级成长</small><b>'+bonusText(j.growth)+'</b></span></div>');abilities.open=kind==='life';facts.appendChild(abilities);
-  if(!info.current){const requirements=el('details','rpg-career-expand career-requirements','<summary>学习与晋升条件</summary><p>入门 · '+info.novice.name+'<br>'+careerGuideLabel(info.novice.npc)+'<br>'+info.entry.text+'</p><p>正式 · '+j.name+'<br>'+careerGuideLabel(j.npc)+'<br>'+j.reqText+(j.novice?'<br>'+info.novice.name+' Lv3':'')+(j.ritual?'<br>仪式地点 · '+LOCATIONS[j.ritual.location].name+'<br>装备 '+ITEMS[j.ritual.item].name+' · '+costText(j.ritual.cost):'')+(info.changing?'<br>更换主战消耗职业重构核心 ×1':'')+'</p>');facts.appendChild(requirements);}
-  card.appendChild(facts);return card;
+function careerProgressMarkup(record){
+  const capped=record.level>=10,need=careerXpNeed(record.level);
+  return '<div class="career-profile-progress"><span><b>Lv '+record.level+'</b><small>'+(capped?'已达职业最高等级':'职业经验 '+record.xp+' / '+need)+'</small></span><i><em style="width:'+(capped?100:Math.min(100,record.xp/need*100))+'%"></em></i></div>';
+}
+function openCareerProfileDetails(kind,id){
+  const record=careerRecord(kind,id);if(!record)return;
+  const job=careerDefinition(record.id),track=careerTrackId(record.id),formal=JOBS[track],novice=isNoviceJob(record.id),body=el('section','career-dossier');
+  body.innerHTML='<header class="career-dossier-heading"><i>'+uiIcon(careerUi(record.id).icon)+'</i><span><small>'+(kind==='main'?'当前主战职业':'已激活 · 自动生效')+'</small><h2>'+job.name+'</h2></span></header>'+careerProgressMarkup(record)+'<p>'+job.desc+'</p><h3>当前职业属性</h3><div class="career-dossier-stats">'+careerStatMarkup(job,record.level)+'</div><h3>如何成长</h3><p>'+(kind==='main'?'战斗获得职业经验，提升当前职业等级。':'进行对应的采集、制造或培育作业，获得该专精的职业经验。')+(novice?'入门阶段没有每级属性增长，等级用于解锁能力与满足晋升条件。':'每提升一级：'+bonusText(job.growth)+'。')+'</p><h3>职业能力</h3><div class="career-dossier-abilities">'+careerAbilityPreviewMarkup(careerSkillIds(record.id,job),true)+'</div>';
+  if(novice)body.appendChild(el('section','career-promotion-note','<h3>下一阶段 · '+formal.name+'</h3><p>'+formal.reqText+(formal.novice?'；'+job.name+' Lv3':'')+'。</p><p>晋升导师：'+careerGuideLabel(formal.npc)+'</p>'+(formal.ritual?'<p>在'+LOCATIONS[formal.ritual.location].name+'完成仪式；装备'+ITEMS[formal.ritual.item].name+'，消耗'+costText(formal.ritual.cost)+'。</p>':'')));
+  const sheet=mountThumbSheet(body,{className:'career-profile-sheet',label:job.name+'详情'}),back=el('button','career-dossier-back','返回职业');back.onclick=()=>sheet.close();sheet.footer.appendChild(back);
+}
+function openCareerMentorHint(){
+  const body=el('section','career-dossier','<header class="career-dossier-heading"><span><small>从幸存者开始</small><h2>尚未就职</h2></span></header><p>你还没有接受主战职业训练。与老乔当面交谈，在「职业训练」中选择你的入门方向。</p><p>'+careerGuideLabel('老乔')+'</p><p>职业需要通过导师教学、任务与材料条件获得，这里只记录你已经取得的身份。</p>'),sheet=mountThumbSheet(body,{className:'career-profile-sheet',label:'职业导师线索'}),back=el('button','career-dossier-back','返回职业');back.onclick=()=>sheet.close();sheet.footer.appendChild(back);
+}
+function renderCareerIdentity(){
+  const record=careerRecord('main'),job=record&&careerDefinition(record.id),ui=careerUi(record&&record.id),profile=record&&careerCombatProfile(record.id),host=el('section','career-identity'+(record?'':' unassigned'));
+  host.dataset.career=record?record.id:'unassigned';
+  const stage=el('div','career-identity-stage');
+  stage.innerHTML=careerPortraitMarkup(record&&record.id,'career-identity-art')+'<header class="career-identity-heading"><small>'+uiIcon(ui.icon)+(record?'当前职业 · '+(isNoviceJob(record.id)?'见习':'正式'):'当前身份')+'</small><h1>'+(job?job.name:'幸存者')+'</h1><p>'+(job?ui.role:'尚未就职')+'</p></header><div class="career-identity-stats" aria-label="当前职业属性"><small>'+(job?'职业加成':'尚无职业加成')+'</small>'+(job?careerStatMarkup(job,record.level):'<p>你的道路<br>从第一次训练开始。</p>')+'</div>';
+  const caption=el('div','career-identity-caption');
+  if(record)caption.innerHTML=careerProgressMarkup(record);
+  caption.appendChild(el('p','career-identity-description',job?job.desc:'坠落之后，你仍在学习如何活下去。找到老乔，接受第一次主战训练。'));
+  if(profile){const gear=careerEquipmentStatus(record.id);caption.appendChild(el('div','career-identity-equipment'+(gear.ok?' ready':''),uiIcon(gear.ok?'check':'alert')+'<span>'+gear.text+'</span>'));}
+  host.append(stage,caption);return host;
 }
 function renderCareerPanel(box){
-  box.classList.add('careers-page');
-  state.careerView=state.careerView==='life'?'life':'main';
-  let tabs,content;
-  const buildContent=()=>renderCareerRoute(state.careerView,refreshState);
-  const buildTabs=()=>{const nav=el('nav','career-view-tabs ui-segmented'),refs=[];nav.setAttribute('aria-label','职业类型');[['main','主战职业','同时生效一种'],['life','生活专精','三种可以兼修']].forEach(([id,label,hint])=>{const tab=el('button',state.careerView===id?'active':'','<b>'+label+'</b><small>'+hint+'</small>');tab.type='button';tab.dataset.careerView=id;tab.setAttribute('aria-pressed',state.careerView===id?'true':'false');tab.onclick=()=>switchView(id);refs.push({id,tab});nav.appendChild(tab);});nav._tabRefs=refs;return nav;};
-  function switchView(id){if(state.careerView===id)return;state.careerView=id;(tabs._tabRefs||[]).forEach(item=>{const active=item.id===id;item.tab.classList.toggle('active',active);item.tab.setAttribute('aria-pressed',active?'true':'false');});const fresh=buildContent();replaceMountedNode(content,fresh,box);content=fresh;save();}
-  function refreshState(){content._refreshCareerRoute();renderTop();save();}
-  tabs=buildTabs();box.appendChild(tabs);content=buildContent();box.appendChild(content);box._refreshCareerPanel=refreshState;
+  box.classList.add('careers-page');state.careerView='current';
+  let identity,footer;
+  const buildFooter=()=>{
+    const record=careerRecord('main'),section=el('footer','career-profile-footer'),rack=el('div','career-specialty-rack');
+    rack.setAttribute('aria-label','副职业，激活后自动生效');
+    ['salvager','fabricator','biologist'].forEach(id=>{
+      const learned=careerRecord('life',id),job=learned&&careerDefinition(learned.id),button=el('button','career-specialty'+(learned?' learned':' locked'),'<i>'+uiIcon(careerUi(id).icon)+'</i><span><b>'+(job?job.name:JOBS[id].name)+'</b><small>'+(learned?'Lv '+learned.level:'未激活')+'</small></span>');
+      button.type='button';button.dataset.career=id;button.disabled=!learned;button.setAttribute('aria-label',(job?job.name:JOBS[id].name)+(learned?' Lv '+learned.level+'，查看详情':'，未激活'));
+      if(learned)button.onclick=()=>openCareerProfileDetails('life',id);rack.appendChild(button);
+    });
+    section.appendChild(rack);
+    const actions=el('div','career-profile-actions'),detail=el('button','career-profile-details',uiIcon(record?'personnel':'dialogue')+'<span>'+(record?'职业成长':'导师线索')+'</span>');
+    detail.onclick=()=>record?openCareerProfileDetails('main',record.id):openCareerMentorHint();actions.appendChild(detail);
+    if(record){const skills=el('button','career-profile-skills primary',uiIcon('tech')+'<span>职业技能</span>');skills.onclick=()=>{state.tab='char';state.charView='skills';state.skillView='active';state.skillCatalogue=false;render();};actions.appendChild(skills);}
+    section.appendChild(actions);return section;
+  };
+  function refreshState(){const freshIdentity=renderCareerIdentity(),freshFooter=buildFooter();replaceMountedNode(identity,freshIdentity,box);replaceMountedNode(footer,freshFooter,box);identity=freshIdentity;footer=freshFooter;renderTop();save();}
+  identity=renderCareerIdentity();footer=buildFooter();box.append(identity,footer);box._refreshCareerPanel=refreshState;
 }
 function refreshCareerPanel(){const box=$('panel');if(box&&panelView()==='careers'&&typeof box._refreshCareerPanel==='function'){box._refreshCareerPanel();return;}render();}
 
@@ -5202,10 +5235,10 @@ function renderCombatPanel(box){
   const role=combatCareerState();if(role){const meter=el('div','battle-role-meter');meter.dataset.role=role.id;meter.innerHTML='<span><b>'+role.label+' '+role.charge+' / '+role.max+'</b><small>'+(role.gearReady?role.loop:role.gearReason)+'</small></span>'+[0,1,2].map(i=>'<i class="'+(i<role.charge?'charged':'')+'" aria-hidden="true"></i>').join('');operator.appendChild(meter);}operatorStack.appendChild(operator);screen.appendChild(hud);
 
   const dock=el('section','battle-command-dock');
-  dock.innerHTML='<header class="battle-command-heading"><span><small>COMBAT INTERFACE</small><b>战术指令</b></span><em>ROUND '+String((c.playerTurns||0)+1).padStart(2,'0')+'</em></header>';
+  dock.innerHTML='<header class="battle-command-heading"><span><small>COMBAT INTERFACE</small><b>战术指令</b></span><em>行动 '+String((c.playerTurns||0)+1).padStart(2,'0')+'</em></header><div class="battle-tempo"><span>速度 '+baseSpd()+' : '+c.spd+'</span><b>'+combatTempoText(c)+'</b></div>';
   const primary=el('div','battle-primary-controls'),normalResource=attackResource();
   primary.appendChild(battleActionButton({label:'攻击',meta:canHit?attackResourceStatus(normalResource):'超出射程 · 当前 '+c.distNow,icon:weaponVisual,cls:'battle-strike',disabled:!canHit||!normalResource.ready,fn:playerAttack}));
-  primary.appendChild(battleActionButton({label:'休整',meta:'体力 +5 · 敌人行动',icon:uiIcon('vital'),cls:'battle-recover',fn:catchBreath}));
+  primary.appendChild(battleActionButton({label:'休整',meta:'体力 +5 · 消耗一次行动',icon:uiIcon('vital'),cls:'battle-recover',fn:catchBreath}));
 
   const skills=el('div','battle-skill-rail');
   [0,1,2].forEach(i=>{const k=(state.skillSlots||[])[i],s=k&&SKILLS[k];if(!s){skills.appendChild(battleActionButton({code:'0'+(i+1),label:'未装配',meta:'在角色页配置',icon:uiIcon('slot-empty'),disabled:true,cls:'battle-skill is-empty'}));return;}
@@ -5285,7 +5318,7 @@ function useItem(id,refresh){ if(!has(id)){log('没有这个物品。','warn');r
   if(it.stamina){const n=recoveryAmount(it.stamina,it.staminaPct,maxStamina());P().stamina=Math.min(Math.round(maxStamina()),P().stamina+n);log('使用'+it.name+',体力+'+n+'。','good',{toast:!refresh});}
   if(it.buff){state.foodBuff={id:it.buff.id,day:currentDay(),charges:it.buff.charges};log('料理增益【'+it.buff.name+'】生效，剩余 '+it.buff.charges+' 次；新的料理增益会覆盖旧效果。','good',{toast:!refresh});}
   if(it.cure==='infection'){P().infected=false;log('感染清除。','good',{toast:!refresh});}
-  if(it.emp&&state.combat&&state.combat.mech){state.combat.empTurns=3;log('电磁干扰生效,目标瘫痪3回合。','good',{toast:!refresh});}
+  if(it.emp&&state.combat&&state.combat.mech){state.combat.empTurns=3;log('电磁干扰生效,跳过目标接下来3次行动。','good',{toast:!refresh});}
   if(refresh)refresh();else render(); }
 function gainProf(k,n,silent=false){ const progress=state.skills[k]||(state.skills[k]={prof:0}),b=skillLv(k);progress.prof=Math.min(SKILL_MAX_LEVEL*10,Math.max(0,Number(progress.prof)||0)+n);const a=skillLv(k);if(a>b)log('【'+SKILLS[k].name+'】升到 Lv'+a+'，技能效果提升。','good',{toast:!silent}); }
 function gainXp(n){ P().xp+=n; while(P().xp>=xpNeed(P().level)){ P().xp-=xpNeed(P().level); P().level++; P().hp=maxHp(); log('⭐ 升到 Lv'+P().level+'!生命/攻击/防御/速度提升。','good'); } }
@@ -5678,7 +5711,7 @@ function startBeacon(floor){ const b=beaconFloorSpec(floor);if(b.floor>state.bea
   const base=ENEMIES.beast; state.tab='act';
   const hp=Math.max(Math.round(base.hp*b.mult),Math.round(totalAtk()*(4+Math.min(16,b.floor*.18)))),atk=Math.max(Math.round(base.atk*Math.sqrt(b.mult)),Math.round(totalDef()+maxHp()*Math.min(.18,.06+b.floor*.002))),def=Math.max(Math.round(base.def*Math.sqrt(b.mult)),Math.round(totalAtk()*Math.min(.22,.04+b.floor*.002)));
   state.combat={id:'beacon',name:'信标·'+b.name+'幻影',hp,maxHp:hp,atk,def,spd:base.spd,range:1,distNow:3,threat:b.threat,drops:{},beacon:b,infect:false,mech:false,boss:false,empTurns:0,shieldUsed:false,skillUsed:false,roleCharge:0,playerTurns:0,timeSettled:false,history:[]};
-  divider(); log('信标激活,【'+b.name+'幻影】成形!','danger'); render(); }
+  divider(); log('信标激活,【'+b.name+'幻影】成形!','danger'); beginCombatTimeline(); }
 function winBeacon(b){
   // Resolve from the floor again so an old in-progress save gains the expanded
   // catalogue too; no save migration and no reward rolls on opening the preview.
@@ -5699,6 +5732,28 @@ let combatFxQueue=[];
 function queueCombatFx(actor,kind,skillId){combatFxQueue.push({actor,kind,skillId:skillId||null});if(combatFxQueue.length>4)combatFxQueue.shift();}
 function appendCombatEffects(screen){const effects=combatFxQueue.splice(0);effects.forEach((fx,index)=>{const effect=fx.skillId?skillEffectClass(fx.skillId):fx.kind,icon=fx.skillId?skillEntryIcon(fx.skillId):(fx.kind==='ranged'?'weapon':fx.kind==='recover'?'vital':fx.kind==='orbital'?'lance':'combat'),layer=el('div','battle-effect-layer actor-'+fx.actor+' fx-'+fx.kind+' effect-'+effect);layer.style.setProperty('--fx-order',index);layer.setAttribute('aria-hidden','true');layer.innerHTML='<span class="battle-fx-sigil">'+uiIcon(icon)+'</span><i></i><i></i><i></i><b></b><em></em>';screen.appendChild(layer);});}
 function recordCombatTurn(c){if(c)c.playerTurns=(c.playerTurns||0)+1;}
+/* 每次行动耗时为 1 / 速度。只推进虚拟战斗时间，不等待现实时间。
+   在玩家操作窗口保存敌方行动条；同一时刻双方就绪时玩家优先。 */
+function combatSpeedRatio(c){return Math.max(1,Number(c.spd)||1)/Math.max(1,baseSpd());}
+function combatTempoText(c){
+  const ratio=combatSpeedRatio(c),progress=Number.isFinite(c.enemyActionProgress)?c.enemyActionProgress:0;
+  if(ratio<=1){const turns=Math.max(1,Math.floor((1-progress+1e-9)/ratio)+1);return '可连续行动 '+turns+' 次';}
+  return '行动后敌方 '+Math.max(0,Math.ceil(progress+ratio-1-1e-9))+' 次';
+}
+function beginCombatTimeline(){const c=state.combat;if(!c)return;c.enemyActionProgress=combatSpeedRatio(c);resolveCombatTimeline(c);}
+function resolveCombatTimeline(c){
+  while(state.combat===c&&c.hp>0&&c.enemyActionProgress>1+1e-9){
+    c.enemyActionProgress=Math.max(0,c.enemyActionProgress-1);
+    c.enemyTurns=(c.enemyTurns||0)+1;resolveEnemyAction();
+  }
+  if(state.combat===c)render();
+}
+function enemyTurn(){
+  const c=state.combat;if(!c||c.hp<=0)return;
+  // 旧战斗存档从当前操作窗口继续，不补打历史回合。
+  c.enemyActionProgress=(Number.isFinite(c.enemyActionProgress)?c.enemyActionProgress:1)+combatSpeedRatio(c);
+  resolveCombatTimeline(c);
+}
 function settleCombatTime(c){if(!c||c.timeSettled)return 0;const turns=Math.max(1,c.playerTurns||0),hours=Math.ceil(turns/COMBAT_TURNS_PER_HOUR);c.timeSettled=true;advanceTime(hours);log('战斗耗时：'+turns+' 回合 · '+hours+' 小时。','dim',c.beacon?{toast:false}:undefined);return hours;}
 /* 敌人数值由其所在装备时代固定，不读取玩家等级、基因、职业或当前装备。 */
 function enemyCombatProfile(e){
@@ -5709,7 +5764,7 @@ function startCombat(eid,extra){ const e=ENEMIES[eid];if(!e)return; combatFxQueu
   state.combat={id:eid,name:e.name,hp:profile.hp,maxHp:profile.hp,atk:profile.atk,def:profile.def,spd:e.spd,range:e.range||1,distNow:e.dist,threat:e.threat||10,drops:e.drops,infect:!!e.infect,mech:!!e.mech,boss:!!e.boss,bossFlag:e.bossFlag,record:e.record,reveal:e.reveal,grant:e.grant,outpostRaid:!!e.outpostRaid,balanceTier:e.balanceTier||0,armorSegments:e.armorSegments||0,damageCapPct:e.damageCapPct||0,bombardEvery:e.bombardEvery||0,bombardDamage:profile.bombardDamage,regenPct:e.regenPct||0,barrierEvery:e.barrierEvery||0,barrierPct:e.barrierPct||0,barrier:0,enragePct:e.enragePct||0,enrageMult:e.enrageMult||0,enraged:false,staminaDrainEvery:e.staminaDrainEvery||0,staminaDrain:e.staminaDrain||0,round:0,playerTurns:0,timeSettled:false,orbitalUsed:false,empTurns:0,shieldUsed:false,skillUsed:false,history:[]};
   if(foodBuffActive('hunterRoast')){state.combat.foodAtkPct=15;state.foodBuff.charges--;log('猎手烤排强化本场战斗：攻击 +15%（剩余 '+state.foodBuff.charges+' 场）。','good');}
   if(extra)Object.assign(state.combat,extra);state.combat.roleCharge=0;
-  const c=state.combat;divider(); log('遭遇【'+c.name+'】!生命'+c.maxHp+' 攻'+c.atk+' 距离'+c.distNow,'danger'); setLogOpen(true); render(); }
+  const c=state.combat;divider(); log('遭遇【'+c.name+'】!生命'+c.maxHp+' 攻'+c.atk+' 距离'+c.distNow,'danger'); setLogOpen(true); beginCombatTimeline(); }
 function approach(){ if(!state.combat||state.combat.distNow<=1)return;if(!payMovementCost(2)){exhaustionDeath();return;}recordCombatTurn(state.combat);const before=state.combat.distNow;state.combat.distNow=Math.max(1,state.combat.distNow-moveRange());if(state.combat.distNow<before)gainCombatCharge('move');log('拉近距离:'+state.combat.distNow,'dim'); if(infectionTick())enemyTurn(); }
 function performAttack(mult,ignoreDef,label,forceCrit,options){ const c=state.combat; if(!c)return;options=options||{};
   recordCombatTurn(c);
@@ -5752,23 +5807,23 @@ function useSkill(k){ const c=state.combat,s=SKILLS[k],lv=Math.max(1,skillLv(k))
   else if(s.effect==='volley'){c.distNow+=2;performAttack((3.2+lv*.15)*amp,.7,'你释放【'+s.name+'】');}
   else if(s.effect==='rift'){const execute=c.hp<=c.maxHp*.35?1.4:1;c.distNow=1;performAttack((2.25+lv*.15)*amp*execute,1,'你释放【'+s.name+'】',true);}
 }
-function enemyTurn(){ const c=state.combat; if(!c||c.hp<=0)return;
+function resolveEnemyAction(){ const c=state.combat; if(!c||c.hp<=0)return;
   const playerDefBonus=c.playerDefBonus||0;c.playerDefBonus=0;
-  if(c.interruptTurns>0){c.interruptTurns--;log('【'+c.name+'】被动能冲击打断，本次无法行动。','good');regenShield();render();return;}
-  if(c.empTurns>0){ c.empTurns--; log('【'+c.name+'】瘫痪中。','dim'); regenShield(); render(); return; }
+  if(c.interruptTurns>0){c.interruptTurns--;log('【'+c.name+'】被动能冲击打断，本次无法行动。','good');regenShield();return;}
+  if(c.empTurns>0){ c.empTurns--; log('【'+c.name+'】瘫痪中。','dim'); regenShield(); return; }
   c.round=(c.round||0)+1;
   if(c.regenPct&&c.hp<c.maxHp){const healed=Math.min(c.maxHp-c.hp,Math.max(1,Math.round(c.maxHp*c.regenPct)));c.hp+=healed;log('【'+c.name+'】重组活体结构，恢复 '+healed+' 生命。','warn');}
   if(c.barrierEvery&&c.round%c.barrierEvery===0){c.barrier=Math.max(c.barrier,Math.round(c.maxHp*c.barrierPct));log('【'+c.name+'】重构防护屏障 '+c.barrier+'。','warn');}
   if(c.enragePct&&!c.enraged&&c.hp<=c.maxHp*c.enragePct){c.enraged=true;c.atk=Math.round(c.atk*(c.enrageMult||1.3));log('【'+c.name+'】进入过载阶段，攻击提升。','danger');}
   if(c.staminaDrainEvery&&c.round%c.staminaDrainEvery===0){const drained=Math.min(P().stamina,c.staminaDrain||0);P().stamina-=drained;log('星门相位脉冲抽取行动能源：体力 -'+drained+'。','warn');}
-  if(c.distNow>c.range){ const step=Math.max(1,Math.ceil(c.spd/4)); c.distNow=Math.max(c.range,c.distNow-step); log('【'+c.name+'】向你逼近，距离 '+c.distNow+'。','dim'); regenShield(); render(); return; }
-  queueCombatFx('enemy',c.bombardEvery&&c.round%c.bombardEvery===0?'bombard':'strike');const dodge=Math.min(85,Math.max(0,statDodge()-(c.spd-baseSpd())*2)); if(Math.random()*100<dodge){gainCombatCharge('dodge');log('你闪避了【'+c.name+'】的攻击!','good'); regenShield(); render(); return; }
+  if(c.distNow>c.range){ const step=Math.max(1,Math.ceil(c.spd/4)); c.distNow=Math.max(c.range,c.distNow-step); log('【'+c.name+'】向你逼近，距离 '+c.distNow+'。','dim'); regenShield(); return; }
+  queueCombatFx('enemy',c.bombardEvery&&c.round%c.bombardEvery===0?'bombard':'strike');const dodge=Math.min(85,Math.max(0,statDodge()-(c.spd-baseSpd())*2)); if(Math.random()*100<dodge){gainCombatCharge('dodge');log('你闪避了【'+c.name+'】的攻击!','good'); regenShield(); return; }
   let dmg=Math.max(1,c.atk-totalDef()-playerDefBonus);if(c.bombardEvery&&c.round%c.bombardEvery===0){dmg+=c.bombardDamage||0;log('质量投射器完成锁定，本轮追加贯穿轰击。','danger');}dmg=Math.max(1,Math.round(dmg*(1-damageReductionRate())*(1-Math.min(.45,targetEquipmentGuardPct(c)/100))));
   if(P().shield>0){ const ab=Math.min(P().shield,dmg); P().shield-=ab; dmg-=ab; if(ab>0){gainCombatCharge('block');log('能量护盾吸收 '+ab+' 伤害。','sys');} }
   if(dmg>0){ P().hp-=dmg; log('你受到'+dmg+'伤害(生命'+Math.max(0,P().hp)+')','danger'); }
   if(c.infect&&!P().infected&&Math.random()<0.4){if(environmentProtected('contamination'))log('生物隔离膜阻断了感染源。','good');else{P().infected=true;log('你被感染了!每动作掉血,需血清。','danger');}}
   if(P().hp<=0&&geneRule('deathGuard')&&!c.deathGuardUsed){c.deathGuardUsed=true;P().hp=1;log('基因规则【嵌合态】拒绝了本次致死伤害。','good');}
-  if(P().hp<=0){die();return;} regenShield(); render(); }
+  if(P().hp<=0){die();return;} regenShield(); }
 function regenShield(){ const mx=shieldMax(); if(mx>0 && P().shield<mx) P().shield=Math.min(mx, P().shield+Math.ceil(mx*0.08));const regen=eqSum('regenPct');if(regen>0&&P().hp<maxHp())P().hp=Math.min(maxHp(),P().hp+Math.max(1,Math.round(maxHp()*regen/100))); }
 function winCombat(){ const c=state.combat;settleCombatTime(c);state.kills++; state.runStats.kills++; state.runStats.wKill+=(c.threat||10); gainXp((c.threat||10)*2);gainCareerXp('main',Math.max(3,Math.round((c.threat||10)/3)));const heal=geneRule('postCombatHealPct')?Math.max(1,Math.round(maxHp()*geneRule('postCombatHealPct')/100)):0;if(heal)P().hp=Math.min(maxHp(),P().hp+heal); log('击败【'+c.name+'】!'+(heal?' 再生恢复 '+heal+' 生命。':''),'good',c.beacon?{toast:false}:undefined);
   if(c.beacon){ winBeacon(c.beacon); state.combat=null; divider(); render(); return; }
@@ -5791,7 +5846,7 @@ function winCombat(){ const c=state.combat;settleCombatTime(c);state.kills++; st
   if(wasTruthFinal){state.screen='ending';state.endingChosen=null;state.tab='act';queueStoryScene({system:true,location:'layer7',kind:'victory',speaker:'核心控制室',unit:'WITNESS PROTOCOL // HUMAN CONTROL',eyebrow:'DECISION AUTHORITY REVOKED',title:'决策人格已解除',lines:['守望者的武装决策层崩解，六件组件仍保持在线。它可以说话、可以解释，却再也不能替任何人执行最终决定。','十二条见证频道重新接入。没有完成的频道保持空白——那些沉默会直接限制你此刻能作出的选择。','核心把最终权限交到你手中。接下来不是回答一道题，而是决定谁将承担答案的后果。'],action:'查看可用结局'});render();return;}
   if(wasGuardian){state.meta.guardianDown=false;log('旧版核心守卫记录已作废。先完成众证协议，核心不会再直接跳入结局。','warn');render();return;}render(); }
 function combatItem(id){ if(!has(id)||!state.combat)return;recordCombatTurn(state.combat);useItem(id);if(infectionTick()&&state.combat)enemyTurn(); }
-function catchBreath(){ if(!state.combat)return;const n=Math.min(5,Math.round(maxStamina())-P().stamina); P().stamina+=n;recordCombatTurn(state.combat);log('你稳住呼吸，恢复 '+n+' 体力，但把行动机会让给了敌人。','warn'); if(infectionTick())enemyTurn(); }
+function catchBreath(){ if(!state.combat)return;const n=Math.min(5,Math.round(maxStamina())-P().stamina); P().stamina+=n;recordCombatTurn(state.combat);log('你稳住呼吸，恢复 '+n+' 体力，消耗一次行动。','dim'); if(infectionTick())enemyTurn(); }
 function flee(){ if(!state.combat)return;if(!payMovementCost(2)){exhaustionDeath();return;}recordCombatTurn(state.combat);if(!infectionTick())return;if(Math.random()<Math.min(.9,.65+Math.max(0,baseSpd()-state.combat.spd)*.02)){const c=state.combat;settleCombatTime(c);state.combat=null; log('成功逃脱。','warn'); divider();render(); } else { log('逃跑失败!','danger'); enemyTurn(); } }
 
 /* ================= 死亡/轮回 ================= */

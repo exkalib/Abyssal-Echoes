@@ -15,7 +15,7 @@ const sandbox={console,Math:Object.create(Math),JSON,crypto:webcrypto,TextEncode
   localStorage:{getItem:()=>null,setItem(){},removeItem(){}},addEventListener(){},setTimeout:()=>1,clearTimeout(){},requestAnimationFrame:()=>1};
 vm.createContext(sandbox);
 const source=fs.readFileSync(__dirname+'/game.js','utf8').replace(/\ninitLaunchGate\(\);\s*$/,'');
-vm.runInContext(source+`\nrender=()=>{};log=()=>{};this.api={reset:()=>state=freshState(),getState:()=>state,ITEMS,SKILLS,JOBS,careerRecord,chooseJob,chooseNoviceJob,ensureCareerSkills,migrateCareerLoadout,mainCareerTrack,careerCombatProfile,careerEquipmentStatus,combatCareerState,gainCombatCharge,skillEquipmentStatus,skillUseStatus,skillUnlocked,skillLevelEffectText,skillResourceLabel,attackResource,equipSkill,startCombat,startBeacon,playerAttack,useSkill,approach,enemyTurn,performAttack,totalAtk,totalDef,statCritDmg,shieldMax,npcLocation};`,sandbox);
+vm.runInContext(source+`\nrender=()=>{};log=()=>{};this.api={reset:()=>state=freshState(),getState:()=>state,ITEMS,SKILLS,JOBS,careerRecord,chooseJob,chooseNoviceJob,ensureCareerSkills,migrateCareerLoadout,mainCareerTrack,careerCombatProfile,careerEquipmentStatus,combatCareerState,gainCombatCharge,skillEquipmentStatus,skillUseStatus,skillUnlocked,skillLevelEffectText,skillResourceLabel,attackResource,equipSkill,startCombat,startBeacon,playerAttack,useSkill,approach,enemyTurn,resolveEnemyAction,performAttack,totalAtk,totalDef,statCritDmg,shieldMax,npcLocation};`,sandbox);
 const a=sandbox.api;
 function fresh(id='bulwark',level=5){const s=a.reset();s.meta.careers.main={id,level,xp:0};s.tutorial.complete=true;s.player.stamina=100;s.player.hp=10000;s.player.equip.weapon=id==='vanguard'?'pistol':'knife';if(id==='bulwark')s.player.equip.offhand='riotShield';s.inv.ammo=100;a.ensureCareerSkills();sandbox.Math.random=()=>.5;return s;}
 function fight(s,extra={}){a.startCombat('guardian',{hp:100000,maxHp:100000,def:10,atk:5,range:1,distNow:1,spd:1,armorSegments:0,barrierEvery:0,regenPct:0,...extra});return s.combat;}
@@ -54,11 +54,11 @@ for(const id of ['noviceGuard','noviceScout','noviceStriker']){
 {
   const s=fresh('infiltrator'),c=fight(s,{distNow:5,empTurns:20});a.approach();assert.equal(c.roleCharge,1);c.distNow=1;const turns=c.playerTurns,stamina=s.player.stamina;a.approach();assert.equal(c.playerTurns,turns);assert.equal(s.player.stamina,stamina);assert.equal(c.roleCharge,1,'无效接近不消费也不充能');
   slot('heavyBlow');a.useSkill('heavyBlow');assert.equal(c.roleCharge,3,'Lv3 重击被动命中积攒两格');
-  c.roleCharge=0;c.empTurns=0;c.distNow=1;sandbox.Math.random=()=>0;a.enemyTurn();assert.equal(c.roleCharge,1,'有效闪避积攒相位');
+  c.roleCharge=0;c.empTurns=0;c.distNow=1;sandbox.Math.random=()=>0;a.resolveEnemyAction();assert.equal(c.roleCharge,1,'有效闪避积攒相位');
 }
 {
-  const s=fresh(),c=fight(s,{atk:80});c.roleCharge=0;s.player.shield=a.shieldMax();a.enemyTurn();assert.equal(c.roleCharge,1,'持实体盾有效吸收伤害积攒动能');
-  c.roleCharge=0;s.player.equip.offhand=null;s.player.shield=100;a.enemyTurn();assert.equal(c.roleCharge,0,'只有能量护盾而无盾牌不可积攒动能');
+  const s=fresh(),c=fight(s,{atk:80});c.roleCharge=0;s.player.shield=a.shieldMax();a.resolveEnemyAction();assert.equal(c.roleCharge,1,'持实体盾有效吸收伤害积攒动能');
+  c.roleCharge=0;s.player.equip.offhand=null;s.player.shield=100;a.resolveEnemyAction();assert.equal(c.roleCharge,0,'只有能量护盾而无盾牌不可积攒动能');
 }
 {
   const s=fresh(),c=fight(s,{empTurns:20});slot('shieldBash');a.useSkill('shieldBash');assert.equal(c.roleCharge,1,'有效盾击也积攒动能，不能只靠被打或反复空架盾');
@@ -68,7 +68,7 @@ for(const id of ['noviceGuard','noviceScout','noviceStriker']){
 for(const [id,key] of [['bulwark','kineticReprisal'],['vanguard','overloadVolley'],['infiltrator','riftExecution']]){
   const s=fresh(id,4);assert.equal(a.skillUnlocked(key),false);s.meta.careers.main.level=5;a.ensureCareerSkills();assert.equal(a.skillUnlocked(key),true);
   const c=fight(s,{empTurns:20});slot(key);c.roleCharge=2;const ammo=s.inv.ammo,stamina=s.player.stamina,hp=c.hp;a.useSkill(key);assert.equal(s.inv.ammo,ammo);assert.equal(s.player.stamina,stamina);assert.equal(c.hp,hp);assert.equal(c.roleCharge,2);
-  c.roleCharge=3;a.useSkill(key);assert.equal(c.roleCharge,0);assert.ok(c.hp<hp);if(id==='vanguard'){assert.equal(s.inv.ammo,ammo-3);assert.equal(c.distNow,3);}if(id==='bulwark')assert.equal(c.interruptTurns,0,'盾反命中应让敌人立即失去一次行动');
+  c.roleCharge=3;a.useSkill(key);assert.equal(c.roleCharge,0);assert.ok(c.hp<hp);if(id==='vanguard'){assert.equal(s.inv.ammo,ammo-3);assert.equal(c.distNow,3);}if(id==='bulwark'){assert.equal(c.interruptTurns,1,'高速连动中打断应保留到敌人真正就绪');a.resolveEnemyAction();assert.equal(c.interruptTurns,0,'敌人就绪时消耗一次打断');}
 }
 {
   const damages=[];for(const def of [0,100000]){const s=fresh('infiltrator'),c=fight(s,{def,empTurns:20});slot('phaseStrike');const hp=c.hp;a.useSkill('phaseStrike');damages.push(hp-c.hp);}assert.equal(damages[0],damages[1],'完全穿甲必须忽略全部护甲，不能残留 5%');

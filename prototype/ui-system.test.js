@@ -10,6 +10,12 @@ const layout=read('style.css');
 const rules=read('UI_SYSTEM.md');
 const html=read('index.html');
 
+for(const scene of ['habitat-workshop','engineering-reactor','bridge-archive']){
+  const asset='assets/story-scenes-v1/'+scene+'.jpg';
+  assert.ok(system.includes(asset),'game overlay needs its existing scene: '+scene);
+  assert.ok(fs.existsSync(path.join(root,asset)),'scene must remain available offline: '+scene);
+}
+
 for(const archetype of ['.ui-page','.ui-workspace','.ui-canvas-workspace','.ui-dialog']){
   assert.match(rules,new RegExp(archetype.replace('.',String.raw`\.`)),`设计规范必须登记页面母版 ${archetype}`);
 }
@@ -56,16 +62,23 @@ assert.match(system,/Actions are short lived combat events[\s\S]*\.battle-effect
 assert.match(game,/function primaryTabKey\(\)[\s\S]*charView==='careers'[\s\S]*charView==='skills'/,'职业与技能一级入口必须映射到正确的底栏选中态');
 assert.match(game,/rootPage=\['camp','explore','character','skills','careers','bag','tasks','settings'\][\s\S]*immersiveWorkspace=\['facility','construction','settlement-shop','npc'\]/,'职业技能必须归入主导航页而不是沉浸工作区');
 assert.match(game,/function skillPageEntries\(view\)[\s\S]*Object\.keys\(MASTERIES\)\.map[\s\S]*Object\.keys\(SKILLS\)\.filter/,'技能能力库必须保留锁定能力并展示解锁路径');
-assert.match(game,/function renderCareerPanel\(box\)[\s\S]*careerView==='life'\?'life':'main'[\s\S]*career-view-tabs[\s\S]*主战职业[\s\S]*生活专精/,'职业页顶部只保留主战与生活两类，默认选当前路线');
-assert.match(game,/function renderCareerRoute\(kind,onChange\)[\s\S]*career-inspection[\s\S]*career-route-dock[\s\S]*career-route-action[\s\S]*section\._refreshCareerRoute=refresh/,'职业详情内部滚动，下一步与执行按钮固定且局部刷新');
+const careerPage=game.slice(game.indexOf('function renderCareerIdentity('),game.indexOf('function refreshCareerPanel('));
+assert.match(careerPage,/careerRecord\('main'\)[\s\S]*career-identity-stats[\s\S]*career-specialty-rack[\s\S]*button.disabled=!learned/,'只显示当前主战身份，三个副职业槽仅激活后可点击');
+assert.doesNotMatch(careerPage,/career-view-tabs|rpg-route-selector|chooseJob|chooseNoviceJob/,'职业页不再提供路线目录、生活分页或远程转职');
+assert.match(game,/function openCareerProfileDetails\(kind,id\)[\s\S]*if\(!record\)return[\s\S]*careerStatMarkup\(job,record.level\)[\s\S]*mountThumbSheet/,'详情只读取已取得职业的实际等级与属性');
 assert.match(system,/Primary progression pages[\s\S]*\.skill-library-card\.locked[\s\S]*\.career-path-card\.current/,'技能与职业一级页必须从统一视觉系统获得状态样式');
 assert.match(system,/RPG progression codex[\s\S]*\.tone-active[\s\S]*\.tone-field[\s\S]*\.career-primary-stage[\s\S]*\.career-life-dossiers/,'技能与职业必须使用统一 RPG 战典皮肤、语义色和主副职业层级');
-assert.match(game,/function renderSkillBrowser\(view,onSelect\)[\s\S]*browser\._sync[\s\S]*skill-inspector-body[\s\S]*skill-action-dock[\s\S]*function refreshSkillPanel\(\)[^\n]*_refreshSkillPanel/,'技能选择必须使用常驻详情和固定操作坞，刷新委托已挂载的局部控制器');
-assert.doesNotMatch(game.match(/function renderSkillBrowser\(view,onSelect\)[\s\S]*?(?=function refreshSkillPanel)/)[0],/mountThumbSheet/,'选择技能不得再弹出抽屉');
-assert.doesNotMatch(game.match(/function renderSkillPanel\(box\)\{[\s\S]*?(?=function refreshSkillPanel)/)[0],/replaceMountedNode|innerHTML\s*=|\brender\(\)/,'技能分类和装配不得重建图标库、槽位或整页');
-assert.match(game,/function switchView\(id\)[\s\S]*replaceMountedNode\(content,fresh,box\)[\s\S]*function refreshCareerPanel\(\)[^\n]*_refreshCareerPanel/,'职业分段必须只替换内容区，外部刷新必须委托已挂载的局部控制器');
+assert.match(game,/function renderSkillPanel\(box\)[\s\S]*skill-projection[\s\S]*skill-game-actions[\s\S]*loadoutOnly:true[\s\S]*function refreshSkillPanel\(\)[^\n]*_refreshSkillPanel/,'技能使用投影与固定装配坞，保持局部更新');
+const skillPage=game.match(/function renderSkillPanel\(box\)\{[\s\S]*?(?=function refreshSkillPanel)/)[0];
+assert.doesNotMatch(skillPage,/mountThumbSheet|skill-inspector|skill-effect-comparison/,'选择技能不弹窗，也不把训练表格铺在主页面');
+assert.doesNotMatch(skillPage,/replaceMountedNode|(?:box|library)\.innerHTML\s*=|\brender\(\)/,'技能分类和装配不得重建图标库或整页');
+assert.match(game,/function openSkillStudy\(ref,onMutate,returnTo\)[\s\S]*trainingOnly:true/,'研习详情只能经显式入口打开，不能复制装配槽');
+assert.doesNotMatch(skillPage,/skill-category-tabs|skill-thumb-dock|switchView|tabRefs/,'战技主画面不能退回三分类标签结构');
+assert.match(skillPage,/renderSkillBrowser\('active',showDetail\)/,'主画面只挂载战技库');
+assert.match(game,/function openSkillCollection\(view,onMutate,scrollTop=0\)[\s\S]*catalogue:false,remember:false[\s\S]*mountThumbSheet/,'自动与精通以浮层打开，不能改变主画面选中招式');
+assert.match(careerPage,/replaceMountedNode\(identity,freshIdentity,box\)[\s\S]*box\._refreshCareerPanel=refreshState/,'职业刷新局部更新当前身份和副职业状态，不替换应用');
 assert.doesNotMatch(game,/function refresh(?:Skill|Career)Panel\(\)[^\n]*replaceChildren/,'技能与职业刷新入口不得清空并重建整个页面');
-assert.match(rules,/角色 \/ 职业 \/ 技能 \/ 背包 \/ 任务[\s\S]*主动技能 \/ 自动生效 \/ 基础精通[\s\S]*常驻详情[\s\S]*固定动作坞/,'统一规范必须固定五项主导航、三类能力、常驻详情与底部操作');
+assert.match(rules,/角色 \/ 职业 \/ 技能 \/ 背包 \/ 任务[\s\S]*战技主画面只展示主动招式[\s\S]*常驻详情[\s\S]*固定动作坞/,'统一规范必须明确单张战技画面和固定装配坞');
 assert.match(rules,/主战职业是唯一人物身份[\s\S]*男女两张同构全身立绘[\s\S]*副职业不是人物身份[\s\S]*可并存的资质徽章/,'统一规范必须固定主战立绘与多副职模块的边界');
 assert.match(rules,/每个技能 ID 必须拥有自己的[\s\S]*战斗按钮与释放动效复用同一个符号[\s\S]*普通攻击、敌方攻击和每种主动技能/,'统一规范必须固定技能图标与战斗反馈');
 assert.doesNotMatch(game,/<span class="cc-icon">(?:DNA|JOB|SKL)<\/span>/,'角色入口必须使用统一 SVG sprite，不能使用文字缩写冒充图标');
