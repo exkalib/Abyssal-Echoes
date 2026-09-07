@@ -1,0 +1,850 @@
+{
+  "version": 10,
+  "status": "generation-rejected-original-alpha-retained",
+  "rendererFilesModified": false,
+  "reason": "内置 imagegen 连续两次返回 RGB 实色棋盘，而非真实 alpha；拒绝进入运行时。按主代理指示停止剩余五件生成，使用既有真实透明原图做关节对位和前后遮挡。",
+  "generationMode": "built-in image_gen__imagegen",
+  "attempts": [
+    {
+      "id": "fieldGreaves",
+      "kind": "complete-worn-leg-armor",
+      "path": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-fb0e9624-d4e3-4bf5-8c53-12e0b7b104c7.png",
+      "size": [
+        1024,
+        1536
+      ],
+      "channels": 3,
+      "hasAlpha": false,
+      "accepted": false,
+      "prompt": "Use case: precise-object-edit. Production asset for an RPG layered paper-doll, actual transparent RGBA background. Image 1 is the fixed body reference, Image 2 the armor design reference. Redraw ONLY the pants/leg armor that would be WORN on that exact body's relaxed straight front standing pose. Render one complete continuous pair of trousers from a low waistband through hips and crotch to both ankle cuffs; include fitted opaque charcoal fabric beneath the armor, all wrapping around the anatomical legs. The output is ONLY a complete pair of pants, no torso, arms, head, skin, shoes, feet, mannequin or background. Never render separated empty leg tubes. Keep camera frontal like body reference, thighs narrow towards knees, legs naturally diverge slightly towards ankles, front knees correctly centered. Actual occupied clothing, NOT an open black hollow waistband/boot cuff: back fabric surfaces hidden behind the implied body, front waistband and natural folds visible. Reproduce distinctive original armor plates, color, wear, material, straps on fitted trousers; preserve strong readable identity. Neutral realistic game-render lighting matching base, NO glow halo. Whole complete pants centered with 5% empty margin. Transparent negative space between legs below crotch. No shadow, floor, checkerboard pixels, text, labels, frame. Pants should fill canvas with realistic proportions (waist to ankle length roughly 2.0 times waistband width), knees at 54% of pants length, crotch at 24%; ankles naturally spaced roughly same as waist width. Garment-only alpha sprite, not a person. This asset is fieldGreaves: muted olive drab field trousers with utility side pouches and straps, dark scuffed steel knee and shin plates, practical flexible material, no high-tech glow. Improve worn fit and connect trousers through hips/crotch."
+    },
+    {
+      "id": "fieldGreaves",
+      "kind": "targeted-alpha-correction",
+      "path": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-cff59e15-dc74-4b98-9823-931679f6e913.png",
+      "size": [
+        1024,
+        1536
+      ],
+      "channels": 3,
+      "hasAlpha": false,
+      "accepted": false,
+      "prompt": "Edit the provided pants asset. Remove the checkerboard background completely and return an image with REAL TRANSPARENT ALPHA CHANNEL. Actual alpha zero outside the pants and between legs, not a painted checkerboard, white or black. Keep the pants exactly as they are. Do not redesign or recolor. This is a game sprite PNG cutout, not a visualization of a cutout. Only visible clothing pixels remain; surrounding pixels must be genuinely transparent."
+    },
+    {
+      "id": "phaseGreaves",
+      "kind": "complete-worn-leg-armor",
+      "path": "/Users/wangyao/.codex/generated_images/01a079fd-ab00-7272-b6bf-1fb2d70a2644/exec-674ea98a-9228-4b48-bc9a-a12ca33f4596.png",
+      "size": [
+        1024,
+        1536
+      ],
+      "channels": 3,
+      "hasAlpha": false,
+      "bounds": null,
+      "accepted": false,
+      "prompt": "Use case: precise-object-edit.\nAsset type: production transparent 2D wearable RPG character sprite, ONE complete waist-to-ankles pair of worn trousers/leg armor.\nInput image 1 is the equipment design to reconstruct. Input image 2 is the exact male character pose/proportions reference; do not render that person. Replace the detached empty-display greaves with COMPLETE trousers with armor attached as genuinely worn.\nPose and anatomy: match the reference man's relaxed FRONT-facing standing posture. A connected belted waist and opaque graphite fabric pelvis/crotch connect the two full legs. Upper thighs are close at the crotch, then each leg angles slightly OUTWARD toward ankles, with the knees following the real straight legs; left ankle farther left than left hip, right ankle farther right than right hip. The legs must not be two detached tubes, must not be parallel, must not be inward bowlegged. Match the visible front plane and volume of actual trousers, with opaque inner-thigh cloth, fitted crotch and hip fabric, knee articulations at about 58 percent down from waistband to ankle. Both leg fronts and visible outer sides are worn armor. No exposed rear/internal shell faces on the front.\nFraming: only this complete lower-body garment from waistband to ankle cuffs, centered and fully visible. Portrait 2:3 image; garment approximately 58 percent as wide as it is tall; waistband at 7 percent canvas height and ankle cuffs at 93 percent. Leave a modest transparent margin on all sides. Waist width about 40 percent canvas width, outer ankle spread about 56 percent canvas width. No boots/shoes/feet. No torso, arms, hands, head, skin, mannequin, ground, cast shadow, text, labels, watermark, props.\nRendering: detailed realistic painted sci-fi game art matching both reference images, physically believable seams, consistent soft top-left lighting, modest three-dimensional thickness, crisp edges and natural dark fabric folds.\nTRANSPARENCY: deliver a true transparent PNG with alpha=0 everywhere outside the garment and between the legs. Checkerboard is only a software UI transparency indicator and MUST NOT be drawn into the image. No solid black, white, gray, colored or checker-pattern backdrop. Preserve the garment opaque; actual alpha background, no painted transparency texture.\nEquipment identity: Preserve the sleek matte-black angular armor, luminous violet circular hip field emitters, violet glossy kneecaps, and narrow violet inset light strips. Keep it a distinctive agile phase armor, not yellow industrial armor."
+    },
+    {
+      "id": "phaseGreaves",
+      "kind": "targeted-alpha-correction",
+      "path": "/Users/wangyao/.codex/generated_images/01a079fd-ab00-7272-b6bf-1fb2d70a2644/exec-68e99473-7da4-4d4f-8e96-e28859ae2308.png",
+      "size": [
+        1024,
+        1536
+      ],
+      "channels": 3,
+      "hasAlpha": false,
+      "bounds": null,
+      "accepted": false,
+      "prompt": "Use case: background-extraction. Cut out the single complete violet-and-black armored trousers in this input. Keep their pixels, colors, geometry, cloth, all contours and the current standing leg angle unchanged. Remove the light gray/white checker pattern completely from outside the pants and from between the two legs. Return a PNG file with an actual RGBA channel: every background pixel must have alpha 0. Transparent alpha, no drawn checkerboard, no white backdrop, no black backdrop. This is a production game compositing layer; only the garment is opaque. Do not create a new pants design or new backdrop."
+    }
+  ],
+  "plannedButNotGenerated": [
+    "miningHarness",
+    "legs_specialist_2",
+    "legs_specialist_3",
+    "legs_specialist_5",
+    "legs_general_5"
+  ],
+  "sourceAnalysis": {
+    "units": "bounds 为源整图像素 [x,y,width,height]；knees 为源整图可见机械膝中心；sourceKneeY/upperFrontRimNormalized 均相对单腿 bounds。bounds 由 alpha>16 逐像素实测；膝位与前沿是原图人工观测近似，膝中心约 ±8 px，前沿约 ±10 px，需要穿戴合成后最终复核。",
+    "upperFrontRimRule": "rim 为将后黑衬垫置后的参考分界。分界以下显示前甲，以上置后；不可无差别裁掉相同高度的黄色扣件或相位环。",
+    "items": [
+      {
+        "id": "phaseGreaves",
+        "bounds": [
+          [
+            96,
+            7,
+            142,
+            516
+          ],
+          [
+            274,
+            7,
+            144,
+            521
+          ]
+        ],
+        "knees": [
+          [
+            170,
+            253
+          ],
+          [
+            342,
+            253
+          ]
+        ],
+        "axis": [
+          170,
+          342
+        ],
+        "rim": [
+          [
+            [
+              96,
+              7
+            ],
+            [
+              132,
+              7
+            ],
+            [
+              145,
+              24
+            ],
+            [
+              171,
+              35
+            ],
+            [
+              201,
+              42
+            ],
+            [
+              222,
+              29
+            ],
+            [
+              238,
+              7
+            ]
+          ],
+          [
+            [
+              274,
+              7
+            ],
+            [
+              289,
+              29
+            ],
+            [
+              316,
+              42
+            ],
+            [
+              346,
+              35
+            ],
+            [
+              373,
+              24
+            ],
+            [
+              384,
+              7
+            ],
+            [
+              418,
+              7
+            ]
+          ]
+        ],
+        "note": "空筒上口最明显。沿前唇曲线把后沿与黑色洞口置于原裤后面，曲线以下保留；紫色髋环不应被裁掉。",
+        "sourceKneeY": [
+          0.47674,
+          0.47217
+        ],
+        "upperFrontRimNormalized": [
+          [
+            [
+              0,
+              0
+            ],
+            [
+              0.25352,
+              0
+            ],
+            [
+              0.34507,
+              0.03295
+            ],
+            [
+              0.52817,
+              0.05426
+            ],
+            [
+              0.73944,
+              0.06783
+            ],
+            [
+              0.88732,
+              0.04264
+            ],
+            [
+              1,
+              0
+            ]
+          ],
+          [
+            [
+              0,
+              0
+            ],
+            [
+              0.10417,
+              0.04223
+            ],
+            [
+              0.29167,
+              0.06718
+            ],
+            [
+              0.5,
+              0.05374
+            ],
+            [
+              0.6875,
+              0.03263
+            ],
+            [
+              0.76389,
+              0
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "miningHarness",
+        "bounds": [
+          [
+            34,
+            12,
+            210,
+            732
+          ],
+          [
+            271,
+            13,
+            208,
+            731
+          ]
+        ],
+        "knees": [
+          [
+            80,
+            334
+          ],
+          [
+            431,
+            335
+          ]
+        ],
+        "axis": [
+          150,
+          360
+        ],
+        "rim": null,
+        "note": "不是护甲空筒，而是腿外側动力支架。机械膝轴在腿外侧，拟合腿体轴线约 x=150/360。不要通宽水平切顶；黄色髋铰链、外侧梁和前扣带必须完整，黑色后部衬垫/背带应按局部轮廓置于原裤后面。",
+        "sourceKneeY": [
+          0.43989,
+          0.44049
+        ],
+        "upperFrontRimNormalized": null
+      },
+      {
+        "id": "legs_specialist_2",
+        "bounds": [
+          [
+            51,
+            18,
+            181,
+            704
+          ],
+          [
+            280,
+            18,
+            182,
+            704
+          ]
+        ],
+        "knees": [
+          [
+            132,
+            342
+          ],
+          [
+            378,
+            342
+          ]
+        ],
+        "axis": [
+          132,
+          378
+        ],
+        "rim": [
+          [
+            [
+              51,
+              18
+            ],
+            [
+              88,
+              23
+            ],
+            [
+              112,
+              34
+            ],
+            [
+              154,
+              43
+            ],
+            [
+              196,
+              53
+            ],
+            [
+              232,
+              51
+            ]
+          ],
+          [
+            [
+              280,
+              51
+            ],
+            [
+              316,
+              53
+            ],
+            [
+              358,
+              43
+            ],
+            [
+              400,
+              34
+            ],
+            [
+              424,
+              23
+            ],
+            [
+              462,
+              18
+            ]
+          ]
+        ],
+        "note": "上口是倾斜黑色衬垫和扣带，后侧内衬可置后；上沿金属扣带前面部分需保留。大腿黄黑警示板较宽，不能按小腿最窄宽度缩整件。",
+        "sourceKneeY": [
+          0.46023,
+          0.46023
+        ],
+        "upperFrontRimNormalized": [
+          [
+            [
+              0,
+              0
+            ],
+            [
+              0.20442,
+              0.0071
+            ],
+            [
+              0.33702,
+              0.02273
+            ],
+            [
+              0.56906,
+              0.03551
+            ],
+            [
+              0.8011,
+              0.04972
+            ],
+            [
+              1,
+              0.04688
+            ]
+          ],
+          [
+            [
+              0,
+              0.04688
+            ],
+            [
+              0.1978,
+              0.04972
+            ],
+            [
+              0.42857,
+              0.03551
+            ],
+            [
+              0.65934,
+              0.02273
+            ],
+            [
+              0.79121,
+              0.0071
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "legs_specialist_3",
+        "bounds": [
+          [
+            41,
+            4,
+            192,
+            755
+          ],
+          [
+            279,
+            3,
+            192,
+            756
+          ]
+        ],
+        "knees": [
+          [
+            128,
+            344
+          ],
+          [
+            383,
+            343
+          ]
+        ],
+        "axis": [
+          128,
+          383
+        ],
+        "rim": [
+          [
+            [
+              41,
+              4
+            ],
+            [
+              72,
+              5
+            ],
+            [
+              106,
+              16
+            ],
+            [
+              150,
+              32
+            ],
+            [
+              196,
+              47
+            ],
+            [
+              233,
+              63
+            ]
+          ],
+          [
+            [
+              279,
+              62
+            ],
+            [
+              316,
+              46
+            ],
+            [
+              361,
+              31
+            ],
+            [
+              406,
+              15
+            ],
+            [
+              440,
+              4
+            ],
+            [
+              471,
+              3
+            ]
+          ]
+        ],
+        "note": "上口向内侧斜降，后黑衬垫是窄斜带。圆形膝关节需保持圆形/局部等比，不随上下两段长度整体拉长。",
+        "sourceKneeY": [
+          0.45033,
+          0.44974
+        ],
+        "upperFrontRimNormalized": [
+          [
+            [
+              0,
+              0
+            ],
+            [
+              0.16146,
+              0.00132
+            ],
+            [
+              0.33854,
+              0.01589
+            ],
+            [
+              0.56771,
+              0.03709
+            ],
+            [
+              0.80729,
+              0.05695
+            ],
+            [
+              1,
+              0.07815
+            ]
+          ],
+          [
+            [
+              0,
+              0.07804
+            ],
+            [
+              0.19271,
+              0.05688
+            ],
+            [
+              0.42708,
+              0.03704
+            ],
+            [
+              0.66146,
+              0.01587
+            ],
+            [
+              0.83854,
+              0.00132
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "legs_specialist_5",
+        "bounds": [
+          [
+            61,
+            12,
+            180,
+            722
+          ],
+          [
+            271,
+            12,
+            180,
+            722
+          ]
+        ],
+        "knees": [
+          [
+            143,
+            346
+          ],
+          [
+            368,
+            346
+          ]
+        ],
+        "axis": [
+          143,
+          368
+        ],
+        "rim": [
+          [
+            [
+              61,
+              12
+            ],
+            [
+              82,
+              13
+            ],
+            [
+              115,
+              28
+            ],
+            [
+              158,
+              45
+            ],
+            [
+              201,
+              63
+            ],
+            [
+              241,
+              77
+            ]
+          ],
+          [
+            [
+              271,
+              77
+            ],
+            [
+              311,
+              63
+            ],
+            [
+              354,
+              45
+            ],
+            [
+              397,
+              28
+            ],
+            [
+              430,
+              13
+            ],
+            [
+              451,
+              12
+            ]
+          ]
+        ],
+        "note": "髋部上沿黑衬垫斜降；大腿前盾板与膝上褶皱需连续。宽度不能按底部尖端来缩，前盾板本身应包覆真实大腿。",
+        "sourceKneeY": [
+          0.4626,
+          0.4626
+        ],
+        "upperFrontRimNormalized": [
+          [
+            [
+              0,
+              0
+            ],
+            [
+              0.11667,
+              0.00139
+            ],
+            [
+              0.3,
+              0.02216
+            ],
+            [
+              0.53889,
+              0.04571
+            ],
+            [
+              0.77778,
+              0.07064
+            ],
+            [
+              1,
+              0.09003
+            ]
+          ],
+          [
+            [
+              0,
+              0.09003
+            ],
+            [
+              0.22222,
+              0.07064
+            ],
+            [
+              0.46111,
+              0.04571
+            ],
+            [
+              0.7,
+              0.02216
+            ],
+            [
+              0.88333,
+              0.00139
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "legs_general_5",
+        "bounds": [
+          [
+            64,
+            6,
+            173,
+            695
+          ],
+          [
+            275,
+            6,
+            174,
+            694
+          ]
+        ],
+        "knees": [
+          [
+            146,
+            336
+          ],
+          [
+            366,
+            336
+          ]
+        ],
+        "axis": [
+          146,
+          366
+        ],
+        "rim": [
+          [
+            [
+              64,
+              6
+            ],
+            [
+              86,
+              11
+            ],
+            [
+              111,
+              27
+            ],
+            [
+              149,
+              45
+            ],
+            [
+              195,
+              68
+            ],
+            [
+              237,
+              81
+            ]
+          ],
+          [
+            [
+              275,
+              81
+            ],
+            [
+              317,
+              68
+            ],
+            [
+              363,
+              45
+            ],
+            [
+              401,
+              27
+            ],
+            [
+              427,
+              11
+            ],
+            [
+              449,
+              6
+            ]
+          ]
+        ],
+        "note": "外侧工具件加宽了 alpha bounds，但它们不属于腿体中心；贴合时大腿主体先对准，外侧设备可以向外多出。顶部后黑衬垫后置，金色前扣保留。",
+        "sourceKneeY": [
+          0.47482,
+          0.4755
+        ],
+        "upperFrontRimNormalized": [
+          [
+            [
+              0,
+              0
+            ],
+            [
+              0.12717,
+              0.00719
+            ],
+            [
+              0.27168,
+              0.03022
+            ],
+            [
+              0.49133,
+              0.05612
+            ],
+            [
+              0.75723,
+              0.08921
+            ],
+            [
+              1,
+              0.10791
+            ]
+          ],
+          [
+            [
+              0,
+              0.10807
+            ],
+            [
+              0.24138,
+              0.08934
+            ],
+            [
+              0.50575,
+              0.0562
+            ],
+            [
+              0.72414,
+              0.03026
+            ],
+            [
+              0.87356,
+              0.0072
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        ]
+      }
+    ]
+  }
+}

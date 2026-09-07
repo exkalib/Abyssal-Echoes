@@ -1,0 +1,1303 @@
+{
+  "version": 11,
+  "date": "2026-09-07",
+  "status": "implemented-not-published",
+  "method": "Built-in imagegen creates each complete waist-to-ankle garment in one source; local reserved-magenta background extraction and boundary alpha cleanup prepare the returned painting for runtime. No local garment painting or palette replacement.",
+  "authorizationContext": "User asked to generate and implement after discussing the local-transparency production issue. Local-only alpha preparation was explicitly announced before processing; no external upload.",
+  "runtime": "One complete garment source per item; rendering partitions that same source continuously to fit waist/crotch/knees/ankles and depth. The rear waistband goes behind the body; old pants/belts are masked only while equipped. Character and backpack share the renderer.",
+  "processingScript": "output/wardrobe-pants-v11/key-assets.cjs",
+  "items": [
+    {
+      "id": "fieldGreaves",
+      "status": "implemented",
+      "asset": "prototype/assets/wearables-v2/pants-v11-fieldGreaves.webp",
+      "geometry": {
+        "file": "../wearables-v2/pants-v11-fieldGreaves",
+        "width": 1022,
+        "height": 1539,
+        "waist": [
+          508.5,
+          205
+        ],
+        "crotch": [
+          509,
+          469
+        ],
+        "knees": [
+          [
+            344,
+            775
+          ],
+          [
+            672,
+            775
+          ]
+        ],
+        "kneeBand": [
+          676,
+          960
+        ],
+        "ankles": [
+          [
+            305,
+            1334
+          ],
+          [
+            710,
+            1334
+          ]
+        ],
+        "rim": [
+          [
+            311,
+            164
+          ],
+          [
+            355,
+            171
+          ],
+          [
+            432,
+            177
+          ],
+          [
+            512,
+            179
+          ],
+          [
+            590,
+            177
+          ],
+          [
+            664,
+            171
+          ],
+          [
+            706,
+            164
+          ]
+        ]
+      },
+      "alphaProcessing": {
+        "id": "fieldGreaves",
+        "source": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/output/wardrobe-pants-v11/fieldGreaves-source.png",
+        "destination": "prototype/assets/wearables-v2/pants-v11-fieldGreaves.webp",
+        "width": 1022,
+        "height": 1539,
+        "bounds": [
+          0.21330724070450097,
+          0.09616634178037686,
+          0.5694716242661448,
+          0.7914230019493177
+        ],
+        "opaquePixels": 475934,
+        "transparentPixels": 1096924,
+        "method": "reserved-magenta-connected-background-and-boundary-unmix",
+        "proof": "output/wardrobe-pants-v11/fieldGreaves-alpha.png"
+      },
+      "generation": {
+        "mode": "built-in imagegen",
+        "prompt": "Use case: stylized-concept\nAsset type: production 2D RPG paper-doll wardrobe garment, fieldGreaves complete armored trousers.\nInput images: Image 1 is only the male anatomy, front camera and relaxed standing-pose reference. Image 2 is the identity/design reference for fieldGreaves, NOT the disconnected two-leg construction to copy. Image 3 is the matching tactical vest style/material reference, not an object to include.\nPrimary request: draw ONE COMPLETE CONTINUOUS WORN PAIR OF TROUSERS from waistband through hips, seat, real crotch fabric, both thighs, knees, shins to ankle cuffs. It must be a coherent actual pair of pants, as if an invisible person matching Image 1 is wearing it; not two unattached greaves, not a hollow retail product display.\nBackdrop: absolutely uniform pure saturated chroma-key magenta #ff00ff, including the space between the legs. No gradients, checkerboards, background texture, floor, cast shadows or text. No magenta on the garment.\nDesign: preserve the original fieldGreaves olive green tough textile, black woven belts/straps, worn gunmetal knee and shin plates and modest utility pockets; continue the textile naturally up through the inseams and crotch to one practical black waist belt. Use tactical black webbing/material and restrained tiny cyan indicators to harmonize with the third reference vest. The pant waist and hip area must remain relatively clean so the vest bottom overlaps it naturally; no huge hip gadgets, extra stomach armor or second belt.\nAnatomy/framing: straight-on front view, waist horizontal and hips natural, legs spread only as much as Image 1, knees straight with slight outward shin angle. Only the pants, no person, exposed skin, torso, hands, boots or feet. Keep ALL of the waist and both ankle cuffs in frame with generous padding. The visible waistband-to-cuff height is 2.1 times the entire pants' widest width, NOT impossibly tall skinny legs. Crotch seam sits 22 percent down from the waist to ankle; center of knees sits 56 percent down; practical thigh/calf proportions.\nConstruction: front waist edge only in the visible front silhouette; do not draw a visible black oval opening, inside seat, or rear waistband over the front. Closed wearable waist, continuous opaque fabric all around the crotch and inner thighs. Leg gap starts below the actual crotch seam. Knee plates wrap around the round knees and shin plates follow the tibias; do not stretch circular parts vertically. The ankle cuffs are closed worn fabric around invisible ankles, with no hollow socket facing the viewer.\nStyle: polished realistic sci-fi game equipment illustration, soft neutral upper-front lighting, sharp seams and believable metal wear, consistent with the source assets. Centered single garment only. No collage, duplicate pants, captions, labels or watermark.",
+        "references": [
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/base-male.webp",
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/fieldGreaves.webp",
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v2/vest-worn-v9-male.webp"
+        ],
+        "source": "/Users/wangyao/.codex/generated_images/01a079fc-6a64-7f93-84e0-672dbb3bf6a1/exec-00675ea4-2cb6-484e-9c0c-d95d0a744638.png",
+        "workspaceRaw": "output/wardrobe-pants-v11/fieldGreaves-source.png",
+        "originalRecord": "output/wardrobe-pants-v11/fieldGreaves.json"
+      }
+    },
+    {
+      "id": "phaseGreaves",
+      "status": "implemented",
+      "asset": "prototype/assets/wearables-v2/pants-v11-phaseGreaves.webp",
+      "geometry": {
+        "file": "../wearables-v2/pants-v11-phaseGreaves",
+        "width": 884,
+        "height": 1778,
+        "waist": [
+          440,
+          170
+        ],
+        "crotch": [
+          442,
+          420
+        ],
+        "knees": [
+          [
+            250,
+            906
+          ],
+          [
+            637,
+            906
+          ]
+        ],
+        "kneeBand": [
+          808,
+          1018
+        ],
+        "ankles": [
+          [
+            180,
+            1608
+          ],
+          [
+            695,
+            1608
+          ]
+        ],
+        "rim": [
+          [
+            244,
+            119
+          ],
+          [
+            270,
+            130
+          ],
+          [
+            316,
+            145
+          ],
+          [
+            358,
+            154
+          ],
+          [
+            397,
+            160
+          ],
+          [
+            421,
+            157
+          ],
+          [
+            471,
+            157
+          ],
+          [
+            490,
+            161
+          ],
+          [
+            540,
+            151
+          ],
+          [
+            588,
+            137
+          ],
+          [
+            628,
+            120
+          ]
+        ]
+      },
+      "alphaProcessing": {
+        "id": "phaseGreaves",
+        "source": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/output/wardrobe-pants-v11/phaseGreaves-raw.png",
+        "destination": "prototype/assets/wearables-v2/pants-v11-phaseGreaves.webp",
+        "width": 884,
+        "height": 1778,
+        "bounds": [
+          0.11764705882352941,
+          0.06130483689538808,
+          0.7567873303167421,
+          0.8582677165354331
+        ],
+        "opaquePixels": 636796,
+        "transparentPixels": 934956,
+        "method": "reserved-magenta-connected-background-and-boundary-unmix",
+        "proof": "output/wardrobe-pants-v11/phaseGreaves-alpha.png"
+      },
+      "generation": {
+        "mode": "built-in imagegen",
+        "prompt": "Use case: stylized-concept.\nAsset type: ONE complete wearable armored pair of trousers for a realistic science-fiction RPG paper-doll character, from actual waistline through hips, closed crotch and BOTH complete legs to ankle cuffs. This replaces the incomplete leg tubes in reference 2.\nInput images: Image 1 is BODY PROPORTION AND STANDING POSE reference only, do NOT include the person. Image 2 is the old phaseGreaves leg equipment with absent waist: retain a recognizable technical phase-joint character but REBUILD it into complete wearable trousers. Image 3 is the MATCHING starShell CHEST ARMOR, use this as the authority for style, colors and materials; do NOT draw chest armor in output.\nScene/backdrop: exactly flat saturated chroma-key magenta #ff00ff, uniformly covering all space outside the trousers including between the legs, no gradient, no shadows, no vignette, no checkerboard.\nSubject: a single complete pair of advanced expedition phase-armored trousers, tailored to a solid human pelvis and two human legs in the relaxed straight-on standing pose from image 1. A slim practical graphite integrated waistband, ONE modest flat central closure, covered hips and a convincingly sewn CLOSED graphite crotch connect both thigh sections. Off-white ceramic plate shells, industrial safety-orange joints/rivets and little cyan emitters belong to the same white/orange/cyan industrial suit as image 3. Angular curved plates wrap outward around the thighs and shins; small phase articulation modules sit at the outer hip and knee. Matching strong dark charcoal fabric fills ALL spaces between plates, shaping the entire legs and pelvis as one garment. It must read as trousers already worn on invisible solid anatomy, not hollow armor shells or tubes.\nAnatomy/framing: direct front orthographic-like camera, no dramatic perspective. Overall actual garment height is 2.05 times its maximum outside width; realistic NOT excessively long legs. Closed crotch fork is approximately 22% down from waistband top; center of kneecaps 56% down; tapered ankle cuffs at 100%. Both legs gently spread outward like the standing reference, knees straight, no walking pose. Small natural cloth folds at hip crease, inner thigh and back-of-knee create volume. Center horizontally, portrait canvas, comfortably framed with small blank margins; entire waistband and both ankle hems visible.\nWaist depth is crucial: waistband top is a shallow FRONT contour; NO visible dark elliptical back-waist opening, mannequin hole, raised rear waistband or black interior bowl. Do not draw the back wall of the pants in front of the abdomen. One restrained waist closure only, no belt above another belt and no giant codpiece.\nFinish: production-quality detailed realistic game illustration matching reference 3's material polish, subtle wear and crisp silhouettes, neutral frontal lighting with gentle upper-left highlights. Do not reflect magenta from backdrop on the garment. No magenta/pink/violet material or glow on this white/orange/cyan item.\nOutput ONLY the one joined full pair of trousers. No head, neck, torso, chest plates, sleeves, arms, hands, skin, mannequin, feet, shoes or boots. No floor, ground contact shadow, text, labels, watermark, graphic symbols, swatches or detached alternate views.",
+        "references": [
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/base-male.webp",
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/phaseGreaves.webp",
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v2/starShell-worn-v9-male.webp"
+        ],
+        "source": "/Users/wangyao/.codex/generated_images/01a079fd-ab00-7272-b6bf-1fb2d70a2644/exec-77e3ae7c-74f4-4831-9b22-760b18bb0b9a.png",
+        "workspaceRaw": "output/wardrobe-pants-v11/phaseGreaves-raw.png",
+        "originalRecord": "output/wardrobe-pants-v11/phaseGreaves.json"
+      }
+    },
+    {
+      "id": "miningHarness",
+      "status": "implemented",
+      "asset": "prototype/assets/wearables-v2/pants-v11-miningHarness.webp",
+      "geometry": {
+        "file": "../wearables-v2/pants-v11-miningHarness",
+        "width": 1024,
+        "height": 1535,
+        "waist": [
+          510.5,
+          158
+        ],
+        "crotch": [
+          510,
+          414
+        ],
+        "knees": [
+          [
+            310,
+            822
+          ],
+          [
+            709,
+            822
+          ]
+        ],
+        "kneeBand": [
+          716,
+          954
+        ],
+        "ankles": [
+          [
+            262,
+            1375
+          ],
+          [
+            753,
+            1375
+          ]
+        ],
+        "rim": [
+          [
+            291,
+            58
+          ],
+          [
+            332,
+            77
+          ],
+          [
+            361,
+            115
+          ],
+          [
+            424,
+            129
+          ],
+          [
+            511,
+            133
+          ],
+          [
+            598,
+            128
+          ],
+          [
+            660,
+            116
+          ],
+          [
+            690,
+            78
+          ],
+          [
+            731,
+            57
+          ]
+        ]
+      },
+      "alphaProcessing": {
+        "id": "miningHarness",
+        "source": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/output/wardrobe-pants-v11/miningHarness-source.png",
+        "destination": "prototype/assets/wearables-v2/pants-v11-miningHarness.webp",
+        "width": 1024,
+        "height": 1535,
+        "bounds": [
+          0.1640625,
+          0.031921824104234525,
+          0.6650390625,
+          0.8931596091205212
+        ],
+        "opaquePixels": 661709,
+        "transparentPixels": 910131,
+        "method": "reserved-magenta-connected-background-and-boundary-unmix",
+        "proof": "output/wardrobe-pants-v11/miningHarness-alpha.png"
+      },
+      "generation": {
+        "mode": "built-in imagegen",
+        "prompt": "Use case: stylized-concept\nAsset type: sci-fi RPG paper-doll full miningHarness wearable pants sprite.\nInput images: Image 1 is the front-facing standing male anatomy and leg spacing reference only. Image 2 is the original mining exoskeleton design that must remain recognizable. Image 3 is a heavy chest armor compatibility/style reference, not an instruction to copy its white/blue main palette or include a torso.\nPrimary request: generate one single complete pair of mining exoskeleton trousers, fully connected from waistband through hips, crotch, thighs, knees, calves and ankle cuffs. The complete underlying actual dark work pants are worn by an invisible person in the first image's pose. The yellow external framework from Image 2 is fitted onto the OUTER sides of these trousers, its hip pivots, knee pivots, telescoping hydraulic rods and ankle mounts actually connected and load-bearing.\nBackdrop: perfectly flat pure saturated magenta #ff00ff across the entire background and gap between legs. No checkerboard, gradient, floor, shadows, haze or words. No magenta in the garment.\nDesign: preserve the mining yellow and black identity, scratched industrial safety-yellow struts and joint covers, black heavy canvas/ballistic underpants, metal pistons and silver rod surfaces, black horizontal fixation straps around thighs and calves. Keep the outside mechanical rails clearly visible and not buried beneath generic solid armor plating. Add proper waist support harness joined to hip pivots and opaque real trouser crotch, reinforced round kneecaps and practical shin abrasion guards, closed ankle cuffs. Match the polished realistic materials and construction quality of Image 3, with at most tiny cyan status indicators and dark navy-black connective components, but do NOT change the mining framework to white/blue or add a glowing chest reactor. This is industrial mining pants, not a copied warden torso.\nComposition/anatomy: front-facing orthographic-like camera, centered complete waist-to-ankle garment only, no wearer, torso, hands, feet or boots. Natural symmetrical standing stance, same modest leg separation as Image 1. Waist-to-cuff height approximately 2.1 times maximum width including outer rails. Actual crotch seam at 22 percent down from waistband, compact knee pivots at 56 percent; realistic thighs and calves, no elongated lower legs. Both whole ankle cuffs and top waistband inside frame with margins.\nConstruction constraints: continuous dark fabric must physically connect waist, seat, crotch and both legs; gap only below the crotch. Do not create detached leg objects, shorts over detached sleeves, or a floating belt. No hollow black oval rear waist cavity facing forward; depict the narrow front-facing worn belt upper edge, with rear edge concealed behind. One practical waist belt only, no enormous central buckle or duplicate codpiece. Knee pivots are circular, not stretched ovals. No dangling components floating away from legs; working linkage proportions.\nStyle: detailed realistic sci-fi game equipment illustration like references, neutral soft upper-front lighting, controlled metal wear and stitched fabric, functional mechanical design. Single garment, no collage, labels, numerals, logos or watermark.",
+        "references": [
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/base-male.webp",
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/miningHarness.webp",
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v2/warden-worn-v9-male.webp"
+        ],
+        "source": "/Users/wangyao/.codex/generated_images/01a079fc-6a64-7f93-84e0-672dbb3bf6a1/exec-fae23726-e8a3-4ddb-b974-cad1c61a7184.png",
+        "workspaceRaw": "output/wardrobe-pants-v11/miningHarness-source.png",
+        "originalRecord": "output/wardrobe-pants-v11/miningHarness.json"
+      }
+    },
+    {
+      "id": "legs_specialist_2",
+      "status": "implemented",
+      "asset": "prototype/assets/wearables-v2/pants-v11-legs_specialist_2.webp",
+      "geometry": {
+        "file": "../wearables-v2/pants-v11-legs_specialist_2",
+        "width": 979,
+        "height": 1606,
+        "waist": [
+          481,
+          143
+        ],
+        "crotch": [
+          479,
+          432
+        ],
+        "knees": [
+          [
+            317,
+            815
+          ],
+          [
+            649,
+            815
+          ]
+        ],
+        "kneeBand": [
+          726,
+          915
+        ],
+        "ankles": [
+          [
+            287,
+            1427
+          ],
+          [
+            680,
+            1427
+          ]
+        ],
+        "rim": [
+          [
+            275,
+            111
+          ],
+          [
+            344,
+            117
+          ],
+          [
+            425,
+            123
+          ],
+          [
+            481,
+            125
+          ],
+          [
+            558,
+            122
+          ],
+          [
+            632,
+            116
+          ],
+          [
+            687,
+            111
+          ]
+        ]
+      },
+      "alphaProcessing": {
+        "id": "legs_specialist_2",
+        "source": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/output/wardrobe-pants-v11/legs_specialist_2-source-v2.png",
+        "destination": "prototype/assets/wearables-v2/pants-v11-legs_specialist_2.webp",
+        "width": 979,
+        "height": 1606,
+        "bounds": [
+          0.18181818181818182,
+          0.062266500622665005,
+          0.6200204290091931,
+          0.8518057285180572
+        ],
+        "opaquePixels": 576720,
+        "transparentPixels": 995554,
+        "method": "reserved-magenta-connected-background-and-boundary-unmix",
+        "proof": "output/wardrobe-pants-v11/legs_specialist_2-alpha.png"
+      },
+      "generation": {
+        "mode": "built-in imagegen",
+        "prompt": "Use case: stylized-concept\nAsset type: 2D sci-fi RPG paper-doll wearable pants sprite, legs_specialist_2 matched to power armor.\nInput images: Image 1 is the front-facing male anatomy and relaxed standing pose reference only. Image 2 is this leg armor's design identity reference, NOT its disconnected two-sleeve product layout. Image 3 is the matching power chest armor, a material and panel-language reference ONLY; do not draw the chest or its belt/codpiece again.\nPrimary request: ONE complete continuous armored pair of trousers as worn by an invisible person in Image 1's stance. Draw an actual waistband, hips, normal crotch seam/pelvic fabric, both full thighs, knees, shins and ankle cuffs as ONE anatomically connected garment. Do not make detached leg sleeves or a separate waist armor patch.\nBackdrop: solid perfectly flat saturated magenta #ff00ff, no gradient or cast shadow. The entire negative space including leg gap must be the same #ff00ff. Garment contains no magenta.\nDesign: coordinated with Image 2 and Image 3: scuffed angular gunmetal plates, industrial mustard-yellow accent plates and worn caution-painted areas, black flexible pressure-suit fabric, realistic black cables and joints, small narrow cyan energy indicators. Real continuous dark fabric and subtle segmented protection join waist, hips and crotch; not bare thighs or hollow interior. One simple functional waistband, relatively unobtrusive so chest bottom armor can overlap it without two huge buckles/codpieces. Thigh and shin plate silhouettes preserve the source armor identity. Keep the knee articulated and round in volume with circular side joints and compact front guards; no vertically stretched circles.\nComposition: single garment centered, straight-on front view at torso-height camera, no side turn. Natural standing leg separation matches Image 1, slight outward angle below knee. Waist-to-ankle height is 2.1 times overall maximum hip/thigh width. Crotch at 22 percent of height down from waist, knees at 56 percent, ankles at 100 percent. Keep the top waist and both complete ankle cuffs comfortably inside frame. No upper torso, head, hands, skin, boots or feet.\nConstruction constraints: the entire crotch must be closed opaque material; leg gap begins below crotch. Do not display the back waistband interior as an oval black bowl floating in front of the wearer. Waist is a narrow worn front-facing band with no visible rear cavity. Ankle cuffs sit around invisible ankles with no hollow frontal socket. No additional rear view, exploded components, display stand, duplicate pants, text, logos, labels or watermark.\nStyle: production-quality realistic sci-fi game equipment illustration matching references, crisp controlled metal edges, believable worn finish, clear material separation, neutral upper-front soft light.",
+        "references": [
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/base-male.webp",
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/equipment-art-v3/legs_specialist_2.webp",
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v2/power-worn-v9-male.webp"
+        ],
+        "source": "/Users/wangyao/.codex/generated_images/01a079fc-6a64-7f93-84e0-672dbb3bf6a1/exec-53af5b90-9b25-4d5f-95f9-7494404b77d4.png",
+        "workspaceRaw": "output/wardrobe-pants-v11/legs_specialist_2-source.png",
+        "originalRecord": "output/wardrobe-pants-v11/legs_specialist_2.json",
+        "correction": {
+          "mode": "built-in imagegen edit",
+          "prompt": "Use case: precise-object-edit. Edit ONLY the upper FRONT PELVIS region of this complete pair of armored trousers. Remove the large long central trapezoid metal codpiece hanging below the belt, and remove its two yellow diagonal attachment tabs next to it. Replace that specific central pelvis area with fitted opaque black graphite fabric, normal subtle sewn fly seam and natural soft folds matching the surrounding trouser cloth. Keep the single current waistband/belt, both outer hip plates, thigh armor, knees, shins, ankle cuffs and the entire silhouette in exactly their existing positions, scale and framing. One complete continuous full pair of trousers, not cropped or separated parts. The rest must remain unchanged, especially the gunmetal/yellow/cyan material scheme. Keep the same perfectly flat magenta backdrop outside the garment and between legs; no backdrop texture, no shadows, no words. This target change avoids duplicating the matched chest armor's pelvic plate when worn as a whole suit.",
+          "reference": "output/wardrobe-pants-v11/legs_specialist_2-source.png",
+          "source": "output/wardrobe-pants-v11/legs_specialist_2-source-v2.png",
+          "note": "Native returned image bytes materialized locally because default save path was unavailable. This corrected source removes the duplicate central codpiece and is the production alpha source."
+        }
+      }
+    },
+    {
+      "id": "legs_specialist_3",
+      "status": "implemented",
+      "asset": "prototype/assets/wearables-v2/pants-v11-legs_specialist_3.webp",
+      "geometry": {
+        "file": "../wearables-v2/pants-v11-legs_specialist_3",
+        "width": 1024,
+        "height": 1536,
+        "waist": [
+          510,
+          168
+        ],
+        "crotch": [
+          510,
+          435
+        ],
+        "knees": [
+          [
+            321,
+            797
+          ],
+          [
+            672,
+            797
+          ]
+        ],
+        "kneeBand": [
+          700,
+          899
+        ],
+        "ankles": [
+          [
+            291,
+            1368
+          ],
+          [
+            706,
+            1368
+          ]
+        ],
+        "rim": [
+          [
+            233,
+            168
+          ],
+          [
+            310,
+            153
+          ],
+          [
+            410,
+            161
+          ],
+          [
+            510,
+            168
+          ],
+          [
+            610,
+            161
+          ],
+          [
+            711,
+            152
+          ],
+          [
+            785,
+            168
+          ]
+        ]
+      },
+      "alphaProcessing": {
+        "id": "legs_specialist_3",
+        "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-ae62d3d6-3ba2-4527-84a7-616a533f8534.png",
+        "destination": "prototype/assets/wearables-v2/pants-v11-legs_specialist_3.webp",
+        "width": 1024,
+        "height": 1536,
+        "bounds": [
+          0.22265625,
+          0.09830729166666667,
+          0.5419921875,
+          0.8092447916666666
+        ],
+        "opaquePixels": 460144,
+        "transparentPixels": 1112720,
+        "method": "reserved-magenta-connected-background-and-boundary-unmix",
+        "proof": "output/wardrobe-pants-v11/legs_specialist_3-alpha.png"
+      },
+      "generation": {
+        "mode": "built-in imagegen",
+        "initialCompleteGarment": {
+          "prompt": "Use case: stylized-concept.\nAsset: ONE complete pair of wearable sci-fi armored trousers, isolated on a genuinely transparent background, for a layered RPG character. One finished garment, not separated parts or a sprite sheet.\nReference 1: matching torso armor material and industrial design language. Reference 2: exact wearer stance and anatomy, not a person to include. Reference 3: existing leg armor mechanical identity to incorporate.\nRedesign the COMPLETE TROUSERS continuously from the natural waist to both ankle cuffs. Include a single fitted belt, full front hips, continuous opaque cloth crotch and upper thighs, articulated thigh plates, circular mechanical knee joints, tapered shin armor, and slim ankle fabric cuffs. The pelvis and both legs must be joined as a real pair of trousers. Do not generate only greaves, shorts, or a separate waist component.\nWorn front view on an implied body in the reference man's neutral stance. Legs diverge gently from hips toward ankles like reference 2, with knees following the same axes. The top waist edge is the actual front waistband wrapping a filled body; the back waistband and inside fabric are hidden by that body. No hollow open bowl, rear interior surfaces, human skin, mannequin, torso, hands, feet or shoes.\nCoherent matching set with reference 1: worn off-white ceramic and steel panels, restrained orange industrial edges, dark graphite flexible cloth, small cyan inset details. Retain reference 3's circular knee joints and distinct articulated plate layout, adapted into complete trousers. Natural fabric folds support the metal, no disconnected floating armor. Crotch flexible and anatomically shaped, modest front buckle; no enormous ornamental groin shield. A close-fitting upper waistband tucks under the torso hem.\nFront/near-orthographic realistic game illustration, soft neutral light, clean legible silhouette, physically correct overlap. Entire garment visible with margin, portrait canvas 2:3, trouser height about twice the outside width; knee centers 56 percent down from top waistband to ankle cuff, crotch bottom about 23 percent down. Only the complete trousers and transparent surrounding area. Actual transparent background, no drawn background or checker pattern, no floor, cast shadow, glow halo, text, labels or watermark.",
+          "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-2ebc1e23-e4d1-466f-9f87-3a08f2967702.png",
+          "references": [
+            "prototype/assets/wearables-v2/nanoSuit-worn-v9-male.webp",
+            "prototype/assets/wearables-v1/base-male.webp",
+            "prototype/assets/equipment-art-v3/legs_specialist_3.webp"
+          ],
+          "status": "RGB checkerboard draft; superseded by edit"
+        },
+        "prompt": "Use case: precise-object-edit. Edit target is this ONE complete armored trousers. Keep the complete connected waist/hips/crotch/both legs/ankle cuffs and all armor materials, design, colors, and stance. Correct ONLY the top waist edge: this is the front view of trousers worn around a filled human waist, NOT a hollow empty garment. Remove the elevated rear black oval waistband and exposed black inner back lining above the front belt. The upper silhouette should instead follow the upper FRONT edge of the front belt, mostly horizontal, with only mild convex curvature as it wraps the waist. No extra rear panel visible above it; no skin or torso. Preserve natural continuous complete trousers geometry. Replace the checker-pattern surroundings with a perfectly flat saturated magenta #ff00ff background everywhere outside trousers and in the gap between legs. No color spill onto the garment, no shadows on backdrop, no gradient, no text. The magenta is for the local production transparency workflow. Do not crop or split the garment.",
+        "references": [
+          "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-2ebc1e23-e4d1-466f-9f87-3a08f2967702.png"
+        ],
+        "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-ae62d3d6-3ba2-4527-84a7-616a533f8534.png"
+      }
+    },
+    {
+      "id": "legs_specialist_5",
+      "status": "implemented",
+      "asset": "prototype/assets/wearables-v2/pants-v11-legs_specialist_5.webp",
+      "geometry": {
+        "file": "../wearables-v2/pants-v11-legs_specialist_5",
+        "width": 1024,
+        "height": 1536,
+        "waist": [
+          506,
+          168
+        ],
+        "crotch": [
+          505,
+          409
+        ],
+        "knees": [
+          [
+            306,
+            801
+          ],
+          [
+            699,
+            801
+          ]
+        ],
+        "kneeBand": [
+          707,
+          910
+        ],
+        "ankles": [
+          [
+            258,
+            1416
+          ],
+          [
+            742,
+            1416
+          ]
+        ],
+        "rim": [
+          [
+            252,
+            103
+          ],
+          [
+            301,
+            115
+          ],
+          [
+            393,
+            137
+          ],
+          [
+            458,
+            139
+          ],
+          [
+            506,
+            133
+          ],
+          [
+            560,
+            140
+          ],
+          [
+            646,
+            124
+          ],
+          [
+            739,
+            102
+          ],
+          [
+            761,
+            114
+          ]
+        ]
+      },
+      "alphaProcessing": {
+        "id": "legs_specialist_5",
+        "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-cbe01c4b-4308-4c01-a451-54b991bb7332.png",
+        "destination": "prototype/assets/wearables-v2/pants-v11-legs_specialist_5.webp",
+        "width": 1024,
+        "height": 1536,
+        "bounds": [
+          0.1904296875,
+          0.0625,
+          0.599609375,
+          0.8873697916666666
+        ],
+        "opaquePixels": 552338,
+        "transparentPixels": 1020526,
+        "method": "reserved-magenta-connected-background-and-boundary-unmix",
+        "proof": "output/wardrobe-pants-v11/legs_specialist_5-alpha.png"
+      },
+      "generation": {
+        "mode": "built-in imagegen",
+        "prompt": "Use case: stylized-concept. Game production asset: ONE complete pair of top-tier armored trousers from natural waist to ankles, not separated pelvis and greaves. Reference 1 is the matching torso armor's white ceramic, safety orange, charcoal ribbed fabric, cyan lights and exoskeletal style. Reference 2 is the old leg armor's angular knee shields and long articulated thigh/shin plates. Redesign a complete garment of the same family, preserving readable angular plates and armored knee polygons.\nFrontal worn standing view. A single modest front belt, connected opaque hips and fabric crotch, two complete legs naturally diverging slightly toward ankles, fitted thighs, knees at 56% down from top waist, cloth ankle cuffs. True continuous clothing under armor, not detached empty tubes. Waist-to-ankle height 2.1 times the overall width. The BACK of the waistband is hidden: upper silhouette must be the front edge of the belt, never a hollow oval, an open bowl or black inside-rear lining. No person, skin, torso, hands, feet or shoes. Match natural straight male standing lower-body anatomy and retain reasonable fitting to female body too.\nDistinguish this advanced exosuit: elegant long off-white angular ceramic thigh/shin armor with orange mechanical articulations and small cyan strips, graphite engineered fabric at crotch and joints; compact angular layered knee armor, no plain circular blue disks. Opaque cloth fully connects hips to both thighs and ankles.\nDetailed realistic RPG illustration with consistent soft light, crisp silhouette, no exaggerated halo. Entire pair centered visible with margin in 2:3 portrait. Background must be perfectly flat saturated magenta #ff00ff outside the silhouette and between the legs, with NO shadows, texture, gradient, checkers or words. Garment has no magenta materials or magenta reflected light; background is reserved solely for production transparency extraction. One garment only.",
+        "references": [
+          "prototype/assets/wearables-v2/exoShell-worn-v9-male.webp",
+          "prototype/assets/equipment-art-v3/legs_specialist_5.webp"
+        ],
+        "source": "/Users/wangyao/.codex/generated_images/01a060f4-2883-7b60-a836-8ded4c8e4676/exec-cbe01c4b-4308-4c01-a451-54b991bb7332.png"
+      }
+    },
+    {
+      "id": "legs_general_1",
+      "status": "implemented",
+      "asset": "prototype/assets/wearables-v2/pants-v11-legs_general_1.webp",
+      "geometry": {
+        "file": "../wearables-v2/pants-v11-legs_general_1",
+        "width": 1024,
+        "height": 1536,
+        "waist": [
+          511.5,
+          145
+        ],
+        "crotch": [
+          509,
+          408
+        ],
+        "knees": [
+          [
+            318,
+            836
+          ],
+          [
+            687,
+            836
+          ]
+        ],
+        "kneeBand": [
+          749,
+          914
+        ],
+        "ankles": [
+          [
+            306,
+            1370
+          ],
+          [
+            708,
+            1370
+          ]
+        ],
+        "rim": [
+          [
+            274,
+            98
+          ],
+          [
+            298,
+            104
+          ],
+          [
+            336,
+            112
+          ],
+          [
+            382,
+            116
+          ],
+          [
+            433,
+            122
+          ],
+          [
+            463,
+            121
+          ],
+          [
+            470,
+            115
+          ],
+          [
+            490,
+            115
+          ],
+          [
+            498,
+            122
+          ],
+          [
+            514,
+            124
+          ],
+          [
+            523,
+            115
+          ],
+          [
+            543,
+            115
+          ],
+          [
+            554,
+            122
+          ],
+          [
+            598,
+            120
+          ],
+          [
+            644,
+            115
+          ],
+          [
+            691,
+            107
+          ],
+          [
+            733,
+            96
+          ],
+          [
+            746,
+            105
+          ]
+        ]
+      },
+      "alphaProcessing": {
+        "id": "legs_general_1",
+        "source": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/output/wardrobe-pants-v11/legs_general_1-raw.png",
+        "destination": "prototype/assets/wearables-v2/pants-v11-legs_general_1.webp",
+        "width": 1024,
+        "height": 1536,
+        "bounds": [
+          0.19921875,
+          0.052083333333333336,
+          0.59375,
+          0.8743489583333334
+        ],
+        "opaquePixels": 580420,
+        "transparentPixels": 992444,
+        "method": "reserved-magenta-connected-background-and-boundary-unmix",
+        "proof": "output/wardrobe-pants-v11/legs_general_1-alpha.png"
+      },
+      "generation": {
+        "mode": "built-in imagegen",
+        "prompt": "Use case: stylized-concept. Asset type: one complete wearable pants armor layer for an RPG, item legs_general_1 / forged expedition trousers. Image 1 is the old separated thigh/knee/shin equipment design reference only. Image 2 is the matching torso armor MATERIAL AND COLOR reference. Image 3 is the fixed-pose human PROPORTION AND STANCE reference only; do not include that person.\nDraw ONE connected pair of full-length armored TROUSERS from the top edge of its natural-waist belt, through hips, fabric front fly, complete crotch/seat volume, thighs, knees and shins, down to open ankle cuffs. It must truly be a single garment, not two detached greaves, not a belt plus disconnected legs. Preserve the old item's recognizable riveted plate shapes, angular kneecaps, long tapered shin plates and functional straps, but make their supporting trousers and waist construction coherent.\nMake it match image 2 as one full suit: dark charcoal heavy woven fabric, distressed warm brown leather belts and pocket flaps, weathered dull silver steel plates, steel buckles, subtle brass/ochre abrasion only. Brown leather hip pockets and useful belt loops visually continue the chest's utilitarian leather system. No dominant yellow hazard stripes and no blue neon.\nView: straight-on natural wearing view, camera level at pelvis, both knees facing camera, upright relaxed human stance like image 3. Ghost wearer invisible: NO skin, person, torso, hands, feet, boots, shoes, mannequin, hanger or stand. Waist occupied as if worn, rear waistband/interior fully occluded: only the front waistband edge should be visible at the top, no hollow open oval, no black rear lining floating above or across the front. Natural 3D worn volume and fabric tension in hips and crotch, not a flat empty product laid out.\nGeometry: overall waistband-to-ankle garment height about 2.1 times maximum width, crotch about 22% down from waistband, kneecap centers about 56% down. Hips natural and not excessively wide; ankles spaced slightly wider than hips as in the reference. Both entire ankle hems visible and open without feet. Keep symmetry of stance but believable minor texture variation. Sharp realistic illustrated PBR game render, neutral frontal soft lighting matching the references, precise seams and sturdy materials, no cast shadow.\nBackground must be a perfectly uniform saturated MAGENTA #ff00ff flat color, INCLUDING the clear gap between the two legs and all other outside negative space. Garment itself contains NO magenta/pink/purple. No gradient, no floor, no shadows, no checkerboard, no texture in background, no text, no labels, no montage. Single centered complete trousers with a clean margin on every side, portrait canvas. This is one entire waist-to-ankle piece to be composited over the reference character.",
+        "references": [
+          {
+            "path": "prototype/assets/equipment-art-v3/legs_general_1.webp",
+            "role": "old leg plate identity"
+          },
+          {
+            "path": "prototype/assets/wearables-v2/body_general_1-worn-v9-male.webp",
+            "role": "matching torso palette/materials"
+          },
+          {
+            "path": "prototype/assets/wearables-v1/base-male.webp",
+            "role": "stance and proportions only"
+          }
+        ],
+        "source": "/Users/wangyao/.codex/generated_images/01a079fa-c409-7ac0-bbab-cb3311203037/exec-d5af3de2-2534-4522-b777-e18720533b35.png",
+        "workspaceRaw": "output/wardrobe-pants-v11/legs_general_1-raw.png",
+        "originalRecord": "output/wardrobe-pants-v11/legs_general_1.json"
+      }
+    },
+    {
+      "id": "legs_general_2",
+      "status": "implemented",
+      "asset": "prototype/assets/wearables-v2/pants-v11-legs_general_2.webp",
+      "geometry": {
+        "file": "../wearables-v2/pants-v11-legs_general_2",
+        "width": 1026,
+        "height": 1533,
+        "waist": [
+          500,
+          159
+        ],
+        "crotch": [
+          504,
+          498
+        ],
+        "knees": [
+          [
+            271,
+            850
+          ],
+          [
+            729,
+            850
+          ]
+        ],
+        "kneeBand": [
+          773,
+          930
+        ],
+        "ankles": [
+          [
+            256,
+            1402
+          ],
+          [
+            754,
+            1402
+          ]
+        ],
+        "rim": [
+          [
+            247,
+            109
+          ],
+          [
+            278,
+            115
+          ],
+          [
+            336,
+            122
+          ],
+          [
+            402,
+            127
+          ],
+          [
+            462,
+            131
+          ],
+          [
+            486,
+            129
+          ],
+          [
+            509,
+            134
+          ],
+          [
+            531,
+            130
+          ],
+          [
+            557,
+            131
+          ],
+          [
+            626,
+            126
+          ],
+          [
+            695,
+            117
+          ],
+          [
+            746,
+            108
+          ],
+          [
+            755,
+            116
+          ]
+        ]
+      },
+      "alphaProcessing": {
+        "id": "legs_general_2",
+        "source": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/output/wardrobe-pants-v11/legs_general_2-raw.png",
+        "destination": "prototype/assets/wearables-v2/pants-v11-legs_general_2.webp",
+        "width": 1026,
+        "height": 1533,
+        "bounds": [
+          0.15886939571150097,
+          0.0639269406392694,
+          0.665692007797271,
+          0.8825831702544031
+        ],
+        "opaquePixels": 660718,
+        "transparentPixels": 912140,
+        "method": "reserved-magenta-connected-background-and-boundary-unmix",
+        "proof": "output/wardrobe-pants-v11/legs_general_2-alpha.png"
+      },
+      "generation": {
+        "mode": "built-in imagegen",
+        "prompt": "Use case: stylized-concept. Asset type: one complete wearable pants armor layer for an RPG, legs_general_2 / fleet expedition trousers. Input image 1 is the OLD isolated armor shape reference only. Input image 2 is the matching chest armor COLOR, MATERIAL, DETAIL language reference. Input image 3 is the human standing pose and proportion reference only, never output the human.\nDraw ONE complete connected waist-to-ankle pair of armored tactical trousers, as naturally worn on an invisible wearer: front waist belt, pelvic side panels, complete fabric front fly and crotch, connected thighs, angular kneecaps, shins and ankle cuffs. Never two disconnected greaves. Keep the old leg armor's angular long panels, beveled kneecaps, side fastening structures and restrained little tech indicators, now plausibly sewn and mounted onto a complete tailored trouser.\nMatch the actual torso suit in image 2: charcoal technical fabric, dirty ivory/off-white ceramic panel faces, a restrained mustard-yellow utility accent on upper side panel and small hardware, black webbing straps and useful attached hip pouches. More OFF-WHITE armor surface than bare grey metal; no industrial all-grey/yellow suit. Subtle steel edge scuffs, real stitching and buckles. The waist and hips must visibly continue the chest's fabric/webbing/ivory panel design.\nCamera exactly straight front, at pelvis level, neutral upright stance like image 3. Adult human proportions: garment waist-to-ankle height approximately 2.1 times maximum full width; crotch split begins about 22% down from the top; both knee centers about 56% down. Knees forward; legs slightly apart; ankle span just slightly wider than hip span. The right and left legs belong to the SAME pant with a continuous pelvis and crotch.\nIMPORTANT OCCLUSION: top silhouette is the occupied pants FRONT WAISTBAND ONLY, a nearly horizontal shallow front arc. Nothing visible behind this front waistband. Do NOT draw a rear rim, interior black lining, open elliptical waist hole, hollow mannequin opening, or back waistband standing above the front. The imaginary torso fully occupies and hides the rear waist. No skin, body, mannequin, arms, torso, feet, boots or shoes. The full front of pelvis and crotch is solid clothing. Open ankle hems end above absent boots, no feet inside.\nHigh-quality realistic illustrated game equipment render, crisp controlled frontal studio light, believable volume, no cast shadow, complete object centered with clear margins. Background: a single perfectly flat saturated MAGENTA #ff00ff, also in the gap between the legs; absolutely no magenta/pink/purple on garment. No background gradients, shadows, floor, checkerboard, text, logos, watermark, multiple views or separate pieces. Output only this single complete pair of wearable full trousers.",
+        "references": [
+          {
+            "path": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/equipment-art-v3/legs_general_2.webp",
+            "role": "old leg plate identity"
+          },
+          {
+            "path": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v2/body_general_2-worn-v9-male.webp",
+            "role": "matching torso palette/materials"
+          },
+          {
+            "path": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/base-male.webp",
+            "role": "stance and proportions only"
+          }
+        ],
+        "source": "/Users/wangyao/.codex/generated_images/01a079fa-c409-7ac0-bbab-cb3311203037/exec-ba6c4e14-6cb8-4387-b8a1-91bf8b9f5f60.png",
+        "workspaceRaw": "output/wardrobe-pants-v11/legs_general_2-raw.png",
+        "originalRecord": "output/wardrobe-pants-v11/legs_general_2.json"
+      }
+    },
+    {
+      "id": "legs_general_3",
+      "status": "implemented",
+      "asset": "prototype/assets/wearables-v2/pants-v11-legs_general_3.webp",
+      "geometry": {
+        "file": "../wearables-v2/pants-v11-legs_general_3",
+        "width": 1023,
+        "height": 1537,
+        "waist": [
+          511,
+          110
+        ],
+        "crotch": [
+          511,
+          406
+        ],
+        "knees": [
+          [
+            293,
+            817
+          ],
+          [
+            720,
+            817
+          ]
+        ],
+        "kneeBand": [
+          749,
+          907
+        ],
+        "ankles": [
+          [
+            254,
+            1400
+          ],
+          [
+            755,
+            1400
+          ]
+        ],
+        "rim": [
+          [
+            279,
+            76
+          ],
+          [
+            312,
+            80
+          ],
+          [
+            347,
+            85
+          ],
+          [
+            406,
+            89
+          ],
+          [
+            462,
+            93
+          ],
+          [
+            483,
+            89
+          ],
+          [
+            488,
+            83
+          ],
+          [
+            536,
+            83
+          ],
+          [
+            541,
+            90
+          ],
+          [
+            600,
+            90
+          ],
+          [
+            650,
+            86
+          ],
+          [
+            698,
+            81
+          ],
+          [
+            738,
+            75
+          ],
+          [
+            745,
+            83
+          ]
+        ]
+      },
+      "alphaProcessing": {
+        "id": "legs_general_3",
+        "source": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/output/wardrobe-pants-v11/legs_general_3-raw.png",
+        "destination": "prototype/assets/wearables-v2/pants-v11-legs_general_3.webp",
+        "width": 1023,
+        "height": 1537,
+        "bounds": [
+          0.18377321603128055,
+          0.043591411841249185,
+          0.6265884652981427,
+          0.903708523096942
+        ],
+        "opaquePixels": 576740,
+        "transparentPixels": 995611,
+        "method": "reserved-magenta-connected-background-and-boundary-unmix",
+        "proof": "output/wardrobe-pants-v11/legs_general_3-alpha.png"
+      },
+      "generation": {
+        "mode": "built-in imagegen",
+        "prompt": "Use case: stylized-concept. Asset type: one complete wearable pants armor layer for a realistic science-fiction RPG, legs_general_3 / field-energy expedition trousers. Image 1 is the old separate leg armor SHAPE/identity reference; image 2 is the matching torso COLOR/MATERIAL/DESIGN reference; image 3 is the wearer's fixed front-view stance and body proportion reference ONLY.\nCreate one indivisible full-length armored PANT garment: natural-waist belt seamlessly attached to shaped hips, complete front fly and crotch, thighs, articulated knees, shins and both ankle hems. A filled, worn silhouette on an invisible adult wearer. Never two loose leg protectors and never just adding a separate belt to the old pieces. The old leg's angular kneecaps, longer shin reinforcement and small inset tech lamps remain recognizable, but modernized to truly belong to the matching chest.\nMatching suit design from image 2: matte black technical woven cloth and carbon-fiber armored panels, elegant brushed SILVER curved structural ribs framing pelvis and outer thigh, small icy cyan-white status lights recessed into joints, black seams/webbing and polished dark metal clasps. NO yellow stripes, orange paint or brown leather. Main panels BLACK/CARBON with silver edges, not massive bare grey industrial slabs. Pelvic side plates should flow into the thigh ribs as a carefully designed whole. Matching the torso's restrained black-and-silver curving design is essential.\nFront-facing full garment, camera at pelvis height, natural upright legs slightly spread like image 3; feet are absent. Waist-to-ankle height about 2.1 times its widest width. Front crotch fork starts about 22% of garment height below waistband, kneecap centers about 56%, ankles spread just a little wider than hip joints. Complete opaque textile pelvis, fly and crotch connecting both legs, not an open hole between belt and thighs. Firm shape without stiff mannequin anatomy.\nThe uppermost silhouette must be the FRONT waistband edge only: almost straight horizontal with a shallow natural curve. There is NO visible rear waistband or inside waistband lining, NO hollow oval opening at the top, NO raised back rim. An imaginary torso occupies it and fully hides all rear surfaces. No person, skin, head, torso, hands, mannequin, stand, hanger, socks, boots, shoes or feet. Ankle cuffs are unobstructed open ends ready to layer over separate footwear.\nSharp professional realistic illustrated PBR equipment render, neutral soft frontal light and very controlled highlights. Entire trousers centered with clean margins on a portrait canvas. Perfectly flat saturated MAGENTA #ff00ff backdrop, including every gap between the legs. Garment contains no pink, purple or magenta. No backdrop texture, checkerboard, gradients, floor, cast shadow, labels, text, logos, watermark, alternate views or detached components. Deliver just this one complete waist-through-crotch-to-ankle clothing layer.",
+        "references": [
+          {
+            "path": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/equipment-art-v3/legs_general_3.webp",
+            "role": "old leg plate identity"
+          },
+          {
+            "path": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v2/body_general_3-worn-v9-male.webp",
+            "role": "matching torso palette/materials"
+          },
+          {
+            "path": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/base-male.webp",
+            "role": "stance and proportions only"
+          }
+        ],
+        "source": "/Users/wangyao/.codex/generated_images/01a079fa-c409-7ac0-bbab-cb3311203037/exec-2b4afd04-5ec8-412e-bc9f-01b430082970.png",
+        "workspaceRaw": "output/wardrobe-pants-v11/legs_general_3-raw.png",
+        "originalRecord": "output/wardrobe-pants-v11/legs_general_3.json"
+      }
+    },
+    {
+      "id": "legs_general_4",
+      "status": "implemented",
+      "asset": "prototype/assets/wearables-v2/pants-v11-legs_general_4.webp",
+      "geometry": {
+        "file": "../wearables-v2/pants-v11-legs_general_4",
+        "width": 980,
+        "height": 1605,
+        "waist": [
+          490,
+          211
+        ],
+        "crotch": [
+          487,
+          467
+        ],
+        "knees": [
+          [
+            315,
+            826
+          ],
+          [
+            658,
+            826
+          ]
+        ],
+        "kneeBand": [
+          718,
+          990
+        ],
+        "ankles": [
+          [
+            265,
+            1434
+          ],
+          [
+            707,
+            1434
+          ]
+        ],
+        "rim": [
+          [
+            311,
+            147
+          ],
+          [
+            351,
+            163
+          ],
+          [
+            412,
+            175
+          ],
+          [
+            462,
+            179
+          ],
+          [
+            510,
+            179
+          ],
+          [
+            570,
+            172
+          ],
+          [
+            620,
+            159
+          ],
+          [
+            660,
+            148
+          ]
+        ]
+      },
+      "alphaProcessing": {
+        "id": "legs_general_4",
+        "source": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/output/wardrobe-pants-v11/legs_general_4-raw.png",
+        "destination": "prototype/assets/wearables-v2/pants-v11-legs_general_4.webp",
+        "width": 980,
+        "height": 1605,
+        "bounds": [
+          0.18979591836734694,
+          0.0853582554517134,
+          0.6112244897959184,
+          0.832398753894081
+        ],
+        "opaquePixels": 511338,
+        "transparentPixels": 1061562,
+        "method": "reserved-magenta-connected-background-and-boundary-unmix",
+        "proof": "output/wardrobe-pants-v11/legs_general_4-alpha.png"
+      },
+      "generation": {
+        "mode": "built-in imagegen",
+        "prompt": "Use case: stylized-concept.\nAsset type: ONE complete wearable armored pair of trousers for a realistic science-fiction RPG paper-doll character, from actual waist through hips, closed crotch and BOTH legs to ankle cuffs.\nInput images: Image 1 is BODY PROPORTION AND STANDING POSE reference only; do NOT draw the person. Image 2 is old legs_general_4: redesign its detached leg guards into a complete joined trouser garment. Image 3 is the MATCHING CHEST body_general_4 and is the authority for surface design, colors and sophistication. Do NOT output the chest.\nScene/backdrop: solid saturated chroma-key magenta #ff00ff, absolutely flat over all background including between the two legs. No shadows, lighting falloff, gradient, checkerboard, or vignette.\nSubject: complete high-tier generalized expedition trousers worn around an invisible solid human pelvis and legs. A slim graphite integrated waistband and one discreet center closure connects fitted hip sections, a sewn CLOSED crotch and both full legs. Use the same polished ivory/off-white faceted ceramic DIAMOND tessellation and fine champagne-metal borders as the matching chest in image 3; restrained deep electric blue-violet points at panel junctions echo the matching chest's nodes. The fabric underlayer is near-black charcoal textile, continuous from the closed waistband down across hip creases, crotch, inner thighs, flexion zones and to both ankle hems. Armor actually wraps the outer volume of full legs, especially hips and thighs; curved pointed knees and layered shin panels follow anatomy. Clothing is not hollow greave tubes. Adjust the old industrial design so chest and trousers unmistakably form one deliberate set.\nAnatomy/framing: direct straight-on front orthographic-like view, human natural standing position from image 1. Actual trousers height about 2.1 times its maximum outside width. Crotch fork about 22% of total garment height from waistband; kneecap center at 56%; ankle hem at 100%. Realistic adult proportions, NOT elongated fashion-model legs. Legs gently diverge from hips toward ankle spacing as in the base reference, symmetric restful knee axes. Keep small comfortable blank margins in a portrait image; show complete waistband and both ankle hems. No excessively broad hip panniers.\nThe waist is a shallow fitted FRONT line with one modest integrated closure, not an open product-display tube: NO elliptical hole at waistband, no black inner bowl, no raised rear waistband wall covering the abdomen, no mannequin cavity. Cloth pelvis has volume and normal wearable crotch seams, no triangular hole, no detached waist patch, no second separate belt. It must look worn, not like two pieces hanging from a floating buckle.\nStyle: highly detailed realistic game asset, controlled soft frontal lighting and nuanced ceramic/cloth textures matching image 3. No magenta or hot pink in clothing or emitter glow; use deep blue-violet only for small nodes and no reflected backdrop color.\nOutput ONLY one joined complete pair of armored trousers. NO chest, torso, neck, head, hands, arms, human skin, mannequin, shoes, boots, feet, floor, drop shadow, text, annotations, labels, logos, watermark or extra objects. No separate alternate views.",
+        "references": [
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/base-male.webp",
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/equipment-art-v3/legs_general_4.webp",
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v2/body_general_4-worn-v9-male.webp"
+        ],
+        "source": "/Users/wangyao/.codex/generated_images/01a079fd-ab00-7272-b6bf-1fb2d70a2644/exec-ae02327c-cda1-49fb-bd33-9826ad42ce16.png",
+        "workspaceRaw": "output/wardrobe-pants-v11/legs_general_4-raw.png",
+        "originalRecord": "output/wardrobe-pants-v11/legs_general_4.json"
+      }
+    },
+    {
+      "id": "legs_general_5",
+      "status": "implemented",
+      "asset": "prototype/assets/wearables-v2/pants-v11-legs_general_5.webp",
+      "geometry": {
+        "file": "../wearables-v2/pants-v11-legs_general_5",
+        "width": 1024,
+        "height": 1536,
+        "waist": [
+          513.5,
+          190
+        ],
+        "crotch": [
+          514,
+          398
+        ],
+        "knees": [
+          [
+            311,
+            801
+          ],
+          [
+            708,
+            801
+          ]
+        ],
+        "kneeBand": [
+          702,
+          904
+        ],
+        "ankles": [
+          [
+            277,
+            1389
+          ],
+          [
+            739,
+            1389
+          ]
+        ],
+        "rim": [
+          [
+            313,
+            108
+          ],
+          [
+            355,
+            135
+          ],
+          [
+            416,
+            151
+          ],
+          [
+            465,
+            157
+          ],
+          [
+            492,
+            146
+          ],
+          [
+            535,
+            145
+          ],
+          [
+            563,
+            157
+          ],
+          [
+            610,
+            146
+          ],
+          [
+            655,
+            128
+          ],
+          [
+            710,
+            104
+          ]
+        ]
+      },
+      "alphaProcessing": {
+        "id": "legs_general_5",
+        "source": "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/output/wardrobe-pants-v11/legs_general_5-raw.png",
+        "destination": "prototype/assets/wearables-v2/pants-v11-legs_general_5.webp",
+        "width": 1024,
+        "height": 1536,
+        "bounds": [
+          0.201171875,
+          0.06380208333333333,
+          0.59375,
+          0.8619791666666666
+        ],
+        "opaquePixels": 502310,
+        "transparentPixels": 1070554,
+        "method": "reserved-magenta-connected-background-and-boundary-unmix",
+        "proof": "output/wardrobe-pants-v11/legs_general_5-alpha.png"
+      },
+      "generation": {
+        "mode": "built-in imagegen",
+        "prompt": "Use case: stylized-concept.\nAsset type: ONE complete wearable waist-to-ankle armored pair of trousers, production character-equipment art for a realistic science-fiction RPG.\nInput images: Image 1 is the actual character BODY PROPORTIONS AND RELAXED FRONT STANDING POSE reference; do not output the person. Image 2 is obsolete legs_general_5 armor, missing the waist and mismatched with its chest. Rebuild it as complete trousers. Image 3 is the matching ultimate expedition CHEST body_general_5: its pearlescent white layered shells, thin warm gold borders, black inner textile and cyan technology must be the style authority. Do NOT draw the chest.\nBackdrop: flat uniform chroma-key saturated magenta #ff00ff across every area outside the garment and between legs. No cast shadow, gradient, halo, checkerboard or environmental reflections. Clothing itself may NOT contain magenta/pink.\nSubject: complete pinnacle expedition armored trousers fitted around invisible solid human lower-body anatomy. A slim, restrained pearl-white and gold integrated waist closure sits on graphite flexible waistband; one waist closure only. Fully connected shaped hips, a closed anatomically sewn charcoal crotch, both thighs, actual knee joints and complete lower legs down to ankle cuffs. Elegant curved overlapping pearlescent ceramic shells sweep around thighs and shins, with slim warm gold structural edges echoing the chest's flowing layered shell design. Small cyan insets at outer hip, knee-side and shin details. Black fitted fabric fills every joint and inner-thigh space as an integrated trouser, carrying subtle seams/folds. Do not copy the old rusty industrial metal slabs; redesign material and shell lines to make a cohesive set with image 3. Gold is restrained framing, not a medieval baroque outfit; retain credible sci-fi construction.\nAnatomy and composition: front view, near-orthographic, relaxed natural standing pose from image 1. Full garment height approximately 2.1 times maximum outside width, not very long slender tubes. Crotch fork at about 22% from top, kneecap centers about 56% from top, both ankle hems at 100%. Legs spread gently outward with natural room between shins, straight knees, each shell centered on its anatomical knee and shin. Keep original human adult proportions and enough actual hip and thigh volume. Center the full garment in a portrait composition with modest blank margins. Include every part of waist and both ankle cuffs without cropping.\nCritical wearable geometry: no open elliptical waistband hole, no exposed inner back-waist bowl, no raised rear waistband drawn over the front pelvis. Show only a shallow FRONT waistband edge, with cloth directly below it. Crotch is closed fabric that joins both legs, no hole, no two disconnected tubes, no lower-body mannequin. One subtle waist closure that can meet the matching chest's lower hem, not a large second breastplate or overlapping belt.\nFinish: premium highly detailed realistic game artwork, subtle luminous pearlescence without rainbow/pink, warm gold edges, graphite fabric, quiet cyan light, neutral soft frontal lighting. Clean anti-aliased outline with no magenta reflection.\nOutput ONLY one joined complete trouser garment from waistband to ankle. No chest armor, torso, upper body, arms, hands, human skin, legs made of flesh, head, footwear, feet, shoes, boots, floor, shadows, writing, insignias, watermark, alternate angle or accessory.",
+        "references": [
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v1/base-male.webp",
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/equipment-art-v3/legs_general_5.webp",
+          "/Users/wangyao/Documents/Qoder/2026-08-28/52c2f35e/prototype/assets/wearables-v2/body_general_5-worn-male.webp"
+        ],
+        "source": "/Users/wangyao/.codex/generated_images/01a079fd-ab00-7272-b6bf-1fb2d70a2644/exec-05e6964c-8081-463f-a9a6-8ddc63b1639c.png",
+        "workspaceRaw": "output/wardrobe-pants-v11/legs_general_5-raw.png",
+        "originalRecord": "output/wardrobe-pants-v11/legs_general_5.json"
+      }
+    }
+  ]
+}

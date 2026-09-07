@@ -9,6 +9,54 @@ const smoke=process.env.WARDROBE_ARMOR_SMOKE==='1';
 const ids=Object.keys(WEARABLE_FIT_V2).filter(id=>WEARABLE_FIT_V2[id].slot==='body');
 const source=(id,sex)=>'assets/wearables-v1/'+WEARABLE_FIT_V2[id][sex][0].file+'.webp';
 assert.equal(ids.length,11);for(const id of ids)assert.equal(WEARABLE_FIT_V2[id].wornTorso,true,id+' must use worn art');
+const near=(a,b,label)=>assert.ok(Math.abs(a-b)<.02,label+': '+a+' versus '+b);
+const clipPoints=clip=>{assert.match(clip,/^polygon\(/);return clip.slice(8,-1).split(',').map(p=>p.trim().split(/\s+/).map(parseFloat));};
+// The lower-body replacement is a compound polygon joined by doubled edges.
+// Use nonzero winding, not a bounding box or an even/odd approximation.
+function visible(points,x,y){
+ if(!points)return true;
+ let winding=0;
+ for(let i=0;i<points.length;i++){
+  const [a,b]=points[i],[c,d]=points[(i+1)%points.length],cross=(c-a)*(y-b)-(x-a)*(d-b);
+  if(b<=y&&d>y&&cross>0)winding++;else if(b>y&&d<=y&&cross<0)winding--;
+ }
+ return winding!==0;
+}
+function matrix(row){
+ const m=row.transform.match(/^translate\(([-\d.e+]+)%,\s*([-\d.e+]+)%\) matrix\(([^)]+)\)$/);
+ assert.ok(m,row.key+' complete pants retain their explicit source matrix');
+ const v=m[3].split(',').map(Number);assert.equal(v.length,6);assert.ok(v.every(Number.isFinite));
+ return {x:Number(m[1])*5.12,y:Number(m[2])*7.68,a:v[0],b:v[1],c:v[2],d:v[3],e:v[4],f:v[5]};
+}
+function world(row,p){const m=matrix(row);return [m.a*p[0]+m.c*p[1]+m.x,m.b*p[0]+m.d*p[1]+m.y];}
+function assertOtherEquipment(previous,current,mixed){
+ const unrelated=rows=>rows.filter(n=>!['body','anatomy'].includes(n.slot));
+ const before=unrelated(previous),after=unrelated(current);assert.equal(after.length,before.length,'no extra unrelated equipment/identity/hand layers');
+ for(const old of before){
+  const now=after.find(n=>n.key===old.key);assert.ok(now,old.key+' remains mounted');
+  if(mixed&&['legs-trousers-0','legs-trousers-rear'].includes(old.key)){
+   const omit=({transform,clip,...rest})=>rest;assert.deepEqual(omit(now),omit(old),old.key+' only waist fitting may vary; item/source/pose/depth cannot change');
+   const a=matrix(old),b=matrix(now);
+   for(const name of ['x','a','b','c','e','f'])assert.equal(b[name],a[name],old.key+' cannot shift sideways, change width, rotate or shear');
+   assert.equal(b.b,0);assert.equal(b.c,0);assert.ok(b.d>0&&b.d/a.d>.65&&b.d/a.d<1.35,'waist adjustment remains local and nonmirrored');
+   const art=WEARABLE_FIT_V2[old.item].trousers,scale=Math.min(512/art.width,768/art.height),crotchY=(768-art.height*scale)/2+art.crotch[1]*scale;
+   for(const x of [0,128,256,384,512])world(now,[x,crotchY]).forEach((v,i)=>near(v,world(old,[x,crotchY])[i],old.key+' entire crotch join stays fixed'));
+   if(old.key.endsWith('-rear'))assert.equal(now.clip,old.clip,'rear/front source waist contour is unchanged');
+   else{
+    const p=clipPoints(old.clip),q=clipPoints(now.clip);assert.deepEqual(q.slice(0,-2),p.slice(0,-2),'the authored front waist rim is not recut to hide a fit problem');
+    for(let i=1;i<=2;i++)world(now,q.at(-i).map((n,k)=>n*(k?7.68:5.12))).forEach((v,k)=>near(v,world(old,p.at(-i).map((n,j)=>n*(j?7.68:5.12)))[k],'outgoing pelvis clip still meets the same thigh boundary'));
+   }
+  }else if(mixed&&['base','uniform'].includes(old.slot)){
+   const omitClip=({clip,...rest})=>rest;assert.deepEqual(omitClip(now),omitClip(old),'original '+old.slot+' identity/source/pose/transform cannot change');
+   const oldClip=old.clip==='none'?null:clipPoints(old.clip),newClip=now.clip==='none'?null:clipPoints(now.clip);
+   for(let y=.19;y<100;y+=.5)for(let x=.23;x<100;x+=.5){
+    // Only the central waist can be trimmed to the newly tucked pants. This
+    // protects face, shoulders, posed hands, old-pants removal and original feet.
+    if(y<33||y>55||x<31||x>69)assert.equal(visible(newClip,x,y),visible(oldClip,x,y),old.slot+' clip changed outside the necessary central waist at '+x+','+y);
+   }
+  }else assert.deepEqual(now,old,old.key+' lower pants/knees/ankles, other equipment and sleeve pose remain exact');
+ }
+}
 (async()=>{
  fs.mkdirSync(path.join(out,'images'),{recursive:true});
  const browser=await chromium.launch({headless:true,...(process.env.BROWSER_EXECUTABLE?{executablePath:process.env.BROWSER_EXECUTABLE}:{})});
@@ -62,7 +110,7 @@ assert.equal(ids.length,11);for(const id of ids)assert.equal(WEARABLE_FIT_V2[id]
    assert.equal(body.src,source(id,sex));assert.equal(body.clip,'none','native contour must remain whole when holding a sword');
    assert.ok(!current.some(n=>n.key.startsWith('forearm-body')),'do not rotate armor waist as a sleeve');
    assert.equal(identity.src,'assets/wearables-v1/base-'+sex+'.webp');assert.ok(Number(identity.z)<Number(body.z)&&Number(identity.z)>2);
-   const unrelated=rows=>rows.filter(n=>!['body','anatomy'].includes(n.slot));assert.deepEqual(unrelated(current),unrelated(previous),'all other equipment and sleeve pose unchanged');
+   assertOtherEquipment(previous,current,mixed);
    const name=id+'-'+sex+'-'+(career||'base')+(mixed?'-mixed':'-single'),image=await capture(name),fullImage=(!career||mixed)?await capture(name,true):undefined;
    await page.evaluate(()=>{state.tab='char';state.charView='overview';render();});await ready();assert.deepEqual(await layers(),current,'character/backpack equality');
    await page.evaluate(()=>{state.tab='bag';render();});await ready();

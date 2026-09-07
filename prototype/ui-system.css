@@ -2777,8 +2777,8 @@ button,
   #panel .battle-primary-controls .battle-action { min-height:52px; }
 
   /* The compact settings dashboard used stronger legacy selectors; touch wins. */
-  #panel[data-view="settings"].settings-home { overflow-y:auto!important; overscroll-behavior:contain; }
-  #panel.settings-home .settings-dashboard { flex:none; }
+  #panel[data-view="settings"].settings-home { overflow:hidden!important; }
+  #panel.settings-home .settings-dashboard { flex:1; }
   #panel.settings-home .settings-media {
     overflow:visible;
     grid-template-rows:repeat(3,minmax(44px,auto));
@@ -2967,6 +2967,52 @@ button,
 /* Fixed-pose wearables: native image alpha, body-anchored pieces, no icon overlays. */
 .wearable-portrait{position:relative;aspect-ratio:2/3;isolation:isolate;pointer-events:none}
 .wearable-portrait>img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;max-width:none;user-select:none}
+/* Powered weapons: source-local light, not a neon stroke around the person.
+ * Maximum eight CSS particles on the one equipped weapon; no JS frame loop. */
+.wearable-weapon-fx{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;color:var(--weapon-fx-color);contain:layout style}
+.wearable-hand-fx{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;color:var(--hand-fx-color);contain:layout style}
+.wearable-hand-fx path,.wearable-hand-fx circle{fill:currentColor;stroke:none}
+.hand-fx-emitter{animation:hand-core-breathe var(--hand-fx-period,4.2s) ease-in-out infinite}
+.hand-fx-halo{filter:blur(1.2px);opacity:.56;transform-box:fill-box;transform-origin:center;transform:scale(2)}
+.hand-fx-core{opacity:.88}
+.hand-fx-particle{opacity:0;animation:hand-energy-speck 3.8s ease-out infinite}
+.wearable-hand-fx[data-fx-kind="crystal"] .hand-fx-particle{fill:#f6d58c}
+.wearable-hand-fx[data-fx-kind="phase"] .hand-fx-emitter{animation-timing-function:ease-in-out}
+.wardrobe-fx-paused .wearable-hand-fx *{animation-play-state:paused!important}
+[data-fx-quality="off"] .wearable-hand-fx{display:none}
+[data-fx-quality="off"] .wearable-hand-fx *,[data-fx-quality="low"] .wearable-hand-fx *{animation:none!important}
+[data-fx-quality="low"] .wearable-hand-fx .hand-fx-particle{display:none}
+[data-fx-quality="low"] .wearable-hand-fx .hand-fx-halo{filter:none;opacity:.18}
+@keyframes hand-core-breathe{0%,100%{opacity:.42}50%{opacity:.95}}
+@keyframes hand-energy-speck{0%,100%{opacity:0;transform:translate(0,0)}20%{opacity:.72}85%{opacity:0;transform:translate(var(--hand-dx),var(--hand-dy))}}
+@media(prefers-reduced-motion:reduce){.wearable-hand-fx *{animation:none!important}.wearable-hand-fx .hand-fx-particle{display:none}.wearable-hand-fx .hand-fx-halo{filter:none;opacity:.2}}
+.wearable-weapon-fx path{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+.wearable-weapon-fx circle{fill:currentColor}
+.weapon-fx-halo{filter:blur(.85px);opacity:.46;animation:weapon-energy-breathe 3.8s ease-in-out infinite}
+.weapon-fx-emission{opacity:.63;animation:weapon-core-breathe 3.8s ease-in-out infinite}
+.wearable-weapon-fx .weapon-fx-flow{stroke:#eaffff;stroke-dasharray:1.2 8;opacity:.76;animation:weapon-energy-flow 3.4s linear infinite}
+.wearable-weapon-fx .weapon-fx-arc{stroke:#e2faff;stroke-width:.21;opacity:0;stroke-dasharray:7 3;animation:weapon-energy-arc 3.9s ease-in-out infinite}
+.weapon-fx-particle{opacity:0;transform-box:fill-box;transform-origin:center;animation:weapon-energy-speck var(--fx-life,3.3s) ease-out var(--fx-delay,0s) infinite}
+.wearable-weapon-fx[data-fx-level="1"] .weapon-fx-halo{opacity:.28;filter:blur(.5px);animation:none}
+.wearable-weapon-fx[data-fx-kind="plasma"] .weapon-fx-halo{filter:blur(1.15px)}
+.wearable-weapon-fx[data-fx-kind="plasma"] .weapon-fx-flow{stroke:#fff4cc;animation-duration:2.5s}
+.wearable-weapon-fx[data-fx-kind="phase"] .weapon-fx-particle{animation-name:weapon-phase-speck}
+.wearable-weapon-fx[data-fx-kind="void"] .weapon-fx-flow{stroke-dasharray:2 5;animation-direction:reverse}
+.wearable-weapon-fx[data-fx-kind="bio"] .weapon-fx-emission{animation:weapon-bio-pulse 3.7s ease-in-out infinite}
+.wearable-weapon-fx[data-fx-kind="reactor"] .weapon-fx-particle,.wearable-weapon-fx[data-fx-kind="gravity"] .weapon-fx-particle{fill:#ffdd8e}
+.wardrobe-fx-paused .wearable-weapon-fx *{animation-play-state:paused!important}
+[data-fx-quality="off"] .wearable-weapon-fx{display:none}
+[data-fx-quality="off"] .wearable-weapon-fx *,[data-fx-quality="low"] .wearable-weapon-fx *{animation:none!important}
+[data-fx-quality="low"] .wearable-weapon-fx .weapon-fx-sparks,[data-fx-quality="low"] .wearable-weapon-fx .weapon-fx-flow,[data-fx-quality="low"] .wearable-weapon-fx .weapon-fx-arc{display:none}
+[data-fx-quality="low"] .wearable-weapon-fx .weapon-fx-halo{filter:none;opacity:.19}
+@keyframes weapon-energy-breathe{0%,100%{opacity:.38}50%{opacity:.72}}
+@keyframes weapon-core-breathe{0%,100%{opacity:.55}50%{opacity:.86}}
+@keyframes weapon-energy-flow{to{stroke-dashoffset:-18.4}}
+@keyframes weapon-energy-arc{0%,68%,100%{opacity:0}76%,86%{opacity:.8}}
+@keyframes weapon-energy-speck{0%,12%{opacity:0;transform:translate(0,0) scale(.6)}25%{opacity:.86}78%,100%{opacity:0;transform:translate(var(--fx-dx),var(--fx-dy)) scale(.15)}}
+@keyframes weapon-phase-speck{0%,16%{opacity:0;transform:translate(0,0) scale(.6)}30%{opacity:.85}60%{opacity:.25}86%,100%{opacity:0;transform:translate(var(--fx-dx),var(--fx-dy)) scale(1.3)}}
+@keyframes weapon-bio-pulse{0%,100%{opacity:.35}25%{opacity:.85}47%{opacity:.5}65%{opacity:.74}}
+@media(prefers-reduced-motion:reduce){.wearable-weapon-fx *{animation:none!important}.wearable-weapon-fx .weapon-fx-sparks,.wearable-weapon-fx .weapon-fx-arc,.wearable-weapon-fx .weapon-fx-flow{display:none}.weapon-fx-emission{opacity:.67}.weapon-fx-halo{opacity:.4}}
 .wearable-dock{position:absolute;width:20%;height:12%;transform:translate(-50%,-50%);border:1px solid var(--ui-line-hi);border-radius:var(--ui-radius-xs);background:var(--ui-surface-sunken);box-shadow:inset 0 1px var(--ui-specular)}
 .wearable-dock::before,.wearable-dock::after{content:'';position:absolute;width:3px;height:40%;top:30%;background:var(--ui-metal);opacity:.7}
 .wearable-dock::before{left:-2px}.wearable-dock::after{right:-2px}
@@ -3078,6 +3124,7 @@ body[data-ui="abyss-frame"] #panel .ui-workspace__exit span b{font-size:13px}
 /* Camp: no competing floating controls; the expedition dock is always reachable. */
 #panel.camp-home{display:flex;flex-direction:column;gap:0;padding:0!important;min-height:0;overflow:hidden!important}
 .camp-home-scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:12px;scrollbar-width:thin;scrollbar-color:var(--ui-line) transparent}
+.camp-facility-toolbar{position:relative;z-index:1;flex:none;min-width:0;padding:8px 12px 0;background:var(--ui-bg-1);border-bottom:1px solid var(--ui-line)}
 #panel.camp-home .camp-hero{padding:0;min-height:0;margin-bottom:12px;border-radius:var(--ui-radius-md);background:var(--ui-plate)}
 #panel.camp-home .camp-hero-head{padding:16px 84px 16px 12px;gap:12px;min-height:0}
 #panel.camp-home .camp-mark{width:36px;height:40px;min-width:36px;border:0;background:transparent;box-shadow:none}
@@ -3315,13 +3362,16 @@ body[data-ui="abyss-frame"] #panel .ending-result-actions{gap:12px}
 #panel.tasks-console .task-completed-row { min-height:52px; padding:12px; }
 #panel.tasks-console .task-completed-row b { white-space:normal; }
 
-#panel.settings-home .settings-dashboard { display:flex; flex-direction:column; gap:12px; }
+#panel.settings-home .settings-dashboard { display:flex; flex-direction:column; gap:8px; padding-bottom:4px; }
 #panel.settings-home .settings-dashboard>* { flex-shrink:0; }
 #panel.settings-home .settings-media { display:block; margin:0; padding:0 12px; }
 #panel.settings-home .settings-control {
   display:grid; grid-template-columns:24px minmax(0,1fr) auto;
-  align-items:center; gap:4px 12px; min-height:72px; padding:12px 0;
+  align-items:center; gap:0 12px; min-height:64px; padding:8px 0;
 }
+#panel.settings-home .settings-control.has-volume { grid-template-rows:22px 44px; }
+#panel.settings-home .settings-control.has-volume :is(.settings-control-mark,.settings-switch) { grid-row:1/3; }
+#panel.settings-home .settings-control.has-volume .settings-volume { grid-column:2; }
 #panel.settings-home .settings-control-mark { width:24px; height:24px; grid-column:1; grid-row:1; border:0; background:none; box-shadow:none; }
 #panel.settings-home .settings-control-mark .ui-icon { width:24px; height:24px; }
 #panel.settings-home .settings-control-copy,
@@ -3329,8 +3379,11 @@ body[data-ui="abyss-frame"] #panel .ending-result-actions{gap:12px}
 #panel.settings-home .settings-control-copy b { font-size:14px; line-height:1.5; white-space:normal; }
 #panel.settings-home .settings-control-copy em { display:block; margin-top:4px; font-size:11px; line-height:1.45; color:var(--ui-text-3); }
 #panel.settings-home .settings-control.has-volume .settings-control-copy em { display:none; }
-#panel.settings-home .settings-switch { grid-column:3; grid-row:1; width:64px; min-height:44px; padding:4px; display:flex; gap:8px; align-items:center; justify-content:center; }
+#panel.settings-home .settings-switch { grid-column:3; grid-row:1; width:76px; min-width:76px; min-height:44px; padding:6px; display:flex; gap:8px; align-items:center; justify-content:center; }
 #panel.settings-home .settings-switch>b { font-size:11px; }
+#panel.settings-home .settings-switch>span { width:26px; height:14px; flex:none; }
+#panel.settings-home .settings-switch>span i { width:8px; height:8px; }
+#panel.settings-home .settings-switch.on>span i { transform:translateX(12px); }
 #panel.settings-home .settings-volume {
   display:grid; grid-template-columns:44px minmax(0,1fr); grid-column:2/4; grid-row:2;
   gap:8px; align-items:center; padding:0; margin:0; border:0;
@@ -3339,11 +3392,11 @@ body[data-ui="abyss-frame"] #panel .ending-result-actions{gap:12px}
 #panel.settings-home .settings-volume>span b { display:none; }
 #panel.settings-home .settings-volume>span em { font-size:11px; }
 #panel.settings-home .settings-volume input[type="range"] { width:100%; min-width:0; height:44px; min-height:44px; margin:0; padding:0; }
-#panel.settings-home .settings-appearance-options { grid-column:3; grid-row:1; display:flex; gap:0; }
-#panel.settings-home .settings-appearance-options button { min-width:44px; min-height:44px; padding:8px; font-size:13px; }
+#panel.settings-home .settings-appearance-options { grid-column:3; grid-row:1; display:flex; gap:0; padding:2px; }
+#panel.settings-home .settings-appearance-options button { min-width:44px; min-height:44px!important; padding:8px!important; font-size:13px; }
 #panel.settings-home .settings-storage-entry {
   display:grid; grid-template-columns:24px minmax(0,1fr) 20px; align-items:center;
-  gap:12px; padding:16px; width:100%; min-height:72px; text-align:left;
+  gap:12px; padding:12px; width:100%; min-height:64px; text-align:left;
 }
 #panel.settings-home .settings-storage-mark { width:24px; height:24px; border:0; }
 #panel.settings-home .settings-storage-mark .ui-icon { width:24px; height:24px; }
@@ -3351,12 +3404,13 @@ body[data-ui="abyss-frame"] #panel .ending-result-actions{gap:12px}
 #panel.settings-home .settings-storage-copy b { font-size:14px; line-height:1.5; }
 #panel.settings-home .settings-storage-copy em { margin-top:4px; font-size:11px; line-height:1.45; }
 #panel.settings-home .settings-version { padding:0; }
-#panel.settings-home .settings-update { display:grid; gap:12px; margin:0; padding:0 16px 16px; border:0; background:none; box-shadow:none; }
+#panel.settings-home .settings-update { display:grid; grid-template-columns:minmax(0,1fr); gap:12px; margin:0; padding:0 12px 12px; border:0; background:none; box-shadow:none; }
 #panel.settings-home .update-copy { min-width:0; }
 #panel.settings-home .update-copy em,
 #panel.settings-home .update-copy>span { font-size:12px; line-height:1.6; }
+#panel.settings-home .update-copy #update-status { max-width:none; white-space:normal; overflow:visible; }
 #panel.settings-home .update-check { min-height:44px; width:100%; font-size:13px; }
-#panel.settings-home .settings-footer { display:flex; flex-direction:column; gap:12px; min-height:0; margin:0; padding:0; }
+#panel.settings-home .settings-footer { display:flex; flex-direction:column; align-items:stretch; gap:8px; min-height:0; margin:0; padding:0; border:0; background:none; }
 #panel.settings-home .settings-qq-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 #panel.settings-home .settings-community,
 #panel.settings-home .settings-slogan { width:100%; min-height:72px; display:flex; align-items:center; gap:8px; padding:12px; text-align:left; }
@@ -3371,6 +3425,17 @@ body[data-ui="abyss-frame"] #panel .ending-result-actions{gap:12px}
 #panel.settings-home .settings-danger>summary { color:var(--ui-text-2); font-size:12px; }
 #panel.settings-home .settings-danger p { margin:0 0 12px; color:var(--ui-text-2); font-size:12px; line-height:1.6; }
 #panel.settings-home .settings-reset { min-height:44px; font-size:13px; }
+#panel.settings-home .settings-exitbar { flex:none; padding:8px 0 0; margin:0; border-top:1px solid var(--ui-line); background:none; }
+#panel.settings-home .settings-exitbar button { min-height:48px; font-size:14px; }
+body[data-ui="abyss-frame"] #panel.settings-home { gap:8px; overflow:hidden!important; background:radial-gradient(ellipse at 100% 0,var(--ui-energy-soft),transparent 60%),var(--ui-bg-0); }
+body[data-ui="abyss-frame"] #panel.settings-home .settings-head { padding:4px 0 8px; margin:0; border:0; border-bottom:1px solid var(--ui-line); border-radius:0; clip-path:none; box-shadow:none; background:none; grid-template-columns:32px minmax(0,1fr); gap:10px; }
+body[data-ui="abyss-frame"] #panel.settings-home .settings-head .ui-module-header__mark { width:32px; height:36px; }
+body[data-ui="abyss-frame"] #panel.settings-home .settings-head .ui-module-header__mark .ui-icon { width:24px; height:24px; }
+body[data-ui="abyss-frame"] #panel.settings-home .settings-head h1 { font-size:20px; letter-spacing:2px; }
+body[data-ui="abyss-frame"] #panel.settings-home .settings-media { border:0; border-radius:0; box-shadow:none; background:none; padding:0 4px; }
+body[data-ui="abyss-frame"] #panel.settings-home .settings-media::before { display:none; }
+body[data-ui="abyss-frame"] #panel.settings-home :is(.settings-version,.settings-danger) { border:0; border-top:1px solid var(--ui-line); border-radius:0; box-shadow:none; background:none; }
+body[data-ui="abyss-frame"] #panel.settings-home :is(.settings-version,.settings-danger)>summary { padding:10px 4px; font-size:13px; }
 
 .settings-cloud-body { display:flex; flex-direction:column; gap:12px; }
 .settings-cloud-body>* { flex-shrink:0; }
@@ -3524,19 +3589,24 @@ body[data-ui="abyss-frame"] #panel.map-mode .mapnode .mn-progress{font-size:10px
 .thumb-sheet summary{min-height:44px}
 @keyframes thumb-sheet-enter{from{opacity:.82}to{opacity:1}}
 body[data-ui="abyss-frame"] #panel.camp-home{isolation:isolate;background:linear-gradient(180deg,color-mix(in srgb,var(--ui-bg-0) 15%,transparent),transparent 32%,color-mix(in srgb,var(--ui-bg-0) 90%,transparent) 85%),url("assets/story-scenes-v1/awakening-camp.jpg") center 42%/cover no-repeat}
-body[data-ui="abyss-frame"] #panel.camp-home>.camp-hero{flex:none;min-height:clamp(112px,23dvh,220px);padding:20px 20px 0;margin:0;border:0;border-radius:0;background:linear-gradient(180deg,color-mix(in srgb,var(--ui-bg-0) 55%,transparent),transparent);box-shadow:none}
+body[data-ui="abyss-frame"] #panel.camp-home>.camp-hero{flex:none;min-height:0;padding:12px 16px;margin:0;border:0;border-radius:0;background:color-mix(in srgb,var(--ui-bg-0) 82%,transparent);box-shadow:none}
 body[data-ui="abyss-frame"] #panel.camp-home>.camp-hero::after{display:none}
+body[data-ui="abyss-frame"] #panel.camp-home>.camp-hero::before{top:12px;bottom:12px}
 body[data-ui="abyss-frame"] #panel.camp-home .camp-hero-head{padding:0;min-height:0;display:block}
-body[data-ui="abyss-frame"] #panel.camp-home .camp-hero-copy h1{font-size:28px;font-weight:500;letter-spacing:4px;margin:4px 0 8px;text-shadow:0 2px 12px var(--ui-bg-0)}
-body[data-ui="abyss-frame"] #panel.camp-home .camp-hero-copy small{font-size:11px;letter-spacing:2px;color:var(--ui-energy-hi)}
-body[data-ui="abyss-frame"] #panel.camp-home .camp-hero-copy p{font-size:12px!important;color:var(--ui-text-1);text-shadow:0 1px 8px var(--ui-bg-0)}
-body[data-ui="abyss-frame"] #panel.camp-home .camp-home-scroll{display:flex;flex-direction:column;justify-content:flex-start;padding:12px 16px 0;scrollbar-width:none;background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--ui-bg-0) 45%,transparent))}
+body[data-ui="abyss-frame"] #panel.camp-home .camp-hero-copy{display:flex;align-items:center;justify-content:space-between;gap:12px}
+body[data-ui="abyss-frame"] #panel.camp-home .camp-hero-copy h1{min-width:0;font-size:20px;font-weight:600;letter-spacing:2px;margin:0;text-shadow:0 2px 12px var(--ui-bg-0)}
+body[data-ui="abyss-frame"] #panel.camp-home .camp-hero-copy small{flex:none;display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.5px;color:var(--ui-text-2);white-space:nowrap}
+body[data-ui="abyss-frame"] #panel.camp-home .camp-hero-copy small i{width:5px;height:5px;border-radius:50%;background:var(--ui-success);box-shadow:0 0 6px var(--ui-success)}
+body[data-ui="abyss-frame"] #panel.camp-home .camp-facility-toolbar{padding:8px 12px 0;background:var(--ui-bg-1)}
+body[data-ui="abyss-frame"] #panel.camp-home .camp-home-scroll{display:flex;flex-direction:column;justify-content:flex-start;padding:12px 12px 0;scrollbar-width:thin;scrollbar-color:var(--ui-line-hi) transparent;background:linear-gradient(180deg,color-mix(in srgb,var(--ui-bg-0) 32%,transparent),color-mix(in srgb,var(--ui-bg-0) 70%,transparent))}
 body[data-ui="abyss-frame"] #panel.camp-home .camp-home-scroll::-webkit-scrollbar{display:none}
-body[data-ui="abyss-frame"] #panel.camp-home .camp-section-head{flex:none;margin:4px 0 8px;border:0;background:none}
+body[data-ui="abyss-frame"] #panel.camp-home .camp-section-head{flex:none;margin:0 0 8px;border:0;background:none}
+body[data-ui="abyss-frame"] #panel.camp-home .camp-facility-toolbar>.camp-section-head{padding:0;min-height:28px;margin:0 0 4px}
 body[data-ui="abyss-frame"] #panel.camp-home .camp-section-head b{font-weight:500;font-size:14px;letter-spacing:2px}
-body[data-ui="abyss-frame"] #panel.camp-home .camp-layout{flex:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 8px;margin:0 0 12px}
-body[data-ui="abyss-frame"] #panel.camp-home .camp-facility{display:flex;flex-direction:column;position:relative;gap:4px;min-height:112px!important;padding:8px 4px!important;border:0;border-radius:0;background:radial-gradient(ellipse at 50% 85%,color-mix(in srgb,var(--ui-bg-0) 80%,transparent),transparent 72%);box-shadow:none}
-body[data-ui="abyss-frame"] #panel.camp-home .cf-icon{width:72px;height:72px;margin:0;border:0;background:transparent;filter:drop-shadow(0 8px 4px var(--ui-bg-0))}
+body[data-ui="abyss-frame"] #panel.camp-home .camp-layout{flex:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 8px;margin:0 0 12px}
+body[data-ui="abyss-frame"] #panel.camp-home .camp-facility{display:flex;flex-direction:column;position:relative;gap:4px;min-height:108px!important;padding:10px 4px 8px!important;border:1px solid color-mix(in srgb,var(--ui-line) 68%,transparent);border-radius:var(--ui-radius-sm);background:linear-gradient(180deg,color-mix(in srgb,var(--ui-bg-0) 32%,transparent),color-mix(in srgb,var(--ui-bg-0) 92%,transparent));box-shadow:none}
+body[data-ui="abyss-frame"] #panel.camp-home .camp-facility::before{display:none}
+body[data-ui="abyss-frame"] #panel.camp-home .cf-icon{width:64px;height:64px;margin:0;border:0;background:transparent;filter:drop-shadow(0 5px 4px var(--ui-bg-0))}
 body[data-ui="abyss-frame"] #panel.camp-home .cf-copy{display:block;width:100%;text-align:center;text-shadow:0 1px 6px var(--ui-bg-0)}
 body[data-ui="abyss-frame"] #panel.camp-home .cf-copy b{font-size:12px;line-height:1.4}
 body[data-ui="abyss-frame"] #panel.camp-home .cf-copy :is(small,em){display:none}
@@ -3545,7 +3615,7 @@ body[data-ui="abyss-frame"] #panel.camp-home .cf-status b{font-size:10px;line-he
 body[data-ui="abyss-frame"] #panel.camp-home .cf-status b::before{content:"Lv ";font-size:10px}
 body[data-ui="abyss-frame"] #panel.camp-home .camp-facility.damaged .cf-status b::before{content:""}
 body[data-ui="abyss-frame"] #panel.camp-home .cf-status :is(small,i){display:none}
-body[data-ui="abyss-frame"] #panel.camp-home .camp-facility-filters{flex:none;margin:8px 12px 0;padding:0;border:0;border-top:1px solid var(--ui-line);background:color-mix(in srgb,var(--ui-bg-0) 75%,transparent)}
+body[data-ui="abyss-frame"] #panel.camp-home .camp-facility-filters{flex:none;margin:0;padding:0;border:0;border-radius:0;background:none}
 body[data-ui="abyss-frame"] #panel.camp-home .camp-home-dock{display:flex;gap:8px;padding:8px 12px 12px;border:0;background:linear-gradient(transparent,var(--ui-bg-0))}
 body[data-ui="abyss-frame"] #panel.camp-home .camp-build-action{flex:none;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;min-width:72px;min-height:60px;padding:8px;background:color-mix(in srgb,var(--ui-bg-0) 80%,transparent);border-color:var(--ui-line-hi)}
 .camp-build-action>.ui-icon{width:24px;height:24px;margin:0}
@@ -3570,7 +3640,7 @@ body[data-ui="abyss-frame"] #panel .npc-console .npc-actions{order:1;flex:none;b
 #panel.careers-page .career-category-tabs{order:2;margin:8px 0 0;padding:0;border:0;border-top:1px solid var(--ui-line)}
 body[data-ui="abyss-frame"] #panel :is(.task-board-head,.career-console-head){background:transparent;border:0;box-shadow:none;padding:4px 0 8px;margin:0}
 body[data-ui="abyss-frame"] #panel :is(.task-board-head,.career-console-head) .ui-module-header__mark{border:0;background:none;box-shadow:none}
-@media(max-height:700px){body[data-ui="abyss-frame"] #panel.camp-home>.camp-hero{min-height:112px;padding:12px 16px 0}body[data-ui="abyss-frame"] #panel.camp-home .camp-hero-copy h1{font-size:24px}body[data-ui="abyss-frame"] #panel.camp-home .cf-icon{width:56px;height:56px}body[data-ui="abyss-frame"] #panel.camp-home .camp-facility{min-height:96px!important}}
+@media(max-height:700px){body[data-ui="abyss-frame"] #panel.camp-home>.camp-hero{padding:8px 12px}body[data-ui="abyss-frame"] #panel.camp-home .cf-icon{width:56px;height:56px}body[data-ui="abyss-frame"] #panel.camp-home .camp-facility{min-height:96px!important}}
 @media(prefers-reduced-motion:reduce){.thumb-sheet{animation:none}}
 /* Containing-block reset: the shared .ui-dialog centering must not move a sheet. */
 .thumb-sheet{position:relative;inset:auto;margin:0;padding:0;transform:none;left:auto;bottom:auto}

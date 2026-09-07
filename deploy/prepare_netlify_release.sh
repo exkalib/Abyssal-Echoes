@@ -23,8 +23,8 @@ payload_dir="$work_dir/payload"
 mkdir -p "$payload_dir/assets" "$output_dir"
 
 cp "$root_dir/prototype/index.html" "$root_dir/prototype/style.css" \
-  "$root_dir/prototype/ui-system.css" "$root_dir/prototype/story-scenes.css" \
-  "$root_dir/prototype/wardrobe-fit.js" "$root_dir/prototype/wardrobe-grips.js" "$root_dir/prototype/wardrobe-hands.js" "$root_dir/prototype/wardrobe-trigger-hands.js" "$root_dir/prototype/wardrobe-sword-hands.js" \
+  "$root_dir/prototype/ui-system.css" "$root_dir/prototype/story-scenes.css" "$root_dir/prototype/wardrobe-fx.css" \
+  "$root_dir/prototype/wardrobe-fit.js" "$root_dir/prototype/wardrobe-grips.js" "$root_dir/prototype/wardrobe-hands.js" "$root_dir/prototype/wardrobe-trigger-hands.js" "$root_dir/prototype/wardrobe-sword-hands.js" "$root_dir/prototype/wardrobe-weapon-poses.js" "$root_dir/prototype/wardrobe-weapon-art.js" "$root_dir/prototype/wardrobe-weapon-effects.js" "$root_dir/prototype/wardrobe-hand-effects.js" "$root_dir/prototype/wardrobe-fx.js" \
   "$root_dir/prototype/wardrobe.js" "$root_dir/prototype/game.js" "$payload_dir/"
 cp -R "$root_dir/prototype/assets/." "$payload_dir/assets/"
 find "$payload_dir/assets" -type f \( \
@@ -32,7 +32,7 @@ find "$payload_dir/assets" -type f \( \
 \) -delete
 
 bundle="bundle.zip"
-(cd "$payload_dir" && zip -q -9 -r "$work_dir/$bundle" index.html style.css ui-system.css story-scenes.css wardrobe-fit.js wardrobe-grips.js wardrobe-hands.js wardrobe-trigger-hands.js wardrobe-sword-hands.js wardrobe.js game.js assets)
+(cd "$payload_dir" && zip -q -9 -r "$work_dir/$bundle" index.html style.css ui-system.css story-scenes.css wardrobe-fx.css wardrobe-fit.js wardrobe-grips.js wardrobe-hands.js wardrobe-trigger-hands.js wardrobe-sword-hands.js wardrobe-weapon-poses.js wardrobe-weapon-art.js wardrobe-weapon-effects.js wardrobe-hand-effects.js wardrobe-fx.js wardrobe.js game.js assets)
 sha256="$(shasum -a 256 "$work_dir/$bundle" | awk '{print $1}')"
 size="$(wc -c < "$work_dir/$bundle" | tr -d ' ')"
 apk_url="${ABYSS_APK_URL:-https://github.com/exkalib/Abyssal-Echoes/releases/latest/download/Abyssal-Echoes.apk}"

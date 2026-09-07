@@ -43,7 +43,7 @@ const occupiedSample=process.env.CHARACTER_WARDROBE_SAMPLE==='blade';
    await page.evaluate(()=>{window.characterRefs={stage:document.querySelector('.char-rpg-stage'),host:document.querySelector('.char-rpg-portrait'),rig:document.querySelector('.char-rpg-portrait .doll-wearable'),base:document.querySelector('.char-rpg-portrait [data-wear-key="base"]'),dock:document.querySelector('.char-thumb-dock')};});
    const stable=()=>page.evaluate(()=>characterRefs.stage===document.querySelector('.char-rpg-stage')&&characterRefs.host===document.querySelector('.char-rpg-portrait')&&characterRefs.rig===document.querySelector('.char-rpg-portrait .doll-wearable')&&characterRefs.base===document.querySelector('.char-rpg-portrait [data-wear-key="base"]')&&characterRefs.dock===document.querySelector('.char-thumb-dock'));
    assert.equal(await page.evaluate(()=>equip('feet','magboots',refreshCharPanel)),true);await ready();assert.equal(await stable(),true,'updating equipment retains character stage, base and controls');
-   assert.equal(await page.locator('.char-rpg-portrait [data-item="magboots"]').count(),2);
+   assert.equal(await page.locator('.char-rpg-portrait [data-item="magboots"]').count(),4,'character mounts the same front and rear boot shells as the backpack');
    await page.evaluate(()=>{setPlayerAppearance('male',null,true);refreshCharPanel();});await ready();assert.equal(await stable(),true,'appearance changes update in place');
    assert.equal(await page.locator('.char-rpg-portrait .doll-wearable').getAttribute('data-gender'),'male');assert.match(await page.locator('.char-rpg-identity>span').innerText(),/男性/);
    const requests=await page.locator('.char-rpg-portrait').evaluate(node=>node._dollRequest);

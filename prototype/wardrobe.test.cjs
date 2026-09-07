@@ -16,7 +16,10 @@ for(const [id,art] of Object.entries(WEARABLE_ART)){
   const specs=wearableSpecification(sex,{[art.slot]:id});
   const fit=WEARABLE_FIT_V2[id],grip=WEARABLE_GRIPS[id];
   assert.ok(fit||grip,id+' has a calibrated body fit or a measured handle');
-  assert.equal(specs.length,grip?(['blade','staff','bar'].includes(grip.kind)?4:3):1+fit[sex].length+(fit.mount?1:0)+(fit.wornTorso?1:0));
+  if(grip){
+   assert.equal(specs.filter(s=>s.slot===art.slot).length,1,'one held item, not an integrated replacement');
+   assert.equal(specs.filter(s=>s.key==='grip-left'||s.key==='grip-right').length,ITEMS[id].weaponHands===2?2:1,'actual occupied hand count');
+  }else assert.equal(specs.length,fit.trousers?6:1+fit[sex].length*(fit.joints?4:fit.slot==='feet'?2:1)+(fit.mount?1:0)+(fit.wornTorso?1:0));
   assert.equal(new Set(specs.map(s=>s.key)).size,specs.length);
   for(const spec of specs.filter(s=>s.src))assert.ok(fs.existsSync(path.join(__dirname,spec.src)),spec.src);
   for(const [file,x,y,sx,sy] of art[sex]){
@@ -36,7 +39,7 @@ for(const sex of ['male','female']){
  assert.ok(Math.abs(body.sx-body.sy)<.00001,'worn torso retains its authored body proportions');
  assert.equal(identity.src,worn[0].src,'face and jaw remain the original character');
  assert.equal(identity.z,3);assert.ok(identity.clip.includes('81.4%'),'original throat is between uniform and front collar');
- assert.ok(!body.clip&&body.src.includes('worn-'+sex),'each sex uses native contour and neck-opening transparency');
+ assert.ok(!body.clip&&body.src===WEARABLE_ROOT+WEARABLE_FIT_V2.body_general_5[sex][0].file+'.webp','each sex uses its authored whole contour and neck-opening transparency');
  assert.equal(wearableSpecification(sex,{}).length,1);
  for(const hands of ['workGloves','servoGauntlet','nanoWeaveGloves'])assert.ok(wearableSpecification(sex,{hands})[0].clip.includes('polygon'),'gloves replace bare hands at runtime');
  assert.equal(wearableSpecification(sex,{hands:'phaseGrip'})[0].clip,undefined,'wrist cuffs keep bare hands');
@@ -66,7 +69,7 @@ assert.match(gradle,/include[^\n]*"wardrobe\.js"/,'APK must include the wardrobe
 assert.match(prepare,/prototype\/wardrobe\.js/);assert.match(prepare,/zip[^\n]*wardrobe\.js/,'full hot update must include the wardrobe runtime');
 assert.match(publish,/bundle_files=\([^\n]*wardrobe\.js/);assert.match(publish,/mv '\$web_dir\/wardrobe\.js\.new' '\$web_dir\/wardrobe\.js'/,'web publication must install wardrobe before its entry point');
 assert.equal((publish.match(/for art_dir in garden-crops-v1 item-art-v2 equipment-art-v3 wearables-v1 wearables-v2/g)||[]).length,2,'lean bundle and web sync must both include new art');
-for(const file of ['wardrobe-fit.js','wardrobe-grips.js','wardrobe-hands.js','wardrobe-trigger-hands.js','wardrobe-sword-hands.js']){
+for(const file of ['wardrobe-fit.js','wardrobe-grips.js','wardrobe-hands.js','wardrobe-trigger-hands.js','wardrobe-sword-hands.js','wardrobe-weapon-poses.js','wardrobe-weapon-art.js','wardrobe-weapon-effects.js']){
  assert.ok(gradle.includes('"'+file+'"'),file+' must ship in APK');
  assert.ok(prepare.includes('prototype/'+file)&&prepare.split('\n').some(line=>line.includes('zip -q')&&line.includes(file)),file+' must ship in full updates');
  assert.ok(publish.split('\n').some(line=>line.startsWith('bundle_files=')&&line.includes(file)),file+' must ship in lean updates');

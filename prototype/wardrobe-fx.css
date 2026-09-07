@@ -1,0 +1,59 @@
+/* ABYSS//FRAME wearable energy: localized hardware, never a character outline. */
+.wearable-portrait>.wardrobe-fx{
+  position:absolute;inset:0;overflow:hidden;pointer-events:none;contain:layout paint;
+  --fx-tone:var(--ui-energy,#39d3eb);color:var(--fx-tone);
+}
+.wardrobe-fx[data-fx-tone="anomaly"]{--fx-tone:var(--ui-anomaly,#9b8cff)}
+.wardrobe-fx *{pointer-events:none;box-sizing:border-box}
+.wardrobe-fx .fx-emitter{position:absolute;left:var(--fx-x);top:var(--fx-y);transform:translate(-50%,-50%);width:3%;aspect-ratio:1}
+.wardrobe-fx .fx-source,.wardrobe-fx .fx-mote{position:absolute;display:block;inset:0;animation-duration:var(--fx-duration);animation-delay:var(--fx-delay,0s);animation-timing-function:linear;animation-iteration-count:infinite}
+.wardrobe-fx .fx-source{background:var(--fx-tone);box-shadow:0 0 4px color-mix(in srgb,var(--fx-tone) 55%,transparent);animation-name:wardrobe-fx-breathe}
+.wardrobe-fx .fx-core{width:3.4%;aspect-ratio:1;transform:translate(-50%,-50%) rotate(45deg)}
+.wardrobe-fx .fx-core .fx-source{inset:8%;background:radial-gradient(ellipse,var(--fx-tone),transparent 70%);box-shadow:none;filter:blur(1px);mix-blend-mode:screen}
+.wardrobe-fx .fx-core .fx-mote{border:1px solid var(--fx-tone);animation-name:wardrobe-fx-core;opacity:0}
+.wardrobe-fx .fx-leg{width:1.1%;aspect-ratio:.16}
+.wardrobe-fx .fx-leg .fx-source{inset:0 38%;opacity:.3;background:linear-gradient(transparent,var(--fx-tone),transparent)}
+.wardrobe-fx .fx-leg .fx-mote{inset:auto 8% 0;height:18%;background:var(--fx-tone);box-shadow:0 0 4px var(--fx-tone);animation-name:wardrobe-fx-conduit}
+.wardrobe-fx .fx-thrust{width:2.5%;aspect-ratio:.6}
+.wardrobe-fx .fx-thrust .fx-source{inset:4% 26% 68%;border-radius:50%}
+.wardrobe-fx .fx-thrust .fx-mote{inset:18% 32% 0;transform-origin:50% 0;background:linear-gradient(var(--fx-tone),transparent);clip-path:polygon(0 0,100% 0,65% 100%,35% 100%);animation-name:wardrobe-fx-exhaust}
+.wardrobe-fx .fx-orbit{width:8%;aspect-ratio:1}
+.wardrobe-fx .fx-orbit .fx-source{inset:14%;border:1px solid color-mix(in srgb,var(--fx-tone) 55%,transparent);border-radius:50%;background:none;box-shadow:none;opacity:.6}
+.wardrobe-fx .fx-orbit .fx-mote{border:1px solid transparent;border-top-color:var(--fx-tone);border-radius:50%;animation-name:wardrobe-fx-orbit;transform:rotate(calc(var(--fx-index)*90deg))}
+.wardrobe-fx .fx-orbit .fx-mote::after{content:"";position:absolute;width:8%;aspect-ratio:1;left:10%;top:10%;background:var(--ui-text-1,#e6f0f5);border-radius:50%;box-shadow:0 0 4px var(--fx-tone)}
+.wardrobe-fx .fx-back-vent{width:1.5%;aspect-ratio:.35}
+.wardrobe-fx .fx-back-vent .fx-source{inset:0 34%;opacity:.45}
+.wardrobe-fx .fx-back-vent .fx-mote{inset:0 15% 70%;background:var(--fx-tone);animation-name:wardrobe-fx-conduit}
+.wardrobe-fx .fx-sensor{width:1.2%;aspect-ratio:2}
+.wardrobe-fx .fx-sensor .fx-source{inset:10%;box-shadow:0 0 4px var(--fx-tone)}
+.wardrobe-fx .fx-sensor .fx-mote{display:none}
+.wardrobe-fx .fx-chip{width:5.4%;aspect-ratio:2.2}
+.wardrobe-fx .fx-chip .fx-source{inset:40% 0;background:linear-gradient(90deg,transparent,var(--fx-tone),transparent);box-shadow:none}
+.wardrobe-fx .fx-chip .fx-mote{inset:24% auto 24% 0;width:10%;background:var(--fx-tone);animation-name:wardrobe-fx-chip}
+.wardrobe-fx .fx-shield{width:5%;aspect-ratio:1.2}
+.wardrobe-fx .fx-shield .fx-source{inset:34%;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)}
+.wardrobe-fx .fx-shield .fx-mote{border:1px solid var(--fx-tone);clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);animation-name:wardrobe-fx-core;opacity:0}
+.wardrobe-fx>svg{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+.wardrobe-fx .fx-wing-trace{fill:none;stroke:var(--fx-tone);stroke-width:.24;stroke-linecap:round;stroke-dasharray:2 8;animation:wardrobe-fx-wing-trace var(--fx-duration) linear infinite;opacity:.66}
+.wardrobe-fx .fx-wing-particle{fill:var(--ui-text-1,#e6f0f5);animation:wardrobe-fx-wing-particle var(--fx-duration) var(--fx-delay) linear infinite;opacity:0}
+.wardrobe-fx[data-fx-stage="3"] .fx-mote{opacity:.5}
+.wardrobe-fx[data-fx-stage="3"] .fx-core .fx-mote{display:none}
+.wardrobe-fx[data-fx-stage="5"] .fx-core{width:4%}
+.wardrobe-fx[data-fx-stage="5"] .fx-thrust{width:3.1%}
+.wardrobe-fx[data-fx-stage="5"] .fx-wing-trace{stroke-width:.32;stroke-dasharray:3 7}
+.wardrobe-fx[data-fx-quality="low"] .fx-mote,.wardrobe-fx[data-fx-quality="low"] .fx-wing-particle{display:none}
+.wardrobe-fx[data-fx-quality="low"] .fx-source{box-shadow:none;animation-duration:7s}
+@keyframes wardrobe-fx-breathe{0%,100%{opacity:.38}50%{opacity:.84}}
+@keyframes wardrobe-fx-core{0%{transform:scale(.48);opacity:0}18%{opacity:.62}85%,100%{transform:scale(1.5);opacity:0}}
+@keyframes wardrobe-fx-conduit{0%{transform:translateY(80%);opacity:0}15%{opacity:.72}80%{opacity:.5}100%{transform:translateY(-440%);opacity:0}}
+@keyframes wardrobe-fx-exhaust{0%,100%{transform:scaleY(.45);opacity:.25}35%{transform:scaleY(1);opacity:.66}65%{transform:scaleY(.65);opacity:.4}}
+@keyframes wardrobe-fx-orbit{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes wardrobe-fx-chip{0%{transform:translateX(0);opacity:0}20%,75%{opacity:.7}100%{transform:translateX(900%);opacity:0}}
+@keyframes wardrobe-fx-wing-trace{from{stroke-dashoffset:0}to{stroke-dashoffset:-40}}
+@keyframes wardrobe-fx-wing-particle{0%{offset-distance:0%;opacity:0}18%{opacity:.7}88%{opacity:.35}100%{offset-distance:100%;opacity:0}}
+@media(prefers-reduced-motion:reduce){
+ .wardrobe-fx .fx-source,.wardrobe-fx .fx-mote,.wardrobe-fx .fx-wing-trace,.wardrobe-fx .fx-wing-particle{animation:none!important;transition:none!important}
+ .wardrobe-fx .fx-mote,.wardrobe-fx .fx-wing-particle{display:none}
+ .wardrobe-fx .fx-source{opacity:.46;box-shadow:none}
+ .wardrobe-fx .fx-wing-trace{opacity:.3;stroke-dasharray:none}
+}

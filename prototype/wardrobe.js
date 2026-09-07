@@ -6,6 +6,10 @@ const wearableGrips=typeof WEARABLE_GRIPS!=='undefined'?WEARABLE_GRIPS:require('
 const wearableHands=typeof WEARABLE_HOLD_HANDS!=='undefined'?WEARABLE_HOLD_HANDS:require('./wardrobe-hands.js').WEARABLE_HOLD_HANDS;
 const wearableTriggerHands=typeof WEARABLE_TRIGGER_HANDS!=='undefined'?WEARABLE_TRIGGER_HANDS:require('./wardrobe-trigger-hands.js').WEARABLE_TRIGGER_HANDS;
 const wearableSwordHands=typeof WEARABLE_SWORD_HANDS!=='undefined'?WEARABLE_SWORD_HANDS:require('./wardrobe-sword-hands.js').WEARABLE_SWORD_HANDS;
+const wearableWeaponPoses=typeof WEARABLE_WEAPON_POSES!=='undefined'?WEARABLE_WEAPON_POSES:require('./wardrobe-weapon-poses.js');
+const wearableWeaponArt=typeof WEARABLE_WEAPON_ART!=='undefined'?WEARABLE_WEAPON_ART:require('./wardrobe-weapon-art.js');
+const wearableWeaponEffects=typeof WEARABLE_WEAPON_EFFECTS!=='undefined'?WEARABLE_WEAPON_EFFECTS:require('./wardrobe-weapon-effects.js');
+const wearableHandEffects=typeof WEARABLE_HAND_EFFECTS!=='undefined'?WEARABLE_HAND_EFFECTS:require('./wardrobe-hand-effects.js');
 const WEARABLE_UNIFORMS=['bulwark','vanguard','infiltrator'];
 const WEARABLE_ORDER=['back','legs','feet','body','hands','weapon','offhand','head','implant','module'];
 const WEARABLE_ART={
@@ -1101,13 +1105,14 @@ function wearableSourcePoint(art,point){
 }
 function wearableTransformPoint(spec,point){
   const p=wearableSourcePoint(spec.art,point),o=spec.pivotPoint,r=(spec.rotation||0)*Math.PI/180;
+  if(spec.matrix){const [a,b,c,d]=spec.matrix;return [spec.x+a*p[0]+c*p[1]*1.5,spec.y+b*p[0]/1.5+d*p[1]];}
   const x=(p[0]-o[0])*spec.sx,y=(p[1]-o[1])*spec.sy*1.5;
   return [o[0]+spec.x+x*Math.cos(r)-y*Math.sin(r),o[1]+spec.y+(x*Math.sin(r)+y*Math.cos(r))/1.5];
 }
 function fittedWearableSpec(piece,slot,item,index){
   const b=piece.bounds,t=piece.target,p=piece.pivot||[.5,0],point=[b[0]+b[2]*p[0],b[1]+b[3]*p[1]];
   const top=wearableSourcePoint(piece,[b[0],b[1]]),bottom=wearableSourcePoint(piece,[b[0]+b[2],b[1]+b[3]]),pivot=wearableSourcePoint(piece,point),anchor=[t[0]+t[2]*p[0],t[1]+t[3]*p[1]];
-  return {key:slot+'-'+index,src:WEARABLE_ROOT+piece.file+'.webp',slot,item,half:piece.half,clip:piece.clip,art:piece,
+  return {key:slot+'-'+index,src:WEARABLE_ROOT+piece.file+'.webp',slot,item,half:piece.half,clip:piece.clip,art:piece,handFx:piece.handFx,...(piece.fxAnchors?{fxAnchors:piece.fxAnchors}:{}),
     x:anchor[0]-pivot[0],y:anchor[1]-pivot[1],sx:t[2]/(bottom[0]-top[0]),sy:t[3]/(bottom[1]-top[1]),
     origin:pivot[0]+'% '+pivot[1]+'%',pivotPoint:pivot,rotation:piece.rotation||0,contact:{sourcePoint:point,anchor},fit:'calibrated'};
 }
@@ -1187,10 +1192,238 @@ function heldWearableSpec(art,slot,item,hand){
   return {key:slot+'-0',src:art.source,slot,item,art,x:anchor[0]-pivot[0],y:anchor[1]-pivot[1],sx:scale,sy:scale,origin:pivot[0]+'% '+pivot[1]+'%',pivotPoint:pivot,rotation,z:slot==='offhand'?24:21,fit:art.status,triggerContact,
     contact:{sourcePoint:art.grip,anchor,kind:'grip',occluded:true,occlusion:slot==='offhand'?'behind-shield':hand.occupiedHilt?'occupied-hilt':'front-fingers',anatomy:hand.occupiedHilt?'palm-handle-fingers':undefined}};
 }
+// V11: one elbow/wrist rig drives anatomy, sleeves and occupied hands together.
+// Art keeps its native alpha. A part contour only hides a surplus grip or cuff.
+function poseSourceClip(art,contour){
+  const wrist=wearableSourcePoint(art,art.wrist),forearm=wearableSourcePoint(art,art.forearm);
+  const axis=[wrist[0]-forearm[0],(wrist[1]-forearm[1])*1.5];
+  const points=(contour||[[0,0],[1,0],[1,1],[0,1]]).map(p=>wearableSourcePoint(art,p)),kept=[];
+  const distance=p=>(p[0]-wrist[0])*axis[0]+(p[1]-wrist[1])*1.5*axis[1]+Math.hypot(...axis)*1.5;
+  for(let i=0;i<points.length;i++){
+    const a=points[i],b=points[(i+1)%points.length],da=distance(a),db=distance(b);
+    if(da>=0)kept.push(a);
+    if((da>=0)!==(db>=0)){const t=da/(da-db);kept.push(a.map((n,k)=>n+t*(b[k]-n)));}
+  }
+  return 'polygon('+kept.map(p=>p.map(n=>n+'%').join(' ')).join(',')+')';
+}
+function poseHandSpec(art,arm,sex,item,handItem,role){
+  const w=wearableSourcePoint(art,art.wrist),f=wearableSourcePoint(art,art.forearm),g=wearableSourcePoint(art,art.grip);
+  const scale=art.palmLength*(sex==='female'?.84:1)/Math.hypot(g[0]-w[0],(g[1]-w[1])*1.5);
+  const rotation=(Math.atan2((arm.wrist[1]-arm.elbow[1])*1.5,arm.wrist[0]-arm.elbow[0])-Math.atan2((w[1]-f[1])*1.5,w[0]-f[0]))*180/Math.PI;
+  const spec={key:'grip-'+arm.side,src:WEARABLE_ROOT+art.file+'.webp',slot:'grip',item,art,
+    x:arm.wrist[0]-w[0],y:arm.wrist[1]-w[1],sx:scale,sy:scale,rotation,pivotPoint:w,origin:w[0]+'% '+w[1]+'%',
+    handItem,handFx:art.handFx,pose:role,z:22,fit:'pose-v11',gripPoint:art.grip,handleAxis:art.axis,occupiedHilt:true,
+    clip:poseSourceClip(art,art.contour),contact:{sourcePoint:art.wrist,anchor:arm.wrist,kind:'seam'}};
+  return spec;
+}
+function poseWeaponSpec(art,item,rig,hand){
+  const p=wearableSourcePoint(art,art.grip),anchor=wearableTransformPoint(hand,hand.gripPoint);
+  const gun=['sidearm','longgun'].includes(rig.kind),horizontal=art.sourceView==='horizontal-right',mirror=gun&&!horizontal?-1:1;
+  const length=({crowbar:40,knife:26,phaseBlade:37,blade:57,eblade:55,sever:58,plasmaSaber:57,voidBlade:61,
+    blade_general_1:44,blade_general_2:54,blade_general_3:58,blade_general_4:54,blade_general_5:62,
+    pistol:23,firearm_general_1:22,firearm_general_2:24,firearm_general_3:25,firearm_general_4:24,firearm_general_5:26,
+    rifle:58,plasmaRifle:58,swarmRifle:60,vacuumCarbine:54,gravLance:70})[item];
+  const extent=horizontal?art.bounds[2]*Math.min(1,1.5*art.width/art.height)*100:art.bounds[3]*Math.min(1,1/(1.5*art.width/art.height))*150;
+  const scale=length/extent;
+  let rotation;
+  if(gun)rotation=hand.rotation-(horizontal?0:90);
+  else{
+    const axis=wearableSourcePoint(art,art.handleAxis),target=wearableTransformPoint(hand,hand.handleAxis);
+    rotation=(Math.atan2((target[1]-anchor[1])*1.5,target[0]-anchor[0])-Math.atan2((axis[1]-p[1])*1.5,axis[0]-p[0]))*180/Math.PI;
+  }
+  const r=rotation*Math.PI/180,c=Math.cos(r)*scale,s=Math.sin(r)*scale,matrix=[c*mirror,s*mirror,-s,c];
+  return {key:'weapon-0',src:art.source,slot:'weapon',item,art,matrix,
+    x:anchor[0]-matrix[0]*p[0]-matrix[2]*p[1]*1.5,y:anchor[1]-matrix[1]*p[0]/1.5-matrix[3]*p[1],
+    origin:'0 0',pivotPoint:[0,0],z:21,pose:rig.kind,fit:'pose-v11',
+    contact:{sourcePoint:art.grip,anchor,kind:'grip',occluded:true,occlusion:'occupied-hilt',anatomy:'palm-handle-fingers'}};
+}
+function occupiedWeaponPose(sex,equipment){
+  const item=equipment.weapon,rig=wearableWeaponPoses.weaponPoseRig(sex,item);if(!rig)return null;
+  const glove=equipment.hands&&equipment.hands!=='phaseGrip'?equipment.hands:'bare',gun=['sidearm','longgun'].includes(rig.kind);
+  const art=(gun?wearableWeaponArt.primary:wearableWeaponArt.low)[glove],support=wearableWeaponArt.support[glove];
+  if(!art||(rig.twoHanded&&!support))throw new Error('Missing native weapon gesture: '+glove+'/'+rig.kind);
+  const left=poseHandSpec(art,rig.arms.left,sex,item,glove,gun?'trigger':rig.kind),weapon=poseWeaponSpec(wearableGrips[item],item,rig,left),held={left},extra=[];
+  if(rig.twoHanded){
+    // Solve the support wrist from the item's real fore-end; the gun does not
+    // stretch to reach the offhand, and the hand does not bend at its wrist.
+    const point=wearableGrips[item].support||({rifle:[.472,.64],plasmaRifle:[.468,.65],swarmRifle:[.484,.66],vacuumCarbine:[.477,.59]})[item];
+    const target=wearableTransformPoint(weapon,point),arm=rig.arms.right;
+    const w=wearableSourcePoint(support,support.wrist),f=wearableSourcePoint(support,support.forearm),g=wearableSourcePoint(support,support.grip);
+    const sf=support.palmLength*(sex==='female'?.84:1)/Math.hypot(g[0]-w[0],(g[1]-w[1])*1.5),d=[(g[0]-w[0])*sf,(g[1]-w[1])*1.5*sf];
+    const u=[w[0]-f[0],(w[1]-f[1])*1.5],ul=Math.hypot(...u);u[0]/=ul;u[1]/=ul;
+    const v=[target[0]-arm.elbow[0],(target[1]-arm.elbow[1])*1.5],parallel=u[0]*d[0]+u[1]*d[1],cross=u[0]*d[1]-u[1]*d[0];
+    const length=Math.sqrt(Math.max(1,v[0]*v[0]+v[1]*v[1]-cross*cross))-parallel;
+    const angle=Math.atan2(v[1],v[0])-Math.atan2(length*u[1]+d[1],length*u[0]+d[0]);
+    arm.wrist=[target[0]-d[0]*Math.cos(angle)+d[1]*Math.sin(angle),target[1]-(d[0]*Math.sin(angle)+d[1]*Math.cos(angle))/1.5];
+    arm.transform=wearableWeaponPoses.forearmTransform(sex,'right',arm.wrist);
+    held.right=poseHandSpec(support,arm,sex,item,glove,'support');
+    extra.push({...held.right,key:'grip-support-rear',z:20,contact:undefined,handFx:undefined,clip:poseSourceClip(support,support.rearContour)});
+    held.right.clip=poseSourceClip(support,support.frontContour);held.right.gripContact={sourcePoint:support.grip,anchor:target,kind:'grip',occluded:true,occlusion:'front-fingers',anatomy:'support-foreend'};
+  }
+  return {rig,held,weapon,extra};
+}
+function armPoseLayer(spec,arm){
+  const o=spec.pivotPoint||[50,0],r=(spec.rotation||0)*Math.PI/180,sx=spec.sx??1,sy=spec.sy??1;
+  const a=spec.matrix||[Math.cos(r)*sx,Math.sin(r)*sx,-Math.sin(r)*sy,Math.cos(r)*sy];
+  const t=spec.matrix?[spec.x,spec.y]:[o[0]+(spec.x||0)-a[0]*o[0]-a[2]*o[1]*1.5,o[1]+(spec.y||0)-a[1]*o[0]/1.5-a[3]*o[1]];
+  const b=arm.transform.matrix,matrix=[b[0]*a[0]+b[2]*a[1],b[1]*a[0]+b[3]*a[1],b[0]*a[2]+b[2]*a[3],b[1]*a[2]+b[3]*a[3]];
+  const at=wearableWeaponPoses.transformPosePoint(arm.transform,t);
+  const next={...spec,matrix,x:at[0],y:at[1],origin:'0 0',pivotPoint:[0,0],fit:'pose-v11'};
+  for(const key of ['contact','triggerContact','gripContact'])if(spec[key])next[key]={...spec[key],anchor:wearableWeaponPoses.transformPosePoint(arm.transform,spec[key].anchor)};
+  return next;
+}
+/* Footwear v10: source artwork is never flattened or edited. Each boot has a
+ * rear shell behind the leg and a front shell above it. These measured source
+ * contours follow the front lip; the empty opening and heel tab stay behind
+ * the actual trousers, including equipped leg armor and career uniforms.
+ */
+const WEARABLE_FOOTWEAR_CUFFS={
+  boots:[[[0,522],[145,522],[157,526],[177,532],[199,532],[217,521],[256,521]],[[256,521],[295,521],[313,532],[335,532],[355,526],[367,522],[512,522]]],
+  magboots:[[[0,365],[104,365],[113,384],[135,397],[163,403],[191,398],[210,382],[219,365],[256,365]],[[256,365],[293,365],[302,382],[321,398],[349,403],[377,397],[399,384],[408,365],[512,365]]],
+  gravityBoots:[[[0,550],[198,550],[220,574],[258,594],[301,619],[340,644],[375,660],[397,638],[420,565],[512,565]],[[512,565.87],[594.64,565.87],[617.49,638.78],[639.34,660.75],[674.11,644.77],[712.84,619.8],[755.55,594.83],[793.3,574.86],[815.15,550.88],[1024,550.88]]],
+  feet_general_1:[[[0,48],[114,48],[125,61],[140,72],[161,78],[182,72],[197,61],[207,48],[256,48]],[[256,48],[305,48],[315,61],[330,72],[351,78],[372,72],[387,61],[398,48],[512,48]]],
+  feet_general_2:[[[0,57],[64,57],[81,69],[104,79],[129,84],[152,79],[174,67],[187,57],[256,57]],[[256,57],[325,57],[338,67],[360,79],[383,84],[408,79],[431,69],[448,57],[512,57]]],
+  feet_general_3:[[[0,151],[186,151],[216,178],[242,191],[281,198],[330,201],[365,194],[400,178],[434,151],[627,151]],[[627,151.92],[819.22,151.92],[853.29,178.89],[888.36,194.88],[923.43,201.87],[972.53,198.88],[1011.61,191.88],[1037.66,178.89],[1067.72,151.92],[1254,151.92]]],
+  feet_general_4:[[[0,72],[350,72],[388,102],[427,133],[467,160],[504,173],[543,167],[590,150],[625,115],[655,74],[768,74]],[[768,73.94],[866.69,73.94],[896.49,114.9],[931.26,149.86],[977.95,166.85],[1016.7,172.84],[1053.45,159.85],[1093.19,132.88],[1131.93,101.91],[1169.68,71.94],[1536,71.94]]],
+  feet_general_5:[[[0,110],[181,110],[208,134],[250,146],[308,150],[365,174],[410,201],[446,184],[476,147],[627,147]],[[627,147],[775.21,147],[805.33,184],[841.47,201],[886.64,174],[943.87,150],[1002.09,146],[1044.26,134],[1071.36,110],[1254,110]]],
+  feet_specialist_4:[[[0,162.41],[386.29,162.41],[406.9,175.7],[431.92,189.74],[464.3,197.12],[501.1,198.6],[538.63,194.91],[570.27,183.09],[597.5,161.67],[768.5,161.67]],[[768.5,161.67],[929.67,161.67],[956.97,183.09],[988.7,194.91],[1026.33,198.6],[1063.22,197.12],[1095.69,189.74],[1120.78,175.7],[1141.44,162.41],[1537,162.41]]],
+  feet_specialist_5:[[[0,50],[324,50],[371,76],[418,95],[464,106],[516,99],[563,78],[610,48],[768.5,48]],[[768.5,48],[921.48,48],[968.76,78],[1016.04,99],[1068.34,106],[1114.62,95],[1161.89,76],[1209.17,50],[1537,50]]]
+};
+function wearableFootwearLayers(layers){
+  const rear=[];
+  for(const layer of layers){
+    if(layer.slot!=='feet'||!WEARABLE_FOOTWEAR_CUFFS[layer.item])continue;
+    const side=layer.half==='right'?1:0,art=layer.art;
+    const ratio=art.width/art.height,w=Math.min(1,1.5*ratio),h=Math.min(1,1/(1.5*ratio));
+    const project=([x,y])=>[((1-w)/2+x/art.width*w)*100,((1-h)/2+y/art.height*h)*100];
+    const edge=WEARABLE_FOOTWEAR_CUFFS[layer.item][side];
+    const points=[...edge,[side?art.width:art.width/2,art.height],[side?art.width/2:0,art.height]];
+    rear.push({...layer,key:layer.key+'-rear',z:0,contact:undefined,fit:'rear-boot-shell'});
+    layer.clip='polygon('+points.map(point=>project(point).map(n=>n+'%').join(' ')).join(',')+')';
+    layer.z=5;layer.fit='front-boot-cuff';
+    if(layer.contact)layer.contact={...layer.contact,occluded:true,occlusion:'trouser-between-boot-shells'};
+  }
+  return [...layers,...rear];
+}
+function fittedLegLayers(piece,id,index,joints,sex,foot){
+  const b=piece.bounds,female=sex==='female',side=index?1:-1;
+  const knee=joints.knee[index],top=joints.top[female?1:0],kneeY=female?68.8:70.4;
+  let bottom=female?88.4:88.9,ankleX=50+side*14.2;
+  if(foot){
+    const edge=WEARABLE_FOOTWEAR_CUFFS[foot.item][index],lip=edge.reduce((deepest,point)=>point[1]>deepest[1]?point:deepest);
+    const cuff=wearableTransformPoint(foot,[lip[0]/foot.art.width,lip[1]/foot.art.height]);
+    bottom=Math.min(bottom,cuff[1]+.65);ankleX=cuff[0];
+  }
+  const sourceYs=[b[1],knee-.065,knee+.065,b[1]+b[3]];
+  const targetXs=[50+side*9.5,50+side*11.8,50+side*12.5,ankleX];
+  const width=joints.width[female?1:0],center=b[0]+b[2]/2;
+  const srcWidth=wearableSourcePoint(piece,[b[0]+b[2],0])[0]-wearableSourcePoint(piece,[b[0],0])[0];
+  const sx=width/srcWidth,parts=[];
+  const kneeHalf=(wearableSourcePoint(piece,[center,sourceYs[2]])[1]-wearableSourcePoint(piece,[center,sourceYs[1]])[1])*sx/2;
+  const targetYs=[top,kneeY-kneeHalf,kneeY+kneeHalf,bottom];
+  for(let band=0;band<3;band++){
+    const p=wearableSourcePoint(piece,[center,sourceYs[band]]),q=wearableSourcePoint(piece,[center,sourceYs[band+1]]);
+    const sy=(targetYs[band+1]-targetYs[band])/(q[1]-p[1]);
+    const shear=(targetXs[band+1]-targetXs[band])/((q[1]-p[1])*1.5);
+    const spec={key:'legs-'+index+'-'+band,slot:'legs',item:id,src:WEARABLE_ROOT+piece.file+'.webp',art:piece,
+      half:piece.half,x:targetXs[band]-sx*p[0]-shear*p[1]*1.5,y:targetYs[band]-sy*p[1],sx,sy,
+      matrix:[sx,0,shear,sy],pivotPoint:[0,0],origin:'0 0',z:4,fit:'joint-fitted',
+      contact:{sourcePoint:[center,sourceYs[band]],anchor:[targetXs[band],targetYs[band]]}};
+    const x0=index?.5:0,x1=index?1:.5,y0=band?sourceYs[band]-.0005:0,y1=band===2?1:sourceYs[band+1]+.0005;
+    const polygon=points=>'polygon('+points.map(point=>wearableSourcePoint(piece,point).map(n=>n+'%').join(' ')).join(',')+')';
+    spec.clip=polygon([[x0,y0],[x1,y0],[x1,y1],[x0,y1]]);
+    if(!band){
+      parts.push({...spec,key:spec.key+'-rear',z:0,contact:undefined,fit:'rear-leg-rim'});
+      // Front rim wraps around the trousers. The hollow rear lining remains
+      // behind the original leg; the native sprite and alpha are unchanged.
+      const lip=joints.rim?.[index]||[[0,0],[.2,.045],[.5,.055],[.8,.045],[1,0]];
+      const edge=lip.map(([x,y])=>[b[0]+x*b[2],b[1]+y*b[3]]);
+      spec.clip=polygon([[x0,edge[0][1]],...edge,[x1,edge.at(-1)[1]],[x1,y1],[x0,y1]]);
+    }
+    parts.push(spec);
+  }
+  return parts;
+}
+const WEARABLE_UNIFORM_HEMS={bulwark:[296,272],vanguard:[298,288],infiltrator:[307,294]};
+function fittedTrouserLayers(art,id,sex,equipment,job){
+  const female=sex==='female',point=([x,y])=>wearableSourcePoint(art,[x/art.width,y/art.height]);
+  const knees=art.knees.map(point),sx=(female?24.4:25)/(knees[1][0]-knees[0][0]);
+  const x=50-sx*(knees[0][0]+knees[1][0])/2,kneeY=female?68.8:70.4;
+  const sourceYs=[art.waist[1],art.crotch[1],...art.kneeBand,(art.ankles[0][1]+art.ankles[1][1])/2].map(y=>point([0,y])[1]);
+  const kneeCenter=(knees[0][1]+knees[1][1])/2;
+  let waist=equipment.body?(female?40.8:43.8):(female?42:45.2);
+  if(WEARABLE_UNIFORM_HEMS[job]){
+    // Career shirts are tucked in at their authored waist, which is above the
+    // untucked starter T-shirt hem. Match the actual FRONT rim, not image top.
+    const front=point([art.waist[0],Math.max(...art.rim.map(p=>p[1]))])[1];
+    const targetRim=WEARABLE_UNIFORM_HEMS[job][female?1:0]/768*100-.2,crotch=female?50.5:53.8;
+    waist=crotch-(sourceYs[1]-sourceYs[0])*(crotch-targetRim)/(sourceYs[1]-front);
+  }
+  const targets=[waist,female?50.5:53.8,kneeY+(sourceYs[2]-kneeCenter)*sx,kneeY+(sourceYs[3]-kneeCenter)*sx,female?88.4:88.9];
+  let hem=100,bootEdge;
+  const shoes=wearableFits[equipment.feet]?.[sex],cuffs=WEARABLE_FOOTWEAR_CUFFS[equipment.feet];
+  if(shoes&&cuffs){
+    bootEdge=shoes.flatMap((shoe,i)=>{const foot=fittedWearableSpec(shoe,'feet',equipment.feet,i);
+      return cuffs[i].map(([px,py])=>{const p=wearableTransformPoint(foot,[px/shoe.width,py/shoe.height]);return [p[0],p[1]+.35];});}).sort((a,b)=>a[0]-b[0]);
+    hem=Math.max(...bootEdge.map(p=>p[1]));
+  }
+  const polygon=points=>'polygon('+points.map(p=>p.map(n=>n+'%').join(' ')).join(',')+')',layers=[];
+  for(let band=0;band<4;band++){
+    const sy=(targets[band+1]-targets[band])/(sourceYs[band+1]-sourceYs[band]),y=targets[band]-sourceYs[band]*sy;
+    // The following band is painted on top. Extend only this band's bottom
+    // underneath it: two independently antialiased clip edges otherwise leave
+    // opaque cloth ~25% transparent at fractional CSS pixels. The bleed is in
+    // portrait space, so a stretched career pelvis gets the same small cover;
+    // source landmarks, rigid knees, the front/rear waistband and boot rim stay
+    // unchanged. No extra source patch or visible duplicate strip is added.
+    const top=band?sourceYs[band]-.015:0,bottom=band===3?Math.min(100,(hem-y)/sy):sourceYs[band+1]+.4/sy;
+    const spec={key:'legs-trousers-'+band,slot:'legs',item:id,src:WEARABLE_ROOT+art.file+'.webp',art,x,y,sx,sy,
+      origin:'0 0',pivotPoint:[0,0],matrix:[sx,0,0,sy],z:4,fit:'complete-trousers',
+      contact:{sourcePoint:[art.waist[0]/art.width,(band?art.kneeBand[0]:art.waist[1])/art.height],anchor:[]}};
+    spec.contact.anchor=wearableTransformPoint(spec,spec.contact.sourcePoint);
+    spec.clip=polygon([[0,top],[100,top],[100,bottom],[0,bottom]]);
+    if(band===3&&bootEdge){
+      const edge=bootEdge.map(([px,py])=>[(px-x)/sx,(py-y)/sy]);
+      spec.clip=polygon([[0,top],[100,top],[100,edge.at(-1)[1]],...edge.slice().reverse(),[0,edge[0][1]]]);
+    }
+    if(!band){
+      const rim=art.rim.map(point),edge=[[0,rim[0][1]],...rim,[100,rim.at(-1)[1]]];
+      layers.push({...spec,key:'legs-trousers-rear',z:0,contact:undefined,clip:polygon([[0,0],[100,0],...edge.slice().reverse()])});
+      spec.clip=polygon([...edge,[100,bottom],[0,bottom]]);
+    }
+    layers.push(spec);
+  }
+  return layers;
+}
+function hideReplacedTrousers(layer,cut,keepFeet,sex){
+  const original=layer.clip?.startsWith('polygon(')?layer.clip.slice(8,-1).split(',').map(p=>p.trim().split(/\s+/).map(parseFloat)):[[0,0],[100,0],[100,100],[0,100]];
+  function crop(rect){
+    let points=original;
+    for(const [axis,edge,greater]of [[0,rect[0],true],[0,rect[2],false],[1,rect[1],true],[1,rect[3],false]]){
+      const next=[];
+      for(let i=0;i<points.length;i++){
+        const a=points[i],b=points[(i+1)%points.length],ia=greater?a[axis]>=edge:a[axis]<=edge,ib=greater?b[axis]>=edge:b[axis]<=edge;
+        if(ia)next.push(a);
+        if(ia!==ib){const t=(edge-a[axis])/(b[axis]-a[axis]);next.push(a.map((v,k)=>v+t*(b[k]-v)));}
+      }
+      points=next;
+    }
+    return points;
+  }
+  const regions=[[0,0,100,cut],[0,cut,31.5,58],[68.5,cut,100,58]];
+  if(keepFeet)regions.push([0,sex==='female'?88.4:88.9,100,100]);
+  const parts=regions.map(crop).filter(p=>p.length>=3),points=[...parts[0],parts[0][0]];
+  // Separate kept regions are joined by doubled, zero-area edges. This is one
+  // CSS polygon; unlike a rectangular cutoff it retains hands and original feet.
+  for(const part of parts.slice(1))points.push(...part,part[0],parts[0][0]);
+  layer.clip='polygon('+points.map(p=>p.map(v=>v+'%').join(' ')).join(',')+')';
+}
 function wearableSpecification(gender,equipment={},career,lifeCareers=[]){
   equipment=Object.fromEntries(Object.entries(equipment).filter(([slot,id])=>WEARABLE_ART[id]?.slot===slot));
-  const sex=gender==='female'?'female':'male',layers=legacyWearableSpecification(sex,equipment,career,lifeCareers),held={};
-  for(const [slot,side] of [['weapon','left'],['offhand','right']])if(wearableGrips[equipment[slot]])held[side]=grippingHandSpec(sex,equipment,side,equipment[slot]);
+  const sex=gender==='female'?'female':'male',weaponPose=occupiedWeaponPose(sex,equipment);
+  if(weaponPose?.rig.twoHanded)equipment={...equipment,offhand:undefined};
+  const layers=legacyWearableSpecification(sex,equipment,career,lifeCareers),held={...weaponPose?.held};
+  for(const [slot,side] of [['weapon','left'],['offhand','right']])if(!held[side]&&wearableGrips[equipment[slot]])held[side]=grippingHandSpec(sex,equipment,side,equipment[slot]);
   const gloves=wearableFits[equipment.hands]?.coversHands??WEARABLE_ART[equipment.hands]?.coversHands;
   const hem=wearableFits[equipment.feet]?.baseCutY?.[sex]??(WEARABLE_ART[equipment.feet]?.coversFeet?(sex==='female'?87:88.5):100);
   const left=gloves||held.left?WEARABLE_BODY_WRISTS[sex][0][1]:60,right=gloves||held.right?WEARABLE_BODY_WRISTS[sex][1][1]:60;
@@ -1198,19 +1431,28 @@ function wearableSpecification(gender,equipment={},career,lifeCareers=[]){
   for(const slot of WEARABLE_ORDER){
     const id=equipment[slot],fit=wearableFits[id],grip=wearableGrips[id];if(!fit&&!grip)continue;
     for(let i=layers.length-1;i>=0;i--)if(layers[i].slot===slot)layers.splice(i,1);
-    if(grip){layers.push(heldWearableSpec(grip,slot,id,held[slot==='weapon'?'left':'right']));continue;}
+    if(grip){layers.push(slot==='weapon'&&weaponPose?weaponPose.weapon:heldWearableSpec(grip,slot,id,held[slot==='weapon'?'left':'right']));continue;}
+    if(slot==='legs'&&fit.trousers){layers.push(...fittedTrouserLayers(fit.trousers,id,sex,equipment,layers.find(s=>s.slot==='uniform')?.item));continue;}
     fit[sex].forEach((piece,index)=>{
+      if(slot==='legs'&&fit.joints){
+        const shoe=wearableFits[equipment.feet]?.[sex]?.[index],foot=shoe&&WEARABLE_FOOTWEAR_CUFFS[equipment.feet]?fittedWearableSpec(shoe,'feet',equipment.feet,index):null;
+        layers.push(...fittedLegLayers(piece,id,index,fit.joints,sex,foot));return;
+      }
       // On the gripping side the closed glove replaces the entire relaxed hand;
       // retaining both is what previously produced doubled fingers and cuffs.
       if(slot==='hands'&&fit.coversHands!==false&&held[piece.half]){
         if(held[piece.half].art.retainCuff){
           const cuff=fittedWearableSpec(piece,slot,id,index);cuff.key='cuff-'+piece.half;cuff.slot='cuff';cuff.z=held[piece.half].art.occupiedHilt?20:23;
-          cuff.clip=wearableCuffClip(cuff,WEARABLE_BODY_WRISTS[sex][piece.half==='left'?0:1][1]+.25);layers.push(held[piece.half].art.forearmPose==='v8'?posedForearmSpec(cuff,sex):cuff);
+          cuff.handFx=piece.cuffFx;
+          cuff.clip=wearableCuffClip(cuff,WEARABLE_BODY_WRISTS[sex][piece.half==='left'?0:1][1]+.25);
+          const arm=weaponPose?.rig.arms[piece.half];
+          layers.push(arm?.occupied?armPoseLayer(cuff,arm):held[piece.half].art.forearmPose==='v8'?posedForearmSpec(cuff,sex):cuff);
         }
         return;
       }
       let spec=fittedWearableSpec(piece,slot,id,index);spec.pose=slot==='hands'?'relaxed':undefined;
-      if(slot==='hands'&&piece.half==='left'&&held.left?.art.forearmPose==='v8')spec=posedForearmSpec(spec,sex);
+      if(slot==='hands'&&weaponPose?.rig.arms[piece.half]?.occupied){spec=armPoseLayer(spec,weaponPose.rig.arms[piece.half]);spec.z=20;}
+      else if(slot==='hands'&&piece.half==='left'&&held.left?.art.forearmPose==='v8')spec=posedForearmSpec(spec,sex);
       layers.push(spec);
     });
     if(fit.mount)layers.push({key:fit.mount,slot:'mount',item:fit.mount,mount:slot,x:slot==='module'?86:87,y:slot==='module'?25:36,z:27});
@@ -1222,7 +1464,24 @@ function wearableSpecification(gender,equipment={},career,lifeCareers=[]){
     // Original skin sits above career clothing but behind the armor's front rim.
     layers.push({key:'body-identity',slot:'anatomy',item:'base-head-'+sex,src:WEARABLE_ROOT+'base-'+sex+'.webp',x:0,y:0,sx:1,sy:1,z:3,clip:'inset(0 0 81.4% 0)'});
   }
-  if(held.left?.art.forearmPose==='v8'){
+  if(weaponPose){
+    for(const layer of [...layers].filter(s=>['base','uniform'].includes(s.slot))){
+      const spec={x:0,y:0,sx:1,sy:1,pivotPoint:[50,0],...layer};
+      for(const side of ['left','right']){
+        const arm=weaponPose.rig.arms[side];if(!arm.occupied)continue;
+        const ey=arm.sourceElbow[1],wy=arm.sourceWrist[1];
+        const points=[[0,ey-1.2],[31,ey-2.2],[35.5,ey-.5],[33,wy+.25],[0,wy+.25]].map(([x,y])=>[side==='right'?100-x:x,y]);
+        layers.push(armPoseLayer({...spec,key:'forearm-'+side+'-'+layer.key,slot:'forearm',z:layer.slot==='uniform'?19:18,clip:wearablePlaneClip(spec,points)},arm));
+        const elbow=arm.sourceElbow;
+        const cap=Array.from({length:20},(_,i)=>[elbow[0]+4.2*Math.cos(i*Math.PI/10),elbow[1]+3.1*Math.sin(i*Math.PI/10)]);
+        layers.push({...spec,key:'elbow-'+side+'-'+layer.key,slot:'forearm',z:layer.slot==='uniform'?18:17,clip:wearablePlaneClip(spec,cap)});
+      }
+      const top=layer.slot==='uniform'?16:0,lower=layer.slot==='base'?hem:Math.min(sex==='female'?87:90,hem),a=weaponPose.rig.arms;
+      const lc=a.left.occupied?a.left.sourceElbow[1]+1.8:left,rc=a.right.occupied?a.right.sourceElbow[1]+1.8:layer.slot==='uniform'?WEARABLE_BODY_WRISTS[sex][1][1]:right;
+      layer.clip=wearablePlaneClip(spec,[[0,top],[100,top],[100,rc],[a.right.occupied?65:67,rc],[67,60],[100,60],[100,lower],[0,lower],[0,60],[33,60],[a.left.occupied?35:33,lc],[0,lc]]);
+    }
+    layers.push(...weaponPose.extra);
+  }else if(held.left?.art.forearmPose==='v8'){
     const elbowY=WEARABLE_FOREARM_V8[sex].elbow[1],wristY=WEARABLE_BODY_WRISTS[sex][0][1];
     for(const layer of [...layers].filter(s=>['base','uniform'].includes(s.slot)||(s.slot==='body'&&!torso?.wornTorso))){
       const spec={x:0,y:0,sx:1,sy:1,pivotPoint:[50,0],...layer};
@@ -1238,7 +1497,14 @@ function wearableSpecification(gender,equipment={},career,lifeCareers=[]){
     }
   }
   layers.push(...Object.values(held).filter(hand=>!hand.integratedGrip));
-  return layers;
+  if(wearableFits[equipment.legs]?.trousers){
+    const trousers=layers.find(s=>s.key==='legs-trousers-0'),art=trousers.art;
+    const cut=Math.max(...art.rim.map(([x,y])=>wearableTransformPoint(trousers,[x/art.width,y/art.height])[1]))+.35;
+    hideReplacedTrousers(layers[0],cut,!equipment.feet,sex);
+    const uniform=layers.find(s=>s.slot==='uniform');
+    if(uniform)hideReplacedTrousers(uniform,Math.min(cut,WEARABLE_UNIFORM_HEMS[uniform.item][sex==='female'?1:0]/768*100),false,sex);
+  }
+  return wearableFootwearLayers(layers);
 }
 function wearableFitAudit(gender,equipment={},career){
   const specs=wearableSpecification(gender,equipment,career),contacts=[];
@@ -1267,10 +1533,14 @@ async function updateWearablePortrait(host,gender,equipment,career,lifeCareers=[
     if(spec.mount){img.className='wearable-dock';img.dataset.slot='mount';img.dataset.item=spec.item;img.dataset.mount=spec.mount;img.style.left=spec.x+'%';img.style.top=spec.y+'%';img.style.zIndex=spec.z;img.innerHTML='<i></i><b>'+ (spec.mount==='module'?'M':'N')+'</b>';continue;}
     if(img.getAttribute('src')!==spec.src)img.src=spec.src;
     img.dataset.slot=spec.slot;img.dataset.item=spec.item;img.dataset.pose=spec.pose||'';img.dataset.handItem=spec.handItem||'';img.dataset.integratedGrip=spec.integratedGrip?'true':'';img.dataset.occupiedHilt=spec.occupiedHilt?'true':'';img.style.zIndex=spec.z??({base:1,uniform:2,back:0,legs:4,feet:5,body:6,hands:9,weapon:21,offhand:24,grip:22,head:26,implant:28,module:28,life:30}[spec.slot]);
-    img.style.transform=spec.slot==='base'?'none':'translate('+spec.x+'%,'+spec.y+'%) rotate('+(spec.rotation||0)+'deg) scale('+spec.sx+','+spec.sy+')';
+    img.style.transform=spec.slot==='base'?'none':spec.matrix?'translate('+spec.x+'%,'+spec.y+'%) matrix('+spec.matrix.join(',')+',0,0)':'translate('+spec.x+'%,'+spec.y+'%) rotate('+(spec.rotation||0)+'deg) scale('+spec.sx+','+spec.sy+')';
     img.style.transformOrigin=spec.origin||'50% 0%';
     img.style.clipPath=spec.clip||(spec.half==='left'?'inset(0 50% 0 0)':spec.half==='right'?'inset(0 0 0 50%)':'none');
   }
+  const weapon=specs.find(spec=>spec.slot==='weapon');
+  wearableWeaponEffects.update(host,weapon,host.querySelector('[data-wear-key="weapon-0"]'),point=>wearableSourcePoint(weapon.art,point));
+  wearableHandEffects.update(host,specs,(spec,point)=>wearableSourcePoint(spec.art,point));
+  if(typeof syncWardrobeEffects==='function')syncWardrobeEffects(host,{gender,equipment,career,specs});
   return true;
 }
 if(typeof module!=='undefined'&&module.exports)module.exports={WEARABLE_ROOT,WEARABLE_ORDER,WEARABLE_ART,WEARABLE_UNIFORMS,wearableSpecification,wearableFitAudit,wearableTransformPoint,fittedWearableSpec};

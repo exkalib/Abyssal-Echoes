@@ -29,6 +29,14 @@ function assertWearableFitContacts(audit,item,nodes){
    assert.equal(hands.length,0,label+' occupied grip cannot be covered by a separate fist');
    assert.equal(body[0].integratedGrip,true,label+' occupied grip must be a mounted integrated asset');
    assert.ok(grips.every(contact=>contact.layerKey===body[0].key&&contact.anatomy==='palm-handle-fingers'),label+' physical contact belongs to the same authored layer');
+  }else if(grips.some(contact=>contact.anatomy==='support-foreend')){
+   assert.equal(item.slot,'weapon',label+' support belongs to a two-handed weapon');
+   const main=hands.find(node=>node.key==='grip-left'),support=hands.find(node=>node.key==='grip-right'),rear=hands.find(node=>node.key==='grip-support-rear');
+   assert.ok(main&&support&&rear&&hands.length===3,label+' requires one main hand and front/rear parts of one supporting hand');
+   assert.ok(main.occupiedHilt&&support.occupiedHilt,label+' both hands have authored occupied grips');
+   assert.ok(grips.some(contact=>contact.anatomy==='palm-handle-fingers'),label+' also requires the main handle contact');
+   const z=Math.max(...body.map(node=>Number(node.zIndex)));
+   assert.ok(Number(main.zIndex)>z&&Number(support.zIndex)>z&&Number(rear.zIndex)<z,label+' fingers are in front and supporting palm is behind the fore-end');
   }else if(grips.some(contact=>contact.occlusion==='occupied-hilt')){
    assert.equal(item.slot,'weapon',label+' occupied hilt belongs to a main weapon');
    assert.equal(hands.length,1,label+' uses one occupied grip, not a second empty fist');

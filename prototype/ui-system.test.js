@@ -23,7 +23,7 @@ assert.match(game,/style\.setProperty\('--map-scale',view\.scale\)/,'地图视�
 assert.match(system,/#panel \.mapnode::before[\s\S]*44px \/ var\(--map-scale,1\)/,'地图节点必须按缩放倍率反向补偿触摸区');
 assert.match(game,/const pointerPair=[\s\S]*beginPinch=[\s\S]*Math\.hypot[\s\S]*pointercancel/,'地图必须支持以双指中点为锚点的触摸缩放');
 for(const control of ['station-detail-workbench \\.station-step','battle-primary-controls \\.battle-action'])assert.match(system,new RegExp(control),`${control} 必须接入统一移动触摸规格`);
-assert.match(system,/#panel\[data-view="settings"\]\.settings-home[\s\S]*overflow-y:auto!important[\s\S]*settings-storage-actions \.cloud-action[\s\S]*min-height:44px!important/,'紧凑设置首页不得以缩小按钮换取伪一屏');
+assert.match(system,/#panel\[data-view="settings"\]\.settings-home[\s\S]*overflow:hidden!important[\s\S]*settings-storage-actions \.cloud-action[\s\S]*min-height:44px!important/,'设置外框固定，按钮保持 44px；内容由内部列表滚动');
 assert.match(system,/#panel\.settings-home \.settings-media[\s\S]*overflow:visible[\s\S]*repeat\(3,minmax\(44px,auto\)\)/,'矮屏设置项变大后不得被旧容器裁切');
 assert.match(system,/body\[data-ui="abyss-frame"\] #panel \.field-head-tool,[\s\S]*field-map-marker,[\s\S]*field-map-drawer-close[\s\S]*min-height:44px!important/,'后加载的野外场景样式不得缩小统一触摸区');
 assert.match(system,/recipe-station-top,[\s\S]*station-detail-body,[\s\S]*npc-content-scroll,[\s\S]*battle-tool-rail \{ overscroll-behavior:contain; \}/,'独立滚动区必须阻止滚动串联');

@@ -14,7 +14,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   }
   const alpha=await page.evaluate(async()=>{
    const files=new Set(['base-male','base-female']);Object.values(WEARABLE_ART).forEach(art=>['male','female'].forEach(sex=>art[sex].forEach(([file])=>files.add(file))));
-   Object.values(WEARABLE_FIT_V2).forEach(art=>['male','female'].forEach(sex=>art[sex].forEach(piece=>files.add(piece.file))));
+   Object.values(WEARABLE_FIT_V2).forEach(art=>{['male','female'].forEach(sex=>art[sex].forEach(piece=>files.add(piece.file)));if(art.trousers)files.add(art.trousers.file);});
    WEARABLE_UNIFORMS.forEach(job=>['male','female'].forEach(sex=>files.add('uniform-'+job+'-'+sex)));
    ['salvager','fabricator','biologist'].forEach(job=>files.add('life-'+job));
    Object.values(WEARABLE_GRIPS).forEach(art=>files.add('../'+art.source.slice('assets/'.length,-'.webp'.length)));
@@ -44,6 +44,10 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   for(const {id,slot} of supported){
    await page.evaluate(async({id,slot})=>{window.wearRefs=['male','female'].map(sex=>document.getElementById(sex).querySelector('[data-wear-key="base"]'));await Promise.all(['male','female'].map(sex=>updateWearablePortrait(document.getElementById(sex),sex,{[slot]:id})));},{id,slot});
    assert.ok(await page.evaluate(({id,slot})=>['male','female'].every((sex,i)=>{const host=document.getElementById(sex);return host.querySelector('[data-wear-key="base"]')===window.wearRefs[i]&&[...host.querySelectorAll('[data-slot="'+slot+'"]')].every(n=>n.dataset.item===id&&n.complete&&n.naturalWidth>0);}),{id,slot}),id+' keeps the base and mounts decoded wear art');
+   if(slot==='feet')assert.equal(await page.evaluate(()=>['male','female'].every(sex=>{
+    const nodes=[...document.getElementById(sex).querySelectorAll('[data-slot="feet"]')],rear=nodes.filter(n=>n.dataset.wearKey.endsWith('-rear')),front=nodes.filter(n=>!n.dataset.wearKey.endsWith('-rear'));
+    return rear.length===2&&front.length===2&&rear.every(n=>getComputedStyle(n).zIndex==='0')&&front.every(n=>getComputedStyle(n).zIndex==='5'&&getComputedStyle(n).clipPath.startsWith('polygon('));
+   })),true,id+' renders both measured front cuffs above the trousers and both rear shells behind them');
   }
   await page.evaluate(()=>refresh());
   await page.locator('#vest').click();await page.locator('#shield').click();await page.evaluate(()=>refresh());
@@ -51,10 +55,10 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   for(const feet of ['boots','magboots','gravityBoots','']){
    await page.locator('[data-feet="'+feet+'"]').click();await page.evaluate(()=>refresh());
    assert.equal(await page.evaluate(()=>window.fixedRefs.every(ref=>{const host=document.getElementById(ref.sex);return ref.base===host.querySelector('[data-slot="base"]')&&ref.body===host.querySelector('[data-slot="body"]')&&ref.shield===host.querySelector('[data-slot="offhand"]');})),true,'shoe selection cannot replace the face, chest or shield');
-   for(const sex of ['male','female'])assert.equal(await page.locator('#'+sex+' [data-slot="feet"]').count(),await page.evaluate(({feet,sex})=>feet?WEARABLE_FIT_V2[feet][sex].length:0,{feet,sex}));
+   for(const sex of ['male','female'])assert.equal(await page.locator('#'+sex+' [data-slot="feet"]').count(),feet?4:0,'each worn pair has two front cuffs and two rear shells');
   }
   const rapid=await page.evaluate(async()=>{const host=document.getElementById('male');const results=await Promise.all([updateWearablePortrait(host,'male',{feet:'boots'}),updateWearablePortrait(host,'male',{feet:'magboots'}),updateWearablePortrait(host,'male',{feet:'gravityBoots'})]);return {results,items:[...host.querySelectorAll('[data-slot="feet"]')].map(n=>n.dataset.item)};});
-  assert.deepEqual(rapid.results,[false,false,true]);assert.deepEqual(rapid.items,['gravityBoots','gravityBoots']);
+  assert.deepEqual(rapid.results,[false,false,true]);assert.deepEqual(rapid.items,['gravityBoots','gravityBoots','gravityBoots','gravityBoots']);
   for(const width of [360,390,520,850]){await page.setViewportSize({width,height:1000});await page.evaluate(()=>refresh());assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);assert.ok(await page.locator('nav button').evaluateAll(nodes=>nodes.every(n=>n.getBoundingClientRect().height>=44)));}
   assert.deepEqual(errors,[]);console.log('Wardrobe sample: '+alpha.length+' real-alpha images, both bodies, retained layers, latest-choice wins and four widths passed.');
  }finally{await browser.close();}

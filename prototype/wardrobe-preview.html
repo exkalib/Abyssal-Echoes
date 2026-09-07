@@ -1,25 +1,47 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>固定人物换装 · 独立验收</title><link rel="stylesheet" href="ui-system.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>固定人物换装 · 独立验收</title><link rel="stylesheet" href="ui-system.css"><link rel="stylesheet" href="wardrobe-fx.css"></head>
 <body class="wardrobe-preview">
 <main>
   <header><small>WEARABLE FITTING / ISOLATED PREVIEW</small><h1>同一个人，逐件穿戴</h1><p>124 件装备的独立验收页，无游戏存档读写；与正式背包共用穿戴映射。</p></header>
   <nav aria-label="样板穿戴"><button data-feet="">默认鞋</button><button data-feet="boots">军用长靴</button><button data-feet="magboots">磁力靴</button><button data-feet="gravityBoots">惯性踏靴</button><button id="vest" aria-pressed="false">复合护甲</button><button id="shield" aria-pressed="false">防暴折盾</button><button id="helmet" aria-pressed="false">防护头盔</button><button id="scope" aria-pressed="false">战术目镜</button><button id="gloves" aria-pressed="false">作业手套</button><button id="legs" aria-pressed="false">野战护腿</button><button id="size" aria-pressed="false">游戏尺寸</button></nav>
   <div id="wearable-selectors" class="wardrobe-preview-selectors"><label>主战制服<select id="fitting-career"><option value="">初始服装</option><option value="bulwark">舰盾卫士</option><option value="vanguard">脉冲游骑</option><option value="infiltrator">裂隙猎手</option></select></label></div>
+  <p id="fitting-status" role="status" aria-live="polite" style="min-height:1.5em;margin:8px 0;color:var(--ui-warning)"></p>
   <div class="wardrobe-preview-grid"><section><h2>男性母版</h2><div id="male"></div></section><section><h2>女性母版</h2><div id="female"></div></section></div>
   <p>检查：肩带、腰线、裤脚、腕部遮挡；切换鞋子时，脸和其他装备节点不应被替换。</p>
 </main>
-<script src="wardrobe-fit.js"></script><script src="wardrobe-grips.js"></script><script src="wardrobe-hands.js"></script><script src="wardrobe-trigger-hands.js"></script><script src="wardrobe-sword-hands.js"></script><script src="wardrobe.js"></script>
+<script src="wardrobe-fit.js"></script><script src="wardrobe-grips.js"></script><script src="wardrobe-hands.js"></script><script src="wardrobe-trigger-hands.js"></script><script src="wardrobe-sword-hands.js"></script><script src="wardrobe-weapon-poses.js"></script><script src="wardrobe-weapon-art.js"></script><script src="wardrobe-weapon-effects.js"></script><script src="wardrobe-hand-effects.js"></script><script src="wardrobe-fx.js"></script><script src="wardrobe.js"></script>
 <script>
 const outfit={feet:null,body:null,offhand:null};
-const refresh=()=>{document.querySelectorAll('[data-wear-slot]').forEach(select=>select.value=outfit[select.dataset.wearSlot]||'');return Promise.all(['male','female'].map(sex=>updateWearablePortrait(document.getElementById(sex),sex,outfit,document.getElementById('fitting-career').value)));};
+// Keep this isolated art page consistent with the game's weaponHands=2 catalog.
+const twoHandedWeapons=new Set(['rifle','plasmaRifle','swarmRifle','vacuumCarbine','gravLance']);
+const toggles=[['vest','body','vest'],['shield','offhand','riotShield'],['helmet','head','helmet'],['scope','head','scope'],['gloves','hands','workGloves'],['legs','legs','fieldGreaves']];
+const syncControls=()=>{
+  document.querySelectorAll('[data-wear-slot]').forEach(select=>select.value=outfit[select.dataset.wearSlot]||'');
+  for(const [button,slot,item] of toggles)document.getElementById(button).setAttribute('aria-pressed',String(outfit[slot]===item));
+  document.querySelectorAll('[data-feet]').forEach(button=>button.setAttribute('aria-pressed',String((outfit.feet||'')===button.dataset.feet)));
+};
+const refresh=()=>{syncControls();return Promise.all(['male','female'].map(sex=>updateWearablePortrait(document.getElementById(sex),sex,outfit,document.getElementById('fitting-career').value)));};
+const selectWearable=(slot,item)=>{
+  const weapon=slot==='weapon'?item:outfit.weapon,offhand=slot==='offhand'?item:outfit.offhand;
+  if(twoHandedWeapons.has(weapon)&&offhand){
+    syncControls();
+    document.getElementById('fitting-status').textContent=slot==='weapon'?'这件武器需要双手持握，请先卸下副手盾。当前穿戴未改变。':'当前武器需要双手持握，请先卸下武器或换成单手武器。当前穿戴未改变。';
+    return false;
+  }
+  outfit[slot]=item;document.getElementById('fitting-status').textContent='';refresh();return true;
+};
 document.getElementById('fitting-career').onchange=refresh;
 const slotNames={back:'背部',legs:'腿部',feet:'足部',body:'躯干',hands:'手部',weapon:'武器',offhand:'副手',head:'头部',implant:'植入体',module:'模组'};
-for(const slot of WEARABLE_ORDER){const items=Object.entries(WEARABLE_ART).filter(([,art])=>art.slot===slot);if(!items.length)continue;const label=document.createElement('label');label.textContent=slotNames[slot];const select=document.createElement('select');select.dataset.wearSlot=slot;select.add(new Option('默认 / 卸下',''));for(const[id]of items)select.add(new Option(id,id));select.onchange=()=>{outfit[slot]=select.value||null;refresh();};label.appendChild(select);document.getElementById('wearable-selectors').appendChild(label);}
-document.querySelectorAll('[data-feet]').forEach(b=>{b.onclick=()=>{outfit.feet=b.dataset.feet||null;document.querySelectorAll('[data-feet]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));refresh();};});
-const toggles=[['vest','body','vest'],['shield','offhand','riotShield'],['helmet','head','helmet'],['scope','head','scope'],['gloves','hands','workGloves'],['legs','legs','fieldGreaves']];
-for(const [id,slot,item] of toggles)document.getElementById(id).onclick=()=>{outfit[slot]=outfit[slot]===item?null:item;for(const [button,part,equipment]of toggles)document.getElementById(button).setAttribute('aria-pressed',String(outfit[part]===equipment));refresh();};
+for(const slot of WEARABLE_ORDER){const items=Object.entries(WEARABLE_ART).filter(([,art])=>art.slot===slot);if(!items.length)continue;const label=document.createElement('label');label.textContent=slotNames[slot];const select=document.createElement('select');select.dataset.wearSlot=slot;select.add(new Option('默认 / 卸下',''));for(const[id]of items)select.add(new Option(id,id));select.onchange=()=>selectWearable(slot,select.value||null);label.appendChild(select);document.getElementById('wearable-selectors').appendChild(label);}
+document.querySelectorAll('[data-feet]').forEach(button=>{button.onclick=()=>selectWearable('feet',button.dataset.feet||null);});
+for(const [id,slot,item] of toggles)document.getElementById(id).onclick=()=>selectWearable(slot,outfit[slot]===item?null:item);
 document.getElementById('size').onclick=()=>{const small=document.body.classList.toggle('game-size');document.getElementById('size').setAttribute('aria-pressed',String(small));};
+// Shareable isolated visual QA presets; never touches a player's save.
+const initial=new URLSearchParams(location.search);
+for(const slot of WEARABLE_ORDER){const item=initial.get(slot);if(item&&WEARABLE_ART[item]?.slot===slot)outfit[slot]=item;}
+if(twoHandedWeapons.has(outfit.weapon))outfit.offhand=null;
+if(['high','low','off'].includes(initial.get('quality')))document.body.dataset.fxQuality=initial.get('quality');
 refresh();
 </script>
 </body></html>

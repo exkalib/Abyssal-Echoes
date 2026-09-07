@@ -25,6 +25,12 @@ assert.throws(()=>check(occupiedHilt),/palm-handle-fingers sprite/,'old fists ca
 assert.throws(()=>check(occupiedHilt,[nodes[0],{...nodes[1],occupiedHilt:true},{...nodes[1],key:'duplicate'}]),/second empty fist/);
 assert.equal(check(occupied,[{...nodes[0],integratedGrip:true}]).visualFit,'pending-human-review','same-sprite contact is still not automatic visual approval');
 assert.throws(()=>check(occupied,[nodes[0]]),/integrated asset/,'cannot relabel an ordinary weapon as an occupied grip');
+const supported={contacts:[occupiedHilt.contacts[0],{...occupiedHilt.contacts[0],anatomy:'support-foreend',layerKey:'grip-right'}]};
+const supportedNodes=[nodes[0],{key:'grip-left',slot:'grip',zIndex:'20',occupiedHilt:true},{key:'grip-right',slot:'grip',zIndex:'20',occupiedHilt:true},{key:'grip-support-rear',slot:'grip',zIndex:'8'}];
+assert.equal(check(supported,supportedNodes).visualFit,'pending-human-review');
+assert.throws(()=>check(supported,supportedNodes.slice(0,3)),/front\/rear parts/,'a long gun cannot silently fall back to one hand');
+assert.throws(()=>check(supported,[...supportedNodes.slice(0,3),{...supportedNodes[3],zIndex:'21'}]),/supporting palm is behind/,'the palm must not cover the fore-end');
+assert.throws(()=>check(supported,supportedNodes.map(node=>node.key==='grip-right'?{...node,occupiedHilt:false}:node)),/both hands/,'a relaxed palm is not a supporting grip');
 assert.throws(()=>check(occupied,[{...nodes[0],integratedGrip:true},nodes[1]]),/separate fist/,'the old fist must not remain on top of the authored grip');
 assert.throws(()=>check(bad({occlusion:'authored-in-sprite'}),[{...nodes[0],integratedGrip:true}]),/same authored layer/);
 const shield={id:'testShield',slot:'offhand',sex:'female'},shieldContact={contacts:[{item:shield.id,kind:'grip',anchor:[75,51],actual:[75,51],tolerance:.5,occluded:true,occlusion:'behind-shield'}]};

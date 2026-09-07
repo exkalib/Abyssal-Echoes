@@ -83,7 +83,7 @@ const ITEMS = {
   gravLance:{name:'惯性长枪',type:'equip',slot:'weapon',weaponType:'ranged',ammo:'weaponCell',ammoCost:2,atk:390,powerPct:100,range:5,pen:45,bossDamagePct:25,icon:'↯'},
   swarmRifle:{name:'蜂群智能枪',type:'equip',slot:'weapon',weaponType:'ranged',ammo:'ammo',ammoCost:2,atk:540,powerPct:115,range:9,crit:16,hit:12,bioDamagePct:28,icon:'⌖'},
   nanoSuit:{name:'纳米再生甲',type:'equip',slot:'body',def:28,guardPct:42,hp:120,regenPct:3,icon:'▥'},
-  gravRig:{name:'重力作业背架',type:'equip',slot:'back',def:8,hp:55,move:2,icon:'⌁'},
+  gravRig:{name:'重力推进翼',type:'equip',slot:'back',def:8,hp:55,move:2,icon:'⌁'},
   phaseShield:{name:'相位护盾',type:'equip',slot:'offhand',equipmentRole:'shield',def:8,shield:150,dodge:10,guardPct:12,icon:'◈',desc:'实体盾骨架在命中前短暂偏离相位；既可吸收冲击，也可作为舰盾技能的盾击支点。'},
   starShell:{name:'星际远征壳层',type:'equip',slot:'body',def:46,guardPct:70,hp:230,shield:130,bossGuardPct:12,icon:'⬡'},
   quantumVisor:{name:'量子预测目镜',type:'equip',slot:'head',crit:18,hit:14,dodge:8,icon:'◎'},
@@ -233,6 +233,9 @@ for(const [id,name,stats] of [['starterAssaultModule','简易增幅模块',{atk:
   EQUIPMENT_EXPANSION[id]={family:'module',branch:ITEMS[id].build,stage:0,technologyId:'make_2',recipe:{st:'work',cost:{scrap:3,cloth:2,ecomp:1},out:id}};
   EQUIPMENT_SERIES_PATHS['module_'+ITEMS[id].build].items.unshift(id);
 }
+// Later back equipment is a dorsal wing assembly; visual progression keeps
+// existing IDs, stats, costs and saved equipment fully compatible.
+for(const [id,name]of Object.entries({back_specialist_4:'量子折跃翼',back_specialist_5:'星际轨道翼',back_general_3:'场能巡航翼',back_general_4:'量子流光翼',back_general_5:'星际天穹翼'}))ITEMS[id].name=name;
 Object.entries(ITEMS).forEach(([id,item])=>{if(item.slot==='weapon'){item.weaponFamily=id==='crowbar'?'tool':item.weaponType==='ranged'?'firearm':'blade';if(!item.weaponHands)item.weaponHands=item.weaponFamily==='firearm'&&id!=='pistol'?2:1;}});
 
 /* 装备动作与面板共用同一个兼容判定；新操作不自动卸掉另一槽的装备。 */
@@ -3437,7 +3440,7 @@ function openCampBuilding(id){ resetStationWorkbench(id);state.campBuilding=id; 
 function renderCampHero(box){
   const hero=el('section','camp-hero');
   const campName=String(state.campName).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-  hero.innerHTML='<div class="camp-hero-head"><span class="camp-hero-copy"><small>方舟残骸 · 安全区域</small><h1>'+campName+'</h1><p>炉火尚温。整备之后，再走进迷雾。</p></span></div>';
+  hero.innerHTML='<div class="camp-hero-head"><span class="camp-hero-copy"><h1>'+campName+'</h1><small><i></i>安全区域</small></span></div>';
   box.appendChild(hero);
 }
 function renderCampContacts(box){
@@ -3658,16 +3661,16 @@ function refreshNpcMode(){const terminal=document.querySelector('.npc-terminal')
 let campFacilityFilter='all';
 function campFacilityGroup(building){return ['smelt','craft','recycle','mess'].includes(building.kind)?'craft':['rest','garden','storage','defense','drone'].includes(building.kind)?'support':'special';}
 function renderCampHome(box){ state.campBuilding=null; state.campView='home'; box.classList.add('camp-home');
-  renderCampHero(box);const content=el('div','camp-home-scroll');box.appendChild(content);renderCampContacts(content);
-  const built=CAMP_BUILDINGS.filter(b=>state.meta.built[b.id]),head=el('div','camp-section-head','<span><b>营地设施</b></span><em>'+built.length+' 座 · 点击使用</em>');content.appendChild(head);
+  renderCampHero(box);const toolbar=el('section','camp-facility-toolbar'),content=el('div','camp-home-scroll');box.append(toolbar,content);
+  const built=CAMP_BUILDINGS.filter(b=>state.meta.built[b.id]),head=el('div','camp-section-head','<span><b>营地设施</b></span><em>'+built.length+' 座 · 点击使用</em>');toolbar.appendChild(head);
   const layout=el('div','camp-layout'),filters=el('nav','camp-facility-filters ui-segmented');filters.setAttribute('aria-label','按用途筛选设施');
   if(built.length<=6||!built.some(b=>campFacilityGroup(b)===campFacilityFilter))campFacilityFilter='all';
-  if(built.length>6){Object.entries({all:'全部',craft:'制造',support:'生存',special:'成长与远征'}).forEach(([key,label])=>{const button=el('button',campFacilityFilter===key?'active':'',label);button.type='button';button.dataset.filter=key;button.setAttribute('aria-pressed',String(campFacilityFilter===key));button.onclick=()=>{if(campFacilityFilter===key)return;campFacilityFilter=key;Array.from(filters.children).forEach(node=>{const selected=node.dataset.filter===key;node.classList.toggle('active',selected);node.setAttribute('aria-pressed',String(selected));});Array.from(layout.children).forEach(node=>{node.hidden=key!=='all'&&node.dataset.group!==key;});};filters.appendChild(button);});content.appendChild(filters);}
+  if(built.length>6){Object.entries({all:'全部',craft:'制造',support:'生存',special:'成长与远征'}).forEach(([key,label])=>{const button=el('button',campFacilityFilter===key?'active':'',label);button.type='button';button.dataset.filter=key;button.setAttribute('aria-pressed',String(campFacilityFilter===key));button.onclick=()=>{if(campFacilityFilter===key)return;campFacilityFilter=key;Array.from(filters.children).forEach(node=>{const selected=node.dataset.filter===key;node.classList.toggle('active',selected);node.setAttribute('aria-pressed',String(selected));});Array.from(layout.children).forEach(node=>{node.hidden=key!=='all'&&node.dataset.group!==key;});};filters.appendChild(button);});toolbar.appendChild(filters);}
   built.forEach(b=>{ const damaged=!!state.meta.damaged[b.id],lv=buildingLevel(b.id),card=el('button','camp-facility '+b.tone+(damaged?' damaged':''));card.dataset.group=campFacilityGroup(b);card.hidden=campFacilityFilter!=='all'&&card.dataset.group!==campFacilityFilter;card.setAttribute('aria-label',b.name+' Lv'+lv+'，'+(damaged?'受损，点击修复':b.desc));
     card.innerHTML='<span class="cf-icon" aria-hidden="true">'+buildingUiIcon(b.id)+'</span><span class="cf-copy"><small>FACILITY // '+(damaged?'OFFLINE':'ONLINE')+'</small><b>'+b.name+'</b><em>'+(damaged?'受损停用 · '+costText({scrap:3})+' 修复':b.desc)+'</em></span><span class="cf-status"><small>'+(damaged?'STATE':'LEVEL')+'</small><b>'+(damaged?'ERR':String(lv).padStart(2,'0'))+'</b><i>'+(damaged?uiIcon('alert'):uiIcon('chevron-right'))+'</i></span>';
     card.onclick=damaged?()=>repairFacility(b.id):()=>openCampBuilding(b.id); layout.appendChild(card); }); content.appendChild(layout);
   if(!built.length)content.appendChild(el('p','empty-note','营地还没有设施。点击下方“建造”，安置第一座休眠仓。'));
-  if(built.length>6)box.appendChild(filters);
+  renderCampContacts(content);
   const dock=el('footer','camp-home-dock'),unlocked=CAMP_BUILDINGS.filter(b=>!state.meta.built[b.id]&&hasBuildingTech(b.id)).length,build=el('button','camp-build-action',uiIcon('build-control')+'<span>建造'+(unlocked?' <b>'+unlocked+'</b>':'')+'</span>');build.type='button';build.setAttribute('aria-label','建筑管理'+(unlocked?'，'+unlocked+'项可建造':''));build.onclick=()=>{state.campView='construct';setLogOpen(false);renderPanelTop();};dock.appendChild(build);
   if(state.flags.mapUnlocked){const depart=el('button','primary camp-depart',uiIcon('expedition')+'<span><b>出发探索</b><small>'+(state.mapUnread?'地图上有新的发现':'前往迷雾中的目的地')+'</small></span>'+uiIcon('chevron-right'));depart.type='button';depart.onclick=openContextMap;dock.appendChild(depart);}
   box.appendChild(dock);
@@ -4248,7 +4251,22 @@ const EQUIPMENT_PORTRAIT_TONE={
 };
 function itemIconName(id){const it=ITEMS[id];if(!it)return 'cargo';if(it.type==='equip')return EQUIP_ICON[id]||SLOT_ICON[it.slot]||'armor';return SPECIAL_ITEM_ICON[id]||ITEM_ICON[id]||(it.type==='use'?'medical':it.type==='book'||it.type==='masteryBook'?'document':it.type==='key'?'lock':it.type==='trophy'?'mission':'cargo');}
 function itemArtTrace(id){let h=2166136261;for(let i=0;i<id.length;i++){h^=id.charCodeAt(i);h=Math.imul(h,16777619);}const a=4+(h&3),b=15+((h>>>3)&3),c=4+((h>>>6)&5),x=5+((h>>>10)&13),y=5+((h>>>14)&13);return '<path class="item-art-trace" d="M2 '+a+'h'+c+'M'+(22-c)+' '+b+'h'+c+'"/><circle class="item-art-node" cx="'+x+'" cy="'+y+'" r=".8"/>';}
-function itemArtSrc(id){if(EQUIPMENT_EXPANSION[id])return 'assets/equipment-art-v3/'+id+'.webp?v=1';return 'assets/item-art-'+(ITEM_ART_V2.has(id)?'v2':'v1')+'/'+id+'.webp?v=3';}
+function itemArtSrc(id){
+  if(id==='gravLance')return 'assets/weapon-poses-v11/weapon-gravLance.webp?v=11';
+  if(['nanoWeaveGloves','phaseGrip','hands_specialist_5','hands_general_3','hands_general_4','hands_general_5'].includes(id))return 'assets/hands-v12/relaxed-'+id+'.webp?v=12';
+  const item=ITEMS[id];
+  // The same stage/slot contract names the inventory art and fitted garment.
+  // It works before the wardrobe renderer loads, including save/data tooling.
+  if(item?.equipmentStage>=3){
+    const file={body:'armor-'+id+'-male',legs:'pants-'+id,feet:'boots-'+id,back:id}[item.slot];
+    if(file)return 'assets/wearables-v12/'+file+'.webp?v=12';
+  }
+  if(ITEMS[id]?.slot==='legs'){
+    const trousers=typeof WEARABLE_FIT_V2==='undefined'?null:WEARABLE_FIT_V2[id]?.trousers;
+    return (trousers?'assets/wearables-v1/'+trousers.file:'assets/wearables-v2/pants-v11-'+id)+'.webp?v=11';
+  }
+  if(EQUIPMENT_EXPANSION[id])return 'assets/equipment-art-v3/'+id+'.webp?v=1';return 'assets/item-art-'+(ITEM_ART_V2.has(id)?'v2':'v1')+'/'+id+'.webp?v=3';
+}
 function itemUiIcon(id){return '<img class="item-art" data-item="'+id+'" src="'+itemArtSrc(id)+'" alt="" draggable="false">';}
 function dollAppearanceSignature(){return JSON.stringify([state.playerAppearance,P().equip,careerRecord('main')?.id,careerRecords('life').map(r=>r.id)]);}
 function dollArt(){
@@ -5061,7 +5079,7 @@ function renderCloudSettingsPanel(box){box.classList.add('settings-cloud','ui-pa
 function openResetConfirm(){const card=saveTransferShell('重新开始游戏','将清空当前本机进度和迁移码，但不会删除服务器上的迁移副本。'),result=el('p','save-transfer-result danger','当前进度会先保存为一份本机回滚副本。'),actions=el('div','save-transfer-actions'),apply=el('button','danger','确认清空并重看序章'),cancel=el('button','','取消');apply.onclick=hardReset;cancel.onclick=closeSaveTransfer;actions.append(apply,cancel);card.classList.add('save-confirm-card');card.append(result,actions);}
 function renderSetPanel(box){
   if(settingsView==='cloud')return renderCloudSettingsPanel(box);box.classList.add('settings-home','ui-page');
-  box.appendChild(uiModuleHeader('module','SYSTEM // CONFIGURATION','设置','按你的习惯调整，进度自动保存在本机',null,'settings-head'));
+  box.appendChild(uiModuleHeader('module','SYSTEM // CONFIGURATION','设置','声音、外观与旅途记录',null,'settings-head'));
   const dashboard=el('div','settings-dashboard');box.appendChild(dashboard);
   normalizeAudioPrefs(state);
   const media=el('section','settings-media ui-panel');media.setAttribute('aria-label','声音与角色');media.appendChild(settingsToggle('sound','sensor','游戏音效','战斗、采集与操作提示',{key:'soundVolume',label:'音效音量'}));
@@ -5070,10 +5088,12 @@ function renderSetPanel(box){
   media.appendChild(settingsAppearance());
   dashboard.appendChild(media);
   const storage=el('button','settings-storage settings-storage-entry ui-list-row','<span class="settings-storage-mark">'+uiIcon('cargo')+'</span><span class="settings-storage-copy"><b>存档管理</b><em>云存档、文件备份与恢复</em></span>'+uiIcon('chevron-right'));storage.type='button';storage.onclick=openCloudSettings;dashboard.appendChild(storage);
-  const update=el('details','settings-version ui-disclosure ui-panel'),updateSummary=el('summary','','版本与更新'+uiIcon('chevron-right')),updateBody=el('div','settings-update ui-disclosure__body');updateBody.innerHTML='<span class="update-copy"><em id="update-version"></em><span id="update-status"></span></span>';
+  const update=el('details','settings-version ui-disclosure ui-panel'),updateSummary=el('summary','','版本与社群'+uiIcon('chevron-right')),updateBody=el('div','settings-update ui-disclosure__body');updateBody.innerHTML='<span class="update-copy"><em id="update-version"></em><span id="update-status"></span></span>';
   const check=el('button','ui-button update-check','检查更新');check.id='check-update-btn';check.onclick=checkAppUpdate;updateBody.appendChild(check);update.append(updateSummary,updateBody);dashboard.appendChild(update);$('update-version').textContent=appVersionInfo();setUpdateUi(updateUi.text,updateUi.busy);
   const footer=el('footer','settings-footer'),qqRow=el('div','settings-qq-row'),community=el('button','settings-community ui-button',uiIcon('qq')+'<span><small>加入官方群</small><b>'+OFFICIAL_QQ_GROUP+'</b></span>');community.id='official-qq-group';community.type='button';community.setAttribute('aria-label','打开深渊回响官方群，QQ群 '+OFFICIAL_QQ_GROUP);community.onclick=openOfficialQQGroup;const slogan=el('button','settings-slogan ui-button',uiIcon('document')+'<span><small>复制加群口令</small><b>'+OFFICIAL_QQ_SLOGAN+'</b></span>');slogan.id='official-qq-slogan';slogan.type='button';slogan.setAttribute('aria-label','复制加群验证口令：'+OFFICIAL_QQ_SLOGAN);slogan.onclick=copyOfficialQQSlogan;qqRow.append(community,slogan);
-  const danger=el('details','settings-danger ui-disclosure'),dangerSummary=el('summary','','重新开始'+uiIcon('chevron-right')),dangerBody=el('div','ui-disclosure__body','<p>清空本机进度，重新体验序章。操作前会保留一份可恢复的备份。</p>'),reset=el('button','ui-button ui-button--danger danger settings-reset','重新开始游戏');reset.type='button';reset.onclick=openResetConfirm;dangerBody.appendChild(reset);danger.append(dangerSummary,dangerBody);footer.append(qqRow,danger);dashboard.appendChild(footer);
+  updateBody.appendChild(qqRow);
+  const danger=el('details','settings-danger ui-disclosure'),dangerSummary=el('summary','','重新开始'+uiIcon('chevron-right')),dangerBody=el('div','ui-disclosure__body','<p>清空本机进度，重新体验序章。操作前会保留一份可恢复的备份。</p>'),reset=el('button','ui-button ui-button--danger danger settings-reset','重新开始游戏');reset.type='button';reset.onclick=openResetConfirm;dangerBody.appendChild(reset);danger.append(dangerSummary,dangerBody);footer.appendChild(danger);dashboard.appendChild(footer);
+  box.appendChild(workspaceExit('返回游戏',()=>{state.tab='act';settingsView='main';render();},{footerClass:'settings-exitbar',ariaLabel:'关闭设置并返回游戏'}));
 }
 function hardReset(){ const prefs=audioPrefs(state);closeSaveTransfer();settingsView='main';try{localStorage.setItem(LOCAL_ROLLBACK_KEY,JSON.stringify(state));}catch(_){}cloudBinding=null;persistCloudBinding();localStorage.removeItem(SAVE_KEY);lastSavedJson=''; state=freshState();Object.assign(state,prefs);syncAudioState();updateCheckpoint(); $('log').innerHTML=''; intro(); render(); }
 

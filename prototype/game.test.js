@@ -451,7 +451,19 @@ pendingTests.push((async()=>{
   const itemIds=vm.runInContext('Object.keys(ITEMS)',sandbox);
   assert.equal(itemIds.length,220,'220 个物品包括新增的 77 件双路线装备');
   const assetPaths=new Set(),assetHashes=new Set(),crypto=require('node:crypto');
-  itemIds.forEach(id=>{const src=vm.runInContext('itemArtSrc('+JSON.stringify(id)+')',sandbox),asset=path.join(__dirname,src.split('?')[0]);assert.ok(fs.existsSync(asset),id+' 缺少独立原画');assert.ok(fs.statSync(asset).size>1000,id+' 原画文件异常');assert.ok(!assetPaths.has(asset),id+' 与另一物品复用了路径');assetPaths.add(asset);const hash=crypto.createHash('sha256').update(fs.readFileSync(asset)).digest('hex');assert.ok(!assetHashes.has(hash),id+' 与另一物品具有完全重复的图片');assetHashes.add(hash);assert.ok(src.includes('/'+id+'.webp'),id+' 必须使用自己的原画');});
+  const pantsIds=new Set(vm.runInContext('Object.keys(ITEMS).filter(id=>ITEMS[id].slot===\'legs\')',sandbox)),pantsFits=require('./wardrobe-fit.js').WEARABLE_FIT_V2;
+  assert.equal(pantsIds.size,11,'11 件裤装都必须使用完整裤甲原画');
+  const withoutFit=Object.fromEntries(itemIds.map(id=>[id,vm.runInContext('itemArtSrc('+JSON.stringify(id)+')',sandbox)]));
+  sandbox.WEARABLE_FIT_V2=pantsFits;
+  itemIds.forEach(id=>{
+    const src=vm.runInContext('itemArtSrc('+JSON.stringify(id)+')',sandbox),asset=path.join(__dirname,src.split('?')[0]);assert.ok(fs.existsSync(asset),id+' 缺少独立原画');assert.ok(fs.statSync(asset).size>1000,id+' 原画文件异常');assert.ok(!assetPaths.has(asset),id+' 与另一物品复用了路径');assetPaths.add(asset);const hash=crypto.createHash('sha256').update(fs.readFileSync(asset)).digest('hex');assert.ok(!assetHashes.has(hash),id+' 与另一物品具有完全重复的图片');assetHashes.add(hash);
+    assert.equal(path.normalize(src.split('?')[0]),path.normalize(withoutFit[id].split('?')[0]),id+' 在有/无穿戴配置的环境中必须指向同一张图');
+    if(pantsIds.has(id)){assert.ok(pantsFits[id].trousers,id+' 必须具有正式整裤配置');assert.equal(asset,path.join(__dirname,'assets/wearables-v1',pantsFits[id].trousers.file+'.webp'),id+' 图标与穿戴必须共用同一张完整裤甲图');}
+    else if(a.ITEMS[id].equipmentStage>=3&&['body','feet','back'].includes(a.ITEMS[id].slot)){
+      assert.equal(asset,path.join(__dirname,'assets/wearables-v1',pantsFits[id].male[0].file+'.webp'),id+' 新套装图标与正式穿戴共用同一件原画');
+    }else{assert.equal(src,withoutFit[id],id+' 原图路径在有/无穿戴配置时必须保持不变');assert.match(src,new RegExp('(?:^|[-/])'+id+'(?:[-.]|$)'),id+' 必须使用自己标识的原画；允许明确的姿态前后缀');}
+  });
+  delete sandbox.WEARABLE_FIT_V2;
   assert.doesNotMatch(source,/ITEM_ART_ALIAS/,'不得用跨物品别名掩盖缺少独立图标');
   assert.match(source,/function itemUiIcon\(id\)[\s\S]{0,180}itemArtSrc\(id\)/,'所有面板共用独立原画路径接口');
   assert.match(uiCss,/\.bag-thumb-sheet \.rpg-equipment-icon>\.item-art\{[^}]*width:72px/,'物品抽屉必须以清晰实物图作为主视觉');
@@ -654,7 +666,10 @@ pendingTests.push((async()=>{
 {
   assert.equal(a.SLOTS.length,10,'装备系统应提供十个长期槽位');
   const equipIds=Object.entries(a.ITEMS).filter(([,it])=>it.type==='equip').map(([id])=>id);
-  equipIds.forEach(id=>assert.match(vm.runInContext('itemUiIcon('+JSON.stringify(id)+')',sandbox),new RegExp('/'+id+'\\.webp'),'每件装备都必须加载自己的独立原画，不再用通用 SVG 数量代替验收'));
+  equipIds.forEach(id=>{
+    const src=vm.runInContext('itemArtSrc('+JSON.stringify(id)+')',sandbox),html=vm.runInContext('itemUiIcon('+JSON.stringify(id)+')',sandbox);
+    assert.ok(html.includes('src="'+src+'"')&&html.includes('data-item="'+id+'"'),'每件装备使用共用资源入口和自己的物品标识');
+  });
   const legacy={equip:{weapon:'crowbar',legs:'boots',acc:'lsChip'}},inv={};a.normalizeEquipment(legacy,inv);
   assert.equal(legacy.equip.feet,'boots','旧存档腿部靴子必须迁移到足部');
   assert.equal(legacy.equip.implant,'lsChip','旧存档饰品必须按物品类型迁移到植入体');

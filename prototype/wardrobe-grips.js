@@ -22,7 +22,7 @@ const WEARABLE_GRIPS={
   pistol:{source:'assets/wearables-v2/weapon-pistol.webp',width:768,height:768,grip:[.654,.207],trigger:[0.47,0.465],rotation:8,length:20,kind:'sidearm',bounds:[.1992,.0143,.6745,.9714],status:'ready',note:'新生成裸枪，右上斜出握把的纹理掌握面；枪套全部移除，扳机护圈透明，枪口外露。'},
   rifle:{source:'assets/wearables-v2/weapon-rifle.webp',width:768,height:768,grip:[.594,.344],trigger:[0.536,0.413],rotation:8,length:41,kind:'longgun',bounds:[.3177,.0078,.3802,.9844],status:'ready',note:'新生成无背带步枪，右侧纹理握把中段；食指沿下方护圈，手心不落在扳机孔或机匣。'},
   plasmaRifle:{source:'assets/wearables-v2/weapon-plasmaRifle.webp',width:768,height:768,grip:[0.583,0.373],trigger:[0.539,0.426],rotation:8,length:40,kind:'longgun',bounds:[0.3581,0.0052,0.2852,0.9844],status:'ready',note:'新生成无背带等离子步枪，右侧黑色纹理握把中段；蓝色能源腔不作为握点，枪口完整裸露。'},
-  gravLance:{source:'assets/wearables-v2/weapon-gravLance.webp',width:768,height:768,grip:[0.5,0.566],rotation:-7,length:58,kind:'staff',bounds:[0.457,0.0065,0.0872,0.987],status:'ready',note:'新生成无背带晶尖长枪，枪杆中下部黑色粗缠柄心；尖端朝上，握点与上方蓝晶头分离。'},
+  gravLance:{source:'assets/weapon-poses-v11/weapon-gravLance.webp',width:1672,height:941,grip:[.243,.581],indexRest:[.33,.50],support:[.595,.505],rotation:0,length:70,kind:'longgun',sourceView:'horizontal-right',bounds:[.016,.303,.97,.38],status:'ready',note:'原生透明双手惯性能量长枪；主手握独立手枪式握把，辅助手托前端护木，不再套用法杖姿势。'},
   swarmRifle:{source:'assets/wearables-v2/weapon-swarmRifle.webp',width:768,height:768,grip:[0.607,0.329],trigger:[0.558,0.4],rotation:8,length:39,kind:'longgun',bounds:[0.3802,0.0013,0.2878,0.9857],status:'ready',note:'新生成异化长枪，右侧黑色肋纹握把中段；红色生物机匣与下方异化能源腔保持完整，背带全部移除。'},
   vacuumCarbine:{source:'assets/wearables-v2/weapon-vacuumCarbine.webp',width:768,height:768,grip:[0.575,0.294],trigger:[0.539,0.347],rotation:8,length:40,kind:'longgun',bounds:[0.4063,0.0013,0.2135,0.9922],status:'ready',note:'新生成无背带真空卡宾枪，右上黑色斜握把中段；银色枪身与青色中槽保持连续，握点不落在扳机孔。'},
   blade_general_1:{source:'assets/wearables-v2/weapon-blade_general_1.webp',width:768,height:768,grip:[0.484,0.177],rotation:9,length:28,kind:'blade',bounds:[0.431,0.0013,0.1393,0.9974],status:'ready',note:'新生成裸露砍刀，棕皮螺旋缠柄中段；握柄稍弯，护手、刀刃一体连续，无鞘。'},
@@ -47,12 +47,12 @@ const WEARABLE_GRIPS={
   shield_general_5:{source:'assets/equipment-art-v3/shield_general_5.webp',width:512,height:512,grip:[.499,.500],rotation:-4,length:26,kind:'shield-brace',bounds:[.0098,.0098,.9785,.9727],occlusion:'behind-shield',status:'ready',note:'中央黑钢凸面背后为掌握点；上方金色径向梁作为前臂入盾方向，手在盾后。'}
 };
 // Hilt direction is measured from the actual handle, not the art canvas center.
-const WEARABLE_HANDLE_AXES={crowbar:[.53,.38],gravLance:[.5,.40],knife:[.5,.39],blade:[.5,.23],eblade:[.5,.23],sever:[.5,.26],plasmaSaber:[.49,.26],phaseBlade:[.50,.33],voidBlade:[.50,.28],blade_general_1:[.50,.30],blade_general_2:[.50,.28],blade_general_3:[.50,.27],blade_general_4:[.286,.269],blade_general_5:[.50,.25]};
+const WEARABLE_HANDLE_AXES={crowbar:[.53,.38],knife:[.5,.39],blade:[.5,.23],eblade:[.5,.23],sever:[.5,.26],plasmaSaber:[.49,.26],phaseBlade:[.50,.33],voidBlade:[.50,.28],blade_general_1:[.50,.30],blade_general_2:[.50,.28],blade_general_3:[.50,.27],blade_general_4:[.286,.269],blade_general_5:[.50,.25]};
 for(const [id,axis]of Object.entries(WEARABLE_HANDLE_AXES))WEARABLE_GRIPS[id].handleAxis=axis;
 // V8 standing pose: keep actual longsword proportions. Move the physical hand
 // contact toward the guard as length increases, rather than enlarging the fist.
 // Short knives remain short; long shafts use a modest separate adjustment.
-for(const [id,factor]of Object.entries({blade:1.32,eblade:1.32,sever:1.25,plasmaSaber:1.3,voidBlade:1.25,blade_general_1:1.18,blade_general_2:1.3,blade_general_3:1.3,blade_general_4:1.25,blade_general_5:1.25,gravLance:1.12})){
+for(const [id,factor]of Object.entries({blade:1.32,eblade:1.32,sever:1.25,plasmaSaber:1.3,voidBlade:1.25,blade_general_1:1.18,blade_general_2:1.3,blade_general_3:1.3,blade_general_4:1.25,blade_general_5:1.25})){
   const art=WEARABLE_GRIPS[id];art.length*=factor;
   if(art.kind==='blade')art.grip=art.grip.map((n,i)=>n+(art.handleAxis[i]-n)*(1-1/factor));
 }

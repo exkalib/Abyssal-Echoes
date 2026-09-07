@@ -25,9 +25,9 @@ const output=process.env.WARDROBE_QA_OUTPUT||fs.mkdtempSync(path.join(os.tmpdir(
   for(const career of ['','bulwark','vanguard','infiltrator'])for(const sex of ['male','female']){
    await page.evaluate(({career,sex})=>{for(const slot of Object.keys(P().equip))if(P().equip[slot])unequip(slot,()=>{});state.meta.careers.main=career?{id:career,level:5,xp:0}:null;state.playerAppearance=sex;refreshBagPanel();},{career,sex});await ready();
    await equipItem('workGloves');assert.equal((await hands()).relaxed,2,'unarmed keeps both relaxed glove hands');
-   await equipItem('knife');assert.deepEqual(await hands(),{closed:[{pose:'sword',glove:'workGloves'}],relaxed:1},'sword-specific grip replaces exactly one relaxed hand');
-   await equipItem('riotShield');assert.deepEqual(await hands(),{closed:[{pose:'sword',glove:'workGloves'},{pose:'shield',glove:'workGloves'}],relaxed:0},'sword and shield use their distinct poses with no old open palms');
-   const geometry=await page.evaluate(()=>({audit:wearableFitAudit(state.playerAppearance,P().equip,careerRecord('main')?.id),nodes:[...document.querySelectorAll('.doll-art-host [data-wear-key]')].map(node=>({key:node.dataset.wearKey,item:node.dataset.item,slot:node.dataset.slot,zIndex:getComputedStyle(node).zIndex}))}));
+   await equipItem('knife');assert.deepEqual(await hands(),{closed:[{pose:'shortblade',glove:'workGloves'}],relaxed:1},'shortblade grip replaces exactly one relaxed hand');
+   await equipItem('riotShield');assert.deepEqual(await hands(),{closed:[{pose:'shortblade',glove:'workGloves'},{pose:'shield',glove:'workGloves'}],relaxed:0},'knife and shield use their distinct poses with no old open palms');
+   const geometry=await page.evaluate(()=>({audit:wearableFitAudit(state.playerAppearance,P().equip,careerRecord('main')?.id),nodes:[...document.querySelectorAll('.doll-art-host [data-wear-key]')].map(node=>({key:node.dataset.wearKey,item:node.dataset.item,slot:node.dataset.slot,occupiedHilt:node.dataset.occupiedHilt==='true',zIndex:getComputedStyle(node).zIndex}))}));
    for(const [id,slot]of [['knife','weapon'],['riotShield','offhand']])assertWearableFitContacts(geometry.audit,{id,slot,sex},geometry.nodes.filter(node=>node.item===id));
    for(const dressed of [false,true]){
     if(dressed)for(const id of ['body_general_1','gravityBoots','module_general_5'])await equipItem(id);

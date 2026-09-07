@@ -1,6 +1,7 @@
 // Disposable browser contexts: isolated local saves, no cloud requests.
 const assert=require('node:assert/strict');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const testUrl=process.env.MOBILE_UI_TEST_URL||'http://127.0.0.1:4187/';
 
 (async()=>{
   const browser=await chromium.launch({headless:true,...(process.env.BROWSER_EXECUTABLE?{executablePath:process.env.BROWSER_EXECUTABLE}:{})});
@@ -11,10 +12,10 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
       page.on('pageerror',error=>{if((process.env.BROWSER_EXECUTABLE||'').includes('/Quark.app/')&&error.message==="Cannot read properties of undefined (reading 'getTopURL')"&&!error.stack.includes('http'))return;errors.push(error.stack);});
       await page.route('**/*',route=>{
         const url=route.request().url();
-        if(/^https?:/.test(url)&&(!url.startsWith('http://127.0.0.1:4187/')||url.includes('/.netlify/functions/'))){const browserTelemetry=(process.env.BROWSER_EXECUTABLE||'').includes('/Quark.app/')&&/^https:\/\/(?:px\.effirst\.com|g\.alicdn\.com)\//.test(url);if(!browserTelemetry)externalRequests.push(url);return route.abort();}
+        if(/^https?:/.test(url)&&(!url.startsWith(testUrl)||url.includes('/.netlify/functions/'))){const browserTelemetry=(process.env.BROWSER_EXECUTABLE||'').includes('/Quark.app/')&&/^https:\/\/(?:px\.effirst\.com|g\.alicdn\.com)\//.test(url);if(!browserTelemetry)externalRequests.push(url);return route.abort();}
         return route.continue();
       });
-      await page.goto('http://127.0.0.1:4187/');
+      await page.goto(testUrl);
       await page.evaluate(()=>{
         prepareLocalGame();state=freshState();state.tutorial={version:1,step:'done',complete:true};
         Object.assign(state.flags,{mapUnlocked:true,braceletUnlocked:true});

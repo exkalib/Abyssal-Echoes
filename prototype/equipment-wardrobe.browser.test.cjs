@@ -47,7 +47,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   await page.waitForSelector('.doll-art-host[data-art-state="error"]');
   assert.equal(await page.evaluate(()=>window.oldFeet.every(n=>n.isConnected&&n.dataset.item==='boots')),true,'network failure retains old mounted art');
   assert.equal(await page.locator('.doll-art-retry').isVisible(),true);await page.unroute(broken);await page.locator('.doll-art-retry').click();await ready();
-  assert.equal(await page.locator('.doll-wearable [data-item="feet_general_4"]').count(),2);assert.equal(await page.locator('.doll-art-retry').isVisible(),false);
+  assert.equal(await page.locator('.doll-wearable [data-item="feet_general_4"]').count(),4,'retry restores both front cuffs and both rear shells');assert.equal(await page.locator('.doll-art-retry').isVisible(),false);
   assert.deepEqual(errors,[]);console.log('Production wardrobe: 124 items × 2 identities, conserved wear/unwear, three life badges, 13-stat detail, four widths, stable scroll and failed-image retry passed.');
  }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});
