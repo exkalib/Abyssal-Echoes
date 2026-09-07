@@ -11,7 +11,16 @@ web_dir="${ABYSS_WEB_DIR:-/srv/www/abyss-echo}"
 build="${1:-$(date +%s)}"
 version="${2:-$(date +%Y.%m.%d-%H%M)}"
 min_shell="${3:-1}"
-bundle_mode="${4:-full}"
+bundle_mode="${4:-lean}"
+# Shell 11 can skip directly from 0.7.6: these later additions are absent from
+# its bundled APK, and the WebView does not fall back to an earlier hot update.
+legacy_shell_assets=(
+  loadout-male-v2.png loadout-female-v2.png building-art-v1/garden-v2.png
+  career-portraits-v1/bulwark-male.png career-portraits-v1/bulwark-female.png
+  career-portraits-v1/vanguard-male.png career-portraits-v1/vanguard-female.png
+  career-portraits-v1/infiltrator-male.png career-portraits-v1/infiltrator-female.png
+  enemy-portraits-v1/arsenalWarden.png enemy-portraits-v1/echoLeviathan.png enemy-portraits-v1/riftMatriarch.png
+)
 
 [[ "$build" =~ ^[0-9]+$ ]] || { echo "build 必须是正整数" >&2; exit 1; }
 [[ "$min_shell" =~ ^[0-9]+$ ]] || { echo "minShell 必须是正整数" >&2; exit 1; }
@@ -36,11 +45,16 @@ else
   for art_dir in garden-crops-v1 item-art-v2 equipment-art-v3 wearables-v1 wearables-v2 wearables-v12 weapon-poses-v11 hands-v12; do
     cp -R "$root_dir/prototype/assets/$art_dir" "$payload_dir/assets/$art_dir"
   done
+  for art_file in "${legacy_shell_assets[@]}"; do
+    mkdir -p "$payload_dir/assets/$(dirname "$art_file")"
+    cp "$root_dir/prototype/assets/$art_file" "$payload_dir/assets/$art_file"
+  done
   bundle_files+=(assets)
 fi
 
 bundle="bundle-$build.zip"
 (cd "$payload_dir" && zip -q -9 -r "$work_dir/$bundle" "${bundle_files[@]}")
+bash "$root_dir/deploy/check_update_bundle.sh" "$work_dir/$bundle"
 sha256="$(shasum -a 256 "$work_dir/$bundle" | awk '{print $1}')"
 size="$(wc -c < "$work_dir/$bundle" | tr -d ' ')"
 apk_url="${ABYSS_APK_URL:-https://github.com/exkalib/Abyssal-Echoes/releases/latest/download/Abyssal-Echoes.apk}"
@@ -79,6 +93,10 @@ else
   scp "$root_dir/prototype/assets/building-art-v1/research.png" "$remote_host:$web_dir/assets/building-art-v1/research.png"
   for art_dir in garden-crops-v1 item-art-v2 equipment-art-v3 wearables-v1 wearables-v2 wearables-v12 weapon-poses-v11 hands-v12; do
     scp -r "$root_dir/prototype/assets/$art_dir" "$remote_host:$web_dir/assets/"
+  done
+  for art_file in "${legacy_shell_assets[@]}"; do
+    ssh "$remote_host" "mkdir -p '$web_dir/assets/$(dirname "$art_file")'"
+    scp "$root_dir/prototype/assets/$art_file" "$remote_host:$web_dir/assets/$art_file"
   done
 fi
 for file in style.css ui-system.css story-scenes.css wardrobe-fx.css wardrobe-fit.js wardrobe-grips.js wardrobe-hands.js wardrobe-trigger-hands.js wardrobe-sword-hands.js wardrobe-weapon-poses.js wardrobe-weapon-art.js wardrobe-weapon-effects.js wardrobe-hand-effects.js wardrobe-fx.js wardrobe.js game.js index.html; do

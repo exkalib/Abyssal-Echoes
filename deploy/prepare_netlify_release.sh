@@ -33,6 +33,7 @@ find "$payload_dir/assets" -type f \( \
 
 bundle="bundle.zip"
 (cd "$payload_dir" && zip -q -9 -r "$work_dir/$bundle" index.html style.css ui-system.css story-scenes.css wardrobe-fx.css wardrobe-fit.js wardrobe-grips.js wardrobe-hands.js wardrobe-trigger-hands.js wardrobe-sword-hands.js wardrobe-weapon-poses.js wardrobe-weapon-art.js wardrobe-weapon-effects.js wardrobe-hand-effects.js wardrobe-fx.js wardrobe.js game.js assets)
+bash "$root_dir/deploy/check_update_bundle.sh" "$work_dir/$bundle"
 sha256="$(shasum -a 256 "$work_dir/$bundle" | awk '{print $1}')"
 size="$(wc -c < "$work_dir/$bundle" | tr -d ' ')"
 apk_url="${ABYSS_APK_URL:-https://github.com/exkalib/Abyssal-Echoes/releases/latest/download/Abyssal-Echoes.apk}"

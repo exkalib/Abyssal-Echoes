@@ -1,10 +1,10 @@
 // Read-only package contract. Never builds, signs, uploads, or runs deploy scripts.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const root=path.resolve(__dirname,'..'),read=file=>fs.readFileSync(path.join(root,file),'utf8');
-const scripts=['wardrobe-fit.js','wardrobe-grips.js','wardrobe-hands.js','wardrobe-trigger-hands.js','wardrobe-sword-hands.js','wardrobe-weapon-poses.js','wardrobe-weapon-art.js','wardrobe-weapon-effects.js','wardrobe-fx.js','wardrobe.js'];
+const scripts=['wardrobe-fit.js','wardrobe-grips.js','wardrobe-hands.js','wardrobe-trigger-hands.js','wardrobe-sword-hands.js','wardrobe-weapon-poses.js','wardrobe-weapon-art.js','wardrobe-weapon-effects.js','wardrobe-hand-effects.js','wardrobe-fx.js','wardrobe.js'];
 const styles=['style.css','ui-system.css','story-scenes.css','wardrobe-fx.css'];
 const payload=['index.html',...styles,...scripts,'game.js'];
-const artDirs=['garden-crops-v1','item-art-v2','equipment-art-v3','wearables-v1','wearables-v2','wearables-v12','weapon-poses-v11'];
+const artDirs=['garden-crops-v1','item-art-v2','equipment-art-v3','wearables-v1','wearables-v2','wearables-v12','weapon-poses-v11','hands-v12'];
 const gradle=read('android/app/build.gradle'),prepare=read('deploy/prepare_netlify_release.sh'),publish=read('deploy/publish_android_update.sh');
 const errors=[],check=(condition,message)=>{if(!condition)errors.push(message);};
 for(const file of payload)check(fs.existsSync(path.join(__dirname,file)),'missing real runtime file: '+file);
@@ -37,5 +37,12 @@ check(publish.includes('cp -R "$root_dir/prototype/assets" "$payload_dir/assets"
 const leanLists=[...publish.matchAll(/for art_dir in ([^;\n]+); do/g)].map(m=>m[1].split(/\s+/));
 check(leanLists.length===2,'both lean ZIP and lean web sync must have asset manifests');
 for(const files of leanLists)for(const directory of artDirs)check(files.includes(directory),'lean assets omit '+directory);
+const legacyFiles=(publish.match(/legacy_shell_assets=\(([\s\S]*?)\)/)?.[1]||'').trim().split(/\s+/);
+for(const file of ['loadout-male-v2.png','loadout-female-v2.png','building-art-v1/garden-v2.png',...['bulwark','vanguard','infiltrator'].flatMap(job=>['male','female'].map(sex=>'career-portraits-v1/'+job+'-'+sex+'.png')),...['arsenalWarden','echoLeviathan','riftMatriarch'].map(id=>'enemy-portraits-v1/'+id+'.png')])check(legacyFiles.includes(file)&&fs.existsSync(path.join(__dirname,'assets',file)),'old shell direct update misses '+file);
+check((publish.match(/for art_file in "\$\{legacy_shell_assets\[@\]\}"/g)||[]).length===2,'legacy additions must be present in both ZIP and web sync');
+for(const [name,source]of [['prepare',prepare],['publish',publish]]){
+ const guard=source.indexOf('bash "$root_dir/deploy/check_update_bundle.sh" "$work_dir/$bundle"');
+ check(guard>0&&guard<source.indexOf('openssl dgst'),name+' must reject oversized ZIP and expanded payload before signing/upload');
+}
 assert.deepEqual(errors,[],'v12 runtime and packaging entry points must be complete');
 console.log('Wardrobe v12 package: index + preview scripts/styles, Android assets, prepare copy/ZIP, full/lean payload, lean web art and final JS/CSS install manifests passed (read-only).');
