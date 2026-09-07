@@ -38,9 +38,10 @@
   function local(spec,x,y){const b=spec.art.bounds||[0,0,1,1];return [b[0]+b[2]*x,b[1]+b[3]*y];}
   function pointSpec(spec,point,kind,stage,index=0){
     const back=kind==='wing'||kind==='back-vent',p=wardrobeFxPoint(spec,point);
+    const floating=spec.art.floating&&['implant','module'].includes(spec.slot);
     // Raised outer wing rails can be above the collar while still behind the
     // body; the face exclusion applies to the central face, not all that Y row.
-    if(!p||p.some(n=>!Number.isFinite(n))||p[0]<0||p[0]>100||p[1]<(kind==='sensor'?2:back?8:19)||p[1]>(kind==='thrust'?99:98)||(back&&p[1]<19&&p[0]>40&&p[0]<60))return null;
+    if(!p||p.some(n=>!Number.isFinite(n))||p[0]<0||p[0]>100||p[1]<(kind==='sensor'||floating?2:back?8:19)||p[1]>(kind==='thrust'?99:98)||(back&&p[1]<19&&p[0]>40&&p[0]<60)||(floating&&p[1]<19&&p[0]>34&&p[0]<66))return null;
     return {key:kind+'-'+index,item:spec.item,slot:spec.slot,specKey:spec.key,sourcePoint:point,point:p,kind,stage,z:kind==='wing'||kind==='back-vent'?0:({body:7,legs:5,feet:6,module:29,head:27,implant:29,offhand:25}[spec.slot]),tone:spec.art.fxTone||(/echoMemory|timeLagModule/.test(spec.item)?'anomaly':'energy')};
   }
   function wardrobeEffectsPlan({equipment={},specs=[],quality='high'}={}){

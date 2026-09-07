@@ -19,7 +19,7 @@ for(const [id,art] of Object.entries(WEARABLE_ART)){
   if(grip){
    assert.equal(specs.filter(s=>s.slot===art.slot).length,1,'one held item, not an integrated replacement');
    assert.equal(specs.filter(s=>s.key==='grip-left'||s.key==='grip-right').length,ITEMS[id].weaponHands===2?2:1,'actual occupied hand count');
-  }else assert.equal(specs.length,fit.trousers?6:1+fit[sex].length*(fit.joints?4:fit.slot==='feet'?2:1)+(fit.mount?1:0)+(fit.wornTorso?1:0));
+  }else assert.equal(specs.length,fit.trousers?6:1+fit[sex].length*(fit.joints?4:fit.slot==='feet'?2:1)+(fit.wornTorso?1:0));
   assert.equal(new Set(specs.map(s=>s.key)).size,specs.length);
   for(const spec of specs.filter(s=>s.src))assert.ok(fs.existsSync(path.join(__dirname,spec.src)),spec.src);
   for(const [file,x,y,sx,sy] of art[sex]){

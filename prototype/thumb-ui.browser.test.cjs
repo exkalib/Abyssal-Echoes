@@ -2,6 +2,8 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const testUrl=process.env.THUMB_UI_TEST_URL||process.env.RPG_TEST_URL||'http://127.0.0.1:4187/';
+const testOrigin=new URL(testUrl).origin;
 (async()=>{
  const browser=await chromium.launch({headless:true,...(process.env.BROWSER_EXECUTABLE?{executablePath:process.env.BROWSER_EXECUTABLE}:{})});
  const shots=process.env.THUMB_UI_ARTIFACT_DIR;
@@ -9,9 +11,9 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
  try{for(const viewport of [{width:360,height:640},{width:390,height:844},{width:412,height:915}]){
   const context=await browser.newContext({viewport,isMobile:true,hasTouch:true,deviceScaleFactor:1}),page=await context.newPage(),errors=[];
   page.setDefaultTimeout(15000);
-  await page.route('**/*',route=>/^http:\/\/127\.0\.0\.1:4187\//.test(route.request().url())?route.continue():route.abort());
+  await page.route('**/*',route=>new URL(route.request().url()).origin===testOrigin?route.continue():route.abort());
   page.on('pageerror',e=>{if(e.message==="Cannot read properties of undefined (reading 'getTopURL')"&&!String(e.stack).includes('http'))return;errors.push(String(e.stack));});
-  await page.goto(process.env.THUMB_UI_TEST_URL||'http://127.0.0.1:4187/');
+  await page.goto(testUrl);
   await page.evaluate(()=>{
    prepareLocalGame();state=freshState();state.tutorial={version:1,step:'done',complete:true};state.sound=false;state.music=false;
    Object.assign(state.flags,{mapUnlocked:true,braceletUnlocked:true,builderUnlocked:true,guideDeparted:true});
@@ -41,7 +43,10 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   await page.locator('.stats-entry').tap();assert.equal(await page.locator('.char-advanced-stats .ui-stat-chip').count(),14);await page.locator('.char-sheet-back').tap();
   await page.locator('.gene-entry').tap();assert.equal(await page.evaluate(()=>abyssHandleBack()),true);assert.equal(await page.locator('#panel').getAttribute('data-view'),'character');
   assert.equal(await page.evaluate(()=>abyssHandleBack()),true);assert.equal(await page.locator('#panel').getAttribute('data-view'),'camp');
-  await page.locator('#tabbar [data-tab="career"]').tap();assert.ok((await hit('.career-view-tabs button')).y>viewport.height*.65);await noOverflow();await capture('career');
+  await page.locator('#tabbar [data-tab="career"]').tap();
+  assert.ok((await hit('.career-view-tabs button')).y<viewport.height*.3,'career categories stay above the inspection area');
+  assert.ok((await hit('.rpg-route-selector')).y>viewport.height*.65,'career choices stay within thumb reach');
+  await noOverflow();await capture('career');
   console.log(viewport.width+' camp, character, upgrade and back paths passed');
   for(const tab of ['skill','bag','task','char']){
    await page.locator('#tabbar [data-tab="'+tab+'"]').tap();await noOverflow();

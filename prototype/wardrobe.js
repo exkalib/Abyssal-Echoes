@@ -1455,7 +1455,6 @@ function wearableSpecification(gender,equipment={},career,lifeCareers=[]){
       else if(slot==='hands'&&piece.half==='left'&&held.left?.art.forearmPose==='v8')spec=posedForearmSpec(spec,sex);
       layers.push(spec);
     });
-    if(fit.mount)layers.push({key:fit.mount,slot:'mount',item:fit.mount,mount:slot,x:slot==='module'?86:87,y:slot==='module'?25:36,z:27});
   }
   const torso=wearableFits[equipment.body];
   if(torso?.wornTorso){
@@ -1529,8 +1528,8 @@ async function updateWearablePortrait(host,gender,equipment,career,lifeCareers=[
   for(const old of host.querySelectorAll('[data-wear-key]'))if(!keep.has(old.dataset.wearKey))old.remove();
   for(const spec of specs){
     let img=host.querySelector('[data-wear-key="'+spec.key+'"]');
-    if(!img){img=document.createElement(spec.mount?'span':'img');img.dataset.wearKey=spec.key;img.alt='';img.draggable=false;host.appendChild(img);}
-    if(spec.mount){img.className='wearable-dock';img.dataset.slot='mount';img.dataset.item=spec.item;img.dataset.mount=spec.mount;img.style.left=spec.x+'%';img.style.top=spec.y+'%';img.style.zIndex=spec.z;img.innerHTML='<i></i><b>'+ (spec.mount==='module'?'M':'N')+'</b>';continue;}
+    if(!img){img=document.createElement('img');img.dataset.wearKey=spec.key;img.alt='';img.draggable=false;host.appendChild(img);}
+    img.classList.toggle('wearable-floating',!!spec.art?.floating);
     if(img.getAttribute('src')!==spec.src)img.src=spec.src;
     img.dataset.slot=spec.slot;img.dataset.item=spec.item;img.dataset.pose=spec.pose||'';img.dataset.handItem=spec.handItem||'';img.dataset.integratedGrip=spec.integratedGrip?'true':'';img.dataset.occupiedHilt=spec.occupiedHilt?'true':'';img.style.zIndex=spec.z??({base:1,uniform:2,back:0,legs:4,feet:5,body:6,hands:9,weapon:21,offhand:24,grip:22,head:26,implant:28,module:28,life:30}[spec.slot]);
     img.style.transform=spec.slot==='base'?'none':spec.matrix?'translate('+spec.x+'%,'+spec.y+'%) matrix('+spec.matrix.join(',')+',0,0)':'translate('+spec.x+'%,'+spec.y+'%) rotate('+(spec.rotation||0)+'deg) scale('+spec.sx+','+spec.sy+')';

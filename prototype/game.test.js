@@ -11,6 +11,7 @@ class FakeElement {
   }
   appendChild(child){ child.parentNode=this;this.children.push(child); return child; }
   append(...children){ children.forEach(child=>this.appendChild(child)); }
+  replaceChildren(...children){this.children.forEach(child=>child.parentNode=null);this.children=[];this.append(...children);}
   insertBefore(child,before){ child.parentNode=this;const index=this.children.indexOf(before);if(index<0)this.children.push(child);else this.children.splice(index,0,child);return child; }
   replaceChild(child,current){ const index=this.children.indexOf(current);if(index<0)return current;child.parentNode=this;current.parentNode=null;this.children[index]=child;return current; }
   addEventListener(){}
@@ -50,7 +51,7 @@ const sandbox = {
 };
 vm.createContext(sandbox);
 let source=fs.readFileSync(__dirname+'/game.js','utf8').replace(/\ninitLaunchGate\(\);\s*$/,'');
-source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,totalAtk,totalDef,statPen,damageReductionRate,locExtraCost,areaActionCost,fieldMealActive,foodBuffActive,payAreaAction,movementHealthCost,payMovementCost,materialSnapshot,beginExpedition,finishExpedition,exhaustionDeath,startCombat,enemyCombatProfile,recordCombatTurn,settleCombatTime,winCombat,playerAttack,enemyTurn,orbitalStrike,attackResource,attackResourceText,approach,catchBreath,useSkill,equipSkill,unequipSkill,skillUnlocked,passiveBonus,renderFieldGatherSkills,activeFieldGatherSkill,fieldGatherSkillApplicable,fieldGatherSkillStatus,performFieldGatherSkill,quickScavengeApplicable,quickScavengeStatus,performQuickScavenge,sporeBoostStatus,performSporeBoost,updateCheckpoint,restoreCheckpoint,research,researchStationReady,unlockGene,unlockGeneNode,geneTier,geneBonus,geneRule,chooseJob,chooseNoviceJob,noviceJobStatus,jobRequirementStatus,jobBonus,gainCareerXp,careerRecord,careerRecords,currentCareer,normalizeLifeCareerRecords,doReincarnate,chooseEnding,gatherAvailable,gatherArea,gatherLimit,resourceSiteOf,resourceSiteDiscovered,resourceRecoveryRemaining,resourceWorkStatus,locationActionStatus,exploreAttempts,performLocationAction,locationActionRemaining,currentDay,rest,fmtTime,advanceTime,activateAvailableQuests,questSearchCount,startBeacon,flee,settleEcho,feedbackSpec,musicSceneId,render,normalizePanelNavigationState,panelView,renderRegionMap,renderLocalMap,renderWorldMap,renderCharPanel,renderSkillPanel,renderCareerPanel,renderBagPanel,renderNpcPanel,renderCareerMentorAction,talkAreaNpc,careerSummary,renderBuilding,renderTechPanel,renderSettlementShop,renderSpaceRoutes,explore,move,travelTo,staminaToCamp,travelRoute,buyEchoUpgrade,repairFacility,resolveRaid,hasBuildingTech,buildFacility,buildingLevel,upgradeFacility,buildDefense,upgradeDefense,defenseBuilt,cookFood,eatMeal,eatFishMeal,useItem,harvestGarden,buildDrone,settleDroneAutomation,droneFleetYield,craftHours,recycleMaterial,damageRandomFacility,mapEdgePath,mapNodeState,tutorialActive,finishWakeAnimation,grantTutorialBracelet,grantTutorialBuilder,grantTutorialMap,completeTutorial,grantTutorialCollector,normalizeEquipment,normalizeMeta,mergePersistentSpaceMeta,metaFlag,setMetaFlag,grantTechRecord,syncQuestProgress,shipReady,assembleStarship,spaceFlightStatus,launchSpaceRoute,emergencySpaceReturn,outpostBuildStatus,buildOutpostPart,outpostReady,locationRevealed,repairLegacyDiscoveryFog,locationGate,entryNeedsConfirm,routeKey,routeKnown,discoverRoute,repairKnownRoutes,routeObstacle,routeNeedsConfirm,crossRouteObstacle,operationStatus,performFieldOperation,regionForLocation,regionUnlocked,regionDiscovery,verticalMapLayout,treeLayout,treePortOffset,treeEdgeRoute,techHeightFitZoom,techReady,techFacilitiesReady,discoverTechRecord,migrateTechTree,setCampName,settlementTrade,settlementTradeQuote,settlementShopProgress,settlementShopCatalog,settlementShopUnlocked,settlementExplorationCount,settlementBuyPrice,settlementSellTerms,settlementSellReward,settlementRecover,acceptCommission,turnInCommission,settlementDiscount,environmentProtected,SLOTS,EQUIP_ICON,EQUIPMENT_GRADES,QUESTS,TECHS,TECH_RECORDS,BRANCHES,MATS,MATERIAL_SOURCES,LOCATIONS,MAP_LINKS,GUIDED_MAP_ROUTES,MAP_CANVAS,WORLD_POS,WORLD_MAP_CANVAS,WORLD_REGION_POS,WORLD_REGIONS,WORLD_REGION_LINKS,LOCAL_MAPS,DISCOVERY_MILESTONES,ENTRY_REQUIREMENTS,ROUTE_OBSTACLES,FIELD_OPERATIONS,LOCATION_ACTIONS,SETTLEMENT_SHOP,SETTLEMENT_SHOP_TIERS,SETTLEMENT_SHOP_CATEGORIES,SETTLEMENT_COMMISSIONS,npcLocation,npcsAt,ITEMS,ENEMIES,COMBAT_ERAS,ENEMY_ERA,RECIPES,COOKING_RECIPES,CAMP_BUILDINGS,OUTPOST_BUILDINGS:(typeof OUTPOST_BUILDINGS==='undefined'?[]:OUTPOST_BUILDINGS),SPACE_ROUTES:(typeof SPACE_ROUTES==='undefined'?[]:SPACE_ROUTES),SMELT,RECYCLE,BEACON,DEF_TYPES,DRONE_MODELS,SKILLS,GENE_NODES,GENE_TREE,JOBS,NOVICE_JOBS};`;
+source += `\n;this.api={freshState,setState:s=>state=s,getState:()=>state,P,M,totalAtk,totalDef,statPen,damageReductionRate,locExtraCost,areaActionCost,fieldMealActive,foodBuffActive,payAreaAction,movementHealthCost,payMovementCost,materialSnapshot,beginExpedition,finishExpedition,exhaustionDeath,startCombat,enemyCombatProfile,recordCombatTurn,settleCombatTime,winCombat,playerAttack,enemyTurn,orbitalStrike,attackResource,attackResourceText,approach,catchBreath,useSkill,equipSkill,unequipSkill,skillUnlocked,passiveBonus,renderFieldGatherSkills,activeFieldGatherSkill,fieldGatherSkillApplicable,fieldGatherSkillStatus,performFieldGatherSkill,quickScavengeApplicable,quickScavengeStatus,performQuickScavenge,sporeBoostStatus,performSporeBoost,updateCheckpoint,restoreCheckpoint,research,researchStationReady,unlockGene,unlockGeneNode,geneTier,geneBonus,geneRule,chooseJob,chooseNoviceJob,noviceJobStatus,jobRequirementStatus,jobBonus,gainCareerXp,careerRecord,careerRecords,currentCareer,normalizeLifeCareerRecords,doReincarnate,chooseEnding,gatherAvailable,gatherArea,gatherLimit,resourceSiteOf,resourceSiteDiscovered,resourceRecoveryRemaining,resourceWorkStatus,locationActionStatus,exploreAttempts,performLocationAction,locationActionRemaining,currentDay,rest,fmtTime,advanceTime,activateAvailableQuests,questSearchCount,startBeacon,flee,settleEcho,feedbackSpec,musicSceneId,render,normalizePanelNavigationState,panelView,renderRegionMap,renderLocalMap,renderWorldMap,renderCharPanel,renderSkillPanel,renderCareerPanel,renderBagPanel,renderNpcPanel,renderCareerMentorAction,talkAreaNpc,careerSummary,renderBuilding,renderTechPanel,renderSettlementShop,renderSpaceRoutes,explore,move,travelTo,staminaToCamp,travelRoute,buyEchoUpgrade,repairFacility,resolveRaid,hasBuildingTech,buildFacility,buildingLevel,upgradeFacility,buildDefense,upgradeDefense,defenseBuilt,cookFood,eatMeal,eatFishMeal,useItem,harvestGarden,buildDrone,settleDroneAutomation,droneFleetYield,craftHours,recycleMaterial,damageRandomFacility,mapEdgePath,mapNodeState,tutorialActive,finishWakeAnimation,grantTutorialBracelet,grantTutorialBuilder,grantTutorialMap,completeTutorial,grantTutorialCollector,normalizeEquipment,normalizeMeta,mergePersistentSpaceMeta,metaFlag,setMetaFlag,grantTechRecord,syncQuestProgress,shipReady,assembleStarship,spaceFlightStatus,launchSpaceRoute,emergencySpaceReturn,outpostBuildStatus,buildOutpostPart,outpostReady,locationRevealed,repairLegacyDiscoveryFog,locationGate,entryNeedsConfirm,routeKey,routeKnown,discoverRoute,repairKnownRoutes,routeObstacle,routeNeedsConfirm,crossRouteObstacle,operationStatus,performFieldOperation,regionForLocation,regionUnlocked,regionDiscovery,verticalMapLayout,treeLayout,treePortOffset,treeEdgeRoute,treeWidthFitZoom,techReady,techFacilitiesReady,discoverTechRecord,migrateTechTree,setCampName,settlementTrade,settlementTradeQuote,settlementShopProgress,settlementShopCatalog,settlementShopUnlocked,settlementExplorationCount,settlementBuyPrice,settlementSellTerms,settlementSellReward,settlementRecover,acceptCommission,turnInCommission,settlementDiscount,environmentProtected,SLOTS,EQUIP_ICON,EQUIPMENT_GRADES,QUESTS,TECHS,TECH_RECORDS,BRANCHES,MATS,MATERIAL_SOURCES,LOCATIONS,MAP_LINKS,GUIDED_MAP_ROUTES,MAP_CANVAS,WORLD_POS,WORLD_MAP_CANVAS,WORLD_REGION_POS,WORLD_REGIONS,WORLD_REGION_LINKS,LOCAL_MAPS,DISCOVERY_MILESTONES,ENTRY_REQUIREMENTS,ROUTE_OBSTACLES,FIELD_OPERATIONS,LOCATION_ACTIONS,SETTLEMENT_SHOP,SETTLEMENT_SHOP_TIERS,SETTLEMENT_SHOP_CATEGORIES,SETTLEMENT_COMMISSIONS,npcLocation,npcsAt,ITEMS,ENEMIES,COMBAT_ERAS,ENEMY_ERA,RECIPES,COOKING_RECIPES,CAMP_BUILDINGS,OUTPOST_BUILDINGS:(typeof OUTPOST_BUILDINGS==='undefined'?[]:OUTPOST_BUILDINGS),SPACE_ROUTES:(typeof SPACE_ROUTES==='undefined'?[]:SPACE_ROUTES),SMELT,RECYCLE,BEACON,DEF_TYPES,DRONE_MODELS,SKILLS,GENE_NODES,GENE_TREE,JOBS,NOVICE_JOBS};`;
 source += `\n;Object.assign(this.api,{costText,recipeMaterialText,renderConstruction,renderSiteSheet,renderRecipeWorkbench,craft,smelt,batchQuantity,scaledCost,craftStationPresentation,skillLv,skillProgressText,careerSkillYieldMult,careerSkillCost,skillLevelEffectText,effectiveEconomyBonus,masteryAtEffectiveCap,masteryOverLevel,masteryBonus,masteryEffectText,upgradeMastery,useMasteryManual,beaconFloorSpec,winBeacon,equipmentRecycleYield,recycleEquipment,statHit,shieldMax,regenShield,recoveryAmount,normalizeCloudCode,validGameSave,createLocalBackup,parseLocalBackup,cloudSaveSummary,fieldActionPresentation,fieldDirective,flavor,taskQuestTarget,taskReadyNow,taskPriorityQuest,taskProgressText,taskRewardText,taskNextStep,renderTaskPanel,nativeShellVersion,legacyNativeUpgradeRequired,setPlayerAppearance,dollArt,MASTERIES});`;
 source += `\n;Object.assign(this.api,{GARDEN_CROPS,gardenSlotCount,gardenYield,gardenCropUiIcon,plantGarden,collectGardenPlot,settleGardenAutomation});`;
 source += `\n;Object.assign(this.api,{BEACON_STORY_ITEMS,BEACON_LOOT_TIERS,BEACON_LOOT_FLOOR,BEACON_EQUIPMENT,beaconRollLoot,beaconLootPreview,beaconEquipmentChance,beaconSkillBookChance,closeSiteSheet});`;
@@ -399,7 +400,7 @@ pendingTests.push((async()=>{
   const androidBuild=fs.readFileSync(path.join(__dirname,'..','android','app','build.gradle'),'utf8');
   assert.ok(Number(androidBuild.match(/versionCode (\d+)/)?.[1])>=16,'当前 APK 安装版本不得回退到旧更新协议之前');
   assert.match(androidBuild,/versionName "\d+\.\d+\.\d+"/,'APK 必须声明可展示的语义版本');
-  assert.match(androidBuild,/SHELL_VERSION", "11"/,'GitHub 更新能力必须提升外壳协议版本');
+  assert.ok(Number(androidBuild.match(/SHELL_VERSION", "(\d+)"/)?.[1])>=12,'文件迁移能力必须提升到外壳协议 12');
   assert.ok(Number(androidBuild.match(/BUNDLED_BUILD", "(\d+)L"/)?.[1])>=1788519667,'APK 内置资源版本不得回退');
   assert.match(androidBuild,/UPDATE_BASE_URL[^\n]*https:\/\/github\.com\/exkalib\/Abyssal-Echoes\/releases\/latest\/download\//,'APK 更新资源必须固定走 GitHub Release');
   assert.match(androidBuild,/CLOUD_SAVE_URL[^\n]*https:\/\/abyssal-echoes-ark\.netlify\.app\/api\/cloud-save/,'APK 云存档必须固定走 Netlify 手动迁移接口');
@@ -439,12 +440,17 @@ pendingTests.push((async()=>{
   assert.match(source,/inventory-scroll/,'物品仓内容必须拥有独立滚动层，不能推动整页与底部菜单');
   const bagSource=source.slice(source.indexOf('function renderBagPanel'),source.indexOf('function refreshBagPanel'));
   const bagEquipmentDetailSource=source.slice(source.indexOf('function renderBagEquipmentDetail'),source.indexOf('function renderBagPanel'));
-  assert.match(bagSource,/card\.onclick=\(\)=>showStoredItem\(id\)/,'材料、消耗品和特殊道具物品格必须先打开详情，不能点格子直接消耗');
-  assert.match(bagSource,/button\.onclick=\(\)=>\{state\.bagItemSelected=id;syncSelection\(\);showEquipment\(\);save\(\);\}/,'装备物品格只选择并打开装备详情，不执行穿戴');
+  assert.match(bagSource,/if\(typeof state\.bagPortraitHidden!=='boolean'\)state\.bagPortraitHidden=true/,'没有显式偏好时优先物品，但不能覆盖用户选择展开');
+  assert.match(bagSource,/const openMasteryStudy=\(\)=>\{closeDetail\(\);state\.tab='char';state\.charView='skills';state\.skillView='mastery'/,'精通手册复用技能页，选择能力前不得消耗');
+  assert.doesNotMatch(bagSource,/openSiteSheet\('masteryBook'/,'背包不得再打开不随局部刷新更新数量的旧研读弹层');
+  assert.match(bagSource,/card\.onclick=\(\)=>\{selectedId=id;syncStoredSelection\(\);\}/,'存储物品格只选择，不能直接消耗或强制弹层');
+  assert.match(bagSource,/button\.onclick=\(\)=>\{state\.bagItemSelected=id;state\.bagSel=item.slot;syncSelection\(\);save\(\);\}/,'装备物品格只更新选择，保留列表且不穿戴');
+  assert.match(bagSource,/selectionDock\(showEquipment,[\s\S]*unequip\(item.slot,refreshEquipment\):equip\(item.slot,id,refreshEquipment\)/,'固定底栏提供独立穿卸确认');
   assert.match(bagSource,/mountThumbSheet\(content,[\s\S]{0,200}bag-thumb-sheet/,'所有背包详情必须使用保持来源页的底部抽屉');
   assert.match(bagSource,/sheet\.footer\.appendChild\(detail\._actions\)/,'穿戴确认必须放在抽屉固定底栏，不埋进属性滚动区');
-  assert.match(bagSource,/action\.onclick=\(\)=>\{if\(useBlocked\(\)\)return;[\s\S]{0,160}useItem\(id,/,'消耗品必须经过可用性判断和详情确认按钮才消耗');
-  assert.match(bagEquipmentDetailSource,/action\.onclick=\(\)=>P\(\)\.equip\[slot\]===selectedId\?unequip\(slot,onMutate\):equip\(slot,selectedId,onMutate\)/,'穿戴和卸下只绑定在详情确认按钮上');
+  assert.match(bagSource,/action\.onclick=\(\)=>\{if\(useBlocked\(id\)\)return;[\s\S]{0,160}useItem\(id,/,'详情内消费仍须经过可用性判断和明确确认');
+  assert.match(bagSource,/if\(useBlocked\(selectedId\)\)return;[\s\S]{0,160}useItem\(selectedId,/,'快捷消费不能绕过满血、库存与场景检查');
+  assert.match(bagEquipmentDetailSource,/action\.onclick=\(\)=>P\(\)\.equip\[slot\]===selectedId\?unequip\(slot,onMutate\):equip\(slot,selectedId,onMutate\)/,'可选完整详情保留独立的穿戴和卸下确认');
   assert.match(bagSource,/function renderStoredItems[\s\S]*itemUiIcon\(id\)/,'材料与其他存储分类都必须继续使用统一物品实物图');
   assert.match(bagSource,/rpg-equipment-title[\s\S]{0,120}itemUiIcon\(id\)/,'物品抽屉主视觉必须复用仓库实物图，不能放大 Emoji');
   assert.match(bagSource,/iicon">'\+itemUiIcon\(id\)/,'装备和特殊道具分类必须继续使用统一物品实物图');
@@ -639,12 +645,12 @@ pendingTests.push((async()=>{
 
 {
   const L=a.treeLayout();
-  const heightFit=a.techHeightFitZoom(844,L.H);assert.ok(heightFit>.8,'科技台首次进入应压紧七类分支并按总高度铺满手机屏幕，节点不得缩成微缩图');
+  for(const width of [320,390,844,1292])assert.ok(Math.abs(a.treeWidthFitZoom(width,L.W)*L.W-width)<.001,'默认缩放必须按整行宽度铺满，而不是把整棵长树缩到一屏');assert.ok(L.H>L.W*3,'文明阶段必须纵向展开');
   assert.equal(L.stages.length,12,'科技树必须展示十二个文明阶段（含远航篇9—12阶）');
   assert.deepEqual(Object.keys(L.pos).sort(),Object.keys(a.TECHS).sort(),'每项科技必须恰有一个画布坐标');
   assert.deepEqual([...new Set(Object.values(a.TECHS).map(t=>t.b))].sort(),[...a.BRANCHES].sort(),'科技分支与布局图例必须闭合');
   Object.entries(a.TECHS).forEach(([id,t])=>(t.req||[]).forEach(req=>{
-    assert.ok(L.pos[id].x>L.pos[req].x+92,req+' → '+id+' 必须保持从左向右');
+    assert.ok(L.pos[id].y>L.pos[req].y+72,req+' → '+id+' 必须保持从上往下');
   }));
   const ids=Object.keys(a.TECHS);ids.forEach(id=>{const p=L.pos[id];assert.ok(Number.isFinite(p.x)&&Number.isFinite(p.y),id+' 坐标必须有效');assert.ok(p.x>=0&&p.y>=0&&p.x+92<=L.W&&p.y+72<=L.H,id+' 必须完全位于科技画布内');assert.ok(L.labels[a.TECHS[id].b],a.TECHS[id].b+' 必须有分支标题');});
   for(let i=0;i<ids.length;i++)for(let j=i+1;j<ids.length;j++){const p=L.pos[ids[i]],q=L.pos[ids[j]];assert.ok(p.x+92<=q.x||q.x+92<=p.x||p.y+72<=q.y||q.y+72<=p.y,ids[i]+' 与 '+ids[j]+' 卡片不得重叠');}
@@ -703,52 +709,50 @@ pendingTests.push((async()=>{
 }
 {
   const s=reset();s.skills.pierce.prof=10;s.skillView='active';const box=new FakeElement(),nodes=[];a.renderSkillPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);
-  assert.equal(nodes.filter(n=>hasClass(n,'skill-browser')).length,3,'三个技能分类必须各保留自己的图标库节点与滚动状态');assert.equal(nodes.some(n=>hasClass(n,'skill-detail-host')),false,'未点技能前不能用常驻详情挤占手机屏幕');
-  assert.equal(nodes.filter(n=>String(n.className).startsWith('skill-loadout-slot')).length,3,'战斗技能栏必须始终显示三个槽位');assert.equal(nodes.filter(n=>String(n.className).includes('skill-category-tabs')).length,1,'技能页必须提供主动、自动与精通分类');
+  assert.equal(nodes.filter(n=>hasClass(n,'skill-browser')).length,3,'三个技能分类必须各保留自己的图标库节点与滚动状态');assert.equal(nodes.filter(n=>hasClass(n,'skill-inspector')).length,1,'所选能力必须在单份常驻详情中展示，不打开抽屉');
+  assert.equal(nodes.filter(n=>hasClass(n,'skill-assign-slot')).length,3,'底部动作区必须直接提供三个战斗槽');assert.equal(nodes.filter(n=>String(n.className).includes('skill-category-tabs')).length,1,'技能页必须提供主动、自动与精通分类');
   const active=nodes.find(n=>hasClass(n,'skill-browser')&&n.dataset.skillView==='active'),cards=active.children[0].children,visible=cards.filter(n=>!n.hidden);assert.equal(visible.length,1,'技能页默认只显示已学能力');assert.equal(visible[0].dataset.skill,'pierce');assert.equal(visible[0].children[1].children[0].innerHTML,'破甲射击');assert.equal(visible[0].children[1].children[1].textContent,'Lv1','图标下方保留当前等级');
-  const catalogue=nodes.find(n=>hasClass(n,'skill-catalogue-toggle'));assert.ok(catalogue,'未来解锁路径必须保留在底部图鉴入口');catalogue.onclick();assert.equal(s.skillCatalogue,true);assert.ok(cards.filter(n=>!n.hidden).length>1);assert.equal(active.children[0].children,cards,'图鉴开关只过滤原节点，不重建技能库');
+  const catalogue=nodes.find(n=>hasClass(n,'skill-catalogue-toggle'));assert.ok(catalogue,'未来解锁路径必须保留在显示未学开关');catalogue.onclick();assert.equal(s.skillCatalogue,true);assert.ok(cards.filter(n=>!n.hidden).length>1);assert.equal(active.children[0].children,cards,'图鉴开关只过滤原节点，不重建技能库');
 }
 {
   const s=reset();s.skills.pierce.prof=10;s.skills.heavy.prof=10;s.skillView='active';s.skillSelected='pierce';const box=new FakeElement();a.renderSkillPanel(box);
-  const [hero,slots,browser,auto,mastery,dock]=box.children,tabs=dock.children[0],cards=browser.children[0].children,detail=a.renderSkillDetail('heavy',()=>box._refreshSkillPanel()),footer=new FakeElement();detail._mountActions(footer,()=>{});const actions=footer.children.find(n=>hasClass(n,'skill-assignment-slots'));
-  assert.equal(actions.children.length,3,'抽屉底部直接提供全部三个槽位，无需先返回上方选槽');actions.children[2].onclick();assert.equal(s.skillSlots[2],'heavy');assert.equal(actions.children[2].children[2].textContent,'点击卸下');actions.children[2].onclick();assert.equal(s.skillSlots[2],null,'再次点击明确标记的卸下位置必须真正卸下');
-  assert.equal(box.children[0],hero);assert.equal(box.children[1],slots);assert.equal(box.children[2],browser);assert.equal(browser.children[0].children,cards,'装配和卸下只更新原节点文字');
-  tabs.children[1].onclick();assert.equal(s.skillView,'auto');assert.equal(browser.hidden,true);assert.equal(auto.hidden,false);assert.equal(box.children[2],browser);assert.equal(box.children[3],auto);assert.equal(box.children[4],mastery);assert.equal(box.children[5],dock,'分类切换不得替换任意图标库或底部控制区');
+  const [hero,dock,hint,browser,auto,mastery,inspector]=box.children,tabs=dock.children[0],cards=browser.children[0].children,detail=a.renderSkillDetail('heavy',()=>box._refreshSkillPanel()),footer=new FakeElement();detail._mountActions(footer);const actions=footer.children.find(n=>hasClass(n,'skill-assignment-slots'));
+  assert.equal(actions.children.length,3,'固定底部直接提供三个槽位，不需要装配模式再确认');actions.children[2].onclick();assert.equal(s.skillSlots[2],'heavy');assert.equal(actions.children[2].children[2].textContent,'点击卸下');actions.children[2].onclick();assert.equal(s.skillSlots[2],null,'再次点击明确标记的卸下位置必须真正卸下');
+  assert.equal(box.children[0],hero);assert.equal(box.children[1],dock);assert.equal(box.children[3],browser);assert.equal(browser.children[0].children,cards,'装配和卸下只更新原节点文字');
+  tabs.children[1].onclick();assert.equal(s.skillView,'auto');assert.equal(browser.hidden,true);assert.equal(auto.hidden,false);assert.equal(box.children[3],browser);assert.equal(box.children[4],auto);assert.equal(box.children[5],mastery);assert.equal(box.children[6],inspector,'分类切换不得替换图标库或详情容器');
 }
 {
   const s=reset();s.meta.careers.life={id:'salvager',level:3,xp:0};s.skills.salvageSense.prof=20;s.skills.fieldSorting.prof=10;s.skillView='auto';s.skillSelected='salvageSense';const box=new FakeElement(),nodes=[];a.renderSkillPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);const card=nodes.find(n=>n.dataset.skill==='salvageSense'),detail=a.renderSkillDetail('salvageSense',()=>{}),footer=new FakeElement();detail._mountActions(footer,()=>{});
-  assert.equal(card.children[1].children[1].textContent,'Lv2 · 自动','职业被动图标必须显示等级与自动状态');assert.match(detail.children.find(n=>hasClass(n,'rpg-skill-effect')).textContent,/采集 \+15%/,'抽屉必须展示真实效果');assert.match(detail.children[0].children[1].children[2].textContent,/Lv2 · 熟练度 0 \/ 10/);assert.equal(footer.children.some(n=>hasClass(n,'skill-assignment-slots')),false,'生活被动不得出现装配按钮');
+  assert.equal(card.children[1].children[1].textContent,'Lv2','自动分类图标必须显示等级');assert.match(detail.children[1].children[0].children[1].textContent,/采集 \+15%/,'当前栏必须展示真实效果');assert.match(detail.children[1].children[1].children[1].textContent,/采集 \+18%/,'下级栏必须使用真实增长公式');assert.match(detail.children[0].children[1].children[2].textContent,/已自动生效 · 熟练度 0 \/ 10/);assert.equal(footer.children.some(n=>hasClass(n,'skill-assignment-slots')),false,'生活被动不得出现装配按钮');
 }
 {
   const s=reset();s.charView='careers';s.meta.careers.main={id:'vanguard',level:3,xp:12};s.meta.careers.life={id:'noviceCollector',level:2,xp:7};s.flags.job_vanguard_qualified=true;s.flags.job_salvager_qualified=true;const box=new FakeElement(),nodes=[];a.renderCharPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);
-  assert.ok(nodes.some(n=>String(n.className).includes('career-loadout')),'职业页当前配置必须先展示已装备的主副职业');
-  assert.equal(nodes.filter(n=>String(n.className).startsWith('career-dossier')).length,2,'主职业与副职业必须分别拥有职业档案卡');
-  assert.ok(nodes.some(n=>(n.innerHTML||'').includes('career-ability-strip')),'当前职业必须展示按等级解锁的能力轨道');
-  assert.equal(nodes.filter(n=>String(n.className).startsWith('career-track-section')).length,0,'当前配置页不得继续把两类职业路线堆在档案下方');
-  assert.ok(nodes.some(n=>hasClass(n,'career-view-tabs')),'职业页必须提供当前配置、战斗路线和生活路线三个分段入口');
+  assert.equal(s.careerView,'main');assert.equal(s.careerMainSelected,'vanguard','默认直接选中当前主战路线');
+  assert.equal(nodes.filter(n=>hasClass(n,'career-path-card')).length,1,'只展示一个选中职业，不再堆主副职业档案');
+  assert.ok(nodes.some(n=>(n.innerHTML||'').includes('职业能力与成长')),'当前职业必须保留按等级解锁的能力');
+  assert.equal(nodes.filter(n=>hasClass(n,'career-track-section')).length,1);assert.equal(nodes.find(n=>hasClass(n,'career-view-tabs')).children.length,2,'主战与生活分类清楚分开');
+  assert.ok(nodes.some(n=>hasClass(n,'career-route-dock')),'下一步和执行动作必须独立于详情滚动区');
 }
 {
-  const s=reset();s.careerView='current';s.meta.careers.life={id:'noviceCollector',level:1,xp:0};s.flags.job_vanguard_qualified=true;const box=new FakeElement();a.renderCareerPanel(box);const [hero,overview,tabs,content]=box.children;tabs.children[1].onclick();
-  assert.equal(box.children[0],hero,'切换职业分段不得重建职业页标题');assert.equal(box.children[1],overview,'切换职业分段不得重建职业统计');assert.equal(box.children[2],tabs,'切换职业分段不得重建分段栏自身');assert.notEqual(box.children[3],content,'切换职业分段只应替换职业内容区');assert.equal(s.careerView,'main');
-  const route=box.children[3];tabs.children[1].onclick();assert.equal(box.children[3],route,'再次点击当前职业分段必须无操作');
+  const s=reset();s.careerView='current';s.meta.careers.life={id:'noviceCollector',level:1,xp:0};s.flags.job_vanguard_qualified=true;const box=new FakeElement();a.renderCareerPanel(box);const [tabs,content]=box.children;tabs.children[1].onclick();
+  assert.equal(box.children[0],tabs,'切换职业分类不得重建分类栏');assert.notEqual(box.children[1],content,'切换职业分类只替换职业内容');assert.equal(s.careerView,'life');
+  const route=box.children[1];tabs.children[1].onclick();assert.equal(box.children[1],route,'再次点击当前分类必须无操作');
 }
 {
   const s=reset();s.charView='careers';s.careerView='main';s.flags.job_vanguard_qualified=true;const box=new FakeElement(),nodes=[];a.renderCharPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);const markup=nodes.map(n=>n.innerHTML||'').join(' ');
   assert.match(markup,/就任加成[\s\S]*攻击 \+30%[\s\S]*暴击 \+10%/,'正式战斗职业在就任前必须展示足够有吸引力的核心属性');
-  assert.match(markup,/专属能力预览[\s\S]*脉冲压制[\s\S]*穿透 25% 护甲[\s\S]*战斗节律[\s\S]*过载齐射/,'展开职业详情必须能提前查看主动、被动与终结技');assert.equal(nodes.filter(n=>hasClass(n,'rpg-route-selector')).length,3,'即使未认证也应能比较三条战斗路线');assert.equal(nodes.filter(n=>hasClass(n,'career-path-card')).length,1,'职业选择只能展开一份详情，不能把三个完整档案同时铺开');
+  assert.match(markup,/职业能力与成长[\s\S]*脉冲压制[\s\S]*穿透 25% 护甲[\s\S]*战斗节律[\s\S]*过载齐射/,'展开职业详情必须能提前查看主动、被动与终结技');assert.equal(nodes.filter(n=>hasClass(n,'rpg-route-selector')).length,3,'即使未认证也应能比较三条战斗路线');assert.equal(nodes.filter(n=>hasClass(n,'career-path-card')).length,1,'职业选择只能展开一份详情，不能把三个完整档案同时铺开');
 }
 {
   const s=reset();s.charView='careers';const box=new FakeElement(),nodes=[];a.renderCharPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);
-  assert.ok(nodes.some(n=>String(n.className).includes('career-loadout')),'没有就职时当前配置也必须展示两个明确的空职业槽');
-  assert.equal(nodes.filter(n=>hasClass(n,'empty')).length,2,'空主职业与空生活职业必须分别给出取得指引');
-  assert.equal(nodes.some(n=>String(n.className).startsWith('career-path-card')),false,'当前配置页不得混入其他路线的完整档案');
+  assert.equal(nodes.filter(n=>hasClass(n,'rpg-route-selector')).length,3,'没有就职时可预览三个方向');assert.equal(nodes.filter(n=>hasClass(n,'career-path-card')).length,1);
+  assert.match(nodes.map(n=>n.textContent||n.innerHTML||'').join(' '),/下一步[\s\S]*老乔/,'未学习路线直接显示当前导师位置');
+  assert.equal(s.meta.careers.main,null,'预览路线不自动就职');
 }
 {
-  const s=reset();s.charView='careers';s.meta.careers.life={id:'noviceCollector',level:1,xp:0};const box=new FakeElement(),nodes=[];a.renderCharPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);const markup=nodes.map(n=>n.innerHTML||'').join(' ');
-  assert.equal(nodes.filter(n=>String(n.className).startsWith('career-dossier')).length,2,'只就任一个职业时仍需显示另一个类型的空槽指引');
-  assert.match(markup,/快速搜刮/,'职业档案必须显示当前已学会的技能');
-  assert.doesNotMatch(markup,/定向拆解|分层挖掘|脉冲游骑|舰盾卫士|裂隙猎手/,'当前配置只展示已就任身份，未学能力和其他路线留在图鉴中');
-  s.careerView='life';const routeBox=new FakeElement(),routeNodes=[];a.renderCharPanel(routeBox);(function walk(node){routeNodes.push(node);(node.children||[]).forEach(walk);})(routeBox);const routeMarkup=routeNodes.map(n=>n.innerHTML||'').join(' ');assert.match(routeMarkup,/残骸勘探员[\s\S]*快速搜刮[\s\S]*技能 Lv1/,'已入门的职业必须显示后续正式路线，并标明已经获得的能力');
+  const s=reset();s.charView='careers';s.careerView='life';s.meta.careers.life={id:'noviceCollector',level:1,xp:0};const box=new FakeElement(),nodes=[];a.renderCharPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);const markup=nodes.map(n=>n.innerHTML||'').join(' ');
+  assert.equal(nodes.filter(n=>hasClass(n,'career-path-card')).length,1,'生活页只显示选中的一条专精');assert.match(markup,/快速搜刮[\s\S]*技能 Lv1/,'已学与未学能力必须准确显示');
+  assert.match(markup,/定向拆解[\s\S]*职业 Lv2 解锁[\s\S]*分层挖掘[\s\S]*职业 Lv3 解锁/,'未来能力明确显示所需等级，不能混标成已学');assert.doesNotMatch(markup,/career-route-art/,'生活专精不能替换人物身体');
 }
 {
   const s=reset();s.meta.careers.life={id:'salvager',level:1,xp:49};const stamina=a.jobBonus('stMax'),gather=a.jobBonus('gatherPct'),recycle=a.jobBonus('recyclePct');a.gainCareerXp('life',1);
@@ -1519,7 +1523,8 @@ pendingTests.push((async()=>{
   const s=reset();s.meta.careers.life=[{id:'noviceCollector',level:3,xp:11},{id:'noviceApprentice',level:3,xp:12},{id:'noviceGrower',level:3,xp:13}];Object.assign(s.flags,{job_salvager_qualified:true,job_fabricator_qualified:true,job_biologist_qualified:true});a.chooseJob('salvager');a.chooseJob('fabricator');a.chooseJob('biologist');
   assert.deepEqual(Array.from(a.careerRecords('life'),r=>r.id).sort(),['biologist','fabricator','salvager'],'晋升一条副职业不得覆盖另外两条路线');assert.equal(a.careerRecord('life','salvager').xp,11);assert.equal(a.careerRecord('life','fabricator').xp,12);assert.equal(a.careerRecord('life','biologist').xp,13,'三条副职业晋升都必须保留各自经验');
   s.meta.careers.main={id:'vanguard',level:2,xp:4};s.charView='careers';const box=new FakeElement(),nodes=[];a.renderCharPanel(box);(function walk(node){nodes.push(node);(node.children||[]).forEach(walk);})(box);const markup=nodes.map(n=>n.innerHTML||'').join(' ');
-  assert.equal(nodes.filter(n=>String(n.className).startsWith('career-dossier')).length,4,'职业档案必须同时展示一个主战职业和全部三个副职业');assert.match(markup,/主战岗位[\s\S]*1 \/ 1[\s\S]*生活专精[\s\S]*3 \/ 3/,'主职唯一与三个可并存副职必须有明确容量展示');assert.match(markup,/可以同时学习 · 对应作业自动生效/,'简化的职业页仍必须明确说明生活专精可并行且自动使用');
+  assert.equal(nodes.filter(n=>hasClass(n,'career-path-card')).length,1,'一屏只保留一个职业详情');assert.match(markup,/主战职业[\s\S]*同时生效一种[\s\S]*生活专精[\s\S]*三种可以兼修/,'主战互斥与生活并行必须明确说明');
+  box.children[0].children[1].onclick();const lifeNodes=[];(function walk(node){lifeNodes.push(node);(node.children||[]).forEach(walk);})(box);const choices=lifeNodes.filter(n=>hasClass(n,'rpg-route-selector'));assert.equal(choices.length,3);assert.deepEqual(choices.map(n=>n.children[0].textContent),['已就任','已就任','已就任'],'三个已经取得的生活专精必须同时显示已掌握');
 }
 {
   const s=reset();assert.equal(s.campName,'幸存者营地');assert.equal(s.settlementRep,0);assert.deepEqual(Object.keys(a.LOCAL_MAPS.settlement.pos).sort(),['camp','setArchive','setBio','setGarrison','setGate','setHub','setWorkshop'].sort());assert.deepEqual(Array.from(a.LOCAL_MAPS.settlement.externalLocations),['camp'],'聚居地局部地图必须直接提供玩家营地返程点');

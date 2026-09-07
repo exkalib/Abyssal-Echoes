@@ -3013,11 +3013,7 @@ button,
 @keyframes weapon-phase-speck{0%,16%{opacity:0;transform:translate(0,0) scale(.6)}30%{opacity:.85}60%{opacity:.25}86%,100%{opacity:0;transform:translate(var(--fx-dx),var(--fx-dy)) scale(1.3)}}
 @keyframes weapon-bio-pulse{0%,100%{opacity:.35}25%{opacity:.85}47%{opacity:.5}65%{opacity:.74}}
 @media(prefers-reduced-motion:reduce){.wearable-weapon-fx *{animation:none!important}.wearable-weapon-fx .weapon-fx-sparks,.wearable-weapon-fx .weapon-fx-arc,.wearable-weapon-fx .weapon-fx-flow{display:none}.weapon-fx-emission{opacity:.67}.weapon-fx-halo{opacity:.4}}
-.wearable-dock{position:absolute;width:20%;height:12%;transform:translate(-50%,-50%);border:1px solid var(--ui-line-hi);border-radius:var(--ui-radius-xs);background:var(--ui-surface-sunken);box-shadow:inset 0 1px var(--ui-specular)}
-.wearable-dock::before,.wearable-dock::after{content:'';position:absolute;width:3px;height:40%;top:30%;background:var(--ui-metal);opacity:.7}
-.wearable-dock::before{left:-2px}.wearable-dock::after{right:-2px}
-.wearable-dock>i{position:absolute;inset:14%;border:1px solid var(--ui-line);border-radius:50%}
-.wearable-dock>b{position:absolute;left:0;top:-10px;width:100%;text-align:center;color:var(--ui-text-3);font:7px/1 var(--ui-font-tech);letter-spacing:1px}
+.wearable-portrait>img.wearable-floating{filter:drop-shadow(0 2px 3px var(--ui-bg-0))}
 .loadout-console .doll{height:300px;margin:8px auto 14px}
 .doll-art-host .doll-wearable{position:absolute;width:200px;max-width:66%;left:50%;top:50%;transform:translate(-50%,-50%)}
 .ui-bag-stage .doll-art-host .doll-wearable{height:calc(100% - 8px);width:auto;max-width:none;max-height:300px}
@@ -3685,89 +3681,145 @@ body[data-ui="abyss-frame"] #panel .char-thumb-dock>button{display:flex;flex-dir
 .char-thumb-sheet .char-advanced-stats>span{display:flex;flex-direction:column;gap:4px;padding:8px;background:var(--ui-bg-0)}
 .char-thumb-sheet .char-advanced-stats small{font-size:11px;color:var(--ui-text-2)}
 .char-thumb-sheet .char-advanced-stats b{font-size:14px;color:var(--ui-text-1)}
-#panel.careers-page .career-view-tabs{order:2;margin:8px 0 0;flex:none;border:0;border-top:1px solid var(--ui-line);padding:0}
+#panel.careers-page .career-view-tabs{order:0;margin:0;flex:none;grid-template-columns:repeat(2,minmax(0,1fr));border:0;border-bottom:1px solid var(--ui-line);padding:0}
 body[data-ui="abyss-frame"] #panel.careers-page{display:flex;flex-direction:column;overflow:hidden!important;gap:8px;padding-bottom:8px}
 #panel.careers-page>.career-console-head{flex:none}
 #panel.careers-page>:is(.career-current-content,.career-track-section){flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
 #panel.careers-page>:is(.career-current-content,.career-track-section)::-webkit-scrollbar{display:none}
+/* Career selection: one full-body stage, two clear disciplines, fixed thumb actions. */
+body[data-ui="abyss-frame"] #panel.careers-page{padding:8px 12px;gap:8px}
+#panel.careers-page .career-view-tabs>button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:52px!important;padding:4px!important}
+#panel.careers-page .career-view-tabs b{font-size:14px}
+#panel.careers-page .career-view-tabs small{display:block;font-size:10px;line-height:1.3;color:var(--ui-text-2)}
+#panel.careers-page .career-bridge{display:flex;flex-direction:column;gap:8px;overflow:hidden!important;margin:0;padding:0;min-height:0}
+#panel.careers-page .career-inspection{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:none}
+#panel.careers-page .career-inspection::-webkit-scrollbar{display:none}
+#panel.careers-page .career-bridge .career-path-card{min-height:100%;display:flex;flex-direction:column;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible}
+#panel.careers-page .career-track-section.career-bridge .career-path-card::before{content:none}
+#panel.careers-page .career-route-hero{position:relative;flex:1;min-height:200px;isolation:isolate;display:flex;align-items:center;background:radial-gradient(ellipse at 77% 55%,var(--ui-energy-soft),transparent 62%)}
+#panel.careers-page .career-track-section.career-bridge .career-route-copy{position:relative;z-index:3;width:54%;min-height:0;padding:12px 0;display:block}
+#panel.careers-page .career-track-section.career-bridge .career-route-art{position:absolute;z-index:1;inset:0 0 0 auto;width:48%;height:100%;object-fit:contain;object-position:center;max-width:none;filter:none}
+#panel.careers-page .career-track-section.career-bridge .career-path-title{width:100%;display:block}
+#panel.careers-page .career-bridge .career-path-title .career-path-emblem{display:none}
+#panel.careers-page .career-bridge .career-path-title small{font-size:10px;letter-spacing:0;line-height:1.5;color:var(--ui-energy)}
+#panel.careers-page .career-bridge .career-path-title b{font-size:20px;line-height:1.4;margin:8px 0 4px}
+#panel.careers-page .career-bridge .career-path-title em{font-size:12px;line-height:1.5;color:var(--ui-text-2)}
+#panel.careers-page .career-bridge .career-xp{margin:12px 0 0;padding:0;display:flex;align-items:center;gap:8px;max-width:none}
+#panel.careers-page .career-bridge .career-xp>span{height:4px;flex:1;min-width:24px;background:var(--ui-line)}
+#panel.careers-page .career-bridge .career-xp>span>i{display:block;height:100%;background:var(--ui-energy)}
+#panel.careers-page .career-bridge .career-xp>em{font-size:10px;white-space:nowrap;color:var(--ui-text-2)}
+#panel.careers-page .career-track-section.career-bridge .career-route-copy>.rpg-career-loop{max-width:none;min-height:0;margin:12px 0 0;font-size:12px;line-height:1.6;color:var(--ui-text-2)}
+#panel.careers-page .career-bridge .rpg-gear-readiness{max-width:none;margin:12px 0 0;padding:0;background:transparent;border:0;font-size:11px;line-height:1.5}
+#panel.careers-page .career-bridge .rpg-gear-readiness>.ui-icon{width:16px;height:16px;flex:none}
+#panel.careers-page .career-profession-seal{position:absolute;z-index:1;right:8%;top:50%;transform:translateY(-50%);width:32%;aspect-ratio:1;color:var(--ui-energy);filter:drop-shadow(0 0 12px var(--ui-energy-soft))}
+#panel.careers-page .career-profession-seal>.ui-icon{width:100%;height:100%}
+#panel.careers-page .career-bridge.life .career-route-hero{flex:none;min-height:176px}
+#panel.careers-page .career-bridge.life .career-profession-seal{width:24%;right:12%}
+#panel.careers-page .career-bridge .rpg-route-facts{padding:0;background:transparent;border:0}
+#panel.careers-page .career-bridge .rpg-career-expand{margin:0;border-top:1px solid var(--ui-line);background:transparent}
+#panel.careers-page .career-bridge .rpg-career-expand>summary{padding:12px 4px;font-size:12px;min-height:44px;line-height:20px}
+#panel.careers-page .career-bridge .rpg-career-expand>p{font-size:12px;padding:8px 4px;line-height:1.7;color:var(--ui-text-2)}
+#panel.careers-page .career-bridge .career-ability{max-width:none}
+#panel.careers-page .career-bridge .career-path-abilities{margin:0}
+#panel.careers-page .career-bridge .career-growth-grid{background:var(--ui-bg-0)}
+#panel.careers-page .career-bridge .rpg-route-selectors{flex:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0;padding:8px 0 0;border-top:1px solid var(--ui-line);background:transparent}
+#panel.careers-page .career-bridge .rpg-route-selector{display:grid;grid-template-columns:1fr;justify-items:center;align-content:center;gap:4px;min-width:0;min-height:80px;padding:8px 4px!important;border:1px solid transparent!important;border-bottom:2px solid transparent!important;border-radius:0;background:transparent!important;box-shadow:none;text-align:center;clip-path:none}
+#panel.careers-page .career-bridge .rpg-route-selector.selected{background:var(--ui-energy-soft)!important;border-bottom-color:var(--ui-energy)!important}
+#panel.careers-page .career-bridge .rpg-route-selector>i{width:28px;height:28px;display:block;margin:0;color:var(--ui-text-2)}
+#panel.careers-page .career-bridge .rpg-route-selector>i>.ui-icon{width:28px;height:28px}
+#panel.careers-page .career-bridge .rpg-route-selector.selected>i{color:var(--ui-energy)}
+#panel.careers-page .career-bridge .rpg-route-selector>b{font-size:12px;line-height:1.4;font-weight:600;color:var(--ui-text-1)}
+#panel.careers-page .career-bridge .rpg-route-selector>small{font-size:10px;line-height:1.3;color:var(--ui-text-3)}
+#panel.careers-page .career-bridge .rpg-route-selector.learned>small{color:var(--ui-success)}
+#panel.careers-page .career-route-dock{flex:none;display:grid;grid-template-columns:minmax(0,1fr) minmax(112px,38%);align-items:center;gap:8px;padding:8px 0 0;border-top:1px solid var(--ui-line);background:var(--ui-bg-1)}
+#panel.careers-page .career-route-dock .rpg-route-next{gap:4px;min-width:0;line-height:1.5}
+#panel.careers-page .career-route-dock .rpg-route-next>b{font-size:12px;font-weight:500;overflow-wrap:anywhere}
+#panel.careers-page .career-route-dock .rpg-route-next>span{font-size:10px;overflow-wrap:anywhere}
+#panel.careers-page .career-route-action{align-self:end;min-width:0;min-height:48px!important;padding:8px!important;font-size:12px;line-height:1.5;white-space:normal}
+#panel.careers-page .career-route-action:active,#panel.careers-page .career-route-action.is-touching{transform:none!important;filter:brightness(1.18)}
+@media(max-height:700px){#panel.careers-page .career-route-hero{min-height:160px}#panel.careers-page .career-bridge .career-path-title b{font-size:18px;margin:4px 0}#panel.careers-page .career-bridge .rpg-route-selector{min-height:72px;padding:4px!important}#panel.careers-page .career-bridge .career-route-copy>.rpg-career-loop{margin-top:8px}}
 body[data-ui="abyss-frame"] #panel .task-head{background:transparent;border:0;box-shadow:none;padding:4px 0 8px;margin:0}
 /* Thumb-first skill grimoire: persistent glyphs, direct bottom-slot assignment. */
-#panel.thumb-skills-page{display:flex!important;flex-direction:column;gap:8px;overflow:hidden!important;padding:12px 12px 8px!important;background:radial-gradient(ellipse at 50% 30%,color-mix(in srgb,var(--ui-energy) 5%,transparent),transparent 65%),var(--ui-bg-1)}
-#panel.thumb-skills-page .skill-console-head{flex:none;min-height:52px;margin:0;padding:0 4px;background:transparent;border:0;box-shadow:none}
-#panel.thumb-skills-page .skill-console-head h1{font-size:20px;line-height:1.3}
-#panel.thumb-skills-page .skill-console-head p{font-size:11px;line-height:1.4;margin-top:4px}
-#panel.thumb-skills-page .skill-loadout-strip{flex:none;padding:0;margin:0;gap:8px}
-#panel.thumb-skills-page .skill-loadout-strip::before{display:none}
-#panel.thumb-skills-page .skill-loadout-slot{position:relative;min-height:76px;padding:12px 8px!important;grid-template-columns:28px minmax(0,1fr);border-color:color-mix(in srgb,var(--skill-tone,var(--ui-line)) 40%,var(--ui-line))!important;background:linear-gradient(150deg,color-mix(in srgb,var(--skill-tone,var(--ui-line)) 7%,var(--ui-surface-2)),var(--ui-bg-0))!important;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
-#panel.thumb-skills-page .skill-loadout-slot>span{top:4px;right:8px;line-height:1;font-size:10px}
-#panel.thumb-skills-page .skill-loadout-slot>b{font-size:12px}
-#panel.thumb-skills-page .skill-loadout-slot>small{font-size:10px}
-#panel.thumb-skills-page .skill-browser{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;gap:0;padding:8px 0 12px}
-#panel.thumb-skills-page .skill-browser::-webkit-scrollbar{display:none}
-#panel.thumb-skills-page .skill-browser{justify-content:safe flex-end}
-#panel.thumb-skills-page .skill-library-grid{flex:none}
-#panel.thumb-skills-page .skill-browser[hidden],#panel.thumb-skills-page .skill-library-card[hidden],#panel.thumb-skills-page .skill-library-empty[hidden]{display:none!important}
-#panel.thumb-skills-page .skill-library-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-content:start;gap:12px 8px;max-height:none;overflow:visible;padding:0;border:0;background:none;box-shadow:none}
-#panel.thumb-skills-page .skill-library-card{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;min-height:112px!important;padding:8px 4px!important;border:0!important;background:transparent!important;box-shadow:none;text-align:center!important;transform:none!important;overflow:visible}
-#panel.thumb-skills-page .skill-library-card.selected{background:transparent!important;box-shadow:none}
-#panel.thumb-skills-page .skill-library-card.locked{opacity:.7}
-#panel.thumb-skills-page .skill-card-icon{flex:0 0 56px;width:56px!important;height:56px!important;padding:8px;border:1px solid color-mix(in srgb,var(--skill-tone) 40%,var(--ui-line))!important;border-radius:9px;background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--skill-tone) 12%,var(--ui-bg-0)),var(--ui-bg-0));box-shadow:inset 0 1px color-mix(in srgb,var(--skill-tone) 24%,transparent);color:var(--skill-tone);clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
-#panel.thumb-skills-page .skill-library-card.selected .skill-card-icon{border-color:var(--skill-tone)!important;box-shadow:inset 0 -2px var(--skill-tone),0 0 16px color-mix(in srgb,var(--skill-tone) 12%,transparent)}
-#panel.thumb-skills-page .skill-card-icon::before,#panel.thumb-skills-page .skill-card-icon::after{display:none}
-#panel.thumb-skills-page .skill-card-icon .ui-icon{width:40px!important;height:40px!important}
+#panel.thumb-skills-page{display:flex!important;flex-direction:column;gap:8px;overflow:hidden!important;padding:8px 12px!important;background:radial-gradient(ellipse at 50% 32%,var(--ui-energy-soft),transparent 60%),var(--ui-bg-1)}
+#panel.thumb-skills-page .skill-console-head{display:flex;align-items:center;justify-content:space-between;flex:none;min-height:44px;margin:0;padding:0;background:none;border:0;box-shadow:none}
+#panel.thumb-skills-page .skill-console-head h1{margin:0;font-size:20px;line-height:1.3;letter-spacing:0}
+#panel.thumb-skills-page .skill-library-count{margin-left:auto;white-space:nowrap;color:var(--ui-text-2);font-size:11px;line-height:1.4}
+#panel.thumb-skills-page .skill-catalogue-toggle{display:flex;align-items:center;gap:8px;min-height:44px!important;padding:8px!important;border:0;background:none;box-shadow:none;color:var(--ui-text-2)}
+#panel.thumb-skills-page .skill-catalogue-toggle .ui-icon{width:20px;height:20px;padding:2px;border:1px solid var(--ui-line-hi);color:transparent}
+#panel.thumb-skills-page .skill-catalogue-toggle.active .ui-icon{color:var(--ui-energy);border-color:var(--ui-energy)}
+#panel.thumb-skills-page .skill-catalogue-toggle b{font-size:12px;font-weight:500}
+#panel.thumb-skills-page .skill-thumb-dock{flex:none;display:block;margin:0;padding:0;border:0;background:none}
+#panel.thumb-skills-page .skill-category-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin:0;padding:0;border:0;clip-path:none;background:none;box-shadow:none}
+#panel.thumb-skills-page .skill-category-tabs>button{min-height:44px!important;padding:8px 4px!important;border:0!important;border-radius:0;clip-path:none;color:var(--ui-text-2);background:none}
+#panel.thumb-skills-page .skill-category-tabs>button b{font-size:13px;font-weight:600}
+#panel.thumb-skills-page .skill-category-tabs>button.active{color:var(--ui-energy);background:var(--ui-energy-soft)!important;box-shadow:inset 0 -2px var(--ui-energy)}
+#panel.thumb-skills-page .skill-view-hint{flex:none;margin:0;padding:0 4px;font-size:11px;line-height:1.4;color:var(--ui-text-2)}
+#panel.thumb-skills-page .skill-browser{display:block;flex:1;min-height:88px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--ui-line) transparent;padding:4px 0 8px}
+#panel.thumb-skills-page [hidden]{display:none!important}
+#panel.thumb-skills-page .skill-library-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-content:start;gap:8px;max-height:none;overflow:visible;padding:0;border:0;background:none;box-shadow:none}
+#panel.thumb-skills-page .skill-library-card{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;gap:4px!important;min-height:92px!important;padding:4px!important;border:1px solid transparent!important;background:transparent!important;box-shadow:none;text-align:center!important;transform:none!important;overflow:visible}
+#panel.thumb-skills-page .skill-library-card.selected{border-color:color-mix(in srgb,var(--skill-tone) 42%,var(--ui-line))!important;background:color-mix(in srgb,var(--skill-tone) 7%,transparent)!important;box-shadow:inset 0 -2px var(--skill-tone)}
+#panel.thumb-skills-page .skill-library-card.locked{opacity:.65}
+#panel.thumb-skills-page .skill-card-icon{flex:0 0 44px;width:44px!important;height:44px!important;padding:4px;border:0!important;border-radius:0;background:radial-gradient(circle,color-mix(in srgb,var(--skill-tone) 12%,transparent),transparent 72%);box-shadow:none;color:var(--skill-tone);clip-path:none;filter:none}
+#panel.thumb-skills-page .skill-card-icon::before,#panel.thumb-skills-page .skill-card-icon::after,#panel.thumb-skills-page .skill-library-grid::before{display:none}
+#panel.thumb-skills-page .skill-card-icon .ui-icon{width:36px!important;height:36px!important}
 #panel.thumb-skills-page .skill-card-copy{display:flex;flex-direction:column;align-items:center;width:100%;gap:4px}
 #panel.thumb-skills-page .skill-card-copy b{margin:0;font-size:12px;line-height:1.35;font-weight:600}
-#panel.thumb-skills-page .skill-card-copy em{font-size:10px;line-height:1.3;color:var(--ui-text-2)}
-#panel.thumb-skills-page .skill-card-state{position:absolute;top:4px;right:0;font-size:10px;line-height:1.3;padding:2px 4px;color:var(--skill-tone);background:var(--ui-bg-0);border-radius:var(--ui-radius-sm);font-style:normal}
+#panel.thumb-skills-page .skill-card-copy em{font-size:11px;line-height:1.3;color:var(--ui-text-2);font-style:normal}
+#panel.thumb-skills-page .skill-card-state{position:absolute;top:0;right:0;padding:2px 4px;color:var(--skill-tone);background:var(--ui-bg-0);font-size:10px;line-height:1.3;font-style:normal}
 #panel.thumb-skills-page .skill-card-state:empty{display:none}
-.skill-library-empty{min-height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:24px 16px;text-align:center;color:var(--ui-text-2)}
-.skill-library-empty>i{display:grid;place-items:center;width:80px;height:80px;border:1px solid var(--ui-line);border-radius:50%;color:var(--ui-text-3)}
-.skill-library-empty .ui-icon{width:40px;height:40px}
-.skill-library-empty b{font-size:16px;color:var(--ui-text-1)}
-.skill-library-empty p{margin:0;font-size:13px;line-height:1.6}
-.skill-library-empty>span{font-size:11px;color:var(--ui-energy)}
-#panel.thumb-skills-page .skill-thumb-dock{flex:none;display:grid;grid-template-columns:minmax(0,1fr) 56px;gap:8px;padding-top:8px;border-top:1px solid var(--ui-line);background:linear-gradient(transparent,var(--ui-bg-1))}
-#panel.thumb-skills-page .skill-category-tabs{margin:0;border:0;gap:4px}
-#panel.thumb-skills-page .skill-category-tabs>button,#panel.thumb-skills-page .skill-catalogue-toggle{display:flex;min-height:56px!important;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:4px!important;border:0;border-radius:6px;color:var(--ui-text-2);background:transparent}
-#panel.thumb-skills-page .skill-category-tabs .ui-icon,#panel.thumb-skills-page .skill-catalogue-toggle .ui-icon{width:22px;height:22px}
-#panel.thumb-skills-page .skill-category-tabs b,#panel.thumb-skills-page .skill-catalogue-toggle b{font-size:12px;line-height:1.3}
-#panel.thumb-skills-page .skill-catalogue-toggle.active{color:var(--ui-energy);background:var(--ui-energy-soft)}
-.skill-thumb-sheet.tone-active{--skill-tone:var(--ui-skill-active)}
-.skill-thumb-sheet.tone-power{--skill-tone:var(--ui-skill-power)}
-.skill-thumb-sheet.tone-guard{--skill-tone:var(--ui-skill-guard)}
-.skill-thumb-sheet.tone-phase{--skill-tone:var(--ui-skill-phase)}
-.skill-thumb-sheet.tone-passive{--skill-tone:var(--ui-skill-passive)}
-.skill-thumb-sheet.tone-field{--skill-tone:var(--ui-skill-field)}
-.skill-thumb-sheet.tone-mastery{--skill-tone:var(--ui-skill-mastery)}
-.skill-thumb-sheet .skill-detail-panel{padding:0;border:0;background:transparent;box-shadow:none;clip-path:none;overflow:visible;min-height:0}
-.skill-thumb-sheet .skill-detail-main{display:flex;align-items:center;gap:12px;padding:0 0 12px;border-bottom:1px solid var(--ui-line)}
-.skill-thumb-sheet .skill-detail-icon{flex:none;display:grid;place-items:center;width:64px;height:64px;padding:8px;color:var(--skill-tone);border:1px solid color-mix(in srgb,var(--skill-tone) 40%,var(--ui-line));background:radial-gradient(circle,color-mix(in srgb,var(--skill-tone) 14%,transparent),transparent 70%);border-radius:9px}
-.skill-thumb-sheet .skill-detail-icon .ui-icon{width:44px;height:44px}
-.skill-thumb-sheet .skill-detail-main small{font-size:11px;color:var(--ui-text-2)}
-.skill-thumb-sheet .skill-detail-main h2{font-size:20px;line-height:1.3;margin:4px 0;color:var(--ui-text-1)}
-.skill-thumb-sheet .skill-detail-level{font-size:11px;line-height:1.4;font-style:normal;color:var(--skill-tone)}
-.skill-thumb-sheet .rpg-skill-effect{margin:16px 0 8px;font-size:15px;line-height:1.65;color:var(--ui-text-1);font-weight:600}
-.skill-thumb-sheet .skill-detail-use{font-size:12px;line-height:1.6;margin:8px 0 12px;color:var(--ui-text-2)}
-.skill-thumb-sheet .skill-growth-guide{border:0;background:transparent;padding:0}
-.skill-thumb-sheet .skill-growth-guide summary{min-height:44px;font-size:12px;padding:8px 0}
-.skill-thumb-sheet .skill-growth-guide p{font-size:12px;line-height:1.6}
-.skill-thumb-sheet .thumb-sheet-footer{display:flex;flex-direction:column;gap:8px}
-.skill-thumb-sheet .skill-action-feedback{margin:0;min-height:16px;font-size:11px;color:var(--ui-success);line-height:1.45}
-.skill-thumb-sheet .skill-assignment-label{margin:0;font-size:11px;line-height:1.4;color:var(--ui-text-2)}
-.skill-thumb-sheet .skill-assignment-slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.skill-thumb-sheet .skill-assign-slot{display:flex;flex-direction:column;gap:4px;min-height:76px;padding:8px 4px;align-items:center;justify-content:center;white-space:normal}
-.skill-thumb-sheet .skill-assign-slot small,.skill-thumb-sheet .skill-assign-slot>span{font-size:10px;line-height:1.3;color:var(--ui-text-2)}
-.skill-thumb-sheet .skill-assign-slot b{font-size:12px;line-height:1.3;color:var(--ui-text-1)}
-.skill-thumb-sheet .skill-assign-slot.equipped{border-color:var(--skill-tone);background:color-mix(in srgb,var(--skill-tone) 10%,var(--ui-surface-1))}
-.skill-thumb-sheet .skill-assign-slot.equipped>span{color:var(--skill-tone)}
-.skill-thumb-sheet .skill-book-action,.skill-thumb-sheet .skill-sheet-close,.skill-thumb-sheet .skill-mastery-confirm{width:100%;min-height:44px;font-size:13px;padding:8px}
-.skill-thumb-sheet .skill-sheet-close{background:transparent;border-color:transparent;color:var(--ui-text-2);box-shadow:none}
-.skill-thumb-sheet .skill-auto-status,.skill-thumb-sheet .skill-mastery-guide{margin:0;padding:0;font-size:12px;line-height:1.5;color:var(--ui-text-2)}
-.skill-thumb-sheet .skill-mastery-caption{margin:0 0 8px;font-size:11px;color:var(--ui-text-2)}
-.skill-thumb-sheet .skill-mastery-controls{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-bottom:8px}
-.skill-thumb-sheet .skill-mastery-controls>button,.skill-thumb-sheet .skill-mastery-quantity{min-height:44px;min-width:44px;width:100%;padding:8px 4px;text-align:center;font-size:13px}
-.skill-thumb-sheet [hidden]{display:none!important}
-@media(max-height:700px){#panel.thumb-skills-page{gap:4px;padding-top:8px!important}#panel.thumb-skills-page .skill-console-head{min-height:44px}#panel.thumb-skills-page .skill-console-head h1{font-size:18px}#panel.thumb-skills-page .skill-loadout-slot{min-height:68px}#panel.thumb-skills-page .skill-library-grid{gap:8px}#panel.thumb-skills-page .skill-library-card{min-height:104px!important}}
+#panel.thumb-skills-page .skill-library-empty{min-height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;padding:8px;text-align:center;color:var(--ui-text-2)}
+#panel.thumb-skills-page .skill-library-empty>i{display:none}
+#panel.thumb-skills-page .skill-library-empty b{font-size:14px;color:var(--ui-text-1)}
+#panel.thumb-skills-page .skill-library-empty p,#panel.thumb-skills-page .skill-library-empty>span{margin:0;font-size:12px;line-height:1.5}
+#panel.thumb-skills-page .skill-inspector{flex:none;display:flex;flex-direction:column;height:clamp(260px,38dvh,328px);min-height:0;overflow:hidden;border-top:1px solid var(--ui-line-hi);background:linear-gradient(160deg,var(--ui-surface-2),var(--ui-bg-0));box-shadow:0 -8px 20px var(--ui-bg-1)}
+#panel.thumb-skills-page .skill-inspector.is-empty{height:auto;min-height:80px}
+#panel.thumb-skills-page .skill-inspector-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--ui-line) transparent;padding:12px}
+#panel.thumb-skills-page .skill-detail-panel{padding:0;min-height:0;border:0;background:none;box-shadow:none;clip-path:none;overflow:visible}
+#panel.thumb-skills-page .skill-detail-main{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;gap:8px;padding:0;border:0}
+#panel.thumb-skills-page .skill-detail-icon{width:44px;height:44px;padding:4px;border:0;border-radius:0;background:none;filter:none;color:var(--skill-tone)}
+#panel.thumb-skills-page .skill-detail-icon .ui-icon{width:36px;height:36px}
+#panel.thumb-skills-page .skill-detail-main small{font-size:10px;color:var(--ui-text-2)}
+#panel.thumb-skills-page .skill-detail-main h2{font-size:16px;line-height:1.3;margin:0 0 4px}
+#panel.thumb-skills-page .skill-detail-level{font-size:11px;line-height:1.4;font-style:normal;color:var(--skill-tone)}
+#panel.thumb-skills-page .skill-effect-comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+#panel.thumb-skills-page .skill-effect-comparison>div{min-width:0}
+#panel.thumb-skills-page .skill-effect-comparison small{font-size:11px;color:var(--ui-text-2)}
+#panel.thumb-skills-page .rpg-skill-effect,#panel.thumb-skills-page .skill-next-effect{margin:4px 0 0;font-size:13px;line-height:1.5;overflow-wrap:anywhere;color:var(--ui-text-1)}
+#panel.thumb-skills-page .skill-next-effect{color:var(--ui-success)}
+#panel.thumb-skills-page .skill-detail-use{margin:12px 0 4px;font-size:12px;line-height:1.5;color:var(--ui-text-2)}
+body[data-ui="abyss-frame"] #panel.thumb-skills-page.skills-page .skill-detail-use{margin-top:4px;font-size:12px!important;line-height:1.5!important}
+#panel.thumb-skills-page .skill-growth-guide{margin:0;padding:0;border:0;background:none}
+#panel.thumb-skills-page .skill-growth-guide summary{min-height:44px;padding:8px 0;font-size:12px}
+#panel.thumb-skills-page .skill-growth-guide p{font-size:12px;line-height:1.6;margin:4px 0 8px}
+#panel.thumb-skills-page .skill-action-dock{flex:none;display:flex;flex-direction:column;gap:8px;padding:8px 12px 12px;border-top:1px solid var(--ui-line);background:var(--ui-bg-0)}
+#panel.thumb-skills-page .skill-action-feedback{min-height:16px;margin:0;font-size:11px;line-height:1.4;color:var(--ui-success)}
+#panel.thumb-skills-page .skill-assignment-label{margin:0;font-size:11px;line-height:1.4;color:var(--ui-text-2)}
+#panel.thumb-skills-page .skill-assignment-slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0;margin:0}
+#panel.thumb-skills-page .skill-assignment-slots::before{display:none}
+#panel.thumb-skills-page .skill-assign-slot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:64px;padding:4px!important;white-space:normal;border:1px solid var(--ui-line);background:var(--ui-surface-1)}
+#panel.thumb-skills-page .skill-assign-slot small,#panel.thumb-skills-page .skill-assign-slot>span{font-size:10px;line-height:1.3;color:var(--ui-text-2)}
+#panel.thumb-skills-page .skill-assign-slot b{font-size:12px;line-height:1.3;color:var(--ui-text-1)}
+#panel.thumb-skills-page .skill-assign-slot.equipped{border-color:var(--skill-tone);background:color-mix(in srgb,var(--skill-tone) 10%,var(--ui-surface-1))}
+#panel.thumb-skills-page .skill-assign-slot.equipped>span{color:var(--skill-tone)}
+#panel.thumb-skills-page .skill-book-action,#panel.thumb-skills-page .skill-mastery-confirm{width:100%;min-height:44px;font-size:13px;padding:8px}
+#panel.thumb-skills-page .skill-auto-status,#panel.thumb-skills-page .skill-mastery-guide,#panel.thumb-skills-page .skill-upgrade-cost{margin:0;padding:0;font-size:12px;line-height:1.5;color:var(--ui-text-2)}
+#panel.thumb-skills-page .skill-auto-status{display:block;border:0;background:none}
+#panel.thumb-skills-page .skill-mastery-caption{margin:0 0 8px;font-size:11px;color:var(--ui-text-2)}
+#panel.thumb-skills-page .skill-mastery-controls{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-bottom:8px}
+#panel.thumb-skills-page .skill-mastery-controls>button,#panel.thumb-skills-page .skill-mastery-quantity{min-height:44px;min-width:44px;width:100%;padding:8px 4px;text-align:center;font-size:13px}
+#panel.thumb-skills-page .skill-selection-empty{font-size:13px;line-height:1.5;color:var(--ui-text-2)}
+body[data-ui="abyss-frame"] #panel.thumb-skills-page .skill-console-head{min-height:44px;margin:0;padding:0;gap:8px}
+body[data-ui="abyss-frame"] #panel.thumb-skills-page.skills-page .skill-view-hint,
+body[data-ui="abyss-frame"] #panel.thumb-skills-page.skills-page .skill-assignment-label,
+body[data-ui="abyss-frame"] #panel.thumb-skills-page.skills-page .skill-action-feedback,
+body[data-ui="abyss-frame"] #panel.thumb-skills-page.skills-page .skill-mastery-caption{font-size:11px!important;line-height:1.4!important}
+#panel.thumb-skills-page .skill-detail-main>span:last-child{display:flex;flex-direction:column;align-items:flex-start;gap:0}
+#panel.thumb-skills-page .skill-detail-main h2{margin:0!important;padding:0;font-size:16px;line-height:1.3}
+#panel.thumb-skills-page .skill-detail-main small{display:none;margin:0;line-height:1.3}
+#panel.thumb-skills-page .skill-detail-panel::before,#panel.thumb-skills-page .skill-detail-panel::after{display:none}
+#panel.thumb-skills-page .skill-library-card[hidden],#panel.thumb-skills-page .skill-browser[hidden],#panel.thumb-skills-page .skill-library-empty[hidden],#panel.thumb-skills-page .skill-catalogue-toggle[hidden]{display:none!important}
+@media(max-height:700px){#panel.thumb-skills-page{gap:4px}#panel.thumb-skills-page .skill-inspector{height:284px}#panel.thumb-skills-page .skill-inspector-body{padding:8px}#panel.thumb-skills-page .skill-action-dock{gap:4px;padding:8px}#panel.thumb-skills-page .skill-view-hint{display:none}#panel.thumb-skills-page .skill-effect-comparison{margin-top:8px}}
 /* Inventory is a game stage, a single scrollable item tray, and a thumb rail. */
 body[data-ui="abyss-frame"] #panel[data-view="bag"]{gap:8px;padding:8px 12px!important;overflow:hidden!important}
 body[data-ui="abyss-frame"] #panel[data-view="bag"] .rpg-bag-body{overflow:hidden;gap:8px;flex:1;min-height:0}
@@ -3817,6 +3869,57 @@ body[data-ui="abyss-frame"] #panel[data-view="bag"] .item.equipped .rpg-item-sta
 .bag-slot-choice b{font-size:13px;color:var(--ui-text-1)}
 .bag-slot-choice small{font-size:10px;line-height:1.4;color:var(--ui-text-2);overflow-wrap:anywhere}
 .bag-slot-choice.selected{border-color:var(--ui-energy);background:var(--ui-energy-soft)}
+/* Inventory: select in place, then act once. Full details remain optional. */
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .bag-category-tabs{order:0;border-top:0;border-bottom:1px solid var(--ui-line);padding:0;min-height:44px}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .bag-category-tabs>button{min-height:44px;padding:4px}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .ui-bag-stage .doll{height:240px}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .ui-bag-stage[hidden]{display:none!important}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .inventory-vault{padding:0 8px;border-radius:var(--ui-radius-sm);background:linear-gradient(180deg,var(--ui-surface-1),var(--ui-bg-1))}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .rpg-bag-body .vault-head{flex:none;min-height:44px;gap:4px;border-top:0;border-bottom:1px solid var(--ui-line)}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .vault-head em{margin-right:auto;font-size:10px;color:var(--ui-text-3)}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .bag-slot-picker{gap:4px;font-size:12px;white-space:nowrap}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .bag-slot-picker>.ui-icon{width:16px;height:16px}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .bag-look-toggle{display:flex;align-items:center;gap:4px;padding:4px!important;border:0;background:none;box-shadow:none;white-space:nowrap;font-size:11px}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .bag-look-toggle>.ui-icon{width:16px;height:16px}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .itemgrid{align-content:start;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-top:8px}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .item{min-height:76px!important;padding:4px!important;gap:4px;border:1px solid color-mix(in srgb,var(--item-tier,var(--ui-metal)) 24%,var(--ui-line));background:linear-gradient(155deg,var(--ui-surface-2),var(--ui-bg-1));border-radius:var(--ui-radius-sm);box-shadow:none;position:relative;justify-content:flex-start}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .item[data-grade="field"]{--item-tier:var(--ui-energy)}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .item[data-grade="quantum"]{--item-tier:var(--ui-anomaly)}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .item[data-grade="stellar"]{--item-tier:var(--ui-warning)}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .item .iicon,body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .item .iicon .item-art{width:36px;height:36px}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .item .iname{font-size:11px;line-height:1.25;min-height:28px;white-space:normal;overflow-wrap:anywhere;display:block;text-align:center}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .item .rpg-item-state{position:absolute;right:3px;top:3px;font-size:10px;line-height:1.2;padding:1px 2px;background:var(--ui-bg-1)}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .item.equipped .rpg-item-state{color:var(--ui-energy)}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .item.selected{border-color:var(--ui-energy);background:linear-gradient(155deg,var(--ui-energy-soft),var(--ui-bg-1));box-shadow:inset 0 -2px var(--ui-energy)}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .bag-selection-dock{flex:none;display:grid;grid-template-columns:minmax(0,1fr) 88px;gap:12px;align-items:center;min-height:96px;padding:8px 12px;border:1px solid var(--ui-line);border-radius:var(--ui-radius-sm);background:var(--ui-plate-muted);box-shadow:inset 0 1px var(--ui-specular);position:relative}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .bag-selection-info{display:flex;align-items:center;gap:10px;border:0;border-radius:0;clip-path:none;background:none;box-shadow:none;padding:0!important;text-align:left;min-width:0}
+.bag-selection-art{width:44px;height:44px;padding:6px;box-sizing:border-box;flex:none;display:grid;place-items:center;background:radial-gradient(circle,var(--ui-energy-soft),transparent 72%)}
+.bag-selection-art .item-art{width:32px;height:32px;object-fit:contain}
+.bag-selection-art>.ui-icon{width:24px;height:24px;color:var(--ui-text-3)}
+.bag-selection-copy{display:grid;gap:3px;min-width:0}
+.bag-selection-copy>small{font-size:10px;line-height:1.2;color:var(--ui-text-2)}
+.bag-selection-copy>b{font-size:14px;line-height:1.3;color:var(--ui-text-1);overflow-wrap:anywhere}
+.bag-selection-copy>span{font-size:11px;line-height:1.4;color:var(--ui-energy);overflow-wrap:anywhere}
+.bag-selection-more{margin-left:auto;display:flex;color:var(--ui-text-3)}
+.bag-selection-more .ui-icon{width:12px;height:12px}
+/* One finish for fixed confirmation actions; selection controls keep their own hierarchy. */
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .bag-quick-action,
+body[data-ui="abyss-frame"] #panel.careers-page .career-route-action,
+body[data-ui="abyss-frame"] #panel.thumb-skills-page :is(.skill-book-action,.skill-mastery-confirm){display:flex;align-items:center;justify-content:center;width:100%;height:48px;min-height:48px!important;padding:8px!important;margin:0;font-size:14px;font-weight:700;line-height:1.3;letter-spacing:.04em;text-align:center;white-space:normal;clip-path:none;border:1px solid color-mix(in srgb,var(--ui-energy) 64%,var(--ui-line));border-radius:var(--ui-radius-sm);color:var(--ui-energy-hi);background:linear-gradient(145deg,color-mix(in srgb,var(--ui-energy-deep) 60%,var(--ui-surface-2)),var(--ui-surface-1));box-shadow:inset 0 1px var(--ui-specular),inset 0 -1px var(--ui-bg-0);transform:none!important}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .bag-quick-action[data-intent="secondary"]{border-color:var(--ui-line-hi);background:linear-gradient(155deg,var(--ui-surface-3),var(--ui-surface-1));color:var(--ui-text-1)}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .bag-quick-action:disabled,
+body[data-ui="abyss-frame"] #panel.careers-page .career-route-action:disabled,
+body[data-ui="abyss-frame"] #panel.thumb-skills-page :is(.skill-book-action,.skill-mastery-confirm):disabled{border-color:var(--ui-line);background:var(--ui-surface-1);color:var(--ui-text-3);box-shadow:none;opacity:1}
+body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .bag-selection-info:active,body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .bag-selection-info.is-touching{transform:none!important}
+@media(min-width:390px){body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .itemgrid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(max-height:740px){
+  body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page{gap:4px}
+  body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .rpg-bag-body{gap:4px}
+  body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .ui-bag-stage .doll{height:220px}
+  body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .vault-head{margin-bottom:0}
+  body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .itemgrid{margin-top:4px}
+  body[data-ui="abyss-frame"] #panel[data-view="bag"].bag-review-page .bag-selection-dock{min-height:88px}
+}
 @media(max-height:740px){
   body[data-ui="abyss-frame"] #panel[data-view="bag"] .ui-bag-stage .doll{height:244px}
   body[data-ui="abyss-frame"] #panel[data-view="bag"] .ui-bag-stage .doll-wearable{width:auto}

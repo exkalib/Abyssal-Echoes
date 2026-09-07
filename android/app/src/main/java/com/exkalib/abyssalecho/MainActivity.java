@@ -39,6 +39,65 @@ public final class MainActivity extends Activity {
     private BundleUpdater.UpdateInfo pendingNativeUpdate;
     private File pendingNativeApk;
     private boolean waitingForInstallPermission;
+    private static final int BACKUP_PICKER = 7102;
+    private static final int MAX_BACKUP_BYTES = 8 * 1024 * 1024;
+    private String backupRequestId;
+    private String backupText;
+
+    private void backupReply(String id, String status, String value) {
+        runOnUiThread(() -> {
+            if (webView != null) webView.evaluateJavascript(
+                    "window.onAbyssBackupResult&&window.onAbyssBackupResult("
+                    + JSONObject.quote(id) + "," + JSONObject.quote(status) + ","
+                    + JSONObject.quote(value) + ");", null);
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != BACKUP_PICKER || backupRequestId == null) return;
+        final String id = backupRequestId, text = backupText;
+        backupRequestId = null;
+        backupText = null;
+        if (resultCode != RESULT_OK || data == null || data.getData() == null) {
+            backupReply(id, "cancel", "已取消，未保存或导入文件");
+            return;
+        }
+        final Uri uri = data.getData();
+        new Thread(() -> {
+            try {
+                if (text != null) {
+                    try (java.io.OutputStream output = getContentResolver().openOutputStream(uri, "wt")) {
+                        if (output == null) throw new java.io.IOException("无法打开保存位置");
+                        output.write(text.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                        output.flush();
+                    }
+                    String name = "加密备份文件";
+                    try (android.database.Cursor cursor = getContentResolver().query(uri,
+                            new String[]{android.provider.OpenableColumns.DISPLAY_NAME}, null, null, null)) {
+                        if (cursor != null && cursor.moveToFirst()) name = cursor.getString(0);
+                    } catch (Exception ignored) { }
+                    backupReply(id, "saved", "已保存到刚才选择的位置：" + name
+                            + "。可在文件管理器中找到后，作为文件发送到 QQ / 微信。");
+                } else {
+                    try (java.io.InputStream input = getContentResolver().openInputStream(uri);
+                         java.io.ByteArrayOutputStream output = new java.io.ByteArrayOutputStream()) {
+                        if (input == null) throw new java.io.IOException("无法读取文件");
+                        byte[] buffer = new byte[8192];
+                        int count;
+                        while ((count = input.read(buffer)) != -1) {
+                            if (output.size() + count > MAX_BACKUP_BYTES) throw new java.io.IOException("备份文件超过 8 MB");
+                            output.write(buffer, 0, count);
+                        }
+                        backupReply(id, "loaded", output.toString("UTF-8"));
+                    }
+                }
+            } catch (Exception error) {
+                backupReply(id, "error", "文件操作失败，请重新选择位置或文件：" + error.getMessage());
+            }
+        }, "backup-file-io").start();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -339,6 +398,35 @@ public final class MainActivity extends Activity {
     }
 
     private final class AppBridge {
+        @JavascriptInterface
+        public void backupFile(String id, String action, String text) {
+            if (id == null || id.length() > 80) return;
+            runOnUiThread(() -> {
+                if (webView == null || !LocalContentWebViewClient.HOME.equals(webView.getUrl())) return;
+                if (backupRequestId != null) { backupReply(id, "error", "请先完成已打开的文件选择窗口"); return; }
+                try {
+                    boolean saving = "save".equals(action);
+                    if (!saving && !"open".equals(action)) throw new IllegalArgumentException("不支持的文件操作");
+                    if (saving && (text == null || text.length() > MAX_BACKUP_BYTES
+                            || !"abyss_echo_backup_v2".equals(new JSONObject(text).optString("format"))))
+                        throw new IllegalArgumentException("请选择游戏生成的加密备份");
+                    Intent intent = new Intent(saving ? Intent.ACTION_CREATE_DOCUMENT : Intent.ACTION_OPEN_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType(saving ? "application/json" : "*/*");
+                    if (saving) intent.putExtra(Intent.EXTRA_TITLE, "abyss-echo-save-"
+                            + new java.text.SimpleDateFormat("yyyyMMdd-HHmmss", java.util.Locale.ROOT).format(new java.util.Date())
+                            + ".encrypted.json");
+                    backupRequestId = id;
+                    backupText = saving ? text : null;
+                    startActivityForResult(intent, BACKUP_PICKER);
+                } catch (Exception error) {
+                    backupRequestId = null;
+                    backupText = null;
+                    backupReply(id, "error", "无法打开系统文件选择器：" + error.getMessage());
+                }
+            });
+        }
+
         @JavascriptInterface
         public void checkForUpdates() {
             runOnUiThread(MainActivity.this::checkForUpdates);
